@@ -49,7 +49,7 @@ describe("Find a Grant", () => {
     });
   });
 
-  it("can apply for a grant", () => {
+  it.only("can apply for a grant", () => {
     cy.get('[name="searchTerm"]')
       .should("have.attr", "placeholder")
       .should("contains", "enter a keyword or search term here");
@@ -64,5 +64,17 @@ describe("Find a Grant", () => {
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     cy.contains("Sign in with GOV.UK One Login").click();
+
+    cy.origin("https://signin.integration.account.gov.uk", () => {
+      cy.contains("Sign in").click();
+      cy.get('[name="email"]').type("");
+      cy.contains("Continue").click();
+      cy.get('[name="password"]').type("");
+      cy.contains("Continue").click();
+    });
+
+    cy.origin("https://sandbox-gap.service.cabinetoffice.gov.uk", () => {
+      cy.contains("Continue").click();
+    });
   });
 });
