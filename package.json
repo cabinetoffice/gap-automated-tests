@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cypress:open": "npx cypress open",
-    "cypress:run": "npx cypress run",
+    "cy:open": "npx cypress open",
+    "cy:run": "npx cypress run | tee -a ./cypress/report.txt",
     "lint": "npx eslint",
     "prettier:write": "npx prettier . --write",
     "prettier:check": "npx prettier . --check",
