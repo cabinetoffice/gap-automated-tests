@@ -30,7 +30,7 @@ INSERT INTO public.grant_applicant(id, user_id)
 
 INSERT INTO public.grant_scheme(
 	grant_scheme_id, funder_id, version, ggis_identifier, created_date, last_updated, last_updated_by, scheme_name, scheme_contact, created_by)
-	VALUES ('-1', '-1', 1, 'GGIS_ID_1', NOW(), null, null, 'Cypress - Test Scheme', 'test_contact"gmail.com', '-5');
+	VALUES ('-1', '-1', 1, 'GGIS_ID_1', NOW(), null, null, 'Cypress - Test Scheme', 'test_contact@gmail.com', '-5');
 
 
     -- INSERT INTO public.grant_application(

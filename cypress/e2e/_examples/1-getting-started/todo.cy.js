@@ -14,6 +14,7 @@
 describe("example to-do app", () => {
   beforeEach(() => {
     cy.task("setUpUser");
+    cy.task("setUpApplyData");
     // Cypress starts out with a blank slate for each test
     // so we must tell it to visit our website with the `cy.visit()` command.
     // Since we want to visit the same URL at the start of all our tests,

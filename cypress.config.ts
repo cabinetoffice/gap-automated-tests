@@ -1,5 +1,6 @@
 import { defineConfig } from "cypress";
 import { createTestUsers, deleteTestUsers } from "./cypress/seed/user";
+import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
 
 export default defineConfig({
   e2e: {
@@ -8,6 +9,11 @@ export default defineConfig({
       on("task", {
         async setUpUser() {
           await deleteTestUsers().then(() => createTestUsers());
+
+          return null;
+        },
+        async setUpApplyData() {
+          await deleteApplyData().then(() => createApplyData());
 
           return null;
         },
