@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@percy/cypress": "^3.1.2",
+    "dotenv": "^16.3.1",
     "fs": "^0.0.1-security",
     "pg": "^8.11.3"
   }

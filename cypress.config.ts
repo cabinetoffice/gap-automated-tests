@@ -6,9 +6,9 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       on("task", {
-        setUpUser() {
-          deleteTestUsers();
-          // await createTestUsers();
+        async setUpUser() {
+          await deleteTestUsers().then(() => createTestUsers());
+
           return null;
         },
         log(message) {

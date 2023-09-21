@@ -1,14 +1,15 @@
 import { runSQL } from "./database";
+import "dotenv/config";
 
 const userServiceDbName: string =
-  process.env.CYPRESS_USER_SERVICE_DB_NAME || "gapuserlocaldb";
+  process.env.CYPRESS_USERS_DATABASE_NAME || "gapuserlocaldb";
 
 export const createTestUsers = async (): Promise<void> => {
-  await runSQL("./sql/addTestUsers.sql", userServiceDbName);
+  await runSQL("./cypress/seed/sql/addTestUsers.sql", userServiceDbName);
   console.log("Successfully added test users");
 };
 
 export const deleteTestUsers = async (): Promise<void> => {
-  await runSQL("./sql/deleteTestUsers.sql", userServiceDbName);
+  await runSQL("./cypress/seed/sql/deleteTestUsers.sql", userServiceDbName);
   console.log("Successfully removed test users");
 };

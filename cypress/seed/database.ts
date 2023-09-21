@@ -1,5 +1,6 @@
 import { Client } from "pg";
-import fs from "fs/promises";
+import { promises as fs } from "fs";
+import "dotenv/config";
 
 const databaseUrl: string =
   process.env.CYPRESS_USERS_DATABASE_URL ||
@@ -11,8 +12,9 @@ export const runSQL = async (
 ): Promise<void> => {
   try {
     const connectionString: string = getConnectionStringByDbName(dbName);
+    console.log("Connection:" + connectionString);
     const sqlScript: string = await fs.readFile(filePath, "utf8");
-    const client: Client = new Client({ connectionString });
+    const client = new Client({ connectionString });
     await client.connect();
     console.log("sqlScript: ", sqlScript);
     await client.query(sqlScript);
