@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cypress:open": "npx cypress open",
-    "cypress:run": "npx cypress run",
+    "cy:open:watch": "npx cypress open --config watchForFileChanges=true",
+    "cy:open:nowatch": "npx cypress open --config watchForFileChanges=false",
+    "cy:run": "npx cypress run",
     "lint": "npx eslint",
     "prettier:write": "npx prettier . --write",
     "prettier:check": "npx prettier . --check",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "cypress": "^13.2.0",
+    "dotenv": "^16.3.1",
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-standard-with-typescript": "^39.0.0",
@@ -33,6 +35,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.1",
+    "mochawesome": "^7.1.3",
     "prettier": "3.0.3",
     "typescript": "^5.2.2"
   },
