@@ -118,6 +118,30 @@ const fillOutRequiredChecks = () => {
   yesSectionComplete();
 };
 
+const submitApplication = () => {
+  cy.contains("Submit application").click();
+
+  cy.contains("Are you sure you want to submit this application?");
+  cy.contains(
+    "You will not be able to make changes to your application after this has been submitted.",
+  );
+  cy.contains("Yes, submit this application").click();
+};
+
+const equalitySectionDecline = () => {
+  cy.contains("We have received your application");
+  cy.contains(
+    "Before you finish using the service, we’d like to ask some equality questions.",
+  );
+  cy.contains("Do you want to answer the equality questions?");
+  cy.contains(
+    "These questions are optional. We would like to understand who the grant will benefit.",
+  );
+  cy.contains("Your answers will not affect your application.");
+  cy.get("[data-cy=cy-radioInput-option-NoSkipTheEqualityQuestions]").click();
+  cy.contains("Continue").click();
+};
+
 describe("Find a Grant", () => {
   beforeEach(() => {
     // We have to visit base url first to prevent issues with cross-origin
@@ -187,25 +211,9 @@ describe("Find a Grant", () => {
 
     fillOutRequiredChecks();
 
-    cy.contains("Submit application").click();
+    submitApplication();
 
-    cy.contains("Are you sure you want to submit this application?");
-    cy.contains(
-      "You will not be able to make changes to your application after this has been submitted.",
-    );
-    cy.contains("Yes, submit this application").click();
-
-    cy.contains("We have received your application");
-    cy.contains(
-      "Before you finish using the service, we’d like to ask some equality questions.",
-    );
-    cy.contains("Do you want to answer the equality questions?");
-    cy.contains(
-      "These questions are optional. We would like to understand who the grant will benefit.",
-    );
-    cy.contains("Your answers will not affect your application.");
-    cy.get("[data-cy=cy-radioInput-option-NoSkipTheEqualityQuestions]").click();
-    cy.contains("Continue").click();
+    equalitySectionDecline();
 
     cy.contains("Application submitted");
     cy.contains("What happens next");
