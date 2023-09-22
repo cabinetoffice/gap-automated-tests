@@ -22,5 +22,6 @@ export default defineConfig({
     //   mochaFile: 'results/my-test-output.xml',
     //   toConsole: true,
     // },
+    reporter: "mochawesome",
   },
 });
