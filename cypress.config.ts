@@ -23,5 +23,14 @@ export default defineConfig({
     //   toConsole: true,
     // },
     reporter: "mochawesome",
+    reporterOptions: {
+      reportDir: "mochawesome-report",
+      charts: true,
+      reportPageTitle: "Find a Grant",
+      embeddedScreenshots: true,
+      inlineAssets: true,
+      saveAllAttempts: false,
+      debug: true,
+    },
   },
 });
