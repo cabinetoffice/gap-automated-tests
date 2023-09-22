@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const BASE_URL =
   "https://dev-env.find-a-grant-support-dev.service.cabinetoffice.gov.uk/";
 
@@ -12,7 +10,8 @@ const signInWithOneLogin = () => {
     cy.contains("Continue").click();
     cy.get('[name="password"]').type(Cypress.env("oneLoginApplicantPassword"));
     cy.contains("Continue").click();
-    //cy.contains("Continue").click();
+    // TODO TD-31
+    // cy.contains("Continue").click();
   });
 };
 
