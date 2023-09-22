@@ -10,15 +10,28 @@ There are example tests contained at `cypress/_examples` to use as a guide when 
 
 - To install dependencies, run `npm install`
 - You'll then need to copy the `.env.example` file to a file called `.env` and enter the login in details for the accounts you will use for testing. You can obtain these by talking to Conor Fayle or Connor MacQueen.
-  - In the `.env` there is a property called `watch-for-file-changes` - this controls whether the tests automatically rerun when you make changes to them.
-  - It can be useful to have this on when debugging failures `watch-for-file-changes=1` but if you are writing tests for a new journey, it can often be handy to turn it off `watch-for-file-changes=0`, allowing you to run through the journey and obtain the required data selectors etc.
+  - `one-login-sandbox-` properties used for signing in to the One Login integration environment - this is a static username/password for the whole environment.
+  - The other email/password combinations are for specific accounts.
 - ESLint, Prettier and Husky are installed, so your code will auto-format when committing changes.
 
 ## Running tests
 
-To run the tests in the GUI, run `npm run cy:open` - this will open a window that will allow you to select your browser, then select test suites to run.
+### GUI
 
-To run the tests in the command line, run `npm run cy:run` - this will output the Cypress report in your console, and also as a HTML report as below.
+To run the tests in the GUI, you have two options. The one you choose dictates whether the tests automatically rerun when you make changes to them.
+
+- `npm run cy:open:watch`
+- `npm run cy:open:nowatch`
+
+Both of these will open a window that will allow you to select your browser, then select test suites to run.
+
+It can be useful to have file watching on when debugging failures `npm run cy:open:watch`.
+
+However, if you are writing tests for a new journey, it can often be better to turn it off `npm run cy:open:nowatch`, allowing you to run through the journey and obtain the required data selectors etc without the tests running every time you make a change.
+
+### Console
+
+To run the tests in the command line, run `npm run cy:run` - this will output the Cypress report in your console, and also generate a HTML report as below.
 
 ## Reports
 

@@ -16,12 +16,6 @@ export default defineConfig({
       oneLoginSuperAdminEmail: process.env["one-login-super-admin-email"],
       oneLoginSuperAdminPassword: process.env["one-login-super-admin-password"],
     },
-    watchForFileChanges: !!+process.env["watch-for--file-changes"],
-    // reporter: 'teamcity',
-    // reporterOptions: {
-    //   mochaFile: 'results/my-test-output.xml',
-    //   toConsole: true,
-    // },
     reporter: "mochawesome",
     reporterOptions: {
       reportDir: "mochawesome-report",

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cy:open": "npx cypress open",
+    "cy:open:watch": "npx cypress open --config watchForFileChanges=true",
+    "cy:open:nowatch": "npx cypress open --config watchForFileChanges=false",
     "cy:run": "npx cypress run",
     "lint": "npx eslint",
     "prettier:write": "npx prettier . --write",
