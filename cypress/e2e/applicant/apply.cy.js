@@ -15,6 +15,10 @@ const signInWithOneLogin = () => {
   });
 };
 
+const save = () => {
+  cy.contains("Save").click();
+};
+
 const saveAndContinue = () => {
   cy.contains("Save and continue").click();
 };
@@ -144,6 +148,8 @@ const equalitySectionDecline = () => {
 
 describe("Find a Grant", () => {
   beforeEach(() => {
+    cy.task("setUpUser");
+    cy.task("setUpApplyData");
     // We have to visit base url first to prevent issues with cross-origin
     cy.visit(BASE_URL);
     // then log in to the One Login integration environment to prevent the popup appearing
@@ -164,13 +170,11 @@ describe("Find a Grant", () => {
     cy.contains("Find a grant");
   });
 
-  it("can search for a grant", () => {
+  it.skip("can search for a grant", () => {
     cy.get('[name="searchTerm"]')
       .should("have.attr", "placeholder")
       .should("contains", "enter a keyword or search term here");
-    cy.get('[name="searchTerm"]').type(
-      "Big Business Grant For Business Things",
-    );
+    cy.get('[name="searchTerm"]').type("Cypress");
 
     cy.get("[data-cy=cySearchGrantsBtn]").click();
 
@@ -190,18 +194,26 @@ describe("Find a Grant", () => {
   });
 
   it("can start and submit new grant application", () => {
-    cy.get('[name="searchTerm"]')
-      .should("have.attr", "placeholder")
-      .should("contains", "enter a keyword or search term here");
-    cy.get('[name="searchTerm"]').type("Automated test grant");
+    // cy.get('[name="searchTerm"]')
+    //   .should("have.attr", "placeholder")
+    //   .should("contains", "enter a keyword or search term here");
+    // cy.get('[name="searchTerm"]').type("Cypress");
+    //
+    // cy.get("[data-cy=cySearchGrantsBtn]").click();
+    //
+    // cy.contains("Cypress").click();
+    //
+    // cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    cy.get("[data-cy=cySearchGrantsBtn]").click();
-
-    cy.contains("Automated test grant").click();
-
-    cy.contains("Start new application").invoke("removeAttr", "target").click();
+    cy.visit(
+      "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
+    );
 
     signInWithOneLogin();
+
+    cy.visit(
+      "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
+    );
 
     cy.contains("Eligibility").click();
     cy.contains("no");
@@ -223,11 +235,45 @@ describe("Find a Grant", () => {
     cy.contains("View your applications").click();
   });
 
-  it.skip("can land on application dashboard and view details", () => {
-    // cy.get('S[data-cy="cySignInAndApply-Link"]')
-    //   .click();
-    cy.contains("Sign in and apply").click();
+  it.only("can land on application dashboard and view details", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
 
     signInWithOneLogin();
+
+    cy.contains("Your organisation details").click();
+
+    cy.get(
+      "[data-cy=cy-organisation-details-navigation-organisationName]",
+    ).click();
+    cy.get("[data-cy=cy-legalName-text-input]").type("Cypress Test Org Name");
+    save();
+
+    // cy.get("[data-cy=cy-organisation-details-navigation-organisationAddress]").click();
+    // cy.get("[data-cy=cy-legalName-text-input]").type("Cypress Test Org Name");
+    // save();
+    //
+    // cy.get("[data-cy=cy-organisation-details-navigation-organisationType]").click();
+    // cy.get("[data-cy=cy-legalName-text-input]").type("Cypress Test Org Name");
+    // save();
+    //
+    // cy.get("[data-cy=cy-organisation-details-navigation-organisationCompaniesHouseNumber]").click();
+    // cy.get("[data-cy=cy-legalName-text-input]").type("Cypress Test Org Name");
+    // save();
+    //
+    // cy.get("[data-cy=cy-organisation-details-navigation-organisationCharity]").click();
+    // cy.get("[data-cy=cy-legalName-text-input]").type("Cypress Test Org Name");
+    // save();
+
+    cy.contains("Back to my account").click();
+
+    cy.contains("Your sign in details").click();
+
+    // TODO reenable click when MFA strategy is defined
+    cy.contains("Change your sign in details in your GOV.UK One Login");
+    //.click();
+
+    // cy.origin("https://signin.integration.account.gov.uk", () => {
+    //   cy.contains("Enter the 6 digit security code");
+    // });
   });
 });

@@ -60,6 +60,5 @@ export const getConnectionStringByDbName = (
   dbUrl: string,
   dbName: string,
 ): string => {
-  return dbUrl;
-  +"/" + dbName;
+  return dbUrl + "/" + dbName;
 };

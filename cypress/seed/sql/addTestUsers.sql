@@ -8,8 +8,8 @@ INSERT INTO public.gap_users(
 	('-1', 'test-user-applicant-1@gov.uk', 'urn:fdc:gov.uk:2022:ibd2rz2CgyidndXyq2zyfcnQwyYI57h34vMlSr77BBb', null, 'PRIVACY_POLICY_PENDING'),
 	('-2', 'test-user-applicant-2@gov.uk', 'urn:fdc:gov.uk:2022:ibd2rz2CgyidndXyq2zyfcnQwyYI57h34vMlSr88CCc', null, 'PRIVACY_POLICY_PENDING'),
 	('-3', 'test.super-admin@gov.uk', 'urn:fdc:gov.uk:2022:ibd2rz2CgyidndXyq2zyfcnQwyYI57h34vMlSr97YUg', '-1', 'USER_READY'),
-	('-4', 'test.applicant@gov.uk', 'urn:fdc:gov.uk:2022:ibd2rz2CgyidndXyq2zyfcnQwyYI57h34vMlSr88AAa', null, 'USER_READY'),
-	('-5', 'test.admin@gov.uk', 'urn:fdc:gov.uk:2022:ibd2rz2CgyidndXyq2zyfcnQwyYI57h34vMlSr22TTt', '-1', 'USER_READY');
+	('-4', 'conor.fayle+cypress_applicant@and.digital', 'urn:fdc:gov.uk:2022:9ANsYHeQjQ0_5MnpParV5KsRzDUXN6MBPvSrS1ImsOk', null, 'USER_READY'),
+	('-5', 'conor.fayle+cypress_admin@and.digital', 'urn:fdc:gov.uk:2022:LecF494FeMdjRWanGBLEtr1UVDc7wLCk1CsAh0F_k08', '-1', 'USER_READY');
 
 
 INSERT INTO public.roles_users(
