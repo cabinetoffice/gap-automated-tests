@@ -8,7 +8,7 @@ const applyServiceDbName: string =
 export const createApplyData = async (): Promise<void> => {
   await runApplySQL("./cypress/seed/sql/apply.sql", applyServiceDbName);
   // publish to contentful
-  publishGrantAdverts();
+  //publishGrantAdverts();
   console.log("Successfully added data to Apply database");
 };
 
