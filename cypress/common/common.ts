@@ -1,11 +1,11 @@
-export const BASE_URL =
-  "https://dev-env.find-a-grant-support-dev.service.cabinetoffice.gov.uk/";
+export const BASE_URL = Cypress.env("applicationBaseUrl");
+const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
 
 export const signInWithOneLogin = (email: string, password: string) => {
   cy.contains("Sign in with GOV.UK One Login").click();
 
   cy.origin(
-    "https://signin.integration.account.gov.uk",
+    ONE_LOGIN_BASE_URL,
     { args: { email, password } },
     ({ email, password }) => {
       cy.contains("Sign in").click();
@@ -25,12 +25,10 @@ export const signInToIntegrationSite = () => {
   // then log in to the One Login integration environment to prevent the popup appearing
   const username = Cypress.env("oneLoginSandboxUsername");
   const password = Cypress.env("oneLoginSandboxPassword");
-  cy.visit(
-    `https://${username}:${password}@signin.integration.account.gov.uk/sign-in-or-create`,
-    {
-      failOnStatusCode: false,
-    },
-  );
+
+  cy.visit(`https://${username}:${password}@${oneLoginUrl}/sign-in-or-create`, {
+    failOnStatusCode: false,
+  });
   // then return back to the base url to execute the tests
   cy.visit(BASE_URL);
   cy.contains("Reject analytics cookies").click();

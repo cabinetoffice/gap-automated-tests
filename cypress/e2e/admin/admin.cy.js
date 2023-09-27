@@ -20,10 +20,6 @@ describe("Create a Grant", () => {
   });
 
   it("can create a new Grant and create advert", () => {
-    // cy.visit(
-    //   "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/admin/dashboard",
-    // );
-
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInWithOneLogin(
       Cypress.env("oneLoginAdminEmail"),
@@ -33,7 +29,6 @@ describe("Create a Grant", () => {
     createGrant();
 
     //create advert
-
     advertSection1();
     advertSection2();
     advertSection3();
