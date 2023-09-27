@@ -4,6 +4,7 @@ import {
   yesQuestionComplete,
   saveAndExit,
   signInToIntegrationSite,
+  signInAsAdmin,
 } from "../../common/common";
 
 const GRANT_NAME = "Cypress Test Grant";
@@ -15,16 +16,9 @@ describe("Create a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("loads the page", () => {
-    cy.contains("Find a grant");
-  });
-
   it("can create a new Grant and create advert", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
-    signInWithOneLogin(
-      Cypress.env("oneLoginAdminEmail"),
-      Cypress.env("oneLoginAdminPassword"),
-    );
+    signInAsAdmin();
 
     createGrant();
 

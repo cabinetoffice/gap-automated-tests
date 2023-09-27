@@ -1,9 +1,10 @@
 import {
-  signInWithOneLogin,
   saveAndContinue,
   yesSectionComplete,
   signInToIntegrationSite,
   save,
+  searchForGrant,
+  signInAsApplicant,
 } from "../../common/common";
 
 const fillOutRequiredChecks = () => {
@@ -124,62 +125,25 @@ const equalitySectionDecline = () => {
   cy.contains("Continue").click();
 };
 
-describe("Find a Grant", () => {
+describe("Apply for a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
     signInToIntegrationSite();
   });
 
-  it("loads the page", () => {
-    cy.contains("Find a grant");
-  });
-
-  it("can search for a grant", () => {
-    // wait for grant to be published to contentful
-    cy.wait(5000);
-    cy.get('[name="searchTerm"]')
-      .should("have.attr", "placeholder")
-      .should("contains", "enter a keyword or search term here");
-    cy.get('[name="searchTerm"]').type("Cypress");
-
-    cy.get("[data-cy=cySearchGrantsBtn]").click();
-
-    cy.contains("Cypress - Automated E2E Test Grant").click();
-
-    const grantData = {
-      Location: "National",
-      "Funding organisation": "The Department of Business",
-      "Who can apply": "Non-profit",
-      "How much you can get": "From £1 to £10,000",
-      "Total size of grant scheme": "£1 million",
-      "Opening date": "24 August 2023, 12:01am",
-      "Closing date": "24 October 2040, 11:59pm",
-    };
-    Object.entries(grantData).forEach(([key, value]) => {
-      cy.contains(key);
-      cy.contains(value);
-    });
-  });
-
   it("can start and submit new grant application", () => {
+    cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
-    cy.get('[name="searchTerm"]')
-      .should("have.attr", "placeholder")
-      .should("contains", "enter a keyword or search term here");
-    cy.get('[name="searchTerm"]').type("Cypress");
 
-    cy.get("[data-cy=cySearchGrantsBtn]").click();
+    searchForGrant("Cypress");
 
     cy.contains("Cypress - Automated E2E Test Grant").click();
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    signInWithOneLogin(
-      Cypress.env("oneLoginApplicantEmail"),
-      Cypress.env("oneLoginApplicantPassword"),
-    );
+    signInAsApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
     cy.visit(
@@ -209,10 +173,7 @@ describe("Find a Grant", () => {
   it("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
-    signInWithOneLogin(
-      Cypress.env("oneLoginApplicantEmail"),
-      Cypress.env("oneLoginApplicantPassword"),
-    );
+    signInAsApplicant();
 
     cy.contains("Your organisation details").click();
 

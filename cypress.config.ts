@@ -2,6 +2,10 @@ import { defineConfig } from "cypress";
 require("dotenv").config();
 import { createTestUsers, deleteTestUsers } from "./cypress/seed/user";
 import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
+import {
+  deleteGrantAdverts,
+  publishGrantAdverts,
+} from "./cypress/seed/contentful";
 
 export default defineConfig({
   e2e: {
@@ -15,6 +19,12 @@ export default defineConfig({
         },
         async setUpApplyData() {
           await deleteApplyData().then(() => createApplyData());
+
+          return null;
+        },
+        async publishGrantsToContentful() {
+          await deleteGrantAdverts();
+          await publishGrantAdverts();
 
           return null;
         },
