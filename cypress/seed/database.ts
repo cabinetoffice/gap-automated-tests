@@ -42,7 +42,7 @@ export const runApplySQL = async (
       applyDatabaseUrl,
       dbName,
     );
-    console.log("Connection:" + connectionString);
+    //console.log("Connection:" + connectionString);
     const sqlScript: string = await fs.readFile(filePath, "utf8");
     const client = new Client({ connectionString });
     await client.connect();

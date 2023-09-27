@@ -16,7 +16,7 @@ export const publishGrantAdverts = () => {
       .then((environment) => {
         // Now that we have an environment, we can get entries from that space
         environment.getEntries().then((entries) => {
-          console.log(entries.items);
+          //console.log(entries.items);
         });
 
         // // let's get a content type

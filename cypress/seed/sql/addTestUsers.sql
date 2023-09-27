@@ -5,22 +5,20 @@ VALUES
 INSERT INTO public.gap_users(
 	gap_user_id, email, sub, dept_id, login_journey_state)
 	VALUES 
-	('-1', 'test-user-applicant-1@gov.uk', 'urn:fdc:gov.uk:2022:ibd2rz2CgyidndXyq2zyfcnQwyYI57h34vMlSr77BBb', null, 'PRIVACY_POLICY_PENDING'),
-	('-2', 'test-user-applicant-2@gov.uk', 'urn:fdc:gov.uk:2022:ibd2rz2CgyidndXyq2zyfcnQwyYI57h34vMlSr88CCc', null, 'PRIVACY_POLICY_PENDING'),
-	('-3', 'test.super-admin@gov.uk', 'urn:fdc:gov.uk:2022:ibd2rz2CgyidndXyq2zyfcnQwyYI57h34vMlSr97YUg', '-1', 'USER_READY'),
-	('-4', 'conor.fayle+cypress_applicant@and.digital', 'urn:fdc:gov.uk:2022:9ANsYHeQjQ0_5MnpParV5KsRzDUXN6MBPvSrS1ImsOk', null, 'USER_READY'),
-	('-5', 'conor.fayle+cypress_admin@and.digital', 'urn:fdc:gov.uk:2022:LecF494FeMdjRWanGBLEtr1UVDc7wLCk1CsAh0F_k08', '-1', 'USER_READY');
+	('-1', 'findagrantdeveloper+super_admin@cabinetoffice.gov.uk', 'urn:fdc:gov.uk:2022:fWal-gUz2TTpPZrp9-PgbW5jOk10hXfTy3cgxxW5HRE', '-1', 'USER_READY'),
+	('-2', 'findagrantdeveloper+admin@cabinetoffice.gov.uk', 'urn:fdc:gov.uk:2022:1QUViebEw1PHGV7iShahw7hmaSG9OL4RFzY_WgR2qcY', '-1', 'USER_READY'),
+	('-3', 'findagrantdeveloper+applicant@cabinetoffice.gov.uk', 'urn:fdc:gov.uk:2022:HvA7mHQsM_eNX5tAYNj2Oyj8_d3sooEtRjo7wbOaROY', null, 'USER_READY');
 
 
 INSERT INTO public.roles_users(
 	roles_id, users_gap_user_id)
 	VALUES 
+	(1, '-1'),
+	(2, '-1'),
+	(3, '-1'),
+	(4, '-1'),
+	(1, '-2'),
+	(2, '-2'),
+	(3, '-2'),
 	(1, '-3'),
-	(2, '-3'),
-	(3, '-3'),
-	(4, '-3'),
-	(1, '-5'),
-	(2, '-5'),
-	(3, '-5'),
-	(1, '-4'),
-	(2, '-4');
+	(2, '-3');

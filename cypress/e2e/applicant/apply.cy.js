@@ -1,32 +1,10 @@
-const BASE_URL =
-  "https://dev-env.find-a-grant-support-dev.service.cabinetoffice.gov.uk/";
-
-const signInWithOneLogin = () => {
-  cy.contains("Sign in with GOV.UK One Login").click();
-
-  cy.origin("https://signin.integration.account.gov.uk", () => {
-    cy.contains("Sign in").click();
-    cy.get('[name="email"]').type(Cypress.env("oneLoginApplicantEmail"));
-    cy.contains("Continue").click();
-    cy.get('[name="password"]').type(Cypress.env("oneLoginApplicantPassword"));
-    cy.contains("Continue").click();
-    // TODO TD-31
-    // cy.contains("Continue").click();
-  });
-};
-
-const save = () => {
-  cy.contains("Save").click();
-};
-
-const saveAndContinue = () => {
-  cy.contains("Save and continue").click();
-};
-
-const yesSectionComplete = () => {
-  cy.get("[data-cy=cy-radioInput-option-YesIveCompletedThisSection]").click();
-  saveAndContinue();
-};
+import {
+  signInWithOneLogin,
+  saveAndContinue,
+  yesSectionComplete,
+  signInToIntegrationSite,
+  save,
+} from "../../common/common";
 
 const fillOutRequiredChecks = () => {
   cy.contains("Required checks").click();
@@ -150,20 +128,7 @@ describe("Find a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
-    // We have to visit base url first to prevent issues with cross-origin
-    cy.visit(BASE_URL);
-    // then log in to the One Login integration environment to prevent the popup appearing
-    const username = Cypress.env("oneLoginSandboxUsername");
-    const password = Cypress.env("oneLoginSandboxPassword");
-    cy.visit(
-      `https://${username}:${password}@signin.integration.account.gov.uk/sign-in-or-create`,
-      {
-        failOnStatusCode: false,
-      },
-    );
-    // then return back to the base url to execute the tests
-    cy.visit(BASE_URL);
-    cy.contains("Reject analytics cookies").click();
+    signInToIntegrationSite();
   });
 
   it("loads the page", () => {
@@ -209,7 +174,10 @@ describe("Find a Grant", () => {
       "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
     );
 
-    signInWithOneLogin();
+    signInWithOneLogin(
+      Cypress.env("oneLoginApplicantEmail"),
+      Cypress.env("oneLoginApplicantPassword"),
+    );
 
     cy.visit(
       "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
@@ -238,7 +206,10 @@ describe("Find a Grant", () => {
   it.only("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
-    signInWithOneLogin();
+    signInWithOneLogin(
+      Cypress.env("oneLoginApplicantEmail"),
+      Cypress.env("oneLoginApplicantPassword"),
+    );
 
     cy.contains("Your organisation details").click();
 
