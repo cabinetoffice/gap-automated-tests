@@ -8,3 +8,4 @@ cypress/screenshots
 cypress/report.txt
 results/
 mochawesome-report/
+mocha/

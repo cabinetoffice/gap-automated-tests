@@ -1,10 +1,10 @@
-delete from public.grant_advert where grant_advert_id in ('00000000-0000-0000-0000-000000000000');
+delete from public.grant_advert where grant_advert_id in ('00000000-0000-0000-0000-000000000000') or created_by in ('-2');
 
 delete from public.grant_submission where application_id in ('-1');
 
-delete from public.grant_application where grant_application_id in ('-1');
+delete from public.grant_application where grant_application_id in ('-1') or created_by in ('-2');
 
-delete from public.grant_scheme where grant_scheme_id in ('-1');
+delete from public.grant_scheme where grant_scheme_id in ('-1') or created_by in ('-2');
 
 delete from public.grant_admin where grant_admin_id in ('-1', '-2');
 

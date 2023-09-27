@@ -3,9 +3,12 @@ import * as contentful from "contentful-management";
 import "dotenv/config";
 
 const ADVERT = {
+  sys: {
+    id: "cypress_test_contentful_id",
+  },
   fields: {
     grantName: {
-      "en-US": "test grant advert",
+      "en-US": "Cypress - Automated E2E Test Grant",
     },
     grantMaximumAwardDisplay: {
       "en-US": "£10,000",
@@ -38,7 +41,7 @@ const ADVERT = {
       "en-US": ["Personal / Individual"],
     },
     label: {
-      "en-US": "test-scheme-1",
+      "en-US": "cypress_test_advert_contentful_slug",
     },
     grantMaximumAward: {
       "en-US": 10000,
@@ -95,33 +98,108 @@ const ADVERT = {
   },
 };
 
-export const publishGrantAdverts = () => {
-  console.log("publishing");
+export const publishGrantAdverts = async () => {
+  console.log("Connecting to Contentful to manage grant adverts");
   const client = contentful.createClient({
     // This is the access token for this space. Normally you get the token in the Contentful web app
     accessToken: process.env["contentful.accessToken"],
   });
   // This API call will request a space with the specified ID
-  client.getSpace(process.env["contentful.spaceId"]).then((space) => {
-    // This API call will request an environment with the specified ID
-    space
-      .getEnvironment(process.env["contentful.environmentId"])
-      .then((environment) => {
-        // Now that we have an environment, we can get entries from that space
-        // environment.getEntries().then((entries) => {
-        //   console.log(entries.items);
-        // });
+  await client
+    .getSpace(process.env["contentful.spaceId"])
+    .then(async (space) => {
+      // This API call will request an environment with the specified ID
+      await space
+        .getEnvironment(process.env["contentful.environmentId"])
+        .then(async (environment) => {
+          await environment
+            .getEntries({ limit: 1000 })
+            .then(async (entries) => {
+              let deletionExecuted = false;
+              console.log("Initiating deletion of grant advert entries");
+              for (const entry of entries.items) {
+                if (
+                  entry.fields?.label?.["en-US"] ===
+                  "cypress_test_advert_contentful_slug"
+                ) {
+                  if (entry.isPublished())
+                    await entry
+                      .unpublish()
+                      .then(() =>
+                        console.log(
+                          "Successfully unpublished grant advert entry",
+                          entry.sys.id,
+                        ),
+                      );
+                  else
+                    console.log(
+                      "Grant advert not published, skipping",
+                      entry.sys.id,
+                    );
 
-        //environment.deleteEntry('');
+                  await entry.delete().then(() => {
+                    console.log(
+                      "Successfully deleted grant advert entry",
+                      entry.sys.id,
+                    );
+                    deletionExecuted = true;
+                  });
+                }
+              }
+              if (!deletionExecuted)
+                console.log("No grant adverts to be deleted");
 
-        environment.createEntry("grantDetails", ADVERT).then((entry) => {
-          console.log(entry);
-          //environment.publishRelease({ releaseId: '1', version: 1 });
+              console.log("Initiating publication of grant advert");
+              await environment
+                .createEntry("grantDetails", ADVERT)
+                .then(async (entry) => {
+                  console.log(
+                    "Successfully created grant advert entry",
+                    entry.sys.id,
+                  );
+                  await entry
+                    .publish()
+                    .then(() =>
+                      console.log(
+                        "Successfully published grant advert entry",
+                        entry.sys.id,
+                      ),
+                    );
+                });
+            });
         });
-      });
-  });
+    });
 };
 
-export const deleteGrantAdverts = () => {};
-
-publishGrantAdverts();
+export const deleteGrantAdverts = async () => {
+  // console.log('Initiating deletion of existing grants advert');
+  // const client = contentful.createClient({
+  //   accessToken: process.env["contentful.accessToken"],
+  // });
+  // await client.getSpace(process.env["contentful.spaceId"]).then(async space => {
+  //   await space
+  //     .getEnvironment(process.env["contentful.environmentId"])
+  //     .then(async environment => {
+  //       await environment.getEntries({ limit: 1000 }).then(async entries => {
+  //         let deletionSuccess = false;
+  //         for (const entry of entries.items) {
+  //           if (entry.fields?.label?.["en-US"] === 'cypress_test_advert_contentful_slug') {
+  //             console.log(entry);
+  //             if (entry.isPublished()) {
+  //               await entry.unpublish().then(() => {
+  //                 console.log('Successfully unpublished grant advert entry');
+  //               });
+  //             } else {
+  //               console.log('Grant advert not published, skipping');
+  //             }
+  //             await entry.delete().then(() => {
+  //               console.log('Successfully deleted grant advert entry');
+  //               deletionSuccess = true;
+  //             });
+  //           }
+  //         }
+  //         if (!deletionSuccess) console.log('No grant adverts to be deleted');
+  //       });
+  //     });
+  // });
+};

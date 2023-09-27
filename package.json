@@ -11,7 +11,9 @@
     "lint": "npx eslint",
     "prettier:write": "npx prettier . --write",
     "prettier:check": "npx prettier . --check",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "clean": "rm -rf node_modules package-lock.json",
+    "clean:install": "npm run clean && npm install"
   },
   "repository": {
     "type": "git",

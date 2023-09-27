@@ -135,13 +135,15 @@ describe("Find a Grant", () => {
     cy.contains("Find a grant");
   });
 
-  it.skip("can search for a grant", () => {
+  it("can search for a grant", () => {
     cy.get('[name="searchTerm"]')
       .should("have.attr", "placeholder")
       .should("contains", "enter a keyword or search term here");
     cy.get('[name="searchTerm"]').type("Cypress");
 
     cy.get("[data-cy=cySearchGrantsBtn]").click();
+
+    cy.contains("Cypress - Automated E2E Test Grant").click();
 
     const grantData = {
       Location: "National",
@@ -159,29 +161,25 @@ describe("Find a Grant", () => {
   });
 
   it("can start and submit new grant application", () => {
-    // cy.get('[name="searchTerm"]')
-    //   .should("have.attr", "placeholder")
-    //   .should("contains", "enter a keyword or search term here");
-    // cy.get('[name="searchTerm"]').type("Cypress");
-    //
-    // cy.get("[data-cy=cySearchGrantsBtn]").click();
-    //
-    // cy.contains("Cypress").click();
-    //
-    // cy.contains("Start new application").invoke("removeAttr", "target").click();
+    cy.get('[name="searchTerm"]')
+      .should("have.attr", "placeholder")
+      .should("contains", "enter a keyword or search term here");
+    cy.get('[name="searchTerm"]').type("Cypress");
 
-    cy.visit(
-      "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
-    );
+    cy.get("[data-cy=cySearchGrantsBtn]").click();
+
+    cy.contains("Cypress - Automated E2E Test Grant").click();
+
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     signInWithOneLogin(
       Cypress.env("oneLoginApplicantEmail"),
       Cypress.env("oneLoginApplicantPassword"),
     );
 
-    cy.visit(
-      "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
-    );
+    // cy.visit(
+    //   "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
+    // );
 
     cy.contains("Eligibility").click();
     cy.contains("no");
@@ -203,7 +201,7 @@ describe("Find a Grant", () => {
     cy.contains("View your applications").click();
   });
 
-  it.only("can land on application dashboard and view details", () => {
+  it("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
     signInWithOneLogin(
@@ -246,5 +244,11 @@ describe("Find a Grant", () => {
     // cy.origin("https://signin.integration.account.gov.uk", () => {
     //   cy.contains("Enter the 6 digit security code");
     // });
+  });
+
+  it("can land on application dashboard and view details", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+
+    //signInWithOneLogin();
   });
 });
