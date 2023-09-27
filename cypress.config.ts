@@ -1,7 +1,5 @@
 import { defineConfig } from "cypress";
 require("dotenv").config();
-const marge = require("mochawesome-report-generator");
-const { merge } = require("mochawesome-merge");
 import { createTestUsers, deleteTestUsers } from "./cypress/seed/user";
 import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
 

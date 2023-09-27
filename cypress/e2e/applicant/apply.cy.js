@@ -244,8 +244,6 @@ describe("Find a Grant", () => {
 
     // TODO reenable click when MFA strategy is defined
     cy.contains("Change your sign in details in your GOV.UK One Login");
-
-    cy.contains("Intentional failure");
     //.click();
 
     // cy.origin("https://signin.integration.account.gov.uk", () => {
