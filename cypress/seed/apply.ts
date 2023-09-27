@@ -14,5 +14,5 @@ export const createApplyData = async (): Promise<void> => {
 export const deleteApplyData = async (): Promise<void> => {
   await runApplySQL("./cypress/seed/sql/delete_apply.sql", applyServiceDbName);
   await deleteGrantAdverts();
-  console.log("Successfully removed data from database");
+  console.log("Successfully removed data from Apply database");
 };

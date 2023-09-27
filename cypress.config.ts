@@ -1,5 +1,7 @@
 import { defineConfig } from "cypress";
 require("dotenv").config();
+const marge = require("mochawesome-report-generator");
+const { merge } = require("mochawesome-merge");
 import { createTestUsers, deleteTestUsers } from "./cypress/seed/user";
 import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
 
@@ -29,6 +31,7 @@ export default defineConfig({
           return null;
         },
       });
+      require("cypress-mochawesome-reporter/plugin")(on);
     },
     env: {
       oneLoginSandboxBaseUrl: process.env["one-login-sandbox-base-url"],
@@ -46,15 +49,19 @@ export default defineConfig({
       applyDbName: process.env["CYPRESS_APPLY_DATABASE_NAME"],
       applicationBaseUrl: process.env["application-base-url"],
     },
-    reporter: "mochawesome",
+    reporter: "cypress-mochawesome-reporter",
     reporterOptions: {
       reportDir: "mochawesome-report",
+      reportFilename: "[status]_[datetime]_report",
+      timestamp: "yyyy-mm-ddTHH:MM:ssZ",
       charts: true,
       reportPageTitle: "Find a Grant",
       embeddedScreenshots: true,
       inlineAssets: true,
       saveAllAttempts: false,
       debug: true,
+      html: true,
+      json: false,
       overwrite: false,
     },
   },

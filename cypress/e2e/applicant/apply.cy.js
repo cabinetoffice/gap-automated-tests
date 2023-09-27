@@ -136,6 +136,8 @@ describe("Find a Grant", () => {
   });
 
   it("can search for a grant", () => {
+    // wait for grant to be published to contentful
+    cy.wait(5000);
     cy.get('[name="searchTerm"]')
       .should("have.attr", "placeholder")
       .should("contains", "enter a keyword or search term here");
@@ -161,6 +163,8 @@ describe("Find a Grant", () => {
   });
 
   it("can start and submit new grant application", () => {
+    // wait for grant to be published to contentful
+    cy.wait(5000);
     cy.get('[name="searchTerm"]')
       .should("have.attr", "placeholder")
       .should("contains", "enter a keyword or search term here");
@@ -177,9 +181,10 @@ describe("Find a Grant", () => {
       Cypress.env("oneLoginApplicantPassword"),
     );
 
-    // cy.visit(
-    //   "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
-    // );
+    // TODO fix this, we shouldn't need to manually navigate
+    cy.visit(
+      "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
+    );
 
     cy.contains("Eligibility").click();
     cy.contains("no");
@@ -239,16 +244,12 @@ describe("Find a Grant", () => {
 
     // TODO reenable click when MFA strategy is defined
     cy.contains("Change your sign in details in your GOV.UK One Login");
+
+    cy.contains("Intentional failure");
     //.click();
 
     // cy.origin("https://signin.integration.account.gov.uk", () => {
     //   cy.contains("Enter the 6 digit security code");
     // });
-  });
-
-  it("can land on application dashboard and view details", () => {
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
-
-    //signInWithOneLogin();
   });
 });

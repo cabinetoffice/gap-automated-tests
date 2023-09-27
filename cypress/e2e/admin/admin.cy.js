@@ -105,9 +105,9 @@ describe("Create a Grant", () => {
 
       cy.get('[data-cy="cy_Section-due-diligence-checks"]').click();
 
-      cy.on("uncaught:exception", (err, runnable) => {
-        return false;
-      });
+      // the diligence checks page throws a React error in the background of loading the page, and cypress stops
+      // processing on any exception. This line just tells it to continue on an unchecked exception.
+      cy.on("uncaught:exception", () => false);
 
       cy.get(
         '[data-cy="cy-checkbox-value-I understand that applicants will be asked for this information"]',
@@ -200,6 +200,7 @@ describe("Create a Grant", () => {
         '[data-cy="cy-4. How to apply-sublist-task-name-Link to application form"]',
       ).click();
 
+      // TODO copy url from application form
       cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').type(
         "https://www.google.com",
       );
@@ -216,13 +217,13 @@ describe("Create a Grant", () => {
       cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").type("1");
       cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateMonth]").type("1");
       cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateYear]").type(
-        today.getFullYear() + 1,
+        `${today.getFullYear() + 1}`,
       );
 
       cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]").type("31");
       cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateMonth]").type("1");
       cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateYear]").type(
-        today.getFullYear() + 1,
+        `${today.getFullYear() + 1}`,
       );
 
       yesQuestionComplete();
