@@ -112,18 +112,12 @@ export const publishGrantAdverts = () => {
         //   console.log(entries.items);
         // });
 
+        //environment.deleteEntry('');
+
         environment.createEntry("grantDetails", ADVERT).then((entry) => {
           console.log(entry);
+          //environment.publishRelease({ releaseId: '1', version: 1 });
         });
-
-        // // let's get a content type
-        // environment.getContentType('product').then((contentType) => {
-        //   // and now let's update its name
-        //   contentType.name = 'New Product'
-        //   contentType.update().then((updatedContentType) => {
-        //     console.log('Update was successful')
-        //   })
-        // })
       });
   });
 };

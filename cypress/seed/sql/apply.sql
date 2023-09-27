@@ -1,6 +1,8 @@
 
 INSERT INTO public.grant_applicant (id, user_id)
     VALUES
+    ('-1', 'urn:fdc:gov.uk:2022:fWal-gUz2TTpPZrp9-PgbW5jOk10hXfTy3cgxxW5HRE'),
+    ('-2', 'urn:fdc:gov.uk:2022:1QUViebEw1PHGV7iShahw7hmaSG9OL4RFzY_WgR2qcY'),
     ('-3', 'urn:fdc:gov.uk:2022:HvA7mHQsM_eNX5tAYNj2Oyj8_d3sooEtRjo7wbOaROY');
 
 insert into public.gap_user (gap_user_id, user_sub)

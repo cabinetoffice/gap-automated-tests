@@ -8,9 +8,21 @@ delete from public.grant_scheme where grant_scheme_id in ('-1');
 
 delete from public.grant_admin where grant_admin_id in ('-1', '-2');
 
-delete from public.grant_applicant where id in ('-3');
+delete from public.grant_applicant where
+    id in ('-1', '-2', '-3') OR
+    user_id in (
+        'urn:fdc:gov.uk:2022:fWal-gUz2TTpPZrp9-PgbW5jOk10hXfTy3cgxxW5HRE',
+        'urn:fdc:gov.uk:2022:1QUViebEw1PHGV7iShahw7hmaSG9OL4RFzY_WgR2qcY',
+        'urn:fdc:gov.uk:2022:HvA7mHQsM_eNX5tAYNj2Oyj8_d3sooEtRjo7wbOaROY'
+    );
 
-delete from public.gap_user where gap_user_id in ('-1', '-2', '-3');
+delete from public.gap_user where
+    gap_user_id in ('-1', '-2', '-3') OR
+    user_sub in (
+        'urn:fdc:gov.uk:2022:fWal-gUz2TTpPZrp9-PgbW5jOk10hXfTy3cgxxW5HRE',
+        'urn:fdc:gov.uk:2022:1QUViebEw1PHGV7iShahw7hmaSG9OL4RFzY_WgR2qcY',
+        'urn:fdc:gov.uk:2022:HvA7mHQsM_eNX5tAYNj2Oyj8_d3sooEtRjo7wbOaROY'
+    );
 
 delete from public.grant_funding_organisation where funder_id = '-1';
 
