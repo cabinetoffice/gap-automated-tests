@@ -31,6 +31,7 @@ export default defineConfig({
       });
     },
     env: {
+      oneLoginSandboxBaseUrl: process.env["one-login-sandbox-base-url"],
       oneLoginSandboxUsername: process.env["one-login-sandbox-username"],
       oneLoginSandboxPassword: process.env["one-login-sandbox-password"],
       oneLoginApplicantEmail: process.env["one-login-applicant-email"],
@@ -43,6 +44,7 @@ export default defineConfig({
       userDbName: process.env["CYPRESS_USERS_DATABASE_NAME"],
       applyDbUrl: process.env["CYPRESS_APPLY_DATABASE_URL"],
       applyDbName: process.env["CYPRESS_APPLY_DATABASE_NAME"],
+      applicationBaseUrl: process.env["application-base-url"],
     },
     reporter: "mochawesome",
     reporterOptions: {
