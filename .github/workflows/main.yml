@@ -1,0 +1,133 @@
+name: Feature Workflow
+
+on:
+  schedule:
+    - cron: "0 22 * * 1-5" # every weekday at 10pm
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/**
+      - fix/**
+      - bug/**
+      - develop
+    paths-ignore:
+      - '*.md'
+
+  pull_request:
+    branches:
+      - fix/**
+      - feature/**
+      - develop
+    paths-ignore:
+      - '*.md'
+jobs:
+  Build:
+    name: Build Feature
+    runs-on: ubuntu-latest
+    
+    steps:
+
+      - name: Setup AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+    
+      # ==============================
+      - name: Dump context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "${GITHUB_CONTEXT}"
+      # ==============================
+
+      - name: Checkout repo
+        uses: actions/checkout@master
+
+      - name: Generate .env
+        run: |
+          cat << EOF > .env
+          CONTENTFUL_SPACE_ID=${{ secrets.QA_CONTENTFUL_SPACE_ID }}
+          CONTENTFUL_ACCESS_TOKEN=${{ secrets.QA_CONTENTFUL_ACCESS_TOKEN }}
+          CONTENTFUL_PREVIEW_ACCESS_TOKEN=${{ secrets.QA_CONTENTFUL_PREVIEW_ACCESS_TOKEN }}
+          CONTENTFUL_ENVIRONMENT=${{ secrets.QA_CONTENTFUL_ENVIRONMENT }}
+          ELASTIC_INDEX=${{ secrets.QA_ELASTIC_INDEX }}
+          ELASTIC_URL=${{ secrets.QA_ELASTIC_URL }}
+          ELASTIC_USERNAME=${{ secrets.QA_ELASTIC_USERNAME }}
+          ELASTIC_PASSWORD=${{ secrets.QA_ELASTIC_PASSWORD }}
+          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+          GOV_NOTIFY_NOTIFICATION_EMAIL_TEMPLATE=${{ secrets.GOV_NOTIFY_NOTIFICATION_EMAIL_TEMPLATE }}
+          GOV_NOTIFY_NOTIFICATION_EMAIL_TEMPLATE_UNSUBSCRIBE=${{ secrets.GOV_NOTIFY_NOTIFICATION_EMAIL_TEMPLATE_UNSUBSCRIBE }}
+          GOV_NOTIFY_API_KEY=${{ secrets.GOV_NOTIFY_API_KEY }}
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          DATABASE_SSL=true
+          ENABLE_FAQ_TAB=false
+          ENABLE_AWARDS_TAB=false
+          HOST=${{ secrets.QA_ENVIRONMENT_URL }}
+          BACKEND_HOST=${{ secrets.QA_BACKEND_HOST }}
+          BASIC_AUTH_USERNAME=${{ secrets.BASIC_AUTH_USERNAME }}
+          BASIC_AUTH_PASSWORD=${{ secrets.BASIC_AUTH_PASSWORD }}
+          VERIFICATION_JWT_EXPIRY_TIME=${{ secrets.VERIFICATION_JWT_EXPIRY_TIME }}
+          ENCRYPTION_KEY_NAME=${{ secrets.QA_ENCRYPTION_KEY_NAME }}
+          ENCRYPTION_KEY_NAMESPACE=${{ secrets.QA_ENCRYPTION_KEY_NAMESPACE }}
+          ENCRYPTION_ORIGIN=${{ secrets.QA_ENCRYPTION_ORIGIN }}
+          ENCRYPTION_STAGE=${{ secrets.QA_ENCRYPTION_STAGE }}
+          ENCRYPTION_WRAPPING_KEY=${{ secrets.QA_ENCRYPTION_WRAPPING_KEY }}
+          GOV_NOTIFY_SAVED_SEARCH_CONFIRMATION_TEMPLATE=${{ secrets.QA_GOV_NOTIFY_SAVED_SEARCH_CONFIRMATION_TEMPLATE }}
+          APPLY_FOR_A_GRANT_APPLICANT_URL=${{ secrets.QA_APPLY_FOR_A_GRANT_APPLICANT_URL}}
+          EOF
+
+      - name: Setup node
+        uses: actions/setup-node@master
+        with:
+          node-version: '${{ steps.nvm.outputs.NVMRC }}'
+
+      - name: Snyk setup
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --fail-on=all
+          
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Read yarn cache directory path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+        id: yarn-cache-dir-path
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            **/node_modules
+            ~/.cache/Cypress
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: |
+          yarn install --frozen-lockfile
+
+      - name: Run Tests
+        run: |
+          npm run cy:run
+          
+      - name: Run cypress tests (accessibility only)
+        uses: cypress-io/github-action@v5
+        with:
+          start: yarn start
+          record: false
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 60
+          browser: chrome
+          runTests: true
+          spec: cypress/e2e/dev/accessibility/*
+        env:
+          CYPRESS_CACHE_FOLDER: '~/.cache/Cypress'
+
+ # =============================
