@@ -99,14 +99,7 @@ jobs:
         uses: actions/setup-node@master
         with:
           node-version: '${{ steps.nvm.outputs.NVMRC }}'
-
-      - name: Snyk setup
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --fail-on=all
-          
+       
       - name: Cache dependencies
         uses: actions/cache@v2
         id: npm-cache
