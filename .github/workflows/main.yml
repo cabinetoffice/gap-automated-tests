@@ -26,16 +26,7 @@ on:
       - GAP**
     paths-ignore:
       - "*.md"
-  pull_request:
-    branches:
-      - fix/**
-      - feature/**
-      - develop
-      - TD**
-      - GAP**
-    paths-ignore:
-      - "*.md"
-jobs:
+  jobs:
   Build:
     name: Build Feature
     runs-on: ubuntu-latest
