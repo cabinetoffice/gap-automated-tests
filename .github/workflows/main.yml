@@ -119,7 +119,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run cy:run:${{ github.event.inputs.suite }}
+          npm run cy:run:all
 
   removeFromVPC:
     runs-on: ubuntu-18.04
