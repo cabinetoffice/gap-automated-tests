@@ -35,6 +35,40 @@ To run the tests in the command line, run `npm run cy:run` - this will output th
 
 ## Reports
 
-When running the E2E tests via `npm run cy:run`, reports are generated via [Mochawesome](https://www.npmjs.com/package/mochawesome) in HTML format. They are stored at `mochawesome-report/mochawesome.html`
+When running the E2E tests via `npm run cy:run`, reports are generated via [Mochawesome](https://www.npmjs.com/package/mochawesome) and [cypress-mochawesome-reporter](https://github.com/LironEr/cypress-mochawesome-reporter) in HTML format. They are stored at `mochawesome-report/*.html`
 
 Cypress is built on top of Mocha, so any reporting tool that works for Mocha will also work for Cypress.
+
+# Writing tests
+
+When writing tests, there are a few things to keep in mind.
+
+### Common actions
+
+There's a shared file of actions that are repeated throught the app located at `/cypress/common/common.ts`. These include functions such as:
+
+- Signing in as a specific user
+- Clicking `Save` or `Save and Continue` buttons
+- Accepting the radio buttons for `Yes, I have completed this section`
+- Searching for a grant
+
+Please use these where possible, and add to them as appropriate.
+
+### Searching for a grant in Find
+
+If your test needs to search for a grant in Find, you must first publish adverts for that test in Contentful and wait for them to be added:
+
+```js
+it("can search for a grant", () => {
+  // publish grant to contentful
+  cy.task("publishGrantsToContentful");
+  // wait for grant to be published to contentful
+  cy.wait(5000);
+  // now you can search for it as normal
+  searchForGrant("Cypress");
+  // continue tests and assertions as normal
+  // ...
+});
+```
+
+While SQL data is being set up and torn down for every test, this is not done in Contentful in order to prevent rate limiting, hence this is done on a test-by-test basis.

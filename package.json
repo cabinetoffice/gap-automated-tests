@@ -8,10 +8,16 @@
     "cy:open:watch": "npx cypress open --config watchForFileChanges=true",
     "cy:open:nowatch": "npx cypress open --config watchForFileChanges=false",
     "cy:run": "npx cypress run",
+    "cy:run:find": "npx cypress run --spec \"cypress/e2e/find/*.cy.js\"",
+    "cy:run:apply": "npx cypress run --spec \"cypress/e2e/applicant/*.cy.js\"",
+    "cy:run:admin": "npx cypress run --spec \"cypress/e2e/admin/*.cy.js\"",
+    "cy:run:superadmin": "npx cypress run --spec \"cypress/e2e/super-admin/*.cy.js\"",
     "lint": "npx eslint",
     "prettier:write": "npx prettier . --write",
     "prettier:check": "npx prettier . --check",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "clean": "rm -rf node_modules package-lock.json",
+    "clean:install": "npm run clean && npm install"
   },
   "repository": {
     "type": "git",
@@ -26,6 +32,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "cypress": "^13.2.0",
+    "cypress-mochawesome-reporter": "^3.6.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^9.0.0",
