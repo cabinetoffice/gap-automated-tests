@@ -3,6 +3,7 @@ node_modules/
 .env
 
 .idea/
+.DS_Store
 
 cypress/screenshots
 cypress/report.txt
