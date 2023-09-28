@@ -19,6 +19,36 @@ export const signInWithOneLogin = (email: string, password: string) => {
   );
 };
 
+export const signInAsApplicant = () => {
+  signInWithOneLogin(
+    Cypress.env("oneLoginApplicantEmail"),
+    Cypress.env("oneLoginApplicantPassword"),
+  );
+};
+
+export const signInAsAdmin = () => {
+  signInWithOneLogin(
+    Cypress.env("oneLoginAdminEmail"),
+    Cypress.env("oneLoginAdminPassword"),
+  );
+};
+
+export const signInAsSuperAdmin = () => {
+  signInWithOneLogin(
+    Cypress.env("oneLoginSuperAdminEmail"),
+    Cypress.env("oneLoginSuperAdminPassword"),
+  );
+};
+
+export const searchForGrant = (searchTerm: string) => {
+  cy.get('[name="searchTerm"]')
+    .should("have.attr", "placeholder")
+    .should("contains", "enter a keyword or search term here");
+  cy.get('[name="searchTerm"]').type(searchTerm);
+
+  cy.get("[data-cy=cySearchGrantsBtn]").click();
+};
+
 export const signInToIntegrationSite = () => {
   console.log(BASE_URL);
   // We have to visit base url first to prevent issues with cross-origin
