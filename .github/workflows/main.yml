@@ -57,13 +57,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-
-      - name: Setup AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
     
       # ==============================
       - name: Dump context
@@ -79,24 +72,27 @@ jobs:
         run: |
           cat << EOF > .env
 
-          ONE_LOGIN_SANDBOX_BASE_URL=signin.integration.account.gov.uk
-          ONE_LOGIN_SANDBOX_USERNAME=example_user
-          ONE_LOGIN_SANDBOX_PASSWORD=example_password
-          ONE_LOGIN_APPLICANT_EMAIL=example+applicant@and.digital
-          ONE_LOGIN_APPLICANT_PASSWORD=example_password
-          ONE_LOGIN_ADMIN_EMAIL=example+admin@and.digital
-          ONE_LOGIN_ADMIN_PASSWORD=example_password
-          ONE_LOGIN_SUPER_ADMIN_EMAIL=example+super_admin@and.digital
-          ONE_LOGIN_SUPER_ADMIN_PASSWORD=example_password
-          CYPRESS_USERS_DATABASE_URL =postgres://postgres:postgres@localhost:5432
-          CYPRESS_USERS_DATABASE_NAME=userdbname
-          CYPRESS_APPLY_DATABASE_URL =postgres://postgres:postgres@localhost:5432
-          CYPRESS_APPLY_DATABASE_NAME=applydbname
-          CONTENTFUL_SPACE_ID=spaceId
-          CONTENTFUL_ACCESS_TOKEN=accessToken
-          CONTENTFUL_ENVIRONMENT_ID=environmentId
-          APPLICATION_BASE_URL=www.google.com
+          ONE_LOGIN_SANDBOX_BASE_URL=${{ secrets.ONE_LOGIN_SANDBOX_BASE_URL }}
+          ONE_LOGIN_SANDBOX_USERNAME=${{ secrets.ONE_LOGIN_SANDBOX_USERNAME }}
+          ONE_LOGIN_SANDBOX_PASSWORD=${{ secrets.ONE_LOGIN_SANDBOX_PASSWORD }}
+
+          APPLICATION_BASE_URL=${{ secrets.APPLICATION_BASE_URL }}
+          ONE_LOGIN_APPLICANT_EMAIL=${{ secrets.ONE_LOGIN_APPLICANT_EMAIL }}
+          ONE_LOGIN_APPLICANT_PASSWORD=${{ secrets.ONE_LOGIN_APPLICANT_PASSWORD }}
+          ONE_LOGIN_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_ADMIN_EMAIL }}
+          ONE_LOGIN_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_ADMIN_PASSWORD }}
+          ONE_LOGIN_SUPER_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_SUPER_ADMIN_EMAIL }}
+          ONE_LOGIN_SUPER_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_SUPER_ADMIN_PASSWORD }}
           
+          CYPRESS_USERS_DATABASE_URL =${{ secrets.CYPRESS_USERS_DATABASE_URL }}
+          CYPRESS_USERS_DATABASE_NAME=${{ secrets.CYPRESS_USERS_DATABASE_NAME }}
+          CYPRESS_APPLY_DATABASE_URL =${{ secrets.CYPRESS_APPLY_DATABASE_URL }}
+          CYPRESS_APPLY_DATABASE_NAME=${{ secrets.CYPRESS_APPLY_DATABASE_NAME }}
+          
+          CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
+          CONTENTFUL_ACCESS_TOKEN=${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
+          CONTENTFUL_ENVIRONMENT_ID=${{ secrets.CONTENTFUL_ENVIRONMENT_ID }}
+                    
           EOF
 
       - name: Setup node
@@ -141,7 +137,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
       if: always()
       
 
