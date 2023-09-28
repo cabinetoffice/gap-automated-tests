@@ -10,11 +10,11 @@ on:
         description: Select test suite
         default: all
         options:
-        - all
-        - find
-        - apply
-        - admin
-        - superadmin
+          - all
+          - find
+          - apply
+          - admin
+          - superadmin
   push:
     branches:
       - feature/**
@@ -25,7 +25,7 @@ on:
       - TD**
       - GAP**
     paths-ignore:
-      - '*.md'
+      - "*.md"
   pull_request:
     branches:
       - fix/**
@@ -34,22 +34,21 @@ on:
       - TD**
       - GAP**
     paths-ignore:
-      - '*.md'
+      - "*.md"
 jobs:
- 
-   Build:
+  Build:
     name: Build Feature
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Get Github action IP
         id: ip
         uses: haythem/public-ip@v1.2
-        
+
       - name: Add Github Actions IP to Security group
         run: |
           echo "${{ steps.ip.outputs.ipv4 }}"
-          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_VPC_SG_ID }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_VPC_SG_ID }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -79,12 +78,12 @@ jobs:
           ONE_LOGIN_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_ADMIN_PASSWORD }}
           ONE_LOGIN_SUPER_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_SUPER_ADMIN_EMAIL }}
           ONE_LOGIN_SUPER_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_SUPER_ADMIN_PASSWORD }}
-          
+
           CYPRESS_USERS_DATABASE_URL =${{ secrets.CYPRESS_USERS_DATABASE_URL }}
           CYPRESS_USERS_DATABASE_NAME=${{ secrets.CYPRESS_USERS_DATABASE_NAME }}
           CYPRESS_APPLY_DATABASE_URL =${{ secrets.CYPRESS_APPLY_DATABASE_URL }}
           CYPRESS_APPLY_DATABASE_NAME=${{ secrets.CYPRESS_APPLY_DATABASE_NAME }}
-          
+
           CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
           CONTENTFUL_ACCESS_TOKEN=${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
           CONTENTFUL_ENVIRONMENT_ID=${{ secrets.CONTENTFUL_ENVIRONMENT_ID }}
@@ -94,8 +93,8 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@master
         with:
-          node-version: '${{ steps.nvm.outputs.NVMRC }}'
-       
+          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+
       - name: Cache dependencies
         uses: actions/cache@v2
         id: npm-cache
@@ -119,15 +118,11 @@ jobs:
 
       - name: Remove Github Actions IP from security group
         run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ env.AWS_VPC_SG_NAME }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-id ${{ env.AWS_VPC_SG_ID }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         if: always()
 
-
-    
-      
-
- # =============================
+  # =============================
