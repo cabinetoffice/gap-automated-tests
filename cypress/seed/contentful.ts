@@ -3,7 +3,6 @@ import * as contentful from "contentful-management";
 import "dotenv/config";
 
 const SLUGS = ["cypress_test_advert_contentful_slug"];
-
 const ADVERTS = [
   {
     fields: {
