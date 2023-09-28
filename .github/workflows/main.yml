@@ -107,6 +107,10 @@ jobs:
         run: |
           npm run cy:run:all
 
+      - name: Upload Report to S3
+        run: |
+          aws s3 cp /home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report/ s3://gap-automated-tests --recursive --exclude "*" --include "*.html"
+
       - name: Remove Github Actions IP from security group
         run: |
           aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_VPC_SG_ID }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
