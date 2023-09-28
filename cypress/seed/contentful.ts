@@ -138,13 +138,13 @@ const createAndPublish = (environment, advert) => {
 export const publishGrantAdverts = async () => {
   console.log("Connecting to Contentful to manage grant adverts");
   const client = contentful.createClient({
-    accessToken: process.env["contentful.accessToken"],
+    accessToken: process.env["CONTENTFUL_ACCESS_TOKEN"],
   });
   await client
-    .getSpace(process.env["contentful.spaceId"])
+    .getSpace(process.env["CONTENTFUL_SPACE_ID"])
     .then(async (space) => {
       await space
-        .getEnvironment(process.env["contentful.environmentId"])
+        .getEnvironment(process.env["CONTENTFUL_ENVIRONMENT_ID"])
         .then(async (environment) => {
           await environment
             .getEntries({ limit: 1000 })
