@@ -49,9 +49,8 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
   
-
 
   Build:
     name: Build Feature
@@ -79,34 +78,25 @@ jobs:
       - name: Generate .env
         run: |
           cat << EOF > .env
-          CONTENTFUL_SPACE_ID=${{ secrets.QA_CONTENTFUL_SPACE_ID }}
-          CONTENTFUL_ACCESS_TOKEN=${{ secrets.QA_CONTENTFUL_ACCESS_TOKEN }}
-          CONTENTFUL_PREVIEW_ACCESS_TOKEN=${{ secrets.QA_CONTENTFUL_PREVIEW_ACCESS_TOKEN }}
-          CONTENTFUL_ENVIRONMENT=${{ secrets.QA_CONTENTFUL_ENVIRONMENT }}
-          ELASTIC_INDEX=${{ secrets.QA_ELASTIC_INDEX }}
-          ELASTIC_URL=${{ secrets.QA_ELASTIC_URL }}
-          ELASTIC_USERNAME=${{ secrets.QA_ELASTIC_USERNAME }}
-          ELASTIC_PASSWORD=${{ secrets.QA_ELASTIC_PASSWORD }}
-          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
-          GOV_NOTIFY_NOTIFICATION_EMAIL_TEMPLATE=${{ secrets.GOV_NOTIFY_NOTIFICATION_EMAIL_TEMPLATE }}
-          GOV_NOTIFY_NOTIFICATION_EMAIL_TEMPLATE_UNSUBSCRIBE=${{ secrets.GOV_NOTIFY_NOTIFICATION_EMAIL_TEMPLATE_UNSUBSCRIBE }}
-          GOV_NOTIFY_API_KEY=${{ secrets.GOV_NOTIFY_API_KEY }}
-          DATABASE_URL=${{ secrets.DATABASE_URL }}
-          DATABASE_SSL=true
-          ENABLE_FAQ_TAB=false
-          ENABLE_AWARDS_TAB=false
-          HOST=${{ secrets.QA_ENVIRONMENT_URL }}
-          BACKEND_HOST=${{ secrets.QA_BACKEND_HOST }}
-          BASIC_AUTH_USERNAME=${{ secrets.BASIC_AUTH_USERNAME }}
-          BASIC_AUTH_PASSWORD=${{ secrets.BASIC_AUTH_PASSWORD }}
-          VERIFICATION_JWT_EXPIRY_TIME=${{ secrets.VERIFICATION_JWT_EXPIRY_TIME }}
-          ENCRYPTION_KEY_NAME=${{ secrets.QA_ENCRYPTION_KEY_NAME }}
-          ENCRYPTION_KEY_NAMESPACE=${{ secrets.QA_ENCRYPTION_KEY_NAMESPACE }}
-          ENCRYPTION_ORIGIN=${{ secrets.QA_ENCRYPTION_ORIGIN }}
-          ENCRYPTION_STAGE=${{ secrets.QA_ENCRYPTION_STAGE }}
-          ENCRYPTION_WRAPPING_KEY=${{ secrets.QA_ENCRYPTION_WRAPPING_KEY }}
-          GOV_NOTIFY_SAVED_SEARCH_CONFIRMATION_TEMPLATE=${{ secrets.QA_GOV_NOTIFY_SAVED_SEARCH_CONFIRMATION_TEMPLATE }}
-          APPLY_FOR_A_GRANT_APPLICANT_URL=${{ secrets.QA_APPLY_FOR_A_GRANT_APPLICANT_URL}}
+
+          ONE_LOGIN_SANDBOX_BASE_URL=signin.integration.account.gov.uk
+          ONE_LOGIN_SANDBOX_USERNAME=example_user
+          ONE_LOGIN_SANDBOX_PASSWORD=example_password
+          ONE_LOGIN_APPLICANT_EMAIL=example+applicant@and.digital
+          ONE_LOGIN_APPLICANT_PASSWORD=example_password
+          ONE_LOGIN_ADMIN_EMAIL=example+admin@and.digital
+          ONE_LOGIN_ADMIN_PASSWORD=example_password
+          ONE_LOGIN_SUPER_ADMIN_EMAIL=example+super_admin@and.digital
+          ONE_LOGIN_SUPER_ADMIN_PASSWORD=example_password
+          CYPRESS_USERS_DATABASE_URL =postgres://postgres:postgres@localhost:5432
+          CYPRESS_USERS_DATABASE_NAME=userdbname
+          CYPRESS_APPLY_DATABASE_URL =postgres://postgres:postgres@localhost:5432
+          CYPRESS_APPLY_DATABASE_NAME=applydbname
+          CONTENTFUL_SPACE_ID=spaceId
+          CONTENTFUL_ACCESS_TOKEN=accessToken
+          CONTENTFUL_ENVIRONMENT_ID=environmentId
+          APPLICATION_BASE_URL=www.google.com
+          
           EOF
 
       - name: Setup node
@@ -142,6 +132,17 @@ jobs:
         run: |
           npm run cy:run:${{ github.event.inputs.suite }}
 
+  removeFromVPC:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Remove Github Actions IP from security group
+      run: |
+        aws ec2 revoke-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
+      if: always()
       
 
  # =============================
