@@ -16,5 +16,6 @@ jobs:
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
       suite: all
-      browser: chrome
+      browser: firefox
+      report: true
     secrets: inherit
