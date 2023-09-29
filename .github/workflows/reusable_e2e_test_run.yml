@@ -7,9 +7,6 @@ on:
       browser:
         default: chrome
         type: string
-      environment:
-        default: dev
-        type: string
 
 jobs:
   reusable_e2e_test_run:
@@ -83,7 +80,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run cy:run:all
+          npm run cy:run:${{ inputs.suite }} -- --browser ${{ inputs.browser }}
 
       - name: Remove Github Actions IP from security group
         run: |
