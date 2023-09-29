@@ -1,3 +1,5 @@
+name: Push E2E Test Run
+
 on:
   push:
     branches:
