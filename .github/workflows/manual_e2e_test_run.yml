@@ -27,5 +27,4 @@ jobs:
     with:
       suite: ${{ inputs.suite }}
       browser:  ${{ inputs.browser }}
-      environment:  ${{ inputs.environment }}
     secrets: inherit
