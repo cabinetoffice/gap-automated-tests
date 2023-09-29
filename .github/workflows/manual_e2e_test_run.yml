@@ -1,0 +1,31 @@
+on:
+  workflow_dispatch:
+    inputs:
+      suite:
+        type: choice
+        description: Select test suite
+        default: all
+        options:
+          - all
+          - find
+          - apply
+          - admin
+          - superadmin
+      browser:
+        type: choice
+        description: Select browser to run tests against
+        default: all
+        options:
+          - all
+          - chrome
+          - firefox
+          - webkit
+
+jobs:
+  call-reusable-e2e-test-run-workflow:
+    uses: ./.github/workflows/reusable_e2e_test_run.yml
+    with:
+      suite: ${{ inputs.suite }}
+      browser:  ${{ inputs.browser }}
+      environment:  ${{ inputs.environment }}
+    secrets: inherit
