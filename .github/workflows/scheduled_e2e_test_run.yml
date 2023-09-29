@@ -1,0 +1,39 @@
+name: Scheduled E2E Test Run Workflow
+
+on:
+  schedule:
+    - cron: "0 4 * * 1-5" # every weekday at 4am
+
+jobs:
+  call-reusable-e2e-test-run-workflow:
+    uses: ./.github/workflows/reusable_e2e_test_run.yml
+    with:
+      suite: all
+      browser: chrome
+      environment: dev
+    secrets: inherit
+
+  report:
+    name: Upload report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload Report to S3
+        run: |
+          aws s3 cp /home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report/ s3://gap-automated-tests --recursive --exclude "*" --include "*.html"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        if: always()
+
+      - name: Presign S3 report for sharing
+        run: |  
+          FILENAME=$(echo mochawesome-report/*.html\([1]\) | sed -e "s/^"mochawesome-report"//")
+          aws s3 presign s3://gap-automated-tests$FILENAME --expires-in 604800
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        if: always()
+
+  # =============================
