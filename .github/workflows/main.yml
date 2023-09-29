@@ -115,9 +115,13 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
-      - name: Presign S3 report for sharing
+      - name: Obtain report filename
         run: |
-          aws s3 presign s3://gap-automated-tests/${{echo mochawesome-report/*.html([1]) | sed -e "s/^"mochawesome-report"//" }} --expires-in 604800
+          echo "GITHUB_REPORT_FILENAME=$(echo mochawesome-report/*.html([1]) | sed -e "s/^"mochawesome-report"//")" >> $GITHUB_ENV
+      
+      - name: Presign S3 report for sharing
+        run: |  
+          aws s3 presign s3://gap-automated-tests$GITHUB_REPORT_FILENAME --expires-in 604800
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
