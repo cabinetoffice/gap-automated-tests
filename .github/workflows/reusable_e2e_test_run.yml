@@ -20,7 +20,6 @@ jobs:
       - name: Get Github action IP
         id: ip
         uses: haythem/public-ip@v1.2
-
       - name: Add Github Actions IP to Security group
         run: |
           echo "${{ steps.ip.outputs.ipv4 }}"
@@ -102,7 +101,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        if: ${{ input.report }}
+        if: ${{ inputs.report }}
 
       - name: Presign S3 report for sharing
         run: |  
