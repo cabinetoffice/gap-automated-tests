@@ -1,3 +1,5 @@
+name: Reusable E2E Test Run
+
 on:
   workflow_call:
     inputs:
