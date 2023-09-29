@@ -16,6 +16,7 @@ jobs:
     name: Run E2E Tests
     runs-on: ubuntu-latest
     concurrency: e2e_test_run
+
     steps:
       - name: Get Github action IP
         id: ip
