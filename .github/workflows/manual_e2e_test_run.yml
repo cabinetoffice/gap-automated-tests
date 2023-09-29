@@ -20,6 +20,10 @@ on:
           - chrome
           - firefox
           - webkit
+      report:
+        type: boolean
+        description: Upload report?
+        default: false
 
 jobs:
   call-reusable-e2e-test-run-workflow:
@@ -27,4 +31,5 @@ jobs:
     with:
       suite: ${{ inputs.suite }}
       browser:  ${{ inputs.browser }}
+      report: ${{ inputs.report }}
     secrets: inherit
