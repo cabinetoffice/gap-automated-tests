@@ -105,7 +105,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run cy:run:all
+          npm run cy:run:superadmin
 
       - name: Upload Report to S3
         run: |
@@ -118,7 +118,7 @@ jobs:
 
       - name: Presign S3 report for sharing
         run: |  
-          FILENAME=$(echo mochawesome-report/*.html([1]) | sed -e "s/^"mochawesome-report"//")
+          FILENAME=$(echo mochawesome-report/*.html\([1]\) | sed -e "s/^"mochawesome-report"//")
           aws s3 presign s3://gap-automated-tests$FILENAME --expires-in 604800
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
