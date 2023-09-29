@@ -26,6 +26,7 @@ on:
       - GAP**
     paths-ignore:
       - "*.md"
+
 jobs:
   Build:
     name: Build Feature
@@ -105,7 +106,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run cy:run:superadmin
+          npm run cy:run:all
 
       - name: Upload Report to S3
         run: |
