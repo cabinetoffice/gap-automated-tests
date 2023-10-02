@@ -6,20 +6,10 @@ on:
 
 jobs:
   call-chrome-reusable-e2e-test-run-workflow:
-    uses: ./.github/workflows/reusable_e2e_test_run.yml
+    uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
       suite: all
-      browser: chrome
-      report: yes
+      report: true
     secrets: inherit
-    
-  call-firefox-reusable-e2e-test-run-workflow:
-    uses: ./.github/workflows/reusable_e2e_test_run.yml
-    with:
-      suite: all
-      browser: firefox
-      report: yes
-    secrets: inherit
-    needs: call-chrome-reusable-e2e-test-run-workflow
 
   # =============================
