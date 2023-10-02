@@ -88,7 +88,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run cy:run:superadmin -- --browser ${{ inputs.browser }}
+          npm run cy:run:${{ inputs.suite }} -- --browser ${{ inputs.browser }}
 
       - name: Remove Github Actions IP from security group
         run: |
