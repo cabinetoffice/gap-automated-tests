@@ -1,0 +1,40 @@
+name: Manual E2E Test Run
+
+on:
+  workflow_dispatch:
+    inputs:
+      suite:
+        type: choice
+        description: Select test suite
+        default: all
+        options:
+          - all
+          - find
+          - apply
+          - admin
+          - superadmin
+      browser:
+        type: choice
+        description: Select browser to run tests against
+        default: all
+        options:
+          - all
+          - chrome
+          - firefox
+          - webkit
+      report:
+        type: choice
+        description: Upload report?
+        default: no
+        options:
+          - no
+          - yes
+
+jobs:
+  call-reusable-e2e-test-run-workflow:
+    uses: ./.github/workflows/reusable_e2e_test_run.yml
+    with:
+      suite: ${{ inputs.suite }}
+      browser:  ${{ inputs.browser }}
+      report: ${{ inputs.report }}
+    secrets: inherit
