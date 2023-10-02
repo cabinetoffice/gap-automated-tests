@@ -108,6 +108,7 @@ jobs:
         # then upload to s3 as normal
         run: |
           FILE_PATH="/home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report"
+          ls -a -d $FILE_PATH
           OLD_FILENAME=$(echo mochawesome-report/*.html\([1]\) | sed -e "s/^"mochawesome-report"//")
           NEW_PASS_FILENAME=${OLD_FILENAME/pass_/pass_${{ inputs.browser }}_}
           NEW_FAIL_FILENAME=${NEW_PASS_FILENAME/fail_/fail_${{ inputs.browser }}_}
