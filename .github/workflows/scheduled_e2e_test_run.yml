@@ -10,7 +10,7 @@ jobs:
     with:
       suite: all
       browser: chrome
-      report: true
+      report: yes
     secrets: inherit
     
   call-firefox-reusable-e2e-test-run-workflow:
@@ -18,7 +18,7 @@ jobs:
     with:
       suite: all
       browser: chrome
-      report: true
+      report: yes
     secrets: inherit
     needs: call-chrome-reusable-e2e-test-run-workflow
 
