@@ -88,7 +88,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run cy:run:${{ inputs.suite }} -- --browser ${{ inputs.browser }}
+          npm run cy:run:superadmin -- --browser ${{ inputs.browser }}
 
       - name: Remove Github Actions IP from security group
         run: |
@@ -111,6 +111,7 @@ jobs:
           OLD_FILENAME=$(echo mochawesome-report/*.html\([1]\) | sed -e "s/^"mochawesome-report"//")
           NEW_PASS_FILENAME=${OLD_FILENAME/pass_/pass_${{ inputs.browser }}_}
           NEW_FAIL_FILENAME=${NEW_PASS_FILENAME/fail_/fail_${{ inputs.browser }}_}
+          echo $OLD_FILENAME $NEW_FAIL_FILENAME $FILE_PATH$OLD_FILENAME $FILE_PATH$NEW_FAIL_FILENAME
           mv $FILE_PATH$OLD_FILENAME $FILE_PATH$NEW_FAIL_FILENAME
           aws s3 cp $FILE_PATH/ s3://gap-automated-tests --recursive --exclude "*" --include "*.html"
         env:
