@@ -101,12 +101,17 @@ jobs:
 
       - name: Upload Report to S3
         run: |
+          OLD_FILENAME=$(echo mochawesome-report/*.html\([1]\) | sed -e "s/^"mochawesome-report"//")
+          REPLACE_PASS_FILENAME=${OLD_FILENAME/(pass_)/pass_${{ inputs.browser }}_}
+          REPLACE_FAIL_FILENAME=${REPLACE_PASS_FILENAME/(fail_)/fail_${{ inputs.browser }}_}
+          mv mochawesome-report$OLD_FILENAME mochawesome-report$REPLACE_FAIL_FILENAME
           aws s3 cp /home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report/ s3://gap-automated-tests --recursive --exclude "*" --include "*.html"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        if: ${{ !cancelled() && inputs.report == 'yes' }}
+        if: always()
+        # if: ${{ !cancelled() && inputs.report == 'yes' }}
 
       - name: Presign S3 report for sharing
         run: |  
@@ -116,4 +121,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        if: ${{ !cancelled() && inputs.report == 'yes' }}
+        if: always()
+        # if: ${{ !cancelled() && inputs.report == 'yes' }}
