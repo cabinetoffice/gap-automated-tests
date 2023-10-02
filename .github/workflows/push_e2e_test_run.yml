@@ -19,5 +19,5 @@ jobs:
     with:
       suite: all
       browser: chrome
-      report: no
+      report: false
     secrets: inherit

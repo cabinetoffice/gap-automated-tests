@@ -10,7 +10,7 @@ on:
         default: chrome
         type: string
       report:
-        default: no
+        default: false
         type: string
       environment:
         default: sandbox
@@ -23,7 +23,6 @@ jobs:
     concurrency: e2e_test_run
 
     steps:
-    
       - name: Get Github action IP
         id: ip
         uses: haythem/public-ip@v1.2
@@ -120,10 +119,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-        if: ${{ !cancelled() && inputs.report == 'yes' }}
+        if: ${{ !cancelled() && inputs.report == 'true' }}
 
       - name: Presign S3 report for sharing
-        run: |  
+        run: |
           FILE_PATH="/home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report"
           FULL_FILE_PATH=$(ls -a -d $FILE_PATH/*)
           FILENAME=${FULL_FILE_PATH/$FILE_PATH/}
@@ -132,4 +131,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-        if: ${{ !cancelled() && inputs.report == 'yes' }}
+        if: ${{ !cancelled() && inputs.report == 'true' }}
