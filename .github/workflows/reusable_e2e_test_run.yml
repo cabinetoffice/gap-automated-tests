@@ -100,11 +100,17 @@ jobs:
         if: always()
 
       - name: Upload Report to S3
+        # there should be only one report generated from the run, so grab it for manipulation
+        # the filename will either start with pass_ or fail_ and we want to put the browser info between this status and the timestamp
+        # so replace any instance of pass_ with pass_{browser}_
+        # then replace any instance of fail_ with fail_{browser}_
+        # then rename the file to this new name so that the browser info is attached to the report
+        # then upload to s3 as normal
         run: |
-          OLD_FILENAME=$(echo mochawesome-report/*.html\([1]\) | sed -e "s/^"mochawesome-report"//")
-          REPLACE_PASS_FILENAME=${OLD_FILENAME/(pass_)/pass_${{ inputs.browser }}_}
-          REPLACE_FAIL_FILENAME=${REPLACE_PASS_FILENAME/(fail_)/fail_${{ inputs.browser }}_}
-          mv mochawesome-report$OLD_FILENAME mochawesome-report$REPLACE_FAIL_FILENAME
+          OLD_FILENAME=$(echo mochawesome-report/*.html\([1]\))
+          NEW_PASS_FILENAME=${OLD_FILENAME/pass_/pass_${{ inputs.browser }}_}
+          NEW_FAIL_FILENAME=${NEW_PASS_FILENAME/fail_/fail_${{ inputs.browser }}_}
+          mv $OLD_FILENAME $NEW_FAIL_FILENAME
           aws s3 cp /home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report/ s3://gap-automated-tests --recursive --exclude "*" --include "*.html"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
