@@ -20,9 +20,16 @@ jobs:
     concurrency: e2e_test_run
 
     steps:
+      - name: Should upload report
+        run: |
+          echo "${ inputs.reports }"
+          echo "${ inputs.reports == 'no' }"
+          echo "${ inputs.reports == 'yes' }"
+    
       - name: Get Github action IP
         id: ip
         uses: haythem/public-ip@v1.2
+
       - name: Add Github Actions IP to Security group
         run: |
           echo "${{ steps.ip.outputs.ipv4 }}"
@@ -86,7 +93,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run cy:run:${{ inputs.suite }} -- --browser ${{ inputs.browser }}
+          npm run cy:run:superadmin -- --browser ${{ inputs.browser }}
 
       - name: Remove Github Actions IP from security group
         run: |
