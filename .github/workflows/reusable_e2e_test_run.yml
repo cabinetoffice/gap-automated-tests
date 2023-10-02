@@ -22,9 +22,9 @@ jobs:
     steps:
       - name: Should upload report
         run: |
-          echo "${{ inputs.reports }}"
-          echo "${{ inputs.reports == 'no' }}"
-          echo "${{ inputs.reports == 'yes' }}"
+          echo "${{ inputs.report }}"
+          echo "${{ inputs.report == 'no' }}"
+          echo "${{ inputs.report == 'yes' }}"
     
       - name: Get Github action IP
         id: ip
