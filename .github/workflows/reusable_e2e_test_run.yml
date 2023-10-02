@@ -20,11 +20,6 @@ jobs:
     concurrency: e2e_test_run
 
     steps:
-      - name: Should upload report
-        run: |
-          echo "${{ inputs.report }}"
-          echo "${{ inputs.report == 'no' }}"
-          echo "${{ inputs.report == 'yes' }}"
     
       - name: Get Github action IP
         id: ip
