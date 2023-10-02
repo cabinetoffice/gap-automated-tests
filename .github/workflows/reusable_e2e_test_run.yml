@@ -108,11 +108,9 @@ jobs:
         # then upload to s3 as normal
         run: |
           FILE_PATH="/home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report"
-          ls -a -d $FILE_PATH/*
           OLD_FILENAME=$(ls -a -d $FILE_PATH/*)
           NEW_PASS_FILENAME=${OLD_FILENAME/pass_/pass_${{ inputs.browser }}_}
           NEW_FAIL_FILENAME=${NEW_PASS_FILENAME/fail_/fail_${{ inputs.browser }}_}
-          echo $OLD_FILENAME $NEW_FAIL_FILENAME
           mv $OLD_FILENAME $NEW_FAIL_FILENAME
           aws s3 cp $FILE_PATH/ s3://gap-automated-tests --recursive --exclude "*" --include "*.html"
         env:
@@ -124,7 +122,12 @@ jobs:
 
       - name: Presign S3 report for sharing
         run: |  
-          FILENAME=$(echo mochawesome-report/*.html\([1]\) | sed -e "s/^"mochawesome-report"//")
+          FILE_PATH="/home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report"
+          FULL_FILE_PATH=$(ls -a -d $FILE_PATH/*)
+          FILENAME=${FULL_FILE_PATH/$FILE_PATH/}
+          echo "path $FILE_PATH"
+          echo "full $FULL_FILE_PATH"
+          echo "file $FILENAME"
           aws s3 presign s3://gap-automated-tests$FILENAME --expires-in 604800
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
