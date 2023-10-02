@@ -10,7 +10,7 @@ on:
         default: chrome
         type: string
       report:
-        default: false
+        default: no
         type: string
 
 jobs:
@@ -104,7 +104,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        if: ${{ inputs.report == 'true' }}
+        if: ${{ inputs.report == 'yes' }}
 
       - name: Presign S3 report for sharing
         run: |  
@@ -114,4 +114,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        if: ${{ inputs.report == 'true' }}
+        if: ${{ inputs.report == 'yes' }}
