@@ -18,6 +18,5 @@ jobs:
     uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
       suite: superadmin
-      browser: chrome
       report: true
     secrets: inherit
