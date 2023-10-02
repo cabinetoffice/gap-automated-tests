@@ -94,9 +94,9 @@ jobs:
         run: |
           aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_VPC_SG_ID }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
         if: always()
 
       - name: Upload Report to S3
