@@ -15,9 +15,8 @@ on:
 
 jobs:
   call-chrome-reusable-e2e-test-run-workflow:
-    uses: ./.github/workflows/reusable_e2e_test_run.yml
+    uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
       suite: all
-      browser: chrome
-      report: no
+      report: true
     secrets: inherit
