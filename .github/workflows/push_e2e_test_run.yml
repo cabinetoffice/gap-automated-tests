@@ -28,6 +28,6 @@ jobs:
     with:
       suite: all
       browser: firefox
-      report: true
+      report: yes
     secrets: inherit
     needs: call-chrome-reusable-e2e-test-run-workflow
