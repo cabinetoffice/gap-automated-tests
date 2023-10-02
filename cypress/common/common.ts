@@ -17,6 +17,10 @@ export const signInWithOneLogin = (email: string, password: string) => {
       // cy.contains("Continue").click();
     },
   );
+  
+  // on firefox we get a `t.ctx.req is undefined` exception thrown here, and cypress stops
+  // processing on any exception. This line just tells it to continue on an unchecked exception.
+  cy.on("uncaught:exception", () => false);
 };
 
 export const signInAsApplicant = () => {

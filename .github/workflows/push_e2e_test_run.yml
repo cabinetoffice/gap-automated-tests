@@ -1,0 +1,23 @@
+name: Push E2E Test Run
+
+on:
+  push:
+    branches:
+      - feature/**
+      - fix/**
+      - bug/**
+      - develop
+      - main
+      - TD**
+      - GAP**
+    paths-ignore:
+      - "*.md"
+
+jobs:
+  call-chrome-reusable-e2e-test-run-workflow:
+    uses: ./.github/workflows/reusable_e2e_test_run.yml
+    with:
+      suite: all
+      browser: chrome
+      report: no
+    secrets: inherit
