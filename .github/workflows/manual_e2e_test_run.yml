@@ -23,9 +23,12 @@ on:
           - firefox
           - webkit
       report:
-        type: boolean
+        type: choice
         description: Upload report?
-        default: false
+        default: no
+        options:
+          - no
+          - yes
 
 jobs:
   call-reusable-e2e-test-run-workflow:
