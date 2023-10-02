@@ -11,7 +11,7 @@ on:
         type: string
       report:
         default: false
-        type: boolean
+        type: string
 
 jobs:
   reusable_e2e_test_run:
@@ -104,7 +104,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        if: ${{ inputs.report == true }}
+        if: ${{ inputs.report == 'true' }}
 
       - name: Presign S3 report for sharing
         run: |  
@@ -114,4 +114,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        if: ${{ inputs.report == true }}
+        if: ${{ inputs.report == 'true' }}
