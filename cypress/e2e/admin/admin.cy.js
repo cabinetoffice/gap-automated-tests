@@ -166,7 +166,7 @@ describe("Create a Grant", () => {
       cy.get('[data-cy="cyBuildApplicationForm"]').click();
 
       cy.get('[data-cy="cy-applicationName-text-input"]').type(
-        "application form name",
+        "Cypress - Grant Application",
       );
       cy.get('[data-cy="cy-button-Continue"]').click();
 
