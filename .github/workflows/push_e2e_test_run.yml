@@ -10,6 +10,8 @@ on:
       - main
       - TD**
       - GAP**
+      - TMI**
+      - release/**
     paths-ignore:
       - "*.md"
 
