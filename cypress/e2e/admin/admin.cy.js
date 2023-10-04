@@ -57,14 +57,62 @@ describe("Create a Grant", () => {
       saveAndContinue();
 
       //add question to new section
-      cy.get('[data-cy="cy_addAQuestion-Custom Section"]').click();
-      cy.get('[data-cy="cy-fieldTitle-text-input"]').type("Custom Question 1");
-      cy.get('[data-cy="cy-hintText-text-area"]').type("Short description");
-      cy.get('[data-cy="cy-radioInput-option-No"]').click();
-      saveAndContinue();
+      addOptionalQuestion(
+        '[data-cy="cy_addAQuestion-Custom Section"]',
+        "Custom Question 1",
+        "Short description",
+        '[data-cy="cy-radioInput-option-YesNo"]',
+      );
 
-      cy.get('[data-cy="cy-radioInput-option-YesNo"]').click();
-      saveAndContinue();
+      addOptionalQuestion(
+        '[data-cy="cy_addAQuestion-Custom Section"]',
+        "Custom Question 2",
+        "Short description",
+        '[data-cy="cy-radioInput-option-ShortAnswer"]',
+      );
+
+      addOptionalQuestion(
+        '[data-cy="cy_addAQuestion-Custom Section"]',
+        "Custom Question 3",
+        "Short description",
+        '[data-cy="cy-radioInput-option-LongAnswer"]',
+      );
+
+      addOptionalMultiChoiceQuestion(
+        '[data-cy="cy_addAQuestion-Custom Section"]',
+        "Custom Question 4",
+        "Short description",
+        '[data-cy="cy-radioInput-option-MultipleChoice"]',
+      );
+
+      addOptionalMultiChoiceQuestion(
+        '[data-cy="cy_addAQuestion-Custom Section"]',
+        "Custom Question 5",
+        "Short description",
+        '[data-cy="cy-radioInput-option-MultipleSelect"]',
+      );
+
+      addOptionalQuestion(
+        '[data-cy="cy_addAQuestion-Custom Section"]',
+        "Custom Question 6",
+        "Short description",
+        '[data-cy="cy-radioInput-option-DocumentUpload"]',
+      );
+
+      addOptionalQuestion(
+        '[data-cy="cy_addAQuestion-Custom Section"]',
+        "Custom Question 7",
+        "Short description",
+        '[data-cy="cy-radioInput-option-Date"]',
+      );
+
+      cy.get('[data-cy="cy_Section-Custom Question 1"]').should("exist");
+      cy.get('[data-cy="cy_Section-Custom Question 2"]').should("exist");
+      cy.get('[data-cy="cy_Section-Custom Question 3"]').should("exist");
+      cy.get('[data-cy="cy_Section-Custom Question 4"]').should("exist");
+      cy.get('[data-cy="cy_Section-Custom Question 5"]').should("exist");
+      cy.get('[data-cy="cy_Section-Custom Question 6"]').should("exist");
+      cy.get('[data-cy="cy_Section-Custom Question 7"]').should("exist");
 
       //add section
       cy.get('[data-cy="cy-button-addNewSection"]').click();
@@ -84,11 +132,41 @@ describe("Create a Grant", () => {
       ).should("not.exist");
     }
 
+    function addOptionalQuestion(section, questionText, description, type) {
+      cy.get(section).click();
+      cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText);
+      cy.get('[data-cy="cy-hintText-text-area"]').type(description);
+      cy.get('[data-cy="cy-radioInput-option-No"]').click();
+      saveAndContinue();
+      cy.get(type).click();
+      saveAndContinue();
+    }
+
+    function addOptionalMultiChoiceQuestion(
+      section,
+      questionText,
+      description,
+      type,
+    ) {
+      cy.get(section).click();
+      cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText);
+      cy.get('[data-cy="cy-hintText-text-area"]').type(description);
+      cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+      saveAndContinue();
+      cy.get(type).click();
+      saveAndContinue();
+
+      cy.get('[data-cy="cy-options[0]-text-input"]').type("Choice 1");
+      cy.get('[data-cy="cy-button-Add another option"]').click();
+      cy.get('[data-cy="cy-options[1]-text-input"]').type("Choice 2");
+      cy.get('[data-cy="cy-button-Save question"]').click();
+    }
+
     function applicationForm() {
       cy.get('[data-cy="cyBuildApplicationForm"]').click();
 
       cy.get('[data-cy="cy-applicationName-text-input"]').type(
-        "application form name",
+        "Cypress - Grant Application",
       );
       cy.get('[data-cy="cy-button-Continue"]').click();
 

@@ -32,6 +32,6 @@ jobs:
       environment: ${{ inputs.environment }}
     secrets: inherit
     needs: call-chrome-reusable-e2e-test-run-workflow
-    if: { { !cancelled()  } }
+    if: always()
 
   # =============================

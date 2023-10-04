@@ -7,6 +7,51 @@ import {
   signInAsApplicant,
 } from "../../common/common";
 
+const fillOutCustomSection = () => {
+  cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
+  cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+  saveAndContinue();
+
+  const shortAnswerQuestionId = "8c4bf8f9-e175-4bd8-a54f-3d9587767bca";
+  cy.get('[data-cy="cy-' + shortAnswerQuestionId + '-text-input"]').type(
+    "input 1",
+  );
+  saveAndContinue();
+
+  const textAreaQuestionId = "d864dc12-d12c-411c-9e2f-8097fa8c5b90";
+  cy.get('[data-cy="cy-' + textAreaQuestionId + '-text-area"]').type("input 2");
+  saveAndContinue();
+
+  const multiSelectQuestionId = "0f0f03e1-9636-4d0d-bd98-e72690307156";
+  cy.get('[data-cy="cy-' + multiSelectQuestionId + '-select"]').select(
+    "Choice 1",
+  );
+  saveAndContinue();
+
+  cy.get('[data-cy="cy-checkbox-value-Choice 1"]').click();
+  cy.get('[data-cy="cy-checkbox-value-Choice 2"]').click();
+  saveAndContinue();
+
+  cy.get('[data-testid="file-upload-input"]').as("fileInput");
+  cy.fixture("example.doc").then((fileContent) => {
+    cy.get("@fileInput").attachFile({
+      fileContent: fileContent.toString(),
+      fileName: "example.doc",
+      mimeType: "application/msword",
+    });
+  });
+  saveAndContinue();
+
+  const dateQuestionId = "e228a74a-290c-4b60-b4c1-d20b138ae10d";
+  cy.get('[data-cy="cyDateFilter-' + dateQuestionId + 'Day"]').type("01");
+  cy.get('[data-cy="cyDateFilter-' + dateQuestionId + 'Month"]').type("01");
+  cy.get('[data-cy="cyDateFilter-' + dateQuestionId + 'Year"]').type("2000");
+  saveAndContinue();
+
+  cy.get('[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]').click();
+  saveAndContinue();
+};
+
 const fillOutRequiredChecks = () => {
   cy.contains("Required checks").click();
 
@@ -102,6 +147,7 @@ const fillOutRequiredChecks = () => {
 };
 
 const submitApplication = () => {
+  cy.get;
   cy.contains("Submit application").click();
 
   cy.contains("Are you sure you want to submit this application?");
@@ -157,6 +203,8 @@ describe("Apply for a Grant", () => {
     yesSectionComplete();
 
     fillOutRequiredChecks();
+
+    fillOutCustomSection();
 
     submitApplication();
 
