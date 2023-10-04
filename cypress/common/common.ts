@@ -17,7 +17,7 @@ export const signInWithOneLogin = (email: string, password: string) => {
       // cy.contains("Continue").click();
     },
   );
-  
+
   // on firefox we get a `t.ctx.req is undefined` exception thrown here, and cypress stops
   // processing on any exception. This line just tells it to continue on an unchecked exception.
   cy.on("uncaught:exception", () => false);
@@ -42,6 +42,11 @@ export const signInAsSuperAdmin = () => {
     Cypress.env("oneLoginSuperAdminEmail"),
     Cypress.env("oneLoginSuperAdminPassword"),
   );
+};
+
+export const signOut = () => {
+  cy.contains("Sign out").click();
+  cy.contains("Find a grant");
 };
 
 export const searchForGrant = (searchTerm: string) => {
@@ -72,24 +77,36 @@ export const signInToIntegrationSite = () => {
   cy.contains("Reject analytics cookies").click();
 };
 
-export const save = () => {
-  cy.contains("Save").click();
+export const clickText = (text: string) => {
+  cy.contains(text).click();
 };
 
-export const saveAndContinue = () => {
-  cy.contains("Save and continue").click();
+export const clickBack = () => {
+  clickText("Back");
+};
+
+export const clickSave = () => {
+  clickText("Save");
+};
+
+export const clickContinue = () => {
+  clickText("Continue");
+};
+
+export const clickSaveAndContinue = () => {
+  clickText("Save and continue");
 };
 
 export const yesSectionComplete = () => {
   cy.get("[data-cy=cy-radioInput-option-YesIveCompletedThisSection]").click();
-  saveAndContinue();
+  clickSaveAndContinue();
 };
 
 export const yesQuestionComplete = () => {
   cy.get("[data-cy=cy-radioInput-option-YesIveCompletedThisQuestion]").click();
-  saveAndContinue();
+  clickSaveAndContinue();
 };
 
 export const saveAndExit = () => {
-  cy.get('[data-cy="cy-button-Save and exit"]').click();
+  clickText("Save and exit");
 };
