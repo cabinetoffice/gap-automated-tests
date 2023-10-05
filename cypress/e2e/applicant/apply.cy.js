@@ -293,7 +293,7 @@ describe("Apply for a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it.only("can start and submit new grant application", () => {
+  it("can start and submit new grant application", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
