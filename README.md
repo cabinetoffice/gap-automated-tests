@@ -10,9 +10,13 @@ There are example tests contained at `cypress/_examples` to use as a guide when 
 
 - To install dependencies, run `npm install`
 - You'll then need to copy the `.env.example` file to a file called `.env` and enter the login in details for the accounts you will use for testing. You can obtain these by talking to Conor Fayle or Connor MacQueen.
-  - `one-login-sandbox-` properties used for signing in to the One Login integration environment - this is a static username/password for the whole environment.
+  - `ONE_LOGIN_SANDBOX_` properties used for signing in to the One Login integration environment - this is a static username/password for the whole environment.
   - The other email/password combinations are for specific accounts.
 - ESLint, Prettier and Husky are installed, so your code will auto-format when committing changes.
+- E2E tests should not be run in parallel - there are measures in place to prevent this in GitHub Actions, but this will not stop you running them locally. If you wish to run against Sandbox, please check https://github.com/cabinetoffice/gap-automated-tests/actions to ensure there are no current jobs running, and coordinate with each other.
+- If you wish to run your tests locally, you'll also need to modify the contentful slug to something unique. This is to prevent Contentful conflicts. You'll need to do this in the following files:
+  - cypress/seed/sql/apply.sql L46
+  - cypress/seed/contentful.ts L43
 
 ## Running tests
 
@@ -31,11 +35,11 @@ However, if you are writing tests for a new journey, it can often be better to t
 
 ### Console
 
-To run the tests in the command line, run `npm run cy:run` - this will output the Cypress report in your console, and also generate a HTML report as below.
+To run the tests in the command line, run `npm run cy:run:all` - this will output the Cypress report in your console, and also generate a HTML report as below.
 
 ## Reports
 
-When running the E2E tests via `npm run cy:run`, reports are generated via [Mochawesome](https://www.npmjs.com/package/mochawesome) and [cypress-mochawesome-reporter](https://github.com/LironEr/cypress-mochawesome-reporter) in HTML format. They are stored at `mochawesome-report/*.html`
+When running the E2E tests via `npm run cy:run:all`, reports are generated via [Mochawesome](https://www.npmjs.com/package/mochawesome) and [cypress-mochawesome-reporter](https://github.com/LironEr/cypress-mochawesome-reporter) in HTML format. They are stored at `mochawesome-report/*.html`
 
 Cypress is built on top of Mocha, so any reporting tool that works for Mocha will also work for Cypress.
 
@@ -45,7 +49,7 @@ When writing tests, there are a few things to keep in mind.
 
 ### Common actions
 
-There's a shared file of actions that are repeated throught the app located at `/cypress/common/common.ts`. These include functions such as:
+There's a shared file of actions that are repeated throughout the app located at `/cypress/common/common.ts`. These include functions such as:
 
 - Signing in as a specific user
 - Clicking `Save` or `Save and Continue` buttons
