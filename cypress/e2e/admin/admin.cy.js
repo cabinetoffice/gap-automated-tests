@@ -308,9 +308,14 @@ describe("Create a Grant", () => {
 
       cy.get("[data-cy=cy-grantTotalAwardAmount-text-input-numeric]").type(
         "10000",
+        { force: true },
       );
-      cy.get("[data-cy=cy-grantMaximumAward-text-input-numeric]").type("50");
-      cy.get("[data-cy=cy-grantMinimumAward-text-input-numeric]").type("10");
+      cy.get("[data-cy=cy-grantMaximumAward-text-input-numeric]").type("50", {
+        force: true,
+      });
+      cy.get("[data-cy=cy-grantMinimumAward-text-input-numeric]").type("10", {
+        force: true,
+      });
 
       yesQuestionComplete();
     }
