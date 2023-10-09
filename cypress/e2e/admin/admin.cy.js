@@ -306,6 +306,7 @@ describe("Create a Grant", () => {
         "[data-cy='cy-2. Award amounts-sublist-task-name-How much funding is available?']",
       ).click();
 
+      cy.get("[data-cy=cy-grantTotalAwardAmount-text-input-numeric]").click();
       cy.get("[data-cy=cy-grantTotalAwardAmount-text-input-numeric]").type(
         "10000",
         { force: true },
