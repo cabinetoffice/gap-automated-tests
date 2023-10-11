@@ -1,6 +1,6 @@
 import {
   signInWithOneLogin,
-  saveAndContinue,
+  clickSaveAndContinue,
   yesQuestionComplete,
   saveAndExit,
   signInToIntegrationSite,
@@ -54,7 +54,7 @@ describe("Create a Grant", () => {
       //add section
       cy.get('[data-cy="cy-button-addNewSection"]').click();
       cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Custom Section");
-      saveAndContinue();
+      clickSaveAndContinue();
 
       //add question to new section
       addOptionalQuestion(
@@ -119,7 +119,7 @@ describe("Create a Grant", () => {
       cy.get('[data-cy="cy-sectionTitle-text-input"]').type(
         "Deletable Section",
       );
-      saveAndContinue();
+      clickSaveAndContinue();
       //delete section
       cy.get(
         '[data-cy="cy_sections_deleteSectionBtn-Deletable Section"]',
@@ -137,9 +137,9 @@ describe("Create a Grant", () => {
       cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText);
       cy.get('[data-cy="cy-hintText-text-area"]').type(description);
       cy.get('[data-cy="cy-radioInput-option-No"]').click();
-      saveAndContinue();
+      clickSaveAndContinue();
       cy.get(type).click();
-      saveAndContinue();
+      clickSaveAndContinue();
     }
 
     function addOptionalMultiChoiceQuestion(
@@ -152,9 +152,9 @@ describe("Create a Grant", () => {
       cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText);
       cy.get('[data-cy="cy-hintText-text-area"]').type(description);
       cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
-      saveAndContinue();
+      clickSaveAndContinue();
       cy.get(type).click();
-      saveAndContinue();
+      clickSaveAndContinue();
 
       cy.get('[data-cy="cy-options[0]-text-input"]').type("Choice 1");
       cy.get('[data-cy="cy-button-Add another option"]').click();
@@ -200,15 +200,15 @@ describe("Create a Grant", () => {
 
       cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME);
 
-      saveAndContinue();
+      clickSaveAndContinue();
 
       cy.get("[data-cy=cy-ggisReference-text-input]").type(ggisNumber);
 
-      saveAndContinue();
+      clickSaveAndContinue();
 
       cy.get("[data-cy=cy-contactEmail-text-input]").type(contactEmail);
 
-      saveAndContinue();
+      clickSaveAndContinue();
 
       cy.get("[data-cy='cy_summaryListValue_Grant name']").contains(GRANT_NAME);
 
@@ -306,11 +306,17 @@ describe("Create a Grant", () => {
         "[data-cy='cy-2. Award amounts-sublist-task-name-How much funding is available?']",
       ).click();
 
+      cy.get("[data-cy=cy-grantTotalAwardAmount-text-input-numeric]").click();
       cy.get("[data-cy=cy-grantTotalAwardAmount-text-input-numeric]").type(
         "10000",
+        { force: true },
       );
-      cy.get("[data-cy=cy-grantMaximumAward-text-input-numeric]").type("50");
-      cy.get("[data-cy=cy-grantMinimumAward-text-input-numeric]").type("10");
+      cy.get("[data-cy=cy-grantMaximumAward-text-input-numeric]").type("50", {
+        force: true,
+      });
+      cy.get("[data-cy=cy-grantMinimumAward-text-input-numeric]").type("10", {
+        force: true,
+      });
 
       yesQuestionComplete();
     }
@@ -320,7 +326,7 @@ describe("Create a Grant", () => {
 
       cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME);
 
-      saveAndContinue();
+      clickSaveAndContinue();
 
       cy.get(
         "[data-cy='cy-1. Grant details-sublist-task-name-Short description']",
