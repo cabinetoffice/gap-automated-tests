@@ -453,24 +453,40 @@ describe("Apply for a Grant", () => {
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationName]",
     ).click();
-    cy.get("[data-cy=cy-legalName-text-input]").type("Cypress Test Org Name");
+    cy.get("[data-cy=cy-legalName-text-input]").type("My First Org");
     clickSave();
 
-    // cy.get("[data-cy=cy-organisation-details-navigation-organisationAddress]").click();
-    // cy.get("[data-cy=cy-legalName-text-input]").type("Cypress Test Org Name");
-    // save();
-    //
-    // cy.get("[data-cy=cy-organisation-details-navigation-organisationType]").click();
-    // cy.get("[data-cy=cy-legalName-text-input]").type("Cypress Test Org Name");
-    // save();
-    //
-    // cy.get("[data-cy=cy-organisation-details-navigation-organisationCompaniesHouseNumber]").click();
-    // cy.get("[data-cy=cy-legalName-text-input]").type("Cypress Test Org Name");
-    // save();
-    //
-    // cy.get("[data-cy=cy-organisation-details-navigation-organisationCharity]").click();
-    // cy.get("[data-cy=cy-legalName-text-input]").type("Cypress Test Org Name");
-    // save();
+    cy.get(
+      "[data-cy=cy-organisation-details-navigation-organisationAddress]",
+    ).click();
+    cy.get("[data-cy=cy-addressLine1-text-input]").type("Address line 1");
+    cy.get("[data-cy=cy-addressLine2-text-input]").type("Address line 2");
+    cy.get("[data-cy=cy-town-text-input").type("Town");
+    cy.get("[data-cy=cy-county-text-input").type("County");
+    cy.get("[data-cy=cy-postcode-text-input").type("Postcode");
+    clickSave();
+
+    cy.get(
+      "[data-cy=cy-organisation-details-navigation-organisationType]",
+    ).click();
+    cy.get("[data-cy=cy-radioInput-option-Other]").click();
+    cy.get("[data-cy=cy-radioInput-option-UnregisteredCharity]").click();
+    cy.get("[data-cy=cy-radioInput-option-RegisteredCharity]").click();
+    cy.get("[data-cy=cy-radioInput-option-NonLimitedCompany]").click();
+    cy.get("[data-cy=cy-radioInput-option-LimitedCompany]").click();
+    clickSave();
+
+    cy.get(
+      "[data-cy=cy-organisation-details-navigation-organisationCompaniesHouseNumber]",
+    ).click();
+    cy.get("[data-cy=cy-companiesHouseNumber-text-input]").type("01234");
+    clickSave();
+
+    cy.get(
+      "[data-cy=cy-organisation-details-navigation-organisationCharity]",
+    ).click();
+    cy.get("[data-cy=cy-charityCommissionNumber-text-input]").type("05678");
+    clickSave();
 
     cy.contains("Back to my account").click();
 
