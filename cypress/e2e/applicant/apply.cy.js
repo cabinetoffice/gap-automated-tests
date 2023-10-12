@@ -490,6 +490,10 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Back to my account").click();
 
+    cy.get("[data-cy=cy-find-a-grant-link").click();
+    cy.get("[data-cy=cyHomePageTitle").should("have.text", "Find a grant");
+    cy.go("back");
+
     cy.contains("Your sign in details").click();
 
     // TODO reenable click when MFA strategy is defined
