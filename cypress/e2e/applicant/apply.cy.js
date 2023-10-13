@@ -453,18 +453,38 @@ describe("Apply for a Grant", () => {
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationName]",
     ).click();
-    cy.get("[data-cy=cy-legalName-text-input]").type("My First Org");
+    cy.get("[data-cy=cy-legalName-text-input]").type("Organisation Name");
     clickSave();
+    cy.get("[data-cy=cy-organisation-value-Name]").should(
+      "have.text",
+      "Organisation Name",
+    );
 
+    const addressData = [
+      "Address line 1",
+      "Address line 2",
+      "Town",
+      "County",
+      "Postcode",
+    ];
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationAddress]",
     ).click();
-    cy.get("[data-cy=cy-addressLine1-text-input]").type("Address line 1");
-    cy.get("[data-cy=cy-addressLine2-text-input]").type("Address line 2");
-    cy.get("[data-cy=cy-town-text-input").type("Town");
-    cy.get("[data-cy=cy-county-text-input").type("County");
-    cy.get("[data-cy=cy-postcode-text-input").type("Postcode");
+    cy.get("[data-cy=cy-addressLine1-text-input]").type(addressData[0]);
+    cy.get("[data-cy=cy-addressLine2-text-input]").type(addressData[1]);
+    cy.get("[data-cy=cy-town-text-input").type(addressData[2]);
+    cy.get("[data-cy=cy-county-text-input").type(addressData[3]);
+    cy.get("[data-cy=cy-postcode-text-input").type(addressData[4]);
     clickSave();
+    cy.get("[data-cy=cy-organisation-value-Address]")
+      .find("ul")
+      .children("li")
+      .each((listItem, index) => {
+        cy.wrap(listItem).should(
+          "have.text",
+          addressData[index] + (index < 4 ? "," : ""),
+        );
+      });
 
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationType]",
@@ -475,24 +495,29 @@ describe("Apply for a Grant", () => {
     cy.get("[data-cy=cy-radioInput-option-NonLimitedCompany]").click();
     cy.get("[data-cy=cy-radioInput-option-LimitedCompany]").click();
     clickSave();
+    cy.contains("Limited company").should("exist");
 
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationCompaniesHouseNumber]",
     ).click();
     cy.get("[data-cy=cy-companiesHouseNumber-text-input]").type("01234");
     clickSave();
+    cy.contains("01234").should("exist");
 
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationCharity]",
     ).click();
-    cy.get("[data-cy=cy-charityCommissionNumber-text-input]").type("05678");
+    cy.get("[data-cy=cy-charityCommissionNumber-text-input]").type("56789");
     clickSave();
+    cy.contains("56789").should("exist");
 
     cy.contains("Back to my account").click();
 
     cy.get("[data-cy=cy-find-a-grant-link").click();
-    cy.get("[data-cy=cyHomePageTitle").should("have.text", "Find a grant");
+    cy.get("[data-cy=cyHomePageTitle]").should("have.text", "Find a grant");
     cy.go("back");
+
+    // TODO test to see if applicant can’t view admin, super admin resources or tech support user screens
 
     cy.contains("Your sign in details").click();
 
