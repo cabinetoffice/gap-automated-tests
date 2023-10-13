@@ -14,6 +14,8 @@ There are example tests contained at `cypress/_examples` to use as a guide when 
   - The other email/password combinations are for specific accounts.
 - ESLint, Prettier and Husky are installed, so your code will auto-format when committing changes.
 - E2E tests should not be run in parallel - there are measures in place to prevent this in GitHub Actions, but this will not stop you running them locally. If you wish to run against Sandbox, please check https://github.com/cabinetoffice/gap-automated-tests/actions to ensure there are no current jobs running, and coordinate with each other.
+- Make sure you are whilelisted in the VPC. This can be done by running the command `aws ec2 authorize-security-group-ingress --group-id sg-04327b244bb7dd831 --protocol tcp --port 5432 --cidr $(curl ifconfig.me)/32`
+  - For more information checkout the [Confluence Page](https://technologyprogramme.atlassian.net/wiki/spaces/GAS/pages/2511798342/Connecting+to+the+Apply+Databases).
 - If you wish to run your tests locally, you'll also need to modify the contentful slug to something unique. This is to prevent Contentful conflicts. You'll need to do this in the following files:
   - cypress/seed/sql/apply.sql L46
   - cypress/seed/contentful.ts L43
