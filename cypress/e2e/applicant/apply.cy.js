@@ -8,6 +8,7 @@ import {
   clickContinue,
   signOut,
   clickBack,
+  BASE_URL,
 } from "../../common/common";
 
 const fillOutCustomSection = () => {
@@ -443,7 +444,7 @@ describe("Apply for a Grant", () => {
     cy.contains("Submit application").should("be.disabled");
   });
 
-  it("can land on application dashboard and view details", () => {
+  it.only("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
     signInAsApplicant();
@@ -517,7 +518,13 @@ describe("Apply for a Grant", () => {
     cy.get("[data-cy=cyHomePageTitle]").should("have.text", "Find a grant");
     cy.go("back");
 
-    // TODO test to see if applicant can’t view admin, super admin resources or tech support user screens
+    // TODO get propper admin dashboard, superadmin dashboard, and techsupport user links.
+    ["admin", "super-admin", "tech-support-user"].forEach((page) => {
+      cy.visit(`${BASE_URL}apply/admin/${page}`)
+        .contains("Page not found")
+        .should("exist");
+      cy.go("back");
+    });
 
     cy.contains("Your sign in details").click();
 
