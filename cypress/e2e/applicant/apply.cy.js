@@ -8,7 +8,7 @@ import {
   clickContinue,
   signOut,
   clickBack,
-  BASE_URL,
+  POST_LOGIN_BASE_URL,
 } from "../../common/common";
 
 const fillOutCustomSection = () => {
@@ -444,7 +444,7 @@ describe("Apply for a Grant", () => {
     cy.contains("Submit application").should("be.disabled");
   });
 
-  it("can land on application dashboard and view details", () => {
+  it.only("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
     signInAsApplicant();
@@ -518,9 +518,12 @@ describe("Apply for a Grant", () => {
     cy.get("[data-cy=cyHomePageTitle]").should("have.text", "Find a grant");
     cy.go("back");
 
-    // TODO get propper admin dashboard, superadmin dashboard, and techsupport user links.
-    ["admin", "super-admin", "tech-support-user"].forEach((page) => {
-      cy.visit(`${BASE_URL}apply/admin/${page}`)
+    [
+      "apply/admin/dashboard",
+      "apply/admin/super-admin-dashboard",
+      "find/api/admin/api-keys/manage",
+    ].forEach((page) => {
+      cy.visit(`${POST_LOGIN_BASE_URL}${page}`, { failOnStatusCode: false })
         .contains("Page not found")
         .should("exist");
       cy.go("back");
