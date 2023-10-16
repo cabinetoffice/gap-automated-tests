@@ -1,5 +1,6 @@
 export const BASE_URL = Cypress.env("applicationBaseUrl");
 export const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
+export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
 
 export const signInWithOneLogin = (email: string, password: string) => {
   cy.contains("Sign in with GOV.UK One Login").click();
