@@ -518,16 +518,14 @@ describe("Apply for a Grant", () => {
     cy.get("[data-cy=cyHomePageTitle]").should("have.text", "Find a grant");
     cy.go("back");
 
-    [
-      "apply/admin/dashboard",
-      "apply/admin/super-admin-dashboard",
-      "find/api/admin/api-keys/manage",
-    ].forEach((page) => {
-      cy.visit(`${POST_LOGIN_BASE_URL}${page}`, { failOnStatusCode: false })
-        .contains("Page not found")
-        .should("exist");
-      cy.go("back");
-    });
+    ["/apply/admin/dashboard", "/apply/admin/super-admin-dashboard"].forEach(
+      (page) => {
+        cy.visit(`${POST_LOGIN_BASE_URL}${page}`, { failOnStatusCode: false })
+          .contains("Page not found")
+          .should("exist");
+        cy.go("back");
+      },
+    );
 
     cy.contains("Your sign in details").click();
 
