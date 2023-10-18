@@ -7,8 +7,43 @@ describe("Find a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("loads the page", () => {
+  it.only("Interacts with the home page and enters a search term > 100 characters", () => {
     cy.contains("Find a grant");
+
+    //navigates to about us menu
+    cy.get('[data-cy="cyaboutGrantsPageLink"]').click();
+
+    cy.get('[data-cy="cyAbout usTitle"]').should("have.text", "About us");
+
+    cy.get('[data-cy="cyhomePageLink"]')
+      .children("a")
+      .should("have.text", "Home")
+      .click();
+
+    //browse grants and perform invalid search on home page(> 100 characters)
+    cy.get('[data-cy="cyBrowseGrantsHomePageTextLink"]').click();
+
+    cy.get('[data-cy="cyhomePageLink"]')
+      .children("a")
+      .should("have.text", "Home")
+      .click();
+
+    //perform invalid search
+    const invalidSearch = "x".repeat(101);
+    cy.get('[data-cy="cyHomePageSearchInput"]').click().type(invalidSearch);
+
+    cy.get('[data-cy="cySearchGrantsBtn"]').click();
+
+    //assert the error banner is there and contains correct text
+    cy.get('[data-cy="cyErrorBannerHeading"]').should(
+      "have.text",
+      "There is a problem",
+    );
+
+    cy.get('[data-cy="cyError_searchAgainTermInput"]').should(
+      "have.text",
+      "Search term must be 100 characters or less",
+    );
   });
 
   it("can search for a grant", () => {
