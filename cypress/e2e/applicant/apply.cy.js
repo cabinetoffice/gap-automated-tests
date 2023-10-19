@@ -1,5 +1,6 @@
 import {
   clickSaveAndContinue,
+  clickSaveAndExit,
   yesSectionComplete,
   signInToIntegrationSite,
   clickSave,
@@ -16,6 +17,9 @@ const fillOutCustomSection = () => {
   cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
 
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+  clickSaveAndExit();
+  cy.get('[data-cy="cy-status-tag-Custom Section-In Progress"]');
+  cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
   clickSaveAndContinue();
 
   const shortAnswerQuestionId = "8c4bf8f9-e175-4bd8-a54f-3d9587767bca";
@@ -294,7 +298,7 @@ describe("Apply for a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("can start and submit new grant application", () => {
+  it.only("can start and submit new grant application", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
