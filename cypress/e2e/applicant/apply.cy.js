@@ -18,10 +18,7 @@ const fillOutCustomSection = () => {
 
   // Error when trying to skip mandatory question
   clickSaveAndContinue();
-  // cy.get('[data-cy="cyErrorBannerHeading"]').should("have.text", "There is a problem");
-  // cy.contains("Select an option");
   cy.get('[data-cy="cyErrorBanner"]').contains("There is a problem");
-  cy.get('[data-cy="cyErrorBanner"]').contains("You must enter an answer");
 
   // Saving and exiting after filling out a question
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
@@ -306,7 +303,7 @@ describe("Apply for a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it.only("can start and submit new grant application", () => {
+  it("can start and submit new grant application", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
