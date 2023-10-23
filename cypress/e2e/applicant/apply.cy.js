@@ -16,6 +16,14 @@ const fillOutCustomSection = () => {
   cy.get('[data-cy="cy-status-tag-Custom Section-Not Started"]');
   cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
 
+  // Error when trying to skip mandatory question
+  clickSaveAndContinue();
+  // cy.get('[data-cy="cyErrorBannerHeading"]').should("have.text", "There is a problem");
+  // cy.contains("Select an option");
+  cy.get('[data-cy="cyErrorBanner"]').contains("There is a problem");
+  cy.get('[data-cy="cyErrorBanner"]').contains("You must enter an answer");
+
+  // Saving and exiting after filling out a question
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
   clickSaveAndExit();
   cy.get('[data-cy="cy-status-tag-Custom Section-In Progress"]');
