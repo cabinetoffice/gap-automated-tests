@@ -7,14 +7,14 @@ export const signInWithOneLogin = (
   password: string,
   isApply: boolean,
 ) => {
-  if (isApply === true) {
+  if (isApply) {
     cy.contains("Sign in with GOV.UK One Login").click();
   }
   cy.origin(
     ONE_LOGIN_BASE_URL,
     { args: { email, password, apply: isApply } },
-    ({ email, password, apply }) => {
-      if (apply === true) {
+    ({ email, password, isApply }) => {
+      if (isApply) {
         cy.contains("Sign in").click();
       }
       cy.get('[name="email"]').type(email);

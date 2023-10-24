@@ -18,7 +18,7 @@ const checkManageNotificationsInfoScreen = () => {
 };
 
 const checkSavedSearchesOrNotifications = (userHasSearchesOrNotifications) => {
-  if (userHasSearchesOrNotifications === false) {
+  if (!userHasSearchesOrNotifications) {
     cy.get('[data-cy="cyManageYourNotificationsNoData"]').should(
       "have.text",
       "You are not signed up for any notifications, and you don't have any saved searches.",
