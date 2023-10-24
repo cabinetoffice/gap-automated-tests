@@ -13,7 +13,7 @@ describe("Manage Users", () => {
   it("can land on super admin dashboard", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
-    signInAsSuperAdmin(true);
+    signInAsSuperAdmin();
 
     cy.contains("Manage users");
   });

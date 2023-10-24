@@ -2,21 +2,19 @@ export const BASE_URL = Cypress.env("applicationBaseUrl");
 export const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
 export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
 
-export const signInWithOneLogin = (
-  email: string,
-  password: string,
-  isApply: boolean,
-) => {
-  if (isApply) {
-    cy.contains("Sign in with GOV.UK One Login").click();
-  }
+export const signInWithOneLoginApply = (email: string, password: string) => {
+  cy.contains("Sign in with GOV.UK One Login").click();
+  cy.origin(ONE_LOGIN_BASE_URL, () => {
+    cy.contains("Sign in").click();
+  });
+  signInWithOneLogin(email, password);
+};
+
+export const signInWithOneLogin = (email: string, password: string) => {
   cy.origin(
     ONE_LOGIN_BASE_URL,
-    { args: { email, password, apply: isApply } },
-    ({ email, password, isApply }) => {
-      if (isApply) {
-        cy.contains("Sign in").click();
-      }
+    { args: { email, password } },
+    ({ email, password }) => {
       cy.get('[name="email"]').type(email);
       cy.contains("Continue").click();
       cy.get('[name="password"]').type(password);
@@ -31,27 +29,31 @@ export const signInWithOneLogin = (
   cy.on("uncaught:exception", () => false);
 };
 
-export const signInAsApplicant = (isApply: boolean) => {
+export const signInAsApplyApplicant = () => {
+  signInWithOneLoginApply(
+    Cypress.env("oneLoginApplicantEmail"),
+    Cypress.env("oneLoginApplicantPassword"),
+  );
+};
+
+export const signInAsFindApplicant = () => {
   signInWithOneLogin(
     Cypress.env("oneLoginApplicantEmail"),
     Cypress.env("oneLoginApplicantPassword"),
-    isApply,
   );
 };
 
-export const signInAsAdmin = (isApply: boolean) => {
-  signInWithOneLogin(
+export const signInAsAdmin = () => {
+  signInWithOneLoginApply(
     Cypress.env("oneLoginAdminEmail"),
     Cypress.env("oneLoginAdminPassword"),
-    isApply,
   );
 };
 
-export const signInAsSuperAdmin = (isApply: boolean) => {
-  signInWithOneLogin(
+export const signInAsSuperAdmin = () => {
+  signInWithOneLoginApply(
     Cypress.env("oneLoginSuperAdminEmail"),
     Cypress.env("oneLoginSuperAdminPassword"),
-    isApply,
   );
 };
 

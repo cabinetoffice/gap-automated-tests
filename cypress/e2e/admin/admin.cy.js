@@ -18,7 +18,7 @@ describe("Create a Grant", () => {
 
   it("can create a new Grant and create advert", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
-    signInAsAdmin(true);
+    signInAsAdmin();
 
     createGrant();
 

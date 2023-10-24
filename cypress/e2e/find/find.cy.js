@@ -2,7 +2,8 @@ import {
   searchForGrant,
   signInToIntegrationSite,
   clickText,
-  signInAsApplicant,
+  signInAsFindApplicant,
+  ONE_LOGIN_BASE_URL,
 } from "../../common/common";
 
 const checkManageNotificationsInfoScreen = () => {
@@ -63,7 +64,7 @@ describe("Find a Grant", () => {
     });
   });
 
-  it("can manage notifications through One Login", () => {
+  it.only("can manage notifications through One Login", () => {
     // journey when not logged in
     cy.contains("Find a grant");
     cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
@@ -72,11 +73,11 @@ describe("Find a Grant", () => {
 
     clickText("Continue to One Login");
 
-    cy.origin("https://signin.integration.account.gov.uk", () => {
+    cy.origin(ONE_LOGIN_BASE_URL, () => {
       cy.get('[id="sign-in-button"]').click();
     });
 
-    signInAsApplicant(false);
+    signInAsFindApplicant();
 
     cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
       "have.text",

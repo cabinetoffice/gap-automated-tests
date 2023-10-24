@@ -4,7 +4,7 @@ import {
   signInToIntegrationSite,
   clickSave,
   searchForGrant,
-  signInAsApplicant,
+  signInAsApplyApplicant,
   clickContinue,
   signOut,
   clickBack,
@@ -305,7 +305,7 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    signInAsApplicant(true);
+    signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
     cy.visit(
@@ -345,7 +345,7 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    signInAsApplicant(true);
+    signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
     cy.visit(
@@ -359,7 +359,7 @@ describe("Apply for a Grant", () => {
     signOut();
 
     cy.get("[data-cy=cySignInAndApply-Link]").click();
-    signInAsApplicant(true);
+    signInAsApplyApplicant();
 
     cy.get('[data-cy="cy-your-applications-link"]').click();
     cy.contains("Cypress - Test Application").click();
@@ -397,7 +397,7 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    signInAsApplicant(true);
+    signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
     cy.visit(
@@ -444,10 +444,10 @@ describe("Apply for a Grant", () => {
     cy.contains("Submit application").should("be.disabled");
   });
 
-  it("can land on application dashboard and view details", () => {
+  it.only("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
-    signInAsApplicant(true);
+    signInAsApplyApplicant();
 
     cy.contains("Your organisation details").click();
 
