@@ -5,14 +5,14 @@ export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
 export const signInWithOneLogin = (
   email: string,
   password: string,
-  apply: boolean,
+  isApply: boolean,
 ) => {
-  if (apply === true) {
+  if (isApply === true) {
     cy.contains("Sign in with GOV.UK One Login").click();
   }
   cy.origin(
     ONE_LOGIN_BASE_URL,
-    { args: { email, password, apply } },
+    { args: { email, password, apply: isApply } },
     ({ email, password, apply }) => {
       if (apply === true) {
         cy.contains("Sign in").click();
@@ -31,27 +31,27 @@ export const signInWithOneLogin = (
   cy.on("uncaught:exception", () => false);
 };
 
-export const signInAsApplicant = (apply: boolean) => {
+export const signInAsApplicant = (isApply: boolean) => {
   signInWithOneLogin(
     Cypress.env("oneLoginApplicantEmail"),
     Cypress.env("oneLoginApplicantPassword"),
-    apply,
+    isApply,
   );
 };
 
-export const signInAsAdmin = (apply: boolean) => {
+export const signInAsAdmin = (isApply: boolean) => {
   signInWithOneLogin(
     Cypress.env("oneLoginAdminEmail"),
     Cypress.env("oneLoginAdminPassword"),
-    apply,
+    isApply,
   );
 };
 
-export const signInAsSuperAdmin = (apply: boolean) => {
+export const signInAsSuperAdmin = (isApply: boolean) => {
   signInWithOneLogin(
     Cypress.env("oneLoginSuperAdminEmail"),
     Cypress.env("oneLoginSuperAdminPassword"),
-    apply,
+    isApply,
   );
 };
 
