@@ -18,15 +18,11 @@ const checkManageNotificationsInfoScreen = () => {
   );
 };
 
-const checkSavedSearchesOrNotifications = (userHasSearchesOrNotifications) => {
-  if (!userHasSearchesOrNotifications) {
-    cy.get('[data-cy="cyManageYourNotificationsNoData"]').should(
-      "have.text",
-      "You are not signed up for any notifications, and you don't have any saved searches.",
-    );
-  } else {
-    // TODO: Implement test to ensure user has notifications or saved searches
-  }
+const checkForNoSavedSearchesOrNotifications = () => {
+  cy.get('[data-cy="cyManageYourNotificationsNoData"]').should(
+    "have.text",
+    "You are not signed up for any notifications, and you don't have any saved searches.",
+  );
 };
 
 describe("Find a Grant", () => {
@@ -64,7 +60,7 @@ describe("Find a Grant", () => {
     });
   });
 
-  it("can manage notifications through One Login", () => {
+  it("can manage notifications through One Login when there are no notifications or saved searches", () => {
     // journey when not logged in
     cy.contains("Find a grant");
     cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
@@ -83,7 +79,7 @@ describe("Find a Grant", () => {
       "have.text",
       "Manage your notifications and saved searches",
     );
-    checkSavedSearchesOrNotifications(false);
+    checkForNoSavedSearchesOrNotifications();
 
     cy.get('[data-cy="cyhomePageLink"]').click();
 
