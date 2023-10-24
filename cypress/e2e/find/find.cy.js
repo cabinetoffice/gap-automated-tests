@@ -63,7 +63,7 @@ describe("Find a Grant", () => {
     });
   });
 
-  it.only("can manage notifications through One Login", () => {
+  it("can manage notifications through One Login", () => {
     // journey when not logged in
     cy.contains("Find a grant");
     cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
