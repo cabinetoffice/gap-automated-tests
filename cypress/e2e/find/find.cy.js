@@ -1,4 +1,32 @@
-import { searchForGrant, signInToIntegrationSite } from "../../common/common";
+import {
+  searchForGrant,
+  signInToIntegrationSite,
+  clickText,
+  signInAsApplicant,
+} from "../../common/common";
+
+const checkManageNotificationsInfoScreen = () => {
+  cy.get("h1").should("have.text", "Manage your notifications");
+  cy.contains(
+    "To manage your notifications, you need to sign in with GOV.UK One Login.",
+  );
+  cy.contains("If you do not have a GOV.UK One Login, you can create one.");
+  cy.contains(
+    "If you want to unsubscribe from notifications without creating a GOV.UK One Login, you can use the " +
+      "unsubscribe link in the emails we send to you.",
+  );
+};
+
+const checkSavedSearchesOrNotifications = (userHasSearchesOrNotifications) => {
+  if (userHasSearchesOrNotifications === false) {
+    cy.get('[data-cy="cyManageYourNotificationsNoData"]').should(
+      "have.text",
+      "You are not signed up for any notifications, and you don't have any saved searches.",
+    );
+  } else {
+    // TODO: Implement test to ensure user has notifications or saved searches
+  }
+};
 
 describe("Find a Grant", () => {
   beforeEach(() => {
@@ -33,5 +61,36 @@ describe("Find a Grant", () => {
       cy.contains(key);
       cy.contains(value);
     });
+  });
+
+  it.only("can manage notifications through One Login", () => {
+    // journey when not logged in
+    cy.contains("Find a grant");
+    cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
+
+    checkManageNotificationsInfoScreen();
+
+    clickText("Continue to One Login");
+
+    cy.origin("https://signin.integration.account.gov.uk", () => {
+      cy.get('[id="sign-in-button"]').click();
+    });
+
+    signInAsApplicant(false);
+
+    cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
+      "have.text",
+      "Manage your notifications and saved searches",
+    );
+    checkSavedSearchesOrNotifications(false);
+
+    cy.get('[data-cy="cyhomePageLink"]').click();
+
+    // journey when already logged in
+    cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
+    cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
+      "have.text",
+      "Manage your notifications and saved searches",
+    );
   });
 });

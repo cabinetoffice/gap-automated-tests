@@ -305,7 +305,7 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    signInAsApplicant();
+    signInAsApplicant(true);
 
     // TODO fix this, we shouldn't need to manually navigate
     cy.visit(
@@ -345,7 +345,7 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    signInAsApplicant();
+    signInAsApplicant(true);
 
     // TODO fix this, we shouldn't need to manually navigate
     cy.visit(
@@ -359,7 +359,7 @@ describe("Apply for a Grant", () => {
     signOut();
 
     cy.get("[data-cy=cySignInAndApply-Link]").click();
-    signInAsApplicant();
+    signInAsApplicant(true);
 
     cy.get('[data-cy="cy-your-applications-link"]').click();
     cy.contains("Cypress - Test Application").click();
@@ -397,7 +397,7 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    signInAsApplicant();
+    signInAsApplicant(true);
 
     // TODO fix this, we shouldn't need to manually navigate
     cy.visit(
@@ -447,7 +447,7 @@ describe("Apply for a Grant", () => {
   it("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
-    signInAsApplicant();
+    signInAsApplicant(true);
 
     cy.contains("Your organisation details").click();
 
