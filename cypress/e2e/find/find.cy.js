@@ -89,5 +89,6 @@ describe("Find a Grant", () => {
       "have.text",
       "Manage your notifications and saved searches",
     );
+    checkForNoSavedSearchesOrNotifications();
   });
 });
