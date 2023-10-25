@@ -2,14 +2,19 @@ export const BASE_URL = Cypress.env("applicationBaseUrl");
 export const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
 export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
 
-export const signInWithOneLogin = (email: string, password: string) => {
+export const signInWithOneLoginApply = (email: string, password: string) => {
   cy.contains("Sign in with GOV.UK One Login").click();
+  cy.origin(ONE_LOGIN_BASE_URL, () => {
+    cy.contains("Sign in").click();
+  });
+  signInWithOneLogin(email, password);
+};
 
+export const signInWithOneLogin = (email: string, password: string) => {
   cy.origin(
     ONE_LOGIN_BASE_URL,
     { args: { email, password } },
     ({ email, password }) => {
-      cy.contains("Sign in").click();
       cy.get('[name="email"]').type(email);
       cy.contains("Continue").click();
       cy.get('[name="password"]').type(password);
@@ -24,7 +29,14 @@ export const signInWithOneLogin = (email: string, password: string) => {
   cy.on("uncaught:exception", () => false);
 };
 
-export const signInAsApplicant = () => {
+export const signInAsApplyApplicant = () => {
+  signInWithOneLoginApply(
+    Cypress.env("oneLoginApplicantEmail"),
+    Cypress.env("oneLoginApplicantPassword"),
+  );
+};
+
+export const signInAsFindApplicant = () => {
   signInWithOneLogin(
     Cypress.env("oneLoginApplicantEmail"),
     Cypress.env("oneLoginApplicantPassword"),
@@ -32,14 +44,14 @@ export const signInAsApplicant = () => {
 };
 
 export const signInAsAdmin = () => {
-  signInWithOneLogin(
+  signInWithOneLoginApply(
     Cypress.env("oneLoginAdminEmail"),
     Cypress.env("oneLoginAdminPassword"),
   );
 };
 
 export const signInAsSuperAdmin = () => {
-  signInWithOneLogin(
+  signInWithOneLoginApply(
     Cypress.env("oneLoginSuperAdminEmail"),
     Cypress.env("oneLoginSuperAdminPassword"),
   );

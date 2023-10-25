@@ -1,4 +1,29 @@
-import { searchForGrant, signInToIntegrationSite } from "../../common/common";
+import {
+  searchForGrant,
+  signInToIntegrationSite,
+  clickText,
+  signInAsFindApplicant,
+  ONE_LOGIN_BASE_URL,
+} from "../../common/common";
+
+const checkManageNotificationsInfoScreen = () => {
+  cy.get("h1").should("have.text", "Manage your notifications");
+  cy.contains(
+    "To manage your notifications, you need to sign in with GOV.UK One Login.",
+  );
+  cy.contains("If you do not have a GOV.UK One Login, you can create one.");
+  cy.contains(
+    "If you want to unsubscribe from notifications without creating a GOV.UK One Login, you can use the " +
+      "unsubscribe link in the emails we send to you.",
+  );
+};
+
+const checkForNoSavedSearchesOrNotifications = () => {
+  cy.get('[data-cy="cyManageYourNotificationsNoData"]').should(
+    "have.text",
+    "You are not signed up for any notifications, and you don't have any saved searches.",
+  );
+};
 
 describe("Find a Grant", () => {
   beforeEach(() => {
@@ -33,5 +58,37 @@ describe("Find a Grant", () => {
       cy.contains(key);
       cy.contains(value);
     });
+  });
+
+  it("can manage notifications through One Login when there are no notifications or saved searches", () => {
+    // journey when not logged in
+    cy.contains("Find a grant");
+    cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
+
+    checkManageNotificationsInfoScreen();
+
+    clickText("Continue to One Login");
+
+    cy.origin(ONE_LOGIN_BASE_URL, () => {
+      cy.get('[id="sign-in-button"]').click();
+    });
+
+    signInAsFindApplicant();
+
+    cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
+      "have.text",
+      "Manage your notifications and saved searches",
+    );
+    checkForNoSavedSearchesOrNotifications();
+
+    cy.get('[data-cy="cyhomePageLink"]').click();
+
+    // journey when already logged in
+    cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
+    cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
+      "have.text",
+      "Manage your notifications and saved searches",
+    );
+    checkForNoSavedSearchesOrNotifications();
   });
 });
