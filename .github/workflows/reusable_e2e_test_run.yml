@@ -136,10 +136,10 @@ jobs:
 
       - name: Check for new occurrences of it.only
         run: |
-          COUNT=$(git diff develop..$(git rev-parse --abbrev-ref HEAD) -S .only | fgrep "+  it.only" | wc -l)
+          COUNT=$(git diff refs/heads/develop..refs/heads/$(git rev-parse --abbrev-ref HEAD) -S .only | fgrep "+  it.only" | wc -l)
           if (( COUNT > 0 )); then
             echo "New occurrence(s) of it.only have been added:"
-            echo $(npm run check:itonly)
+            echo $(git diff refs/heads/develop..refs/heads/$(git rev-parse --abbrev-ref HEAD) -S .only | fgrep -e "+++" -e "+  it.only")
             echo "If you need to only run a certain test in a suite (due to known, tracked bugs) then .skip should be used on the offending tests instead"
             exit 1
           fi

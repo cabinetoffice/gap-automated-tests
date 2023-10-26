@@ -17,9 +17,7 @@
     "prettier:check": "npx prettier . --check",
     "prepare": "husky install",
     "clean": "rm -rf node_modules package-lock.json",
-    "clean:install": "npm run clean && npm install",
-    "check:itonly": "git diff develop..$(git rev-parse --abbrev-ref HEAD) -S .only | fgrep -e \"+++\" -e \"+  it.only\"",
-    "count:itonly": "git diff develop..$(git rev-parse --abbrev-ref HEAD) -S .only | fgrep \"+  it.only\" | wc -l"
+    "clean:install": "npm run clean && npm install"
   },
   "repository": {
     "type": "git",
