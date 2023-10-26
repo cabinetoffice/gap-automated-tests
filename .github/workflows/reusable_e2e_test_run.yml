@@ -64,7 +64,7 @@ jobs:
           CYPRESS_APPLY_DATABASE_NAME=${{ secrets.CYPRESS_APPLY_DATABASE_NAME }}
           CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
           CONTENTFUL_ACCESS_TOKEN=${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
-          CONTENTFUL_ENVIRONMENT_ID=${{ secrets.CONTENTFUL_ENVIRONMENT_ID }}
+          CONTENTFUL_ENVIRONMENT_ID=${{ vars.CONTENTFUL_ENVIRONMENT_ID }}
           EOF
 
       - name: Setup node
@@ -140,6 +140,7 @@ jobs:
           if (( COUNT > 0 )); then
             echo "New occurrence(s) of it.only have been added:"
             echo $(npm run check:itonly)
+            echo "If you need to only run a certain test in a suite (due to known, tracked bugs) then .skip should be used on the offending tests instead"
             exit 1
           fi
         if: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
