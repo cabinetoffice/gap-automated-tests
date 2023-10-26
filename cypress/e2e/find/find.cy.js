@@ -91,4 +91,21 @@ describe("Find a Grant", () => {
     );
     checkForNoSavedSearchesOrNotifications();
   });
+
+  it.only("can filter and sort grants", () => {
+    cy.contains("Find a grant");
+
+    cy.get('[data-cy="cySearchGrantsBtn"]').click();
+
+    cy.get('[data-cy="cyGrantsFoundMessage"]').should("not.contain.text", "0");
+
+    cy.get('[data-cy="cyPaginationComponent"]')
+      .find("ul")
+      .children("li")
+      .children("a")
+      .each((page, index) => {
+        console.log(index);
+        console.log(page[0].getAttribute("data-cy"));
+      });
+  });
 });
