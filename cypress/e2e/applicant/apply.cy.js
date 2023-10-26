@@ -321,6 +321,13 @@ describe("Apply for a Grant", () => {
       "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
     );
 
+    // checks 'mailto' support email link
+    cy.get('[data-cy="cy-support-email"]').should(
+      "have.attr",
+      "href",
+      "mailto:findagrantdeveloper+admin@cabinetoffice.gov.uk",
+    );
+
     fillOutEligibity();
 
     fillOutRequiredChecks();
@@ -341,6 +348,12 @@ describe("Apply for a Grant", () => {
     cy.contains("All of your current and past applications are listed below.");
     cy.contains("Name of grant");
     cy.contains("Cypress - Test Application");
+
+    // checks that clicking on submitted application does nothing
+    cy.get('[data-cy="cy-application-link-Cypress - Test Application"]').should(
+      "not.have.attr",
+      "href",
+    );
   });
 
   it("can start, save, come back, continue and submit new grant application", () => {
