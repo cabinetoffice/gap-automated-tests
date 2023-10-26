@@ -7,7 +7,11 @@ describe("Find a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it.only("Interacts with the home page and enters a search term > 100 characters", () => {
+  it("loads the page", () => {
+    cy.contains("Find a grant");
+  });
+
+  it("Interacts with the home page and enters a search term > 100 characters", () => {
     cy.contains("Find a grant");
 
     //navigates to about us menu
