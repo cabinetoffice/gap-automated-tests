@@ -142,4 +142,4 @@ jobs:
             echo $(npm run check:itonly)
             exit 1
           fi
-        it: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+        if: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
