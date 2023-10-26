@@ -43,6 +43,11 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@master
+        with:
+          ref: develop
+
+      - name: Checkout repo
+        uses: actions/checkout@master
 
       - name: Generate .env
         run: |
