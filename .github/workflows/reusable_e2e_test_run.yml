@@ -136,7 +136,7 @@ jobs:
 
       - name: Check for new occurrences of it.only
         run: |
-          COUNT=$(git diff develop..$(git rev-parse --abbrev-ref HEAD) -S .only | fgrep "+  it.only" | wc -l))
+          COUNT=$(git diff develop..$(git rev-parse --abbrev-ref HEAD) -S .only | fgrep "+  it.only" | wc -l)
           if (( COUNT > 0 )); then
             echo "New occurrence(s) of it.only have been added:"
             echo $(npm run check:itonly)
