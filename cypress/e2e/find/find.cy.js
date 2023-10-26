@@ -7,7 +7,7 @@ describe("Find a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it.only("loads the page", () => {
+  it("loads the page", () => {
     cy.contains("Find a grant");
   });
 
