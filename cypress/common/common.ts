@@ -110,6 +110,10 @@ export const clickSaveAndContinue = () => {
   clickText("Save and continue");
 };
 
+export const clickSaveAndExit = () => {
+  clickText("Save and exit");
+};
+
 export const yesSectionComplete = () => {
   cy.get("[data-cy=cy-radioInput-option-YesIveCompletedThisSection]").click();
   clickSaveAndContinue();

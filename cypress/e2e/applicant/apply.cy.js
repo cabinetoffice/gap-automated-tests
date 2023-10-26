@@ -1,5 +1,6 @@
 import {
   clickSaveAndContinue,
+  clickSaveAndExit,
   yesSectionComplete,
   signInToIntegrationSite,
   clickSave,
@@ -15,7 +16,15 @@ const fillOutCustomSection = () => {
   cy.get('[data-cy="cy-status-tag-Custom Section-Not Started"]');
   cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
 
+  // Error when trying to skip mandatory question
+  clickSaveAndContinue();
+  cy.get('[data-cy="cyErrorBanner"]').contains("There is a problem");
+
+  // Saving and exiting after filling out a question
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+  clickSaveAndExit();
+  cy.get('[data-cy="cy-status-tag-Custom Section-In Progress"]');
+  cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
   clickSaveAndContinue();
 
   const shortAnswerQuestionId = "8c4bf8f9-e175-4bd8-a54f-3d9587767bca";
@@ -312,6 +321,13 @@ describe("Apply for a Grant", () => {
       "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
     );
 
+    // checks 'mailto' support email link
+    cy.get('[data-cy="cy-support-email"]').should(
+      "have.attr",
+      "href",
+      "mailto:findagrantdeveloper+admin@cabinetoffice.gov.uk",
+    );
+
     fillOutEligibity();
 
     fillOutRequiredChecks();
@@ -332,6 +348,12 @@ describe("Apply for a Grant", () => {
     cy.contains("All of your current and past applications are listed below.");
     cy.contains("Name of grant");
     cy.contains("Cypress - Test Application");
+
+    // checks that clicking on submitted application does nothing
+    cy.get('[data-cy="cy-application-link-Cypress - Test Application"]').should(
+      "not.have.attr",
+      "href",
+    );
   });
 
   it("can start, save, come back, continue and submit new grant application", () => {
