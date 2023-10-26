@@ -133,3 +133,13 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
         if: ${{ !cancelled() && inputs.report == 'true' }}
+
+      - name: Check for new occurrences of it.only
+        run: |
+          COUNT=$(git diff develop..$(git rev-parse --abbrev-ref HEAD) -S .only | fgrep "+  it.only" | wc -l))
+          if (( COUNT > 0 )); then
+            echo "New occurrence(s) of it.only have been added:"
+            echo $(npm run check:itonly)
+            exit 1
+          fi
+        it: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
