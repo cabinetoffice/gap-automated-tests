@@ -25,6 +25,26 @@ const checkForNoSavedSearchesOrNotifications = () => {
   );
 };
 
+const countNumberOfPages = () => {
+  cy.get('[data-cy="cyPaginationComponent"]')
+    .find("ul")
+    .children("li")
+    .last()
+    .prev()
+    .children("a")
+    .invoke("attr", "href")
+    .then((href) => {
+      cy.wrap(+href.split("page=")[1] - 1).as("pageCount");
+    });
+};
+
+const clickThroughPagination = (numberOfPages) => {
+  Cypress._.times(numberOfPages, () => {
+    cy.get('[data-cy="cyPaginationNextButton"]').click();
+    cy.wait(300);
+  });
+};
+
 describe("Find a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
@@ -99,13 +119,12 @@ describe("Find a Grant", () => {
 
     cy.get('[data-cy="cyGrantsFoundMessage"]').should("not.contain.text", "0");
 
-    cy.get('[data-cy="cyPaginationComponent"]')
-      .find("ul")
-      .children("li")
-      .children("a")
-      .each((page, index) => {
-        console.log(index);
-        console.log(page[0].getAttribute("data-cy"));
-      });
+    countNumberOfPages();
+
+    cy.get("@pageCount").then((pageCount) => {
+      clickThroughPagination(pageCount);
+    });
+    cy.get('[data-cy="cyPaginationNextButton"]').should("not.exist");
+    cy.get('[data-cy="cyPaginationPageNumber1"]').click();
   });
 });
