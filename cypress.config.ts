@@ -73,9 +73,5 @@ export default defineConfig({
       json: false,
       overwrite: false,
     },
-    retries: {
-      runMode: 1,
-      openMode: 0,
-    },
   },
 });

@@ -27,8 +27,6 @@ export const signInWithOneLogin = (
       cy.contains("Continue").click();
       cy.get('[name="password"]').type(password);
       cy.contains("Continue").click();
-      console.log(`Retry number: ${currentRetry}`);
-      cy.log(`Retry number: ${currentRetry}`);
       // Accept the terms of use update on first retry
       if (currentRetry === 1) {
         cy.contains("GOV.UK One Login terms of use update");
