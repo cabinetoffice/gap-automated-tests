@@ -130,4 +130,37 @@ describe("Find a Grant", () => {
     );
     checkForNoSavedSearchesOrNotifications();
   });
+
+  it.only("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
+
+    // go to home page
+    cy.contains("Find a grant");
+
+    // search for and view test grant advert
+    searchForGrant("Cypress");
+    clickText("Cypress - Automated E2E Test Grant");
+
+    // click 'Sign up for updates'
+    clickText("Sign up for updates");
+    // TODO : Assert that the correct informational text appears
+
+    // LOGIN
+
+    // Check success banner appears
+    // Assert that the notification appears
+
+    // Click unsubscribe
+    // Land on unsubscribe confirmation
+    // Cancel
+
+    // Click unsubscribe
+    // Land on unsubscribe confirmation
+    // Confirm
+
+    // See success banner for unsubscribing
+    // Ensure notification no longer exists
+  });
 });
