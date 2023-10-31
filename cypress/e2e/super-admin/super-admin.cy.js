@@ -10,11 +10,20 @@ describe("Manage Users", () => {
     signInToIntegrationSite();
   });
 
-  it("can land on super admin dashboard", () => {
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
+  it(
+    "can land on super admin dashboard",
+    {
+      retries: {
+        runMode: 1,
+        openMode: 0,
+      },
+    },
+    () => {
+      cy.get("[data-cy=cySignInAndApply-Link]").click();
 
-    signInAsSuperAdmin();
+      signInAsSuperAdmin(Cypress.currentRetry);
 
-    cy.contains("Manage users");
-  });
+      cy.contains("Manage users");
+    },
+  );
 });
