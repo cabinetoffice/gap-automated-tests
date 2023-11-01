@@ -17,7 +17,9 @@
     "prettier:check": "npx prettier . --check",
     "prepare": "husky install",
     "clean": "rm -rf node_modules package-lock.json",
-    "clean:install": "npm run clean && npm install"
+    "clean:install": "npm run clean && npm install",
+    "vpc:sandbox:add": "aws ec2 authorize-security-group-ingress --group-id sg-04327b244bb7dd831 --protocol tcp --port 5432 --cidr $(curl ifconfig.me)/32",
+    "vpc:sandbox:remove": "aws ec2 revoke-security-group-ingress --group-id sg-04327b244bb7dd831 --protocol tcp --port 5432 --cidr $(curl ifconfig.me)/32"
   },
   "repository": {
     "type": "git",

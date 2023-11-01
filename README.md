@@ -68,6 +68,32 @@ There's a shared file of actions that are repeated throughout the app located at
 
 Please use these where possible, and add to them as appropriate if they can be shared between suites.
 
+### Logging in
+
+If your test requires login, you must set that test to allow retries for `runMode` only, and pass `Cypress.currentRetry` to the signIn function like so:
+
+```js
+it(
+  "logs in",
+  {
+    retries: {
+      runMode: 1,
+      openMode: 0,
+    },
+  },
+  () => {
+    signInAsAdmin(Cypress.currentRetry);
+
+    // continue tests and assertions as normal
+    // ...
+  },
+);
+```
+
+This is to allow Cypress to accept the One Login Terms of Use banner if they make changes to their T&Cs, and the tests may fail if this is not added.
+
+This may unfortunately cause reports to display the wrong errors if there are legitimate failures (unknown - still to be confirmed) but at least will not require manual intervention for scheduled jobs.
+
 ### Searching for a grant in Find
 
 If your test needs to search for a grant in Find, you must first publish adverts for that test in Contentful and wait for them to be added:
