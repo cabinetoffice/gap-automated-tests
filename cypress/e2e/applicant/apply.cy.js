@@ -11,6 +11,7 @@ import {
   clickBack,
   POST_LOGIN_BASE_URL,
 } from "../../common/common";
+import { TEST_GRANT_NAME } from "../../common/constants";
 
 const fillOutCustomSection = () => {
   cy.get('[data-cy="cy-status-tag-Custom Section-Not Started"]');
@@ -318,7 +319,7 @@ describe("Apply for a Grant", () => {
 
       searchForGrant("Cypress");
 
-      cy.contains("Cypress - Automated E2E Test Grant").click();
+      cy.contains(TEST_GRANT_NAME).click();
 
       cy.contains("Start new application")
         .invoke("removeAttr", "target")
@@ -383,7 +384,7 @@ describe("Apply for a Grant", () => {
 
       searchForGrant("Cypress");
 
-      cy.contains("Cypress - Automated E2E Test Grant").click();
+      cy.contains(TEST_GRANT_NAME).click();
 
       cy.contains("Start new application")
         .invoke("removeAttr", "target")
@@ -448,7 +449,7 @@ describe("Apply for a Grant", () => {
 
       searchForGrant("Cypress");
 
-      cy.contains("Cypress - Automated E2E Test Grant").click();
+      cy.contains(TEST_GRANT_NAME).click();
 
       cy.contains("Start new application")
         .invoke("removeAttr", "target")

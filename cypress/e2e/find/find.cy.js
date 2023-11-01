@@ -5,6 +5,7 @@ import {
   signInAsFindApplicant,
   ONE_LOGIN_BASE_URL,
 } from "../../common/common";
+import { TEST_GRANT_NAME } from "../../common/constants";
 
 const checkManageNotificationsInfoScreen = () => {
   cy.get("h1").should("have.text", "Manage your notifications");
@@ -102,7 +103,7 @@ describe("Find a Grant", () => {
 
     searchForGrant("Cypress");
 
-    cy.contains("Cypress - Automated E2E Test Grant");
+    cy.contains(TEST_GRANT_NAME);
 
     const grantData = {
       Location: "National",
@@ -186,16 +187,14 @@ describe("Find a Grant", () => {
       "Search term must be 100 characters or less",
     );
 
-    cy.get('[data-cy="cySearchAgainInput"]')
-      .click()
-      .type("Cypress - Automated E2E Test Grant");
+    cy.get('[data-cy="cySearchAgainInput"]').click().type(TEST_GRANT_NAME);
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
     cy.get(".grants_list").find("li").should("have.length", 1);
 
     cy.get('[data-cy="cyGrantNameAndLink"]').should(
       "have.text",
-      "Cypress - Automated E2E Test Grant",
+      TEST_GRANT_NAME,
     );
   });
 });
