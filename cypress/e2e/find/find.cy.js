@@ -112,7 +112,7 @@ describe("Find a Grant", () => {
     checkForNoSavedSearchesOrNotifications();
   });
 
-  it.only("can filter and sort grants", () => {
+  it.only("can navigate through pagination and limit search term to < 100 characters", () => {
     cy.contains("Find a grant");
 
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
@@ -126,5 +126,28 @@ describe("Find a Grant", () => {
     });
     cy.get('[data-cy="cyPaginationNextButton"]').should("not.exist");
     cy.get('[data-cy="cyPaginationPageNumber1"]').click();
+
+    //perform invalid search
+    const invalidSearch = "x".repeat(101);
+    cy.get('[data-cy="cySearchAgainInput"]').click().type(invalidSearch);
+    cy.get('[data-cy="cySearchAgainButton"]').click();
+
+    cy.get('[data-cy="cyErrorBanner"]').contains("h2", "There is a problem");
+    cy.get('[data-cy="cyError_searchAgainTermInput"]').contains(
+      "a",
+      "Search term must be 100 characters or less",
+    );
+
+    cy.get('[data-cy="cySearchAgainInput"]')
+      .click()
+      .type("Cypress - Automated E2E Test Grant");
+    cy.get('[data-cy="cySearchAgainButton"]').click();
+
+    cy.get(".grants_list").find("li").should("have.length", 1);
+
+    cy.get('[data-cy="cyGrantNameAndLink"]').should(
+      "have.text",
+      "Cypress - Automated E2E Test Grant",
+    );
   });
 });
