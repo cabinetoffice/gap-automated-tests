@@ -6,16 +6,9 @@ import {
   ONE_LOGIN_BASE_URL,
 } from "../../common/common";
 
-const checkManageNotificationsInfoScreen = () => {
-  cy.get("h1").should("have.text", "Manage your notifications");
-  cy.contains(
-    "To manage your notifications, you need to sign in with GOV.UK One Login.",
-  );
-  cy.contains("If you do not have a GOV.UK One Login, you can create one.");
-  cy.contains(
-    "If you want to unsubscribe from notifications without creating a GOV.UK One Login, you can use the " +
-      "unsubscribe link in the emails we send to you.",
-  );
+const checkInfoScreen = (headerText, bodyText) => {
+  cy.get("h1").should("have.text", headerText);
+  cy.contains(bodyText);
 };
 
 const checkForNoSavedSearchesOrNotifications = () => {
@@ -104,7 +97,10 @@ describe("Find a Grant", () => {
     cy.contains("Find a grant");
     cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
 
-    checkManageNotificationsInfoScreen();
+    checkInfoScreen(
+      "Manage your notifications",
+      "To manage your notifications, you need to sign in with GOV.UK One Login.",
+    );
 
     clickText("Continue to One Login");
 
@@ -132,6 +128,7 @@ describe("Find a Grant", () => {
   });
 
   it.only("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
+    cy.task("setUpFindData");
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -143,13 +140,23 @@ describe("Find a Grant", () => {
     searchForGrant("Cypress");
     clickText("Cypress - Automated E2E Test Grant");
 
-    // click 'Sign up for updates'
+    // click 'Sign up for updates' and continue to One Login
     clickText("Sign up for updates");
-    // TODO : Assert that the correct informational text appears
+    checkInfoScreen(
+      "Sign up for updates",
+      "To sign up for updates, you need to sign in with GOV.UK One Login.",
+    );
+    clickText("Continue to One Login");
 
-    // LOGIN
+    cy.origin(ONE_LOGIN_BASE_URL, () => {
+      cy.get('[id="sign-in-button"]').click();
+    });
+
+    signInAsFindApplicant();
 
     // Check success banner appears
+    cy.get('[data-cy="cySubscribeSuccessMessageContent"]');
+
     // Assert that the notification appears
 
     // Click unsubscribe

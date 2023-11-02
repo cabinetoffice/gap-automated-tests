@@ -6,6 +6,7 @@ import {
   deleteGrantAdverts,
   publishGrantAdverts,
 } from "./cypress/seed/contentful";
+import { createFindData, deleteFindData } from "./cypress/seed/find";
 
 export default defineConfig({
   e2e: {
@@ -19,6 +20,11 @@ export default defineConfig({
         },
         async setUpApplyData() {
           await deleteApplyData().then(() => createApplyData());
+
+          return null;
+        },
+        async setUpFindData() {
+          await deleteFindData().then(() => createFindData());
 
           return null;
         },
