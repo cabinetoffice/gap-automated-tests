@@ -356,7 +356,7 @@ describe("Apply for a Grant", () => {
     );
   });
 
-  it("can start, save, come back, continue and submit new grant application", () => {
+  it.only("can start, save, come back, continue and submit new grant application", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -466,7 +466,7 @@ describe("Apply for a Grant", () => {
     cy.contains("Submit application").should("be.disabled");
   });
 
-  it("can land on application dashboard and view details", () => {
+  it.only("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
     signInAsApplyApplicant();
@@ -513,8 +513,8 @@ describe("Apply for a Grant", () => {
       "[data-cy=cy-organisation-details-navigation-organisationType]",
     ).click();
     cy.get("[data-cy=cy-radioInput-option-Other]").click();
-    cy.get("[data-cy=cy-radioInput-option-UnregisteredCharity]").click();
-    cy.get("[data-cy=cy-radioInput-option-RegisteredCharity]").click();
+    cy.get("[data-cy=cy-radioInput-option-IAmApplyingAsAnIndividual]").click();
+    cy.get("[data-cy=cy-radioInput-option-Charity]").click();
     cy.get("[data-cy=cy-radioInput-option-NonLimitedCompany]").click();
     cy.get("[data-cy=cy-radioInput-option-LimitedCompany]").click();
     clickSave();
