@@ -99,44 +99,35 @@ describe("Find a Grant", () => {
     });
   });
 
-  it(
-    "can manage notifications through One Login when there are no notifications or saved searches",
-    {
-      retries: {
-        runMode: 1,
-        openMode: 0,
-      },
-    },
-    () => {
-      // journey when not logged in
-      cy.contains("Find a grant");
-      cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
+  it("can manage notifications through One Login when there are no notifications or saved searches", () => {
+    // journey when not logged in
+    cy.contains("Find a grant");
+    cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
 
-      checkManageNotificationsInfoScreen();
+    checkManageNotificationsInfoScreen();
 
-      clickText("Continue to One Login");
+    clickText("Continue to One Login");
 
-      cy.origin(ONE_LOGIN_BASE_URL, () => {
-        cy.get('[id="sign-in-button"]').click();
-      });
+    cy.origin(ONE_LOGIN_BASE_URL, () => {
+      cy.get('[id="sign-in-button"]').click();
+    });
 
-      signInAsFindApplicant(Cypress.currentRetry);
+    signInAsFindApplicant();
 
-      cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
-        "have.text",
-        "Manage your notifications and saved searches",
-      );
-      checkForNoSavedSearchesOrNotifications();
+    cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
+      "have.text",
+      "Manage your notifications and saved searches",
+    );
+    checkForNoSavedSearchesOrNotifications();
 
-      cy.get('[data-cy="cyhomePageLink"]').click();
+    cy.get('[data-cy="cyhomePageLink"]').click();
 
-      // journey when already logged in
-      cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
-      cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
-        "have.text",
-        "Manage your notifications and saved searches",
-      );
-      checkForNoSavedSearchesOrNotifications();
-    },
-  );
+    // journey when already logged in
+    cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
+    cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
+      "have.text",
+      "Manage your notifications and saved searches",
+    );
+    checkForNoSavedSearchesOrNotifications();
+  });
 });

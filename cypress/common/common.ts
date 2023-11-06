@@ -2,36 +2,28 @@ export const BASE_URL = Cypress.env("applicationBaseUrl");
 export const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
 export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
 
-export const signInWithOneLoginApply = (
-  email: string,
-  password: string,
-  currentRetry: number,
-) => {
+export const signInWithOneLoginApply = (email: string, password: string) => {
   cy.contains("Sign in with GOV.UK One Login").click();
   cy.origin(ONE_LOGIN_BASE_URL, () => {
     cy.contains("Sign in").click();
   });
-  signInWithOneLogin(email, password, currentRetry);
+  signInWithOneLogin(email, password);
 };
 
-export const signInWithOneLogin = (
-  email: string,
-  password: string,
-  currentRetry: number,
-) => {
+export const signInWithOneLogin = (email: string, password: string) => {
   cy.origin(
     ONE_LOGIN_BASE_URL,
-    { args: { email, password, currentRetry } },
-    ({ email, password, currentRetry }) => {
+    { args: { email, password } },
+    ({ email, password }) => {
       cy.get('[name="email"]').type(email);
       cy.contains("Continue").click();
       cy.get('[name="password"]').type(password);
       cy.contains("Continue").click();
-      // Accept the terms of use update on first retry
-      if (currentRetry === 1) {
-        cy.contains("GOV.UK One Login terms of use update");
-        cy.contains("Continue").click();
-      }
+      // Accept the terms of use update on first retry - keeping code in but commented out for now
+      // if (currentRetry === 1) {
+      //   cy.contains("GOV.UK One Login terms of use update");
+      //   cy.contains("Continue").click();
+      // }
     },
   );
 
@@ -40,35 +32,31 @@ export const signInWithOneLogin = (
   cy.on("uncaught:exception", () => false);
 };
 
-export const signInAsApplyApplicant = (currentRetry: number) => {
+export const signInAsApplyApplicant = () => {
   signInWithOneLoginApply(
     Cypress.env("oneLoginApplicantEmail"),
     Cypress.env("oneLoginApplicantPassword"),
-    currentRetry,
   );
 };
 
-export const signInAsFindApplicant = (currentRetry: number) => {
+export const signInAsFindApplicant = () => {
   signInWithOneLogin(
     Cypress.env("oneLoginApplicantEmail"),
     Cypress.env("oneLoginApplicantPassword"),
-    currentRetry,
   );
 };
 
-export const signInAsAdmin = (currentRetry: number) => {
+export const signInAsAdmin = () => {
   signInWithOneLoginApply(
     Cypress.env("oneLoginAdminEmail"),
     Cypress.env("oneLoginAdminPassword"),
-    currentRetry,
   );
 };
 
-export const signInAsSuperAdmin = (currentRetry: number) => {
+export const signInAsSuperAdmin = () => {
   signInWithOneLoginApply(
     Cypress.env("oneLoginSuperAdminEmail"),
     Cypress.env("oneLoginSuperAdminPassword"),
-    currentRetry,
   );
 };
 
