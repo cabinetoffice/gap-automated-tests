@@ -356,7 +356,7 @@ describe("Apply for a Grant", () => {
     );
   });
 
-  it.only("can start, save, come back, continue and submit new grant application", () => {
+  it("can start, save, come back, continue and submit new grant application", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -466,7 +466,7 @@ describe("Apply for a Grant", () => {
     cy.contains("Submit application").should("be.disabled");
   });
 
-  it.only("can land on application dashboard and view details", () => {
+  it("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
     signInAsApplyApplicant();
