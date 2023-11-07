@@ -120,14 +120,9 @@ describe("Find a Grant", () => {
     });
   });
 
+
   it(
     "can manage notifications through One Login when there are no notifications or saved searches",
-    {
-      retries: {
-        runMode: 1,
-        openMode: 0,
-      },
-    },
     () => {
       // journey when not logged in
       cy.contains("Find a grant");
@@ -141,7 +136,7 @@ describe("Find a Grant", () => {
         cy.get('[id="sign-in-button"]').click();
       });
 
-      signInAsFindApplicant(Cypress.currentRetry);
+      signInAsFindApplicant();
 
       cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
         "have.text",
