@@ -317,7 +317,7 @@ describe("Apply for a Grant", () => {
       // wait for grant to be published to contentful
       cy.wait(5000);
 
-      searchForGrant("Cypress");
+      searchForGrant(TEST_GRANT_NAME);
 
       cy.contains(TEST_GRANT_NAME).click();
 
@@ -382,7 +382,7 @@ describe("Apply for a Grant", () => {
       // wait for grant to be published to contentful
       cy.wait(5000);
 
-      searchForGrant("Cypress");
+      searchForGrant(TEST_GRANT_NAME);
 
       cy.contains(TEST_GRANT_NAME).click();
 
@@ -447,7 +447,7 @@ describe("Apply for a Grant", () => {
       // wait for grant to be published to contentful
       cy.wait(5000);
 
-      searchForGrant("Cypress");
+      searchForGrant(TEST_GRANT_NAME);
 
       cy.contains(TEST_GRANT_NAME).click();
 
