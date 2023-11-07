@@ -133,7 +133,7 @@ describe("Find a Grant", () => {
       cy.get('[id="sign-in-button"]').click();
     });
 
-    signInAsFindApplicant(Cypress.currentRetry);
+    signInAsFindApplicant();
 
     cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
       "have.text",

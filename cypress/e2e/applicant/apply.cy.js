@@ -315,7 +315,7 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    signInAsApplyApplicant(Cypress.currentRetry);
+    signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
     cy.visit(
@@ -368,7 +368,7 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    signInAsApplyApplicant(Cypress.currentRetry);
+    signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
     cy.visit(
@@ -470,7 +470,7 @@ describe("Apply for a Grant", () => {
   it("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
-    signInAsApplyApplicant(Cypress.currentRetry);
+    signInAsApplyApplicant();
 
     cy.contains("Your organisation details").click();
 
@@ -514,8 +514,8 @@ describe("Apply for a Grant", () => {
       "[data-cy=cy-organisation-details-navigation-organisationType]",
     ).click();
     cy.get("[data-cy=cy-radioInput-option-Other]").click();
-    cy.get("[data-cy=cy-radioInput-option-UnregisteredCharity]").click();
-    cy.get("[data-cy=cy-radioInput-option-RegisteredCharity]").click();
+    cy.get("[data-cy=cy-radioInput-option-IAmApplyingAsAnIndividual]").click();
+    cy.get("[data-cy=cy-radioInput-option-Charity]").click();
     cy.get("[data-cy=cy-radioInput-option-NonLimitedCompany]").click();
     cy.get("[data-cy=cy-radioInput-option-LimitedCompany]").click();
     clickSave();
