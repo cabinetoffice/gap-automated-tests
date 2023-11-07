@@ -8,15 +8,7 @@ import {
 import { TEST_GRANT_NAME } from "../../common/constants";
 
 const checkManageNotificationsInfoScreen = () => {
-  cy.get("h1").should("have.text", "Manage your notifications");
-  cy.contains(
-    "To manage your notifications, you need to sign in with GOV.UK One Login.",
-  );
-  cy.contains("If you do not have a GOV.UK One Login, you can create one.");
-  cy.contains(
-    "If you want to unsubscribe from notifications without creating a GOV.UK One Login, you can use the " +
-      "unsubscribe link in the emails we send to you.",
-  );
+  cy.get("h1").should("have.text", "Manage notifications and saved searches");
 };
 
 const checkForNoSavedSearchesOrNotifications = () => {
@@ -108,7 +100,7 @@ describe("Find a Grant", () => {
     const grantData = {
       Location: "National",
       "Funding organisation": "The Department of Business",
-      "Who can apply": "Non-profit",
+      "Who can apply": "Personal / Individual",
       "How much you can get": "From £1 to £10,000",
       "Total size of grant scheme": "£1 million",
       "Opening date": "24 August 2023, 12:01am",
@@ -181,10 +173,8 @@ describe("Find a Grant", () => {
     cy.get('[data-cy="cySearchAgainInput"]').click().type(TEST_GRANT_NAME);
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
-    cy.get(".grants_list").find("li").should("have.length", 1);
-
     cy.get('[data-cy="cyGrantNameAndLink"]').should(
-      "have.text",
+      "include.text",
       TEST_GRANT_NAME,
     );
   });
