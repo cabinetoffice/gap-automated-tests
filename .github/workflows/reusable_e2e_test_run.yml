@@ -30,6 +30,7 @@ jobs:
       - name: Add Github Actions IP to Security group
         run: |
           echo "${{ steps.ip.outputs.ipv4 }}"
+          echo "this is the contentful env ${{ vars[format('{0}_CONTENTFUL_ENVIRONMENT_ID', inputs.environment.uppercase )] }}"
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment.uppercase )] }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
         env:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
