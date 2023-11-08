@@ -420,7 +420,7 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-    signInAsApplyApplicant(Cypress.currentRetry);
+    signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
     cy.visit(
