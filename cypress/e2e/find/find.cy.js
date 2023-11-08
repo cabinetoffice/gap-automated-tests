@@ -99,6 +99,8 @@ describe("Find a Grant", () => {
     });
   });
 
+  //temporarily skipping test while OL is turned off for Find migration journey
+  //TODO : revert skip when OL is turned back on
   it.skip("can manage notifications through One Login when there are no notifications or saved searches", () => {
     // journey when not logged in
     cy.contains("Find a grant");
