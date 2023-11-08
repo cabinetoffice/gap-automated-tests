@@ -32,9 +32,9 @@ on:
       environment:
         type: choice
         description: Environment
-        default: sandbox
+        default: SANDBOX
         options:
-          - sandbox
+          - SANDBOX
           - QA
 
 jobs:

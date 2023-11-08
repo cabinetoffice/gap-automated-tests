@@ -25,3 +25,4 @@ jobs:
       report: false
       environment: QA
     secrets: inherit
+    environment: QA

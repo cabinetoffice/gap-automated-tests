@@ -10,15 +10,17 @@ jobs:
     with:
       suite: all
       report: true
-      environment: sandbox
+      environment: SANDBOX
     secrets: inherit
+    environment: Sandbox
 
   call-qa-reusable-e2e-test-run-workflow:
     uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
       suite: all
       report: true
-      environment: qa
+      environment: QA
     secrets: inherit
+    environment: QA
 
   # =============================

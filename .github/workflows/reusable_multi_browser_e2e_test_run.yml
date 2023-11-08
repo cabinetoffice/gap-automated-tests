@@ -10,7 +10,7 @@ on:
         default: false
         type: string
       environment:
-        default: sandbox
+        default: SANDBOX
         type: string
 
 jobs:
