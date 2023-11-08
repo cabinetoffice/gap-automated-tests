@@ -10,6 +10,7 @@ jobs:
     with:
       suite: all
       report: true
+      environment: sandbox
     secrets: inherit
 
   # =============================
