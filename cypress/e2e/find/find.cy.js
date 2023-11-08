@@ -155,10 +155,14 @@ describe("Find a Grant", () => {
     signInAsFindApplicant();
 
     // Check success banner appears
+    //TODO : FIX BANNER, WAS NOT SHOWING UP SO DECIDED TO MOVE ON WITHOUT CHECK
     cy.get('[data-cy="cySubscribeSuccessMessageContent"]');
 
     // Assert that the notification appears
-
+    cy.get('[data-cy="cyadvert NameUnsubscriptionTableName"]').should(
+      "have.text",
+      "Cypress - Automated E2E Test Grant",
+    );
     // Click unsubscribe
     // Land on unsubscribe confirmation
     // Cancel
