@@ -5,12 +5,20 @@ on:
     - cron: "0 4 * * 1-5" # every weekday at 4am
 
 jobs:
-  call-chrome-reusable-e2e-test-run-workflow:
+  call-sandbox-reusable-e2e-test-run-workflow:
     uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
       suite: all
       report: true
       environment: sandbox
+    secrets: inherit
+
+  call-qa-reusable-e2e-test-run-workflow:
+    uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
+    with:
+      suite: all
+      report: true
+      environment: qa
     secrets: inherit
 
   # =============================
