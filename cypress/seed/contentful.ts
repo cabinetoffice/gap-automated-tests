@@ -2,12 +2,16 @@
 import * as contentful from "contentful-management";
 import "dotenv/config";
 
-const SLUGS = ["cypress_test_advert_contentful_slug"];
+const SLUGS = [
+  "cypress_test_advert_contentful_slug",
+  "cypress_test_advert_contentful_slug_v2_internal",
+  "cypress_test_advert_contentful_slug_v2_external",
+];
 const ADVERTS = [
   {
     fields: {
       grantName: {
-        "en-US": "Cypress - Automated E2E Test Grant",
+        "en-US": "Cypress - Automated E2E Test Grant V1",
       },
       grantMaximumAwardDisplay: {
         "en-US": "£10,000",
@@ -41,6 +45,189 @@ const ADVERTS = [
       },
       label: {
         "en-US": "cypress_test_advert_contentful_slug",
+      },
+      grantMaximumAward: {
+        "en-US": 10000,
+      },
+      grantTotalAwardAmount: {
+        "en-US": 1000000,
+      },
+      grantApplicationCloseDate: {
+        "en-US": "2040-10-24T23:59",
+      },
+      grantObjectivesTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantSupportingInfoTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantMinimumAward: {
+        "en-US": 1,
+      },
+      grantApplyTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantApplicationOpenDate: {
+        "en-US": "2023-08-24T00:01",
+      },
+      grantEligibilityTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantTotalAwardDisplay: {
+        "en-US": "£1 million",
+      },
+      grantShortDescription: {
+        "en-US": "no",
+      },
+      grantFunder: {
+        "en-US": "The Department of Business",
+      },
+    },
+  },
+  {
+    fields: {
+      grantName: {
+        "en-US": "Cypress - Automated E2E Test Grant V2 Internal",
+      },
+      grantMaximumAwardDisplay: {
+        "en-US": "£10,000",
+      },
+      grantWebpageUrl: {
+        "en-US":
+          "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/mandatory-questions/start?schemeId=-2",
+      },
+      grantMinimumAwardDisplay: {
+        "en-US": "£1",
+      },
+      grantSummaryTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantDatesTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantLocation: {
+        "en-US": ["National"],
+      },
+      grantApplicantType: {
+        "en-US": ["Personal / Individual"],
+      },
+      label: {
+        "en-US": "cypress_test_advert_contentful_slug_v2_internal",
+      },
+      grantMaximumAward: {
+        "en-US": 10000,
+      },
+      grantTotalAwardAmount: {
+        "en-US": 1000000,
+      },
+      grantApplicationCloseDate: {
+        "en-US": "2040-10-24T23:59",
+      },
+      grantObjectivesTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantSupportingInfoTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantMinimumAward: {
+        "en-US": 1,
+      },
+      grantApplyTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantApplicationOpenDate: {
+        "en-US": "2023-08-24T00:01",
+      },
+      grantEligibilityTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantTotalAwardDisplay: {
+        "en-US": "£1 million",
+      },
+      grantShortDescription: {
+        "en-US": "no",
+      },
+      grantFunder: {
+        "en-US": "The Department of Business",
+      },
+    },
+  },
+  {
+    fields: {
+      grantName: {
+        "en-US": "Cypress - Automated E2E Test Grant V2 External",
+      },
+      grantMaximumAwardDisplay: {
+        "en-US": "£10,000",
+      },
+      grantWebpageUrl: {
+        "en-US": "https://www.google.com",
+      },
+      grantMinimumAwardDisplay: {
+        "en-US": "£1",
+      },
+      grantSummaryTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantDatesTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantLocation: {
+        "en-US": ["National"],
+      },
+      grantApplicantType: {
+        "en-US": ["Personal / Individual"],
+      },
+      label: {
+        "en-US": "cypress_test_advert_contentful_slug_v2_internal",
       },
       grantMaximumAward: {
         "en-US": 10000,

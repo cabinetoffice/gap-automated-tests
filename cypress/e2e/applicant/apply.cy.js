@@ -296,6 +296,122 @@ const equalitySectionDecline = () => {
   );
 };
 
+const fillMandatoryQuestions = (details, orgProfileFilled) => {
+  // If Org Profile isn't filled go through all pages
+  if (!orgProfileFilled) {
+    // Name
+    cy.contains("Enter the name of your organisation").should("exist");
+    cy.get("[data-cy=cy-name-text-input]")
+      .should("have.value", "")
+      .type(details.name);
+    clickSaveAndContinue();
+
+    // Address
+    cy.contains("Enter your organisation's address").should("exist");
+    details.address.forEach((item) => {
+      cy.get(`[data-cy=cy-${item}-text-input]`)
+        .should("have.value", "")
+        .type(item);
+    });
+    clickSaveAndContinue();
+
+    // Org Type
+    cy.contains("Choose your application type").should("exist");
+    [
+      "Other",
+      "IAmApplyingAsAnIndividual",
+      "Charity",
+      "NonLimitedCompany",
+      "LimitedCompany",
+    ].forEach((item) => {
+      cy.get(`[data-cy=cy-radioInput-option-${item}]`)
+        .should("not.be.checked")
+        .click();
+    });
+    clickSaveAndContinue();
+
+    // Companies House
+    cy.contains("Enter your Companies House number (if you have one)").should(
+      "exist",
+    );
+    cy.get("[data-cy=cy-companiesHouseNumber-text-input]")
+      .should("have.value", "")
+      .type(details.companiesHouse);
+    clickSaveAndContinue();
+
+    // Charities Commission
+    cy.contains(
+      "Enter your Charity Commission number (if you have one)",
+    ).should("exist");
+    cy.get("[data-cy=cy-charityCommissionNumber-text-input]")
+      .should("have.value", "")
+      .type(details.charitiesCommission);
+    clickSaveAndContinue();
+  }
+
+  // How much funding
+  cy.contains("How much funding are you applying for?").should("exist");
+  cy.get("[data-cy=cy-fundingAmount-text-input-numeric]")
+    .should("have.value", "")
+    .type("100");
+  clickSaveAndContinue();
+
+  // Where will this funding be spent
+  cy.contains("Where will this funding be spent?").should("exist");
+  [
+    "North East England (England)",
+    "North West (England)",
+    "Yorkshire and The Humber",
+    "East Midlands (England)",
+    "West Midlands (England)",
+    "East England",
+    "London",
+    "South East (England)",
+    "South West (England)",
+    "Scotland",
+    "Wales",
+    "Northern Ireland",
+    "Outside of the UK",
+  ].forEach((item) => {
+    cy.get(`data-cy="cy-checkbox-value-${item}"]`)
+      .should("not.be.checked")
+      .click();
+  });
+  clickSaveAndContinue();
+};
+
+const confirmDetails = (details) => {
+  // Confirm your details
+  cy.contains("Confirm your details").should("exist");
+
+  cy.contains(details.name).should("exist");
+
+  cy.get("[data-cy=cy-organisation-value-Address]")
+    .find("ul")
+    .children("li")
+    .each((listItem, index) => {
+      cy.wrap(listItem).should(
+        "have.text",
+        details.address[index] + (index < 4 ? "," : ""),
+      );
+    });
+
+  cy.contains(details.orgType).should("exist");
+  cy.contains(details.companiesHouse).should("exist");
+  cy.contains(details.charitiesCommission).should("exist");
+  cy.contains(`£${details.howMuchFunding}`).should("exist");
+
+  cy.get("[data-cy=cy-organisation-value-Where will this funding be spent?]")
+    .find("ul")
+    .children("li")
+    .each((listItem, index) => {
+      cy.wrap(listItem).should(
+        "have.text",
+        details.fundingLocation[index] + (index < 12 ? "," : ""),
+      );
+    });
+};
+
 describe("Apply for a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
@@ -318,7 +434,7 @@ describe("Apply for a Grant", () => {
 
       searchForGrant("Cypress");
 
-      cy.contains("Cypress - Automated E2E Test Grant").click();
+      cy.contains("Cypress - Automated E2E Test Grant V1").click();
 
       cy.contains("Start new application")
         .invoke("removeAttr", "target")
@@ -359,11 +475,11 @@ describe("Apply for a Grant", () => {
         "All of your current and past applications are listed below.",
       );
       cy.contains("Name of grant");
-      cy.contains("Cypress - Test Application");
+      cy.contains("Cypress - Test Application V1");
 
       // checks that clicking on submitted application does nothing
       cy.get(
-        '[data-cy="cy-application-link-Cypress - Test Application"]',
+        '[data-cy="cy-application-link-Cypress - Test Application V1"]',
       ).should("not.have.attr", "href");
     },
   );
@@ -383,7 +499,7 @@ describe("Apply for a Grant", () => {
 
       searchForGrant("Cypress");
 
-      cy.contains("Cypress - Automated E2E Test Grant").click();
+      cy.contains("Cypress - Automated E2E Test Grant V1").click();
 
       cy.contains("Start new application")
         .invoke("removeAttr", "target")
@@ -406,7 +522,7 @@ describe("Apply for a Grant", () => {
       signInAsApplyApplicant(Cypress.currentRetry);
 
       cy.get('[data-cy="cy-your-applications-link"]').click();
-      cy.contains("Cypress - Test Application").click();
+      cy.contains("Cypress - Test Application V1").click();
 
       cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
 
@@ -429,7 +545,7 @@ describe("Apply for a Grant", () => {
         "All of your current and past applications are listed below.",
       );
       cy.contains("Name of grant");
-      cy.contains("Cypress - Test Application");
+      cy.contains("Cypress - Test Application V1");
     },
   );
 
@@ -448,7 +564,7 @@ describe("Apply for a Grant", () => {
 
       searchForGrant("Cypress");
 
-      cy.contains("Cypress - Automated E2E Test Grant").click();
+      cy.contains("Cypress - Automated E2E Test Grant V1").click();
 
       cy.contains("Start new application")
         .invoke("removeAttr", "target")
@@ -557,7 +673,7 @@ describe("Apply for a Grant", () => {
         "[data-cy=cy-organisation-details-navigation-organisationType]",
       ).click();
       cy.get("[data-cy=cy-radioInput-option-Other]").click();
-      cy.get("[data-cy=cy-radioInput-option-UnregisteredCharity]").click();
+      cy.get("[data-cy=cy-radioInput-option-Charity]").click();
       cy.get("[data-cy=cy-radioInput-option-RegisteredCharity]").click();
       cy.get("[data-cy=cy-radioInput-option-NonLimitedCompany]").click();
       cy.get("[data-cy=cy-radioInput-option-LimitedCompany]").click();
@@ -602,6 +718,76 @@ describe("Apply for a Grant", () => {
       // cy.origin("https://signin.integration.account.gov.uk", () => {
       //   cy.contains("Enter the 6 digit security code");
       // });
+    },
+  );
+
+  it(
+    "Mandatory questions flow - Empty organisation profile",
+    {
+      retries: {
+        runMode: 1,
+        openMode: 0,
+      },
+    },
+    () => {
+      cy.task("publishGrantsToContentful");
+      // wait for grant to be published to contentful
+      cy.wait(5000);
+
+      // TODO - Get working with Cypress grant
+      searchForGrant("V2 - 06/11");
+      cy.contains("V2 - 06/11").click();
+
+      cy.contains("Start new application")
+        .invoke("removeAttr", "target")
+        .click();
+
+      signInAsApplyApplicant(Cypress.currentRetry);
+
+      // TODO - make better
+      // cy.visit(
+      //   "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/mandatory-questions/start?schemeId=-2",
+      // );
+
+      // Before you start
+      cy.contains("Before you start").should("exist");
+      cy.contains("Continue").click();
+
+      // Details object
+      const details = {
+        name: "MyOrg",
+        address: ["addressLine1", "addressLine2", "city", "county", "postcode"],
+        orgType: "Limited company",
+        companiesHouse: "12345",
+        charitiesCommission: "67890",
+        howMuchFunding: "100",
+        fundingLocation: [
+          "North East (England)",
+          "North West (England)",
+          "Yorkshire and the Humber",
+          "East Midlands (England)",
+          "West Midlands (England)",
+          "East England",
+          "London",
+          "South East (England)",
+          "South West (England)",
+          "Scotland",
+          "Wales",
+          "Northern Ireland",
+          "Outside of the UK",
+        ],
+      };
+
+      // Mandatory Questions & Confirm Details
+      fillMandatoryQuestions(details, false);
+      confirmDetails(details);
+
+      //Click through and edit fields
+      //Return to summary after each edit
+      //Click confirm and submit
+      //Do this all for internal and external applications
+
+      // Going to have two more it() for partial filled org profile and filled org profile
     },
   );
 });
