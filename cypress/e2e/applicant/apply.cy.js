@@ -317,15 +317,13 @@ describe("Apply for a Grant", () => {
     signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
-    cy.visit(
-      "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
-    );
+    cy.visit(`${POST_LOGIN_BASE_URL}/apply/applicant/applications/-1`);
 
     // checks 'mailto' support email link
     cy.get('[data-cy="cy-support-email"]').should(
       "have.attr",
       "href",
-      "mailto:findagrantdeveloper+admin@cabinetoffice.gov.uk",
+      `mailto:${Cypress.env("oneLoginAdminEmail")}`,
     );
 
     fillOutEligibity();
@@ -370,9 +368,7 @@ describe("Apply for a Grant", () => {
     signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
-    cy.visit(
-      "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
-    );
+    cy.visit(`${POST_LOGIN_BASE_URL}/apply/applicant/applications/-1`);
 
     fillOutEligibity();
 
@@ -422,9 +418,7 @@ describe("Apply for a Grant", () => {
     signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
-    cy.visit(
-      "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
-    );
+    cy.visit(`${POST_LOGIN_BASE_URL}/apply/applicant/applications/-1`);
 
     fillOutEligibity();
 
@@ -555,7 +549,7 @@ describe("Apply for a Grant", () => {
     cy.contains("Change your sign in details in your GOV.UK One Login");
     //.click();
 
-    // cy.origin("https://signin.integration.account.gov.uk", () => {
+    // cy.origin(Cypress.env('oneLoginBaseUrl'), () => {
     //   cy.contains("Enter the 6 digit security code");
     // });
   });

@@ -23,5 +23,5 @@ jobs:
       suite: all
       browser: chrome
       report: false
-      environment: sandbox
+      environment: qa
     secrets: inherit
