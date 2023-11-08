@@ -20,7 +20,6 @@ jobs:
   reusable_e2e_test_run:
     name: Run E2E Tests
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
     concurrency: e2e_test_run
 
     steps:
@@ -48,28 +47,28 @@ jobs:
       - name: Generate .env
         run: |
           cat << EOF > .env
-          ONE_LOGIN_BASE_URL=${{ secrets.ONE_LOGIN_SANDBOX_BASE_URL }}
-          ONE_LOGIN_USERNAME=${{ secrets.ONE_LOGIN_SANDBOX_USERNAME }}
-          ONE_LOGIN_PASSWORD=${{ secrets.ONE_LOGIN_SANDBOX_PASSWORD }}
-          APPLICATION_BASE_URL=${{ secrets.APPLICATION_BASE_URL }}
-          POST_LOGIN_BASE_URL=${{ secrets.POST_LOGIN_BASE_URL }}
+          ONE_LOGIN_BASE_URL=${{ inputs.environment.uppercase }}_${{ secrets.ONE_LOGIN_SANDBOX_BASE_URL }}
+          ONE_LOGIN_USERNAME=${{ inputs.environment.uppercase }}_${{ secrets.ONE_LOGIN_SANDBOX_USERNAME }}
+          ONE_LOGIN_PASSWORD=${{ inputs.environment.uppercase }}_${{ secrets.ONE_LOGIN_SANDBOX_PASSWORD }}
+          APPLICATION_BASE_URL=${{ inputs.environment.uppercase }}_${{ secrets.APPLICATION_BASE_URL }}
+          POST_LOGIN_BASE_URL=${{ inputs.environment.uppercase }}_${{ secrets.POST_LOGIN_BASE_URL }}
           ONE_LOGIN_APPLICANT_EMAIL=${{ secrets.ONE_LOGIN_APPLICANT_EMAIL }}
           ONE_LOGIN_APPLICANT_PASSWORD=${{ secrets.ONE_LOGIN_APPLICANT_PASSWORD }}
-          ONE_LOGIN_APPLICANT_SUB=${{ secrets.ONE_LOGIN_APPLICANT_SUB }}
+          ONE_LOGIN_APPLICANT_SUB=${{ inputs.environment.uppercase }}_${{ secrets.ONE_LOGIN_APPLICANT_SUB }}
           ONE_LOGIN_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_ADMIN_EMAIL }}
           ONE_LOGIN_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_ADMIN_PASSWORD }}
-          ONE_LOGIN_ADMIN_SUB=${{ secrets.ONE_LOGIN_ADMIN_SUB }}
+          ONE_LOGIN_ADMIN_SUB=${{ inputs.environment.uppercase }}_${{ secrets.ONE_LOGIN_ADMIN_SUB }}
           ONE_LOGIN_SUPER_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_SUPER_ADMIN_EMAIL }}
           ONE_LOGIN_SUPER_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_SUPER_ADMIN_PASSWORD }}
-          ONE_LOGIN_SUPER_ADMIN_SUB=${{ secrets.ONE_LOGIN_SUPER_ADMIN_SUB }}
-          AWS_VPC_SG_ID=${{ secrets.AWS_VPC_SG_ID }}
-          USERS_DATABASE_URL =${{ secrets.CYPRESS_USERS_DATABASE_URL }}
-          USERS_DATABASE_NAME=${{ secrets.CYPRESS_USERS_DATABASE_NAME }}
-          APPLY_DATABASE_URL =${{ secrets.CYPRESS_APPLY_DATABASE_URL }}
-          APPLY_DATABASE_NAME=${{ secrets.CYPRESS_APPLY_DATABASE_NAME }}
+          ONE_LOGIN_SUPER_ADMIN_SUB=${{ inputs.environment.uppercase }}_${{ secrets.ONE_LOGIN_SUPER_ADMIN_SUB }}
+          AWS_VPC_SG_ID=${{ inputs.environment.uppercase }}_${{ secrets.AWS_VPC_SG_ID }}
+          USERS_DATABASE_URL =${{ inputs.environment.uppercase }}_${{ secrets.CYPRESS_USERS_DATABASE_URL }}
+          USERS_DATABASE_NAME=${{ inputs.environment.uppercase }}_${{ secrets.CYPRESS_USERS_DATABASE_NAME }}
+          APPLY_DATABASE_URL =${{ inputs.environment.uppercase }}_${{ secrets.CYPRESS_APPLY_DATABASE_URL }}
+          APPLY_DATABASE_NAME=${{ inputs.environment.uppercase }}_${{ secrets.CYPRESS_APPLY_DATABASE_NAME }}
           CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
-          CONTENTFUL_ACCESS_TOKEN=${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
-          CONTENTFUL_ENVIRONMENT_ID=${{ vars.CONTENTFUL_ENVIRONMENT_ID }}
+          CONTENTFUL_ACCESS_TOKEN=${{ inputs.environment.uppercase }}_${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
+          CONTENTFUL_ENVIRONMENT_ID=${{ inputs.environment.uppercase }}_${{ vars.CONTENTFUL_ENVIRONMENT_ID }}
           EOF
 
       - name: Setup node
