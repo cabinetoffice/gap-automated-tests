@@ -29,6 +29,25 @@ const applyDatabaseUrl: string =
   process.env.APPLY_DATABASE_URL ||
   "postgres://postgres:postgres@localhost:5432";
 
+const allSubs: string[] = [
+  process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
+  process.env.ONE_LOGIN_ADMIN_SUB,
+  process.env.ONE_LOGIN_APPLICANT_SUB,
+];
+
+const applySubstitutions = {
+  [insertApplicants]: allSubs,
+  [insertUsers]: allSubs,
+  [insertSchemes]: [process.env.ONE_LOGIN_ADMIN_SUB],
+  [deleteAdverts]: allSubs,
+  [deleteSubmissions]: allSubs,
+  [deleteApplications]: allSubs,
+  [deleteSchemes]: allSubs,
+  [deleteAdmins]: allSubs,
+  [deleteApplicants]: allSubs,
+  [deleteUsers]: allSubs,
+};
+
 export const createApplyData = async (): Promise<void> => {
   await runSQLFromJs(
     [
@@ -41,7 +60,7 @@ export const createApplyData = async (): Promise<void> => {
       insertApplications,
       insertAdverts,
     ],
-    [[], [], [], [], [], [], [], []],
+    applySubstitutions,
     applyServiceDbName,
     applyDatabaseUrl,
   );
@@ -61,7 +80,7 @@ export const deleteApplyData = async (): Promise<void> => {
       deleteFundingOrgs,
       deleteApplicantOrgProfiles,
     ],
-    [[], [], [], [], [], [], [], [], []],
+    applySubstitutions,
     applyServiceDbName,
     applyDatabaseUrl,
   );

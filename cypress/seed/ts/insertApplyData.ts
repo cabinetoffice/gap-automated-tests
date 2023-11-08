@@ -1,17 +1,17 @@
 const insertApplicants: string = `
 INSERT INTO public.grant_applicant (id, user_id)
     VALUES
-    ('-1', 'urn:fdc:gov.uk:2022:fWal-gUz2TTpPZrp9-PgbW5jOk10hXfTy3cgxxW5HRE'),
-    ('-2', 'urn:fdc:gov.uk:2022:1QUViebEw1PHGV7iShahw7hmaSG9OL4RFzY_WgR2qcY'),
-    ('-3', 'urn:fdc:gov.uk:2022:HvA7mHQsM_eNX5tAYNj2Oyj8_d3sooEtRjo7wbOaROY');
+    ('-1', $1),
+    ('-2', $2),
+    ('-3', $3);
 `;
 
 const insertUsers: string = `
 INSERT INTO public.gap_user (gap_user_id, user_sub)
     VALUES
-    ('-1', 'urn:fdc:gov.uk:2022:fWal-gUz2TTpPZrp9-PgbW5jOk10hXfTy3cgxxW5HRE'),
-    ('-2', 'urn:fdc:gov.uk:2022:1QUViebEw1PHGV7iShahw7hmaSG9OL4RFzY_WgR2qcY'),
-    ('-3', 'urn:fdc:gov.uk:2022:HvA7mHQsM_eNX5tAYNj2Oyj8_d3sooEtRjo7wbOaROY');
+    ('-1', $1),
+    ('-2', $2),
+    ('-3', $3);
 `;
 
 const insertFundingOrgs: string = `
@@ -36,7 +36,7 @@ INSERT INTO public.grant_applicant_organisation_profile(id, address_line1, addre
 
 const insertSchemes: string = `
 INSERT INTO public.grant_scheme(grant_scheme_id, funder_id, version, ggis_identifier, created_date, last_updated, last_updated_by, scheme_name, scheme_contact, created_by)
-    VALUES ('-1', '-1', 1, 'GGIS_ID_1', NOW(), NOW(), '-2', 'Cypress - Test Scheme', 'findagrantdeveloper+admin@cabinetoffice.gov.uk', '-2');
+    VALUES ('-1', '-1', 1, 'GGIS_ID_1', NOW(), NOW(), '-2', 'Cypress - Test Scheme', $1, '-2');
 `;
 
 const insertApplications: string = `
