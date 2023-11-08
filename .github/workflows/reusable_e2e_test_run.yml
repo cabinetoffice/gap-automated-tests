@@ -68,7 +68,7 @@ jobs:
           APPLY_DATABASE_NAME=${{ secrets.${{ inputs.environment.uppercase }}_CYPRESS_APPLY_DATABASE_NAME }}
           CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
           CONTENTFUL_ACCESS_TOKEN=${{ secrets.${{ inputs.environment.uppercase }}_CONTENTFUL_ACCESS_TOKEN }}
-          CONTENTFUL_ENVIRONMENT_ID=${{ inputs.environment.uppercase }}_${{ vars.CONTENTFUL_ENVIRONMENT_ID }}
+          CONTENTFUL_ENVIRONMENT_ID=${{ vars.${{ inputs.environment.uppercase }}_CONTENTFUL_ENVIRONMENT_ID }}
           EOF
 
       - name: Setup node
