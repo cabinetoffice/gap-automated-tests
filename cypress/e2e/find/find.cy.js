@@ -8,7 +8,7 @@ import {
 import { TEST_GRANT_NAME } from "../../common/constants";
 
 const checkManageNotificationsInfoScreen = () => {
-  cy.get("h1").should("have.text", "Manage notifications and saved searches");
+  cy.get("h1").should("have.text", "Manage your notifications");
 };
 
 const checkForNoSavedSearchesOrNotifications = () => {
@@ -149,7 +149,10 @@ describe("Find a Grant", () => {
 
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
 
-    cy.get('[data-cy="cyGrantsFoundMessage"]').should("not.contain.text", "0");
+    cy.get('[data-cy="cyGrantsFoundMessage"]').should(
+      "not.contain.text",
+      "We've found 0",
+    );
 
     countNumberOfPages();
 
