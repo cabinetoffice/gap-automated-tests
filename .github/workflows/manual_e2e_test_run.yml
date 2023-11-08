@@ -30,12 +30,12 @@ on:
           - false
           - true
       environment:
-        type: choise
+        type: choice
         description: Environment
         default: sandbox
         options:
           - sandbox
-          - qa
+          - QA
 
 jobs:
   call-reusable-e2e-test-run-workflow:
