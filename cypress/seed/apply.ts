@@ -38,7 +38,7 @@ const allSubs: string[] = [
 const applySubstitutions = {
   [insertApplicants]: allSubs,
   [insertUsers]: allSubs,
-  [insertSchemes]: [process.env.ONE_LOGIN_ADMIN_SUB],
+  [insertSchemes]: [process.env.ONE_LOGIN_ADMIN_EMAIL],
   [deleteAdverts]: allSubs,
   [deleteSubmissions]: allSubs,
   [deleteApplications]: allSubs,
