@@ -13,16 +13,34 @@ There are example tests contained at `cypress/_examples` to use as a guide when 
   - `ONE_LOGIN_SANDBOX_` properties used for signing in to the One Login integration environment - this is a static username/password for the whole environment.
   - The other email/password combinations are for specific accounts.
 - ESLint, Prettier and Husky are installed, so your code will auto-format when committing changes.
-- E2E tests should not be run in parallel - there are measures in place to prevent this in GitHub Actions, but this will not stop you running them locally. If you wish to run against Sandbox, please check https://github.com/cabinetoffice/gap-automated-tests/actions to ensure there are no current jobs running, and coordinate with each other.
-- Make sure you are whilelisted in the Sandbox DB VPC. This can be done by
+- Make sure you are whilelisted in the VPC for the environment you're running in. This can be done by
   - Running the command `npm run vpc:add`
     - To remove yourself: `npm run vpc:remove`
   - Or following the steps in [Confluence Page](https://technologyprogramme.atlassian.net/wiki/spaces/GAS/pages/2511798342/Connecting+to+the+Apply+Databases).
-- If you wish to run your tests locally, you'll also need to modify the contentful slug to something unique. This is to prevent Contentful conflicts. You'll need to do this in the following files:
-  - `cypress/seed/sql/apply.sql>L46`
-  - `cypress/seed/contentful.ts>L43`
 - Tests can be run against QA or Sandbox. You'll need to have the appropriate .env file in order to be able to run tests against each environment. The current `.env` file in use should be called simply `.env` and the other should be called `.env.qa` or `.env.sandbox` respectively.
   - There is a command to switch your current environment between the two: `npm run env:switch`
+- You will need to set up 3 users with One Login, and use these to run E2E tests locally. Steps:
+  1. Go to Find a Grant for the environment you wish to run against
+  2. Click `Sign in and Apply`
+  3. Create a new account for the intended role (you can use the + trick to generate a "new" email still linked to your inbox) until you reach the dashboard
+  4. Repeat steps 2-3 for applicant, admin and super admin
+  5. Put each of these 3 emails into the .env under ONE_LOGIN_APPLICANT_EMAIL, ONE_LOGIN_ADMIN_EMAIL and ONE_LOGIN_SUPER_ADMIN_EMAIL appropriately.
+  6. Add yourself to the VPC if you haven't already (`npm run vpc:add`)
+  7. Run `npm run subs` to get the subs for each of your users
+  ```
+    ONE_LOGIN_APPLICANT_EMAIL=example+applicant@cabinetoffice.gov.uk
+    ONE_LOGIN_APPLICANT_SUB=urn:fdc:gov.uk:20XX:1234567890qwertyuiopasdfghjklzxcvbnm
+    ONE_LOGIN_APPLICANT_PASSWORD=XXXXXXXX
+    ONE_LOGIN_ADMIN_EMAIL=example+admin@cabinetoffice.gov.uk
+    ONE_LOGIN_ADMIN_SUB=urn:fdc:gov.uk:20XX:1234567890qwertyuiopasdfghjklzxcvbnm
+    ONE_LOGIN_ADMIN_PASSWORD=XXXXXXXX
+    ONE_LOGIN_SUPER_ADMIN_EMAIL=example+super_admin@cabinetoffice.gov.uk
+    ONE_LOGIN_SUPER_ADMIN_SUB=urn:fdc:gov.uk:20XX:1234567890qwertyuiopasdfghjklzxcvbnm
+    ONE_LOGIN_SUPER_ADMIN_PASSWORD=XXXXXXXX
+  ```
+  8. Copy the output into your .env
+  9. Fill in the passwords
+- You _must_ set the .env FIRST_USER_ID to a number unique to yourself. It will iterate up by the number of users (3 at the time of writing) so please ensure there are no collisions.
 
 ## Running tests
 
@@ -94,8 +112,10 @@ While SQL data is being set up and torn down for every test, this is not done in
 When adding new environment variables, you must do this in several places:
 
 - `.env` - this is not committed
+  - ensure you also have it in `.env.qa` or `.env.sandbox` depending on your current env
 - `.env.example`
-- `cypress.config.ts`
-- `.github/workflows/reusable_e2e_test_run.yml` - add to `Generate .env` stage
+- `cypress.config.ts` - if it's referenced by a test
+- `.github/workflows/reusable_e2e_test_run.yml` - add to `Generate .env` stage if it's needed for the run
 - GitHub Secrets/Variables
   - Secrets should be used instead of Variables unless you need to view the env var during/after the test run (e.g. AWS Access Key and Region are in Variables to allow us to copy the presigned url to the report)
+  - If the environment variable is environment-specific (most are) then a variable should be added for both Sandbox and QA, prefixed either `SANDBOX_` or `QA_`
