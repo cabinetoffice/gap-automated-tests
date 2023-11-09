@@ -8,18 +8,18 @@ function isSandboxEnv() {
   return false;
 }
 
-console.log("Current environment: ", isSandboxEnv() ? "Sandbox" : "QA");
+console.log("Previous environment:", isSandboxEnv() ? "Sandbox" : "QA");
 
 if (isSandboxEnv()) {
   fs.rename(".env", ".env.sandbox", () => {
     fs.rename(".env.qa", ".env", () => {
-      console.log("Switched to QA environment");
+      console.log("New environment: QA");
     });
   });
 } else {
   fs.rename(".env", ".env.qa", () => {
     fs.rename(".env.sandbox", ".env", () => {
-      console.log("Switched to Sandbox environment");
+      console.log("New environment: Sandbox");
     });
   });
 }
