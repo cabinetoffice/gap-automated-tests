@@ -15,6 +15,7 @@ on:
 
 jobs:
   call-chrome-reusable-e2e-test-run-workflow:
+    name: Chrome E2E Test Run
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
       suite: ${{ inputs.suite }}
@@ -24,6 +25,7 @@ jobs:
     secrets: inherit
 
   call-firefox-reusable-e2e-test-run-workflow:
+    name: Firefox E2E Test Run
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
       suite: ${{ inputs.suite }}
