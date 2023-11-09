@@ -21,6 +21,8 @@ There are example tests contained at `cypress/_examples` to use as a guide when 
 - If you wish to run your tests locally, you'll also need to modify the contentful slug to something unique. This is to prevent Contentful conflicts. You'll need to do this in the following files:
   - `cypress/seed/sql/apply.sql>L46`
   - `cypress/seed/contentful.ts>L43`
+- Tests can be run against QA or Sandbox. You'll need to have the appropriate .env file in order to be able to run tests against each environment. The current `.env` file in use should be called simply `.env` and the other should be called `.env.qa` or `.env.sandbox` respectively.
+  - There is a command to switch your current environment between the two: `npm run env:switch`
 
 ## Running tests
 
