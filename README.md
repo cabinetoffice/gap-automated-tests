@@ -15,12 +15,14 @@ There are example tests contained at `cypress/_examples` to use as a guide when 
 - ESLint, Prettier and Husky are installed, so your code will auto-format when committing changes.
 - E2E tests should not be run in parallel - there are measures in place to prevent this in GitHub Actions, but this will not stop you running them locally. If you wish to run against Sandbox, please check https://github.com/cabinetoffice/gap-automated-tests/actions to ensure there are no current jobs running, and coordinate with each other.
 - Make sure you are whilelisted in the Sandbox DB VPC. This can be done by
-  - Running the command `aws ec2 authorize-security-group-ingress --group-id sg-04327b244bb7dd831 --protocol tcp --port 5432 --cidr $(curl ifconfig.me)/32`
-    - To remove yourself: `aws ec2 revoke-security-group-ingress --group-id sg-04327b244bb7dd831 --protocol tcp --port 5432 --cidr $(curl ifconfig.me)/32`
+  - Running the command `npm run vpc:add`
+    - To remove yourself: `npm run vpc:remove`
   - Or following the steps in [Confluence Page](https://technologyprogramme.atlassian.net/wiki/spaces/GAS/pages/2511798342/Connecting+to+the+Apply+Databases).
 - If you wish to run your tests locally, you'll also need to modify the contentful slug to something unique. This is to prevent Contentful conflicts. You'll need to do this in the following files:
   - `cypress/seed/sql/apply.sql>L46`
   - `cypress/seed/contentful.ts>L43`
+- Tests can be run against QA or Sandbox. You'll need to have the appropriate .env file in order to be able to run tests against each environment. The current `.env` file in use should be called simply `.env` and the other should be called `.env.qa` or `.env.sandbox` respectively.
+  - There is a command to switch your current environment between the two: `npm run env:switch`
 
 ## Running tests
 

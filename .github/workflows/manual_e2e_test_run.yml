@@ -29,6 +29,13 @@ on:
         options:
           - false
           - true
+      environment:
+        type: choice
+        description: Environment
+        default: SANDBOX
+        options:
+          - SANDBOX
+          - QA
 
 jobs:
   call-reusable-e2e-test-run-workflow:
@@ -37,6 +44,7 @@ jobs:
       suite: ${{ inputs.suite }}
       browser: ${{ inputs.browser }}
       report: ${{ inputs.report }}
+      environment: ${{ inputs.environment }}
     secrets: inherit
     if: ${{ !cancelled() && inputs.browser != 'all' }}
 
@@ -45,5 +53,6 @@ jobs:
     with:
       suite: ${{ inputs.suite }}
       report: ${{ inputs.report }}
+      environment: ${{ inputs.environment }}
     secrets: inherit
     if: ${{ !cancelled() && inputs.browser == 'all' }}
