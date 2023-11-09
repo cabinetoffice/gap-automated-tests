@@ -20,7 +20,7 @@ jobs:
   reusable_e2e_test_run:
     name: Run E2E Tests
     runs-on: ubuntu-latest
-    concurrency: e2e_test_run
+    concurrency: e2e_test_run_${{ inputs.environment }}
     environment: ${{ inputs.environment }}
 
     steps:
