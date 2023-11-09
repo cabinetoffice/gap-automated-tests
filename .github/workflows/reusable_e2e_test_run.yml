@@ -25,7 +25,7 @@ jobs:
     # First, only set the environment if we want reports (so it doesn't ping every time someone pushes)
     # Then, if the environment is SANDBOX then display it as Sandbox, so it's not as shouty
     # Otherwise just use the env name
-    environment: ${{ inputs.report == 'true' && inputs.environment == 'SANDBOX' && 'Sandbox' || inputs.environment || '' }}
+    environment: ${{ inputs.report == 'true' && inputs.environment || '' }}
 
     steps:
       - name: Get Github action IP
