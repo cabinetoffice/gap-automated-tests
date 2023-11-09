@@ -87,56 +87,49 @@ describe("Find a Grant", () => {
     const grantData = {
       Location: "National",
       "Funding organisation": "The Department of Business",
-      "Who can apply": "Non-profit",
+      "Who can apply": "Personal / Individual",
       "How much you can get": "From £1 to £10,000",
       "Total size of grant scheme": "£1 million",
       "Opening date": "24 August 2023, 12:01am",
       "Closing date": "24 October 2040, 11:59pm",
     };
     Object.entries(grantData).forEach(([key, value]) => {
-      cy.contains(key);
-      cy.contains(value);
+      cy.get("#cypress_test_advert_contentful_slug").contains(key);
+      cy.get("#cypress_test_advert_contentful_slug").contains(value);
     });
   });
 
-  it(
-    "can manage notifications through One Login when there are no notifications or saved searches",
-    {
-      retries: {
-        runMode: 1,
-        openMode: 0,
-      },
-    },
-    () => {
-      // journey when not logged in
-      cy.contains("Find a grant");
-      cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
+  //temporarily skipping test while OL is turned off for Find migration journey
+  //TODO : revert skip when OL is turned back on
+  it.skip("can manage notifications through One Login when there are no notifications or saved searches", () => {
+    // journey when not logged in
+    cy.contains("Find a grant");
+    cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
 
-      checkManageNotificationsInfoScreen();
+    checkManageNotificationsInfoScreen();
 
-      clickText("Continue to One Login");
+    clickText("Continue to One Login");
 
-      cy.origin(ONE_LOGIN_BASE_URL, () => {
-        cy.get('[id="sign-in-button"]').click();
-      });
+    cy.origin(ONE_LOGIN_BASE_URL, () => {
+      cy.get('[id="sign-in-button"]').click();
+    });
 
-      signInAsFindApplicant(Cypress.currentRetry);
+    signInAsFindApplicant();
 
-      cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
-        "have.text",
-        "Manage your notifications and saved searches",
-      );
-      checkForNoSavedSearchesOrNotifications();
+    cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
+      "have.text",
+      "Manage your notifications and saved searches",
+    );
+    checkForNoSavedSearchesOrNotifications();
 
-      cy.get('[data-cy="cyhomePageLink"]').click();
+    cy.get('[data-cy="cyhomePageLink"]').click();
 
-      // journey when already logged in
-      cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
-      cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
-        "have.text",
-        "Manage your notifications and saved searches",
-      );
-      checkForNoSavedSearchesOrNotifications();
-    },
-  );
+    // journey when already logged in
+    cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
+    cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
+      "have.text",
+      "Manage your notifications and saved searches",
+    );
+    checkForNoSavedSearchesOrNotifications();
+  });
 });
