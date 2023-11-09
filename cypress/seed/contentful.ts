@@ -14,8 +14,7 @@ const ADVERTS = [
         "en-US": "£10,000",
       },
       grantWebpageUrl: {
-        "en-US":
-          "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/applications/-1",
+        "en-US": `${process.env.POST_LOGIN_BASE_URL}/apply/applicant/applications/-1`,
       },
       grantMinimumAwardDisplay: {
         "en-US": "£1",
