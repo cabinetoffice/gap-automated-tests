@@ -1,16 +1,42 @@
-import { runSQL } from "./database";
 import "dotenv/config";
+import { runSQLFromJs } from "./database";
+import {
+  insertDepartments,
+  insertRoles,
+  insertUsers,
+} from "./ts/insertTestUsers";
+import { deleteUsers, deleteDepartments } from "./ts/deleteTestUsers";
 
 const userServiceDbName: string =
-  process.env.CYPRESS_USERS_DATABASE_NAME || "gapuserlocaldb";
+  process.env.USERS_DATABASE_NAME || "gapuserlocaldb";
 
 const userDatabaseUrl: string =
-  process.env.CYPRESS_USERS_DATABASE_URL ||
+  process.env.USERS_DATABASE_URL ||
   "postgres://postgres:postgres@localhost:5432";
 
+const userSubstitutions = {
+  [insertUsers]: [
+    process.env.ONE_LOGIN_SUPER_ADMIN_EMAIL,
+    process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
+    process.env.ONE_LOGIN_ADMIN_EMAIL,
+    process.env.ONE_LOGIN_ADMIN_SUB,
+    process.env.ONE_LOGIN_APPLICANT_EMAIL,
+    process.env.ONE_LOGIN_APPLICANT_SUB,
+  ],
+  [deleteUsers]: [
+    process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
+    process.env.ONE_LOGIN_ADMIN_SUB,
+    process.env.ONE_LOGIN_APPLICANT_SUB,
+    process.env.ONE_LOGIN_SUPER_ADMIN_EMAIL,
+    process.env.ONE_LOGIN_ADMIN_EMAIL,
+    process.env.ONE_LOGIN_APPLICANT_EMAIL,
+  ],
+};
+
 export const createTestUsers = async (): Promise<void> => {
-  await runSQL(
-    "./cypress/seed/sql/addTestUsers.sql",
+  await runSQLFromJs(
+    [insertDepartments, insertUsers, insertRoles],
+    userSubstitutions,
     userServiceDbName,
     userDatabaseUrl,
   );
@@ -18,8 +44,9 @@ export const createTestUsers = async (): Promise<void> => {
 };
 
 export const deleteTestUsers = async (): Promise<void> => {
-  await runSQL(
-    "./cypress/seed/sql/deleteTestUsers.sql",
+  await runSQLFromJs(
+    [deleteUsers, deleteDepartments],
+    userSubstitutions,
     userServiceDbName,
     userDatabaseUrl,
   );
