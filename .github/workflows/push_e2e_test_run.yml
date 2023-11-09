@@ -31,6 +31,6 @@ jobs:
     with:
       suite: all
       browser: chrome
-      report: false
+      report: true
       environment: QA
     secrets: inherit

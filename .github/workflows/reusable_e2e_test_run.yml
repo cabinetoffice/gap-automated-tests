@@ -21,7 +21,11 @@ jobs:
     name: Run E2E Tests
     runs-on: ubuntu-latest
     concurrency: e2e_test_run_${{ inputs.environment }}
-    environment: ${{ inputs.environment }}
+    # Github Actions doesn't have ternaries for some reason, so this is the only way to do what we need:
+    # First, only set the environment if we want reports (so it doesn't ping every time someone pushes)
+    # Then, if the environment is SANDBOX then display it as Sandbox, so it's not as shouty
+    # Otherwise just use the env name
+    environment: ${{ inputs.report == 'true' && inputs.environment == 'SANDBOX' && 'Sandbox' || inputs.environment || '' }}
 
     steps:
       - name: Get Github action IP
