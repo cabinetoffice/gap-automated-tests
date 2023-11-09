@@ -133,7 +133,8 @@ describe("Find a Grant", () => {
     );
     checkForNoSavedSearchesOrNotifications();
 
-    cy.get('[data-cy="cyhomePageLink"]').click();
+    cy.get('[data-cy="cySearch grantsPageLink"]').click();
+    clickText("Back");
 
     // journey when already logged in
     cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
