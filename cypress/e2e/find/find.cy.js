@@ -138,7 +138,12 @@ describe("Find a Grant", () => {
 
     // search for and view test grant advert
     searchForGrant("Cypress");
-    clickText("Cypress - Automated E2E Test Grant");
+    // cy.get('[data-cy="cyGrantNameAndLink"]').should('have.text', 'Cypress - Automated E2E Test Grant');
+
+    cy.get("#cypress_test_advert_contentful_slug")
+      .children("h2")
+      .should("have.text", "Cypress - Automated E2E Test Grant")
+      .click();
 
     // click 'Sign up for updates' and continue to One Login
     clickText("Sign up for updates");
