@@ -5,17 +5,10 @@ import {
   signInAsFindApplicant,
   ONE_LOGIN_BASE_URL,
 } from "../../common/common";
+import { TEST_GRANT_NAME } from "../../common/constants";
 
 const checkManageNotificationsInfoScreen = () => {
   cy.get("h1").should("have.text", "Manage your notifications");
-  cy.contains(
-    "To manage your notifications, you need to sign in with GOV.UK One Login.",
-  );
-  cy.contains("If you do not have a GOV.UK One Login, you can create one.");
-  cy.contains(
-    "If you want to unsubscribe from notifications without creating a GOV.UK One Login, you can use the " +
-      "unsubscribe link in the emails we send to you.",
-  );
 };
 
 const checkForNoSavedSearchesOrNotifications = () => {
@@ -23,6 +16,26 @@ const checkForNoSavedSearchesOrNotifications = () => {
     "have.text",
     "You are not signed up for any notifications, and you don't have any saved searches.",
   );
+};
+
+const countNumberOfPages = () => {
+  cy.get('[data-cy="cyPaginationComponent"]')
+    .find("ul")
+    .children("li")
+    .last()
+    .prev()
+    .children("a")
+    .invoke("attr", "href")
+    .then((href) => {
+      cy.wrap(+href.split("page=")[1] - 1).as("pageCount");
+    });
+};
+
+const clickThroughPagination = (numberOfPages) => {
+  Cypress._.times(numberOfPages, () => {
+    cy.get('[data-cy="cyPaginationNextButton"]').click();
+    cy.wait(300);
+  });
 };
 
 describe("Find a Grant", () => {
@@ -80,9 +93,9 @@ describe("Find a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    searchForGrant("Cypress");
+    searchForGrant(TEST_GRANT_NAME);
 
-    cy.contains("Cypress - Automated E2E Test Grant");
+    cy.contains(TEST_GRANT_NAME);
 
     const grantData = {
       Location: "National",
@@ -99,9 +112,7 @@ describe("Find a Grant", () => {
     });
   });
 
-  //temporarily skipping test while OL is turned off for Find migration journey
-  //TODO : revert skip when OL is turned back on
-  it.skip("can manage notifications through One Login when there are no notifications or saved searches", () => {
+  it("can manage notifications through One Login when there are no notifications or saved searches", () => {
     // journey when not logged in
     cy.contains("Find a grant");
     cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
@@ -122,7 +133,8 @@ describe("Find a Grant", () => {
     );
     checkForNoSavedSearchesOrNotifications();
 
-    cy.get('[data-cy="cyhomePageLink"]').click();
+    cy.get('[data-cy="cySearch grantsPageLink"]').click();
+    clickText("Back");
 
     // journey when already logged in
     cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
@@ -131,5 +143,43 @@ describe("Find a Grant", () => {
       "Manage your notifications and saved searches",
     );
     checkForNoSavedSearchesOrNotifications();
+  });
+
+  it("can navigate through pagination and limit search term to < 100 characters", () => {
+    cy.contains("Find a grant");
+
+    cy.get('[data-cy="cySearchGrantsBtn"]').click();
+
+    cy.get('[data-cy="cyGrantsFoundMessage"]').should(
+      "not.contain.text",
+      "We've found 0",
+    );
+
+    countNumberOfPages();
+
+    cy.get("@pageCount").then((pageCount) => {
+      clickThroughPagination(pageCount);
+    });
+    cy.get('[data-cy="cyPaginationNextButton"]').should("not.exist");
+    cy.get('[data-cy="cyPaginationPageNumber1"]').click();
+
+    //perform invalid search
+    const invalidSearch = "x".repeat(101);
+    cy.get('[data-cy="cySearchAgainInput"]').click().type(invalidSearch);
+    cy.get('[data-cy="cySearchAgainButton"]').click();
+
+    cy.get('[data-cy="cyErrorBanner"]').contains("h2", "There is a problem");
+    cy.get('[data-cy="cyError_searchAgainTermInput"]').contains(
+      "a",
+      "Search term must be 100 characters or less",
+    );
+
+    cy.get('[data-cy="cySearchAgainInput"]').click().type(TEST_GRANT_NAME);
+    cy.get('[data-cy="cySearchAgainButton"]').click();
+
+    cy.get('[data-cy="cyGrantNameAndLink"]').should(
+      "include.text",
+      TEST_GRANT_NAME,
+    );
   });
 });
