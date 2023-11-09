@@ -21,10 +21,8 @@ jobs:
     name: Run E2E Tests
     runs-on: ubuntu-latest
     concurrency: e2e_test_run_${{ inputs.environment }}
-    # Github Actions doesn't have ternaries for some reason, so this is the only way to do what we need:
-    # First, only set the environment if we want reports (so it doesn't ping every time someone pushes)
-    # Then, if the environment is SANDBOX then display it as Sandbox, so it's not as shouty
-    # Otherwise just use the env name
+    # GitHub Actions doesn't have ternaries for some reason, so this only sets the environment if we want reports
+    # (so it doesn't ping every time someone pushes)
     environment: ${{ inputs.report == 'true' && inputs.environment || '' }}
 
     steps:
@@ -35,7 +33,6 @@ jobs:
       - name: Add Github Actions IP to Security group
         run: |
           echo "${{ steps.ip.outputs.ipv4 }}"
-          echo "this is the contentful env ${{ vars[format('{0}_CONTENTFUL_ENVIRONMENT_ID', inputs.environment)] }}"
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
         env:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}

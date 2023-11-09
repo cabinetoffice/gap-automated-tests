@@ -1,5 +1,5 @@
-import { runSQL, runSQLFromJs } from "./database";
 import "dotenv/config";
+import { runSQLFromJs } from "./database";
 import {
   insertApplicants,
   insertUsers,
