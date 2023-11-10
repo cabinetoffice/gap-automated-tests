@@ -183,7 +183,7 @@ describe("Find a Grant", () => {
     );
   });
 
-  it("Can subscribe and unsubscribe from notifications", () => {
+  it("Can subscribe and unsubscribe from newsletter notifications", () => {
     cy.contains("Find a grant");
     clickText("Sign up and we will email you when new grants have been added.");
     clickText("Continue to One Login");
@@ -196,6 +196,7 @@ describe("Find a Grant", () => {
       "have.text",
       "View Updates",
     );
+    cy.contains("You signed up for updates");
     clickText("Unsubscribe from updates about new grants");
     clickText("Yes, unsubscribe");
     cy.get(".govuk-notification-banner__heading").contains(
