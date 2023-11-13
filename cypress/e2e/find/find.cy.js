@@ -4,6 +4,7 @@ import {
   clickText,
   signInAsFindApplicant,
   ONE_LOGIN_BASE_URL,
+  createSavedSearch,
 } from "../../common/common";
 import { TEST_GRANT_NAME } from "../../common/constants";
 
@@ -205,5 +206,34 @@ describe("Find a Grant", () => {
     cy.get("[data-cy='cyManageYourNotificationsNoData']").contains(
       "You are not signed up for any notifications, and you don't have any saved searches.",
     );
+  });
+
+  it("Can subscribe and unsubscribe a saved search notification", () => {
+    cy.contains("Find a grant");
+    //start saved search login journey
+    cy.get('[data-cy="cySearchGrantsBtn"]').click();
+    cy.get('[data-cy="cy£5,000,000 plusCheckbox"]').click();
+    cy.get('[data-cy="cyApplyFilter"]').click();
+    cy.get('[data-cy="cySaveSearchLink"]').click();
+    clickText("Continue to One Login");
+    cy.origin(ONE_LOGIN_BASE_URL, () => {
+      cy.get('[id="sign-in-button"]').click();
+    });
+    signInAsFindApplicant();
+    createSavedSearch("test saved search");
+    cy.contains("Your saved search has been added.");
+    cy.contains(
+      "You can now access your notifications when you sign in with GOV.UK One Login.",
+    );
+    cy.get('[data-cy="cytest saved searchSavedSearchTableName"]').contains(
+      "test saved search",
+    );
+    //unsubscribe
+    cy.get('[data-cy="cytest saved searchDeleteLink"]').click();
+    clickText("Yes, delete");
+    cy.get('[data-cy="cytest saved searchSavedSearchTableName"]').should(
+      "not.exist",
+    );
+    cy.contains("You have deleted the saved search called: test saved search");
   });
 });
