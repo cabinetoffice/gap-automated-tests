@@ -143,7 +143,7 @@ describe("Find a Grant", () => {
     checkForNoSavedSearchesOrNotifications();
   });
 
-  it.only("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
+  it("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
     cy.task("setUpFindData");
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
