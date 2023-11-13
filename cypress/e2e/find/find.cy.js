@@ -182,4 +182,28 @@ describe("Find a Grant", () => {
       TEST_GRANT_NAME,
     );
   });
+
+  it("Can subscribe and unsubscribe from newsletter notifications", () => {
+    cy.contains("Find a grant");
+    clickText("Sign up and we will email you when new grants have been added.");
+    clickText("Continue to One Login");
+    cy.origin(ONE_LOGIN_BASE_URL, () => {
+      cy.get('[id="sign-in-button"]').click();
+    });
+    signInAsFindApplicant();
+    cy.get(".govuk-heading-m").contains("Updates about new grants");
+    cy.get('[data-cy="cyViewWeeklyUpdatesButton"]').should(
+      "have.text",
+      "View Updates",
+    );
+    cy.contains("You signed up for updates");
+    clickText("Unsubscribe from updates about new grants");
+    clickText("Yes, unsubscribe");
+    cy.get(".govuk-notification-banner__heading").contains(
+      "You have unsubscribed from updates about new grants.",
+    );
+    cy.get("[data-cy='cyManageYourNotificationsNoData']").contains(
+      "You are not signed up for any notifications, and you don't have any saved searches.",
+    );
+  });
 });
