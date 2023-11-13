@@ -1,13 +1,14 @@
 // @ts-ignore
 import * as contentful from "contentful-management";
 import "dotenv/config";
+import { TEST_GRANT_NAME } from "../common/constants";
 
 const SLUGS = ["cypress_test_advert_contentful_slug"];
 const ADVERTS = [
   {
     fields: {
       grantName: {
-        "en-US": "Cypress - Automated E2E Test Grant",
+        "en-US": TEST_GRANT_NAME,
       },
       grantMaximumAwardDisplay: {
         "en-US": "£10,000",

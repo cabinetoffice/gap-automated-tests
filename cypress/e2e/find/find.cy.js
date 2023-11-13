@@ -5,10 +5,13 @@ import {
   signInAsFindApplicant,
   ONE_LOGIN_BASE_URL,
 } from "../../common/common";
+import { TEST_GRANT_NAME } from "../../common/constants";
+
 
 const checkInfoScreen = (headerText, bodyText) => {
   cy.get("h1").should("have.text", headerText);
   cy.contains(bodyText);
+
 };
 
 const checkForNoSavedSearchesOrNotifications = () => {
@@ -17,6 +20,7 @@ const checkForNoSavedSearchesOrNotifications = () => {
     "You are not signed up for any notifications, and you don't have any saved searches.",
   );
 };
+
 
 const checkSuccessBanner = (headerElement, bodyElement, bodyText) => {
   cy.get(headerElement).should("have.text", "Success");
@@ -31,6 +35,25 @@ const convertDate = (subscribedDate) => {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
+
+const countNumberOfPages = () => {
+  cy.get('[data-cy="cyPaginationComponent"]')
+    .find("ul")
+    .children("li")
+    .last()
+    .prev()
+    .children("a")
+    .invoke("attr", "href")
+    .then((href) => {
+      cy.wrap(+href.split("page=")[1] - 1).as("pageCount");
+    });
+};
+
+const clickThroughPagination = (numberOfPages) => {
+  Cypress._.times(numberOfPages, () => {
+    cy.get('[data-cy="cyPaginationNextButton"]').click();
+    cy.wait(300);
+
   });
 };
 
@@ -89,9 +112,9 @@ describe("Find a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    searchForGrant("Cypress");
+    searchForGrant(TEST_GRANT_NAME);
 
-    cy.contains("Cypress - Automated E2E Test Grant");
+    cy.contains(TEST_GRANT_NAME);
 
     const grantData = {
       Location: "National",
@@ -132,7 +155,8 @@ describe("Find a Grant", () => {
     );
     checkForNoSavedSearchesOrNotifications();
 
-    cy.get('[data-cy="cyhomePageLink"]').click();
+    cy.get('[data-cy="cySearch grantsPageLink"]').click();
+    clickText("Back");
 
     // journey when already logged in
     cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
@@ -142,6 +166,7 @@ describe("Find a Grant", () => {
     );
     checkForNoSavedSearchesOrNotifications();
   });
+
 
   it("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
     cy.task("setUpFindData");
@@ -259,5 +284,67 @@ describe("Find a Grant", () => {
       "You have been unsubscribed from",
     );
     checkForNoSavedSearchesOrNotifications();
+
+  it("can navigate through pagination and limit search term to < 100 characters", () => {
+    cy.contains("Find a grant");
+
+    cy.get('[data-cy="cySearchGrantsBtn"]').click();
+
+    cy.get('[data-cy="cyGrantsFoundMessage"]').should(
+      "not.contain.text",
+      "We've found 0",
+    );
+
+    countNumberOfPages();
+
+    cy.get("@pageCount").then((pageCount) => {
+      clickThroughPagination(pageCount);
+    });
+    cy.get('[data-cy="cyPaginationNextButton"]').should("not.exist");
+    cy.get('[data-cy="cyPaginationPageNumber1"]').click();
+
+    //perform invalid search
+    const invalidSearch = "x".repeat(101);
+    cy.get('[data-cy="cySearchAgainInput"]').click().type(invalidSearch);
+    cy.get('[data-cy="cySearchAgainButton"]').click();
+
+    cy.get('[data-cy="cyErrorBanner"]').contains("h2", "There is a problem");
+    cy.get('[data-cy="cyError_searchAgainTermInput"]').contains(
+      "a",
+      "Search term must be 100 characters or less",
+    );
+
+    cy.get('[data-cy="cySearchAgainInput"]').click().type(TEST_GRANT_NAME);
+    cy.get('[data-cy="cySearchAgainButton"]').click();
+
+    cy.get('[data-cy="cyGrantNameAndLink"]').should(
+      "include.text",
+      TEST_GRANT_NAME,
+    );
+  });
+
+  it("Can subscribe and unsubscribe from newsletter notifications", () => {
+    cy.contains("Find a grant");
+    clickText("Sign up and we will email you when new grants have been added.");
+    clickText("Continue to One Login");
+    cy.origin(ONE_LOGIN_BASE_URL, () => {
+      cy.get('[id="sign-in-button"]').click();
+    });
+    signInAsFindApplicant();
+    cy.get(".govuk-heading-m").contains("Updates about new grants");
+    cy.get('[data-cy="cyViewWeeklyUpdatesButton"]').should(
+      "have.text",
+      "View Updates",
+    );
+    cy.contains("You signed up for updates");
+    clickText("Unsubscribe from updates about new grants");
+    clickText("Yes, unsubscribe");
+    cy.get(".govuk-notification-banner__heading").contains(
+      "You have unsubscribed from updates about new grants.",
+    );
+    cy.get("[data-cy='cyManageYourNotificationsNoData']").contains(
+      "You are not signed up for any notifications, and you don't have any saved searches.",
+    );
+
   });
 });
