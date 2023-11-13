@@ -18,7 +18,7 @@ on:
 
 jobs:
   reusable_e2e_test_run:
-    name: Run E2E Tests env/${{ inputs.environment }} suite/${{ suite }} browser/${{ inputs.browser }}
+    name: Run E2E Tests env:${{ inputs.environment }} suite:${{ inputs.suite }} browser:${{ inputs.browser }}
     runs-on: ubuntu-latest
     concurrency: e2e_test_run_${{ inputs.environment }}
     # GitHub Actions doesn't have ternaries for some reason, so this only sets the environment if we want reports

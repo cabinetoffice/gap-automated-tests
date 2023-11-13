@@ -52,7 +52,7 @@ DELETE FROM public.gap_user WHERE
 
 const deleteFundingOrgs: string = `
 DELETE FROM public.grant_funding_organisation WHERE funder_id = $1;
-`; // remove
+`;
 
 const deleteApplicantOrgProfiles: string = `
 DELETE FROM public.grant_applicant_organisation_profile WHERE applicant_id IN ($1, $2, $3);

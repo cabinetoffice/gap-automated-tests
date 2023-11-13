@@ -21,6 +21,7 @@ import {
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
 } from "./ts/deleteApplyData";
+import { TEST_V1_GRANT } from "../common/constants";
 
 const applyServiceDbName: string =
   process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
@@ -38,6 +39,8 @@ const allSubs: string[] = [
 const SUPER_ADMIN_ID = -process.env.FIRST_USER_ID;
 const ADMIN_ID = -(+process.env.FIRST_USER_ID + 1);
 const APPLICANT_ID = -(+process.env.FIRST_USER_ID + 2);
+const FUNDING_ID = -process.env.FIRST_USER_ID;
+const SCHEME_ID = -process.env.FIRST_USER_ID;
 
 const applySubstitutions = {
   [insertApplicants]: [
@@ -56,8 +59,15 @@ const applySubstitutions = {
     APPLICANT_ID,
     process.env.ONE_LOGIN_APPLICANT_SUB,
   ],
-  [insertFundingOrgs]: [SUPER_ADMIN_ID],
-  [insertAdmins]: [SUPER_ADMIN_ID, SUPER_ADMIN_ID, ADMIN_ID, ADMIN_ID],
+  [insertFundingOrgs]: [FUNDING_ID],
+  [insertAdmins]: [
+    SUPER_ADMIN_ID,
+    FUNDING_ID,
+    SUPER_ADMIN_ID,
+    ADMIN_ID,
+    FUNDING_ID,
+    ADMIN_ID,
+  ],
   [insertGrantApplicantOrgProfiles]: [
     SUPER_ADMIN_ID,
     SUPER_ADMIN_ID,
@@ -66,7 +76,22 @@ const applySubstitutions = {
     APPLICANT_ID,
     APPLICANT_ID,
   ],
-  [insertSchemes]: [process.env.ONE_LOGIN_ADMIN_EMAIL],
+  [insertSchemes]: [
+    SCHEME_ID,
+    FUNDING_ID,
+    ADMIN_ID,
+    process.env.ONE_LOGIN_ADMIN_EMAIL,
+    ADMIN_ID,
+  ],
+  [insertApplications]: [SCHEME_ID, SCHEME_ID, ADMIN_ID, ADMIN_ID],
+  [insertAdverts]: [
+    TEST_V1_GRANT.contentfulId,
+    TEST_V1_GRANT.contentfulSlug,
+    TEST_V1_GRANT.name,
+    ADMIN_ID,
+    ADMIN_ID,
+    SCHEME_ID,
+  ],
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [
     SUPER_ADMIN_ID,
@@ -93,9 +118,9 @@ export const createApplyData = async (): Promise<void> => {
       insertFundingOrgs,
       insertAdmins,
       insertGrantApplicantOrgProfiles,
-      //insertSchemes,
-      //insertApplications,
-      //insertAdverts,
+      insertSchemes,
+      insertApplications,
+      insertAdverts,
     ],
     applySubstitutions,
     applyServiceDbName,

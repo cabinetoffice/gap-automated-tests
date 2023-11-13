@@ -5,7 +5,7 @@ import {
   signInAsFindApplicant,
   ONE_LOGIN_BASE_URL,
 } from "../../common/common";
-import { TEST_GRANT_NAME } from "../../common/constants";
+import { TEST_V1_GRANT } from "../../common/constants";
 
 const checkManageNotificationsInfoScreen = () => {
   cy.get("h1").should("have.text", "Manage your notifications");
@@ -93,9 +93,9 @@ describe("Find a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    searchForGrant(TEST_GRANT_NAME);
+    searchForGrant(Cypress.env("testV1GrantName"));
 
-    cy.contains(TEST_GRANT_NAME);
+    cy.contains(Cypress.env("testV1GrantName"));
 
     const grantData = {
       Location: "National",
@@ -179,7 +179,7 @@ describe("Find a Grant", () => {
 
     cy.get('[data-cy="cyGrantNameAndLink"]').should(
       "include.text",
-      TEST_GRANT_NAME,
+      Cypress.env("testV1GrantName"),
     );
   });
 
