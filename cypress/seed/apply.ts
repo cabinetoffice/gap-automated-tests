@@ -36,15 +36,14 @@ const allSubs: string[] = [
   process.env.ONE_LOGIN_APPLICANT_SUB,
 ];
 
-const SUPER_ADMIN_ID = -process.env.FIRST_USER_ID;
-const ADMIN_ID = -(+process.env.FIRST_USER_ID + 1);
-const APPLICANT_ID = -(+process.env.FIRST_USER_ID + 2);
-const FUNDING_ID = -process.env.FIRST_USER_ID;
-const SCHEME_ID = -process.env.FIRST_USER_ID;
-const ADVERT_ID = `${process.env.FIRST_USER_ID.padStart(
-  8,
-  "0",
-)}-0000-0000-0000-000000000000`;
+const SUPER_ADMIN_ID = -Math.abs(+process.env.FIRST_USER_ID);
+const ADMIN_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 1);
+const APPLICANT_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 2);
+const FUNDING_ID = -Math.abs(+process.env.FIRST_USER_ID);
+const SCHEME_ID = -Math.abs(+process.env.FIRST_USER_ID);
+const ADVERT_ID = `${Math.abs(+process.env.FIRST_USER_ID)
+  .toString()
+  .padStart(8, "0")}-0000-0000-0000-000000000000`;
 
 const applySubstitutions = {
   [insertApplicants]: [

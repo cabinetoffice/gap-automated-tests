@@ -14,10 +14,10 @@ const userDatabaseUrl: string =
   process.env.USERS_DATABASE_URL ||
   "postgres://postgres:postgres@localhost:5432";
 
-const SUPER_ADMIN_ID = -process.env.FIRST_USER_ID;
-const ADMIN_ID = -(+process.env.FIRST_USER_ID + 1);
-const APPLICANT_ID = -(+process.env.FIRST_USER_ID + 2);
-const DEPARTMENT_ID = -process.env.FIRST_USER_ID;
+const SUPER_ADMIN_ID = -Math.abs(+process.env.FIRST_USER_ID);
+const ADMIN_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 1);
+const APPLICANT_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 2);
+const DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID);
 
 const userSubstitutions = {
   [insertDepartments]: [DEPARTMENT_ID],
