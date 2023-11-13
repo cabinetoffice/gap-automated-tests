@@ -11,7 +11,6 @@ import {
   clickBack,
   POST_LOGIN_BASE_URL,
 } from "../../common/common";
-import { TEST_V1_GRANT } from "../../common/constants";
 
 const fillOutCustomSection = () => {
   cy.get('[data-cy="cy-status-tag-Custom Section-Not Started"]');
@@ -304,7 +303,7 @@ describe("Apply for a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it.only("can start and submit new grant application", () => {
+  it("can start and submit new grant application", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
