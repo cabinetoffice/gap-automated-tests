@@ -1,14 +1,14 @@
 const insertDepartments: string = `
 INSERT INTO public.departments(id, ggis_id, name)
-    VALUES('-1', 'GGIS_ID', 'Cypress - Test Department');
-`; // if not exists
+    VALUES($1, 'GGIS_ID', 'Cypress - Test Department');
+`;
 
 const insertUsers: string = `
 INSERT INTO public.gap_users(gap_user_id, email, sub, dept_id, login_journey_state)
 	VALUES 
-	($1, $2, $3, '-1', 'USER_READY'),
-	($4, $5, $6, '-1', 'USER_READY'),
-	($7, $8, $9, null, 'USER_READY');
+	($1, $2, $3, $4, 'USER_READY'),
+	($5, $6, $7, $8, 'USER_READY'),
+	($9, $10, $11, null, 'USER_READY');
 `;
 
 const insertRoles: string = `

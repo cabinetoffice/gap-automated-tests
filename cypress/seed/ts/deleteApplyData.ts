@@ -51,7 +51,7 @@ DELETE FROM public.gap_user WHERE
 `;
 
 const deleteFundingOrgs: string = `
-DELETE FROM public.grant_funding_organisation WHERE funder_id = '-1';
+DELETE FROM public.grant_funding_organisation WHERE funder_id = $1;
 `; // remove
 
 const deleteApplicantOrgProfiles: string = `

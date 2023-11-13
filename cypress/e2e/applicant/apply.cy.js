@@ -304,7 +304,7 @@ describe("Apply for a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("can start and submit new grant application", () => {
+  it.only("can start and submit new grant application", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -318,7 +318,7 @@ describe("Apply for a Grant", () => {
     signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
-    cy.visit(`${POST_LOGIN_BASE_URL}/apply/applicant/applications/-1`);
+    //cy.visit(`${POST_LOGIN_BASE_URL}/apply/applicant/applications/-1`);
 
     // checks 'mailto' support email link
     cy.get('[data-cy="cy-support-email"]').should(

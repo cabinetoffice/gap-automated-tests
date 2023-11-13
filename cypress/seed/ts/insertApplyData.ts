@@ -16,14 +16,14 @@ INSERT INTO public.gap_user (gap_user_id, user_sub)
 
 const insertFundingOrgs: string = `
 INSERT INTO public.grant_funding_organisation(funder_id, organisation_name)
-    VALUES ('-1', 'Cypress - Test Funding Organisation');
+    VALUES ($1, 'Cypress - Test Funding Organisation');
 `; // if not exists
 
 const insertAdmins: string = `
 INSERT INTO public.grant_admin(grant_admin_id, funder_id, user_id)
     VALUES
-    ($1, '-1', $2),
-    ($3, '-1', $4);
+    ($1, $2, $3),
+    ($4, $5, $6);
 `;
 
 const insertGrantApplicantOrgProfiles: string = `

@@ -1,6 +1,5 @@
 require("dotenv").config();
-const { Client, Pool } = require("pg");
-//import { runSQLFromJs } from "../cypress/seed/database.ts";
+const { Client } = require("pg");
 
 const userServiceDbName = process.env.USERS_DATABASE_NAME || "gapuserlocaldb";
 

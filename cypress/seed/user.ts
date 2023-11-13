@@ -19,6 +19,7 @@ const ADMIN_ID = -(+process.env.FIRST_USER_ID + 1);
 const APPLICANT_ID = -(+process.env.FIRST_USER_ID + 2);
 
 const userSubstitutions = {
+  [insertDepartments]: [SUPER_ADMIN_ID],
   [insertUsers]: [
     SUPER_ADMIN_ID,
     process.env.ONE_LOGIN_SUPER_ADMIN_EMAIL,
@@ -52,15 +53,12 @@ const userSubstitutions = {
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     process.env.ONE_LOGIN_APPLICANT_EMAIL,
   ],
+  [deleteDepartments]: [SUPER_ADMIN_ID],
 };
 
 export const createTestUsers = async (): Promise<void> => {
   await runSQLFromJs(
-    [
-      //insertDepartments,
-      insertUsers,
-      insertRoles,
-    ],
+    [insertDepartments, insertUsers, insertRoles],
     userSubstitutions,
     userServiceDbName,
     userDatabaseUrl,
@@ -70,10 +68,7 @@ export const createTestUsers = async (): Promise<void> => {
 
 export const deleteTestUsers = async (): Promise<void> => {
   await runSQLFromJs(
-    [
-      deleteUsers,
-      //deleteDepartments
-    ],
+    [deleteUsers, deleteDepartments],
     userSubstitutions,
     userServiceDbName,
     userDatabaseUrl,

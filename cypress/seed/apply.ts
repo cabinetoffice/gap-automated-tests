@@ -56,6 +56,7 @@ const applySubstitutions = {
     APPLICANT_ID,
     process.env.ONE_LOGIN_APPLICANT_SUB,
   ],
+  [insertFundingOrgs]: [SUPER_ADMIN_ID],
   [insertAdmins]: [SUPER_ADMIN_ID, SUPER_ADMIN_ID, ADMIN_ID, ADMIN_ID],
   [insertGrantApplicantOrgProfiles]: [
     SUPER_ADMIN_ID,
@@ -78,6 +79,7 @@ const applySubstitutions = {
   [deleteApplications]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSchemes]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteAdmins]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
+  [deleteFundingOrgs]: [SUPER_ADMIN_ID],
   [deleteApplicants]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
   [deleteUsers]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
@@ -88,7 +90,7 @@ export const createApplyData = async (): Promise<void> => {
     [
       insertApplicants,
       insertUsers,
-      //insertFundingOrgs,
+      insertFundingOrgs,
       insertAdmins,
       insertGrantApplicantOrgProfiles,
       //insertSchemes,
@@ -112,7 +114,7 @@ export const deleteApplyData = async (): Promise<void> => {
       deleteAdmins,
       deleteApplicants,
       deleteUsers,
-      //deleteFundingOrgs,
+      deleteFundingOrgs,
       deleteApplicantOrgProfiles,
     ],
     applySubstitutions,
