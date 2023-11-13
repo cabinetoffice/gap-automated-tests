@@ -93,9 +93,9 @@ describe("Find a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    searchForGrant(Cypress.env("testV1GrantName"));
+    searchForGrant(Cypress.env("testV1Grant").name);
 
-    cy.contains(Cypress.env("testV1GrantName"));
+    cy.contains(Cypress.env("testV1Grant").name);
 
     const grantData = {
       Location: "National",
@@ -107,8 +107,8 @@ describe("Find a Grant", () => {
       "Closing date": "24 October 2040, 11:59pm",
     };
     Object.entries(grantData).forEach(([key, value]) => {
-      cy.get("#cypress_test_advert_contentful_slug").contains(key);
-      cy.get("#cypress_test_advert_contentful_slug").contains(value);
+      cy.get(`#${Cypress.env("testV1Grant").contentfulSlug}`).contains(key);
+      cy.get(`#${Cypress.env("testV1Grant").contentfulSlug}`).contains(value);
     });
   });
 
@@ -174,12 +174,14 @@ describe("Find a Grant", () => {
       "Search term must be 100 characters or less",
     );
 
-    cy.get('[data-cy="cySearchAgainInput"]').click().type(TEST_GRANT_NAME);
+    cy.get('[data-cy="cySearchAgainInput"]')
+      .click()
+      .type(Cypress.env("testV1Grant").name);
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
     cy.get('[data-cy="cyGrantNameAndLink"]').should(
       "include.text",
-      Cypress.env("testV1GrantName"),
+      Cypress.env("testV1Grant").name,
     );
   });
 

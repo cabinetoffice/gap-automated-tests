@@ -13,7 +13,7 @@ const ADVERTS = [
         "en-US": "£10,000",
       },
       grantWebpageUrl: {
-        "en-US": `${process.env.POST_LOGIN_BASE_URL}/apply/applicant/applications/-${process.env.FIRST_USER_ID}`,
+        "en-US": TEST_V1_GRANT.applicationUrl,
       },
       grantMinimumAwardDisplay: {
         "en-US": "£1",

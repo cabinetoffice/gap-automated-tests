@@ -41,6 +41,10 @@ const ADMIN_ID = -(+process.env.FIRST_USER_ID + 1);
 const APPLICANT_ID = -(+process.env.FIRST_USER_ID + 2);
 const FUNDING_ID = -process.env.FIRST_USER_ID;
 const SCHEME_ID = -process.env.FIRST_USER_ID;
+const ADVERT_ID = `${process.env.FIRST_USER_ID.padStart(
+  8,
+  "0",
+)}-0000-0000-0000-000000000000`;
 
 const applySubstitutions = {
   [insertApplicants]: [
@@ -83,8 +87,15 @@ const applySubstitutions = {
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
   ],
-  [insertApplications]: [SCHEME_ID, SCHEME_ID, ADMIN_ID, ADMIN_ID],
+  [insertApplications]: [
+    SCHEME_ID,
+    SCHEME_ID,
+    ADMIN_ID,
+    TEST_V1_GRANT.applicationName,
+    ADMIN_ID,
+  ],
   [insertAdverts]: [
+    ADVERT_ID,
     TEST_V1_GRANT.contentfulId,
     TEST_V1_GRANT.contentfulSlug,
     TEST_V1_GRANT.name,

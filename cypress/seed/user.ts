@@ -17,16 +17,19 @@ const userDatabaseUrl: string =
 const SUPER_ADMIN_ID = -process.env.FIRST_USER_ID;
 const ADMIN_ID = -(+process.env.FIRST_USER_ID + 1);
 const APPLICANT_ID = -(+process.env.FIRST_USER_ID + 2);
+const DEPARTMENT_ID = -process.env.FIRST_USER_ID;
 
 const userSubstitutions = {
-  [insertDepartments]: [SUPER_ADMIN_ID],
+  [insertDepartments]: [DEPARTMENT_ID],
   [insertUsers]: [
     SUPER_ADMIN_ID,
     process.env.ONE_LOGIN_SUPER_ADMIN_EMAIL,
     process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
+    DEPARTMENT_ID,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     process.env.ONE_LOGIN_ADMIN_SUB,
+    DEPARTMENT_ID,
     APPLICANT_ID,
     process.env.ONE_LOGIN_APPLICANT_EMAIL,
     process.env.ONE_LOGIN_APPLICANT_SUB,
@@ -53,7 +56,7 @@ const userSubstitutions = {
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     process.env.ONE_LOGIN_APPLICANT_EMAIL,
   ],
-  [deleteDepartments]: [SUPER_ADMIN_ID],
+  [deleteDepartments]: [DEPARTMENT_ID],
 };
 
 export const createTestUsers = async (): Promise<void> => {

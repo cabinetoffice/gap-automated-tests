@@ -54,7 +54,9 @@ export default defineConfig({
       applyDbName: process.env["APPLY_DATABASE_NAME"],
       applicationBaseUrl: process.env["APPLICATION_BASE_URL"],
       postLoginBaseUrl: process.env["POST_LOGIN_BASE_URL"],
-      testV1GrantName: TEST_V1_GRANT.name,
+      testV1Grant: {
+        ...TEST_V1_GRANT,
+      },
     },
     reporter: "cypress-mochawesome-reporter",
     reporterOptions: {
