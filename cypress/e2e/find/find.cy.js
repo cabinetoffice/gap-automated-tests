@@ -18,6 +18,22 @@ const checkForNoSavedSearchesOrNotifications = () => {
   );
 };
 
+const checkSuccessBanner = (headerElement, bodyElement, bodyText) => {
+  cy.get(headerElement).should("have.text", "Success");
+  cy.get(bodyElement).should("contain.text", bodyText);
+};
+
+// TODO: Implement date assertions - make sure format matches dates used on site
+const convertDate = (subscribedDate) => {
+  const dateOfSubscription = new Date(subscribedDate);
+  return dateOfSubscription.toLocaleString([], {
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
 describe("Find a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
@@ -133,6 +149,7 @@ describe("Find a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
+    // --- UNAUTHENTICATED JOURNEY ---
     // go to home page
     cy.contains("Find a grant");
 
@@ -147,6 +164,9 @@ describe("Find a Grant", () => {
 
     // click 'Sign up for updates' and continue to One Login
     clickText("Sign up for updates");
+    //capture date
+    cy.wrap(Date.now()).as("subscribedDate");
+
     checkInfoScreen(
       "Sign up for updates",
       "To sign up for updates, you need to sign in with GOV.UK One Login.",
@@ -159,24 +179,85 @@ describe("Find a Grant", () => {
 
     signInAsFindApplicant();
 
-    // Check success banner appears
-    //TODO : FIX BANNER, WAS NOT SHOWING UP SO DECIDED TO MOVE ON WITHOUT CHECK
-    cy.get('[data-cy="cySubscribeSuccessMessageContent"]');
-
-    // Assert that the notification appears
-    cy.get('[data-cy="cyadvert NameUnsubscriptionTableName"]').should(
-      "have.text",
-      "Cypress - Automated E2E Test Grant",
+    // check success banner and notification has appeared
+    checkSuccessBanner(
+      '[data-cy="cyImportantBannerTitle"]',
+      '[data-cy="cyImportantBannerBody"]',
+      "You have signed up for updates about",
     );
-    // Click unsubscribe
-    // Land on unsubscribe confirmation
-    // Cancel
 
-    // Click unsubscribe
-    // Land on unsubscribe confirmation
-    // Confirm
+    cy.get(
+      '[data-cy="cyCypress - Automated E2E Test GrantUnsubscriptionTableName"]',
+    ).should("have.text", "Cypress - Automated E2E Test Grant");
 
-    // See success banner for unsubscribing
-    // Ensure notification no longer exists
+    // TODO : Implement Date Assertions
+    // cy.get('@subscribedDate').then((subscribedDateTimestamp) => {
+    //   const subscriptionDate = convertDate(subscribedDateTimestamp);
+    //   cy.get('[data-cy="cyCypress - Automated E2E Test GrantUnsubscriptionTableName"]')
+    //       .parent()
+    //       .next()
+    //       .should('contain.text',
+    //           "You signed up for updates on "
+    //           + subscriptionDate.getDay() + " "
+    //           + subscriptionDate.getMonth()
+    //           + subscriptionDate.getFullYear() + " at "
+    //           + subscriptionDate.getHours() + ":" + subscriptionDate.getMinutes());
+    //
+    // });
+
+    // Cancel unsubscribe action
+    clickText("Unsubscribe");
+    cy.get('[data-cy="cyUnsubscribeGrantConfirmationPageTitle"]').should(
+      "have.text",
+      "Are you sure you want to unsubscribe?",
+    );
+    clickText("Cancel");
+
+    // Unsubscribe from updates
+    clickText("Unsubscribe");
+    cy.get('[data-cy="cyUnsubscribeConfirmationButton"]').click();
+
+    // Check confirmation banner and that notification has been removed
+    checkSuccessBanner(
+      "#govuk-notification-banner-title",
+      '[data-cy="cySubscribeSuccessMessageContent"]',
+      "You have been unsubscribed from",
+    );
+    checkForNoSavedSearchesOrNotifications();
+
+    // --- AUTHENTICATED JOURNEY ---
+    // search for grant
+    clickText("Search for grants");
+    cy.get('[name="searchTerm"]').type("Cypress");
+    cy.get('[data-cy="cySearchAgainButton"]').click();
+
+    cy.get("#cypress_test_advert_contentful_slug")
+      .children("h2")
+      .should("have.text", "Cypress - Automated E2E Test Grant")
+      .click();
+
+    clickText("Sign up for updates");
+
+    checkSuccessBanner(
+      "#govuk-notification-banner-title",
+      '[data-cy="cySubscribeSuccessMessageContent"]',
+      "You have signed up for updates about",
+    );
+
+    cy.get(
+      '[data-cy="cyCypress - Automated E2E Test GrantUnsubscriptionTableName"]',
+    ).should("have.text", "Cypress - Automated E2E Test Grant");
+
+    // Unsubscribe from updates
+    clickText("Unsubscribe");
+    cy.get('[data-cy="cyUnsubscribeConfirmationButton"]').click();
+
+    // Check confirmation banner and that notification has been removed
+    checkSuccessBanner(
+      "#govuk-notification-banner-title",
+      '[data-cy="cySubscribeSuccessMessageContent"]',
+      "You have been unsubscribed from",
+    );
+    checkForNoSavedSearchesOrNotifications();
   });
 });
