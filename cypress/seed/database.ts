@@ -1,5 +1,4 @@
 import { Client } from "pg";
-import { promises as fs } from "fs";
 import "dotenv/config";
 
 export const runSQLFromJs = async (
@@ -13,6 +12,7 @@ export const runSQLFromJs = async (
     const client = new Client({ connectionString });
     await client.connect();
     for (const sqlScript of sqlScripts) {
+      //console.log("sqlScript: ", sqlScript, substitutions[sqlScript]);
       await client.query(sqlScript, substitutions[sqlScript] || []);
     }
     await client.end();

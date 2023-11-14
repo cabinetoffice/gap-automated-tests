@@ -11,7 +11,7 @@ import {
   clickBack,
   POST_LOGIN_BASE_URL,
 } from "../../common/common";
-import { TEST_GRANT_NAME } from "../../common/constants";
+import { TEST_V1_GRANT } from "../../common/constants";
 
 const fillOutCustomSection = () => {
   cy.get('[data-cy="cy-status-tag-Custom Section-Not Started"]');
@@ -309,16 +309,16 @@ describe("Apply for a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    searchForGrant(TEST_GRANT_NAME);
+    searchForGrant(Cypress.env("testV1Grant").name);
 
-    cy.contains(TEST_GRANT_NAME).click();
+    cy.contains(Cypress.env("testV1Grant").name).click();
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
-    cy.visit(`${POST_LOGIN_BASE_URL}/apply/applicant/applications/-1`);
+    cy.visit(Cypress.env("testV1Grant").applicationUrl);
 
     // checks 'mailto' support email link
     cy.get('[data-cy="cy-support-email"]').should(
@@ -346,13 +346,14 @@ describe("Apply for a Grant", () => {
     cy.contains("Your applications");
     cy.contains("All of your current and past applications are listed below.");
     cy.contains("Name of grant");
-    cy.contains("Cypress - Test Application");
+    cy.contains(Cypress.env("testV1Grant").applicationName);
 
     // checks that clicking on submitted application does nothing
-    cy.get('[data-cy="cy-application-link-Cypress - Test Application"]').should(
-      "not.have.attr",
-      "href",
-    );
+    cy.get(
+      `[data-cy="cy-application-link-${
+        Cypress.env("testV1Grant").applicationName
+      }"]`,
+    ).should("not.have.attr", "href");
   });
 
   it("can start, save, come back, continue and submit new grant application", () => {
@@ -360,16 +361,16 @@ describe("Apply for a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    searchForGrant(TEST_GRANT_NAME);
+    searchForGrant(Cypress.env("testV1Grant").name);
 
-    cy.contains(TEST_GRANT_NAME).click();
+    cy.contains(Cypress.env("testV1Grant").name).click();
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
-    cy.visit(`${POST_LOGIN_BASE_URL}/apply/applicant/applications/-1`);
+    cy.visit(Cypress.env("testV1Grant").applicationUrl);
 
     fillOutEligibity();
 
@@ -381,7 +382,7 @@ describe("Apply for a Grant", () => {
     signInAsApplyApplicant();
 
     cy.get('[data-cy="cy-your-applications-link"]').click();
-    cy.contains("Cypress - Test Application").click();
+    cy.contains(Cypress.env("testV1Grant").applicationName).click();
 
     cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
 
@@ -402,7 +403,7 @@ describe("Apply for a Grant", () => {
     cy.contains("Your applications");
     cy.contains("All of your current and past applications are listed below.");
     cy.contains("Name of grant");
-    cy.contains("Cypress - Test Application");
+    cy.contains(Cypress.env("testV1Grant").applicationName);
   });
 
   it("test that doc upload is required for relevant application form", () => {
@@ -410,16 +411,16 @@ describe("Apply for a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    searchForGrant(TEST_GRANT_NAME);
+    searchForGrant(Cypress.env("testV1Grant").name);
 
-    cy.contains(TEST_GRANT_NAME).click();
+    cy.contains(Cypress.env("testV1Grant").name).click();
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     signInAsApplyApplicant();
 
     // TODO fix this, we shouldn't need to manually navigate
-    cy.visit(`${POST_LOGIN_BASE_URL}/apply/applicant/applications/-1`);
+    cy.visit(Cypress.env("testV1Grant").applicationUrl);
 
     fillOutEligibity();
 

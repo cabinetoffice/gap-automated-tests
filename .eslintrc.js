@@ -19,5 +19,8 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  rules: {},
+  plugins: ["no-only-tests"],
+  rules: {
+    "no-only-tests/no-only-tests": "error",
+  },
 };

@@ -21,6 +21,7 @@ import {
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
 } from "./ts/deleteApplyData";
+import { TEST_V1_GRANT } from "../common/constants";
 
 const applyServiceDbName: string =
   process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
@@ -35,17 +36,88 @@ const allSubs: string[] = [
   process.env.ONE_LOGIN_APPLICANT_SUB,
 ];
 
+const SUPER_ADMIN_ID = -Math.abs(+process.env.FIRST_USER_ID);
+const ADMIN_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 1);
+const APPLICANT_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 2);
+const FUNDING_ID = -Math.abs(+process.env.FIRST_USER_ID);
+const SCHEME_ID = -Math.abs(+process.env.FIRST_USER_ID);
+const ADVERT_ID = `${Math.abs(+process.env.FIRST_USER_ID)
+  .toString()
+  .padStart(8, "0")}-0000-0000-0000-000000000000`;
+
 const applySubstitutions = {
-  [insertApplicants]: allSubs,
-  [insertUsers]: allSubs,
-  [insertSchemes]: [process.env.ONE_LOGIN_ADMIN_EMAIL],
-  [deleteAdverts]: allSubs,
-  [deleteSubmissions]: allSubs,
-  [deleteApplications]: allSubs,
-  [deleteSchemes]: allSubs,
-  [deleteAdmins]: allSubs,
-  [deleteApplicants]: allSubs,
-  [deleteUsers]: allSubs,
+  [insertApplicants]: [
+    SUPER_ADMIN_ID,
+    process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
+    ADMIN_ID,
+    process.env.ONE_LOGIN_ADMIN_SUB,
+    APPLICANT_ID,
+    process.env.ONE_LOGIN_APPLICANT_SUB,
+  ],
+  [insertUsers]: [
+    SUPER_ADMIN_ID,
+    process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
+    ADMIN_ID,
+    process.env.ONE_LOGIN_ADMIN_SUB,
+    APPLICANT_ID,
+    process.env.ONE_LOGIN_APPLICANT_SUB,
+  ],
+  [insertFundingOrgs]: [FUNDING_ID],
+  [insertAdmins]: [
+    SUPER_ADMIN_ID,
+    FUNDING_ID,
+    SUPER_ADMIN_ID,
+    ADMIN_ID,
+    FUNDING_ID,
+    ADMIN_ID,
+  ],
+  [insertGrantApplicantOrgProfiles]: [
+    SUPER_ADMIN_ID,
+    SUPER_ADMIN_ID,
+    ADMIN_ID,
+    ADMIN_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+  ],
+  [insertSchemes]: [
+    SCHEME_ID,
+    FUNDING_ID,
+    ADMIN_ID,
+    process.env.ONE_LOGIN_ADMIN_EMAIL,
+    ADMIN_ID,
+  ],
+  [insertApplications]: [
+    SCHEME_ID,
+    SCHEME_ID,
+    ADMIN_ID,
+    TEST_V1_GRANT.applicationName,
+    ADMIN_ID,
+  ],
+  [insertAdverts]: [
+    ADVERT_ID,
+    TEST_V1_GRANT.contentfulId,
+    TEST_V1_GRANT.contentfulSlug,
+    TEST_V1_GRANT.name,
+    ADMIN_ID,
+    ADMIN_ID,
+    SCHEME_ID,
+  ],
+  [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
+  [deleteSubmissions]: [
+    SUPER_ADMIN_ID,
+    ADMIN_ID,
+    APPLICANT_ID,
+    SUPER_ADMIN_ID,
+    ADMIN_ID,
+    ...allSubs,
+  ],
+  [deleteApplications]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
+  [deleteSchemes]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
+  [deleteAdmins]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
+  [deleteFundingOrgs]: [SUPER_ADMIN_ID],
+  [deleteApplicants]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
+  [deleteUsers]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
+  [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 
 export const createApplyData = async (): Promise<void> => {
