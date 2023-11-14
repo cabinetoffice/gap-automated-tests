@@ -49,7 +49,7 @@ const fillOutCustomSectionUntilDocUpload = () => {
   clickSaveAndContinue();
 };
 
-const fillOutCustomSectionFromDocUpload = () => {
+const fillOutDocUpload = () => {
   cy.get('[data-testid="file-upload-input"]').as("fileInput");
   cy.fixture("example.doc").then((fileContent) => {
     cy.get("@fileInput").attachFile({
@@ -59,15 +59,16 @@ const fillOutCustomSectionFromDocUpload = () => {
     });
   });
   clickSaveAndContinue();
+};
 
+const fillOutCustomSectionAfterDocUpload = () => {
   const dateQuestionId = "e228a74a-290c-4b60-b4c1-d20b138ae10d";
   cy.get('[data-cy="cyDateFilter-' + dateQuestionId + 'Day"]').type("01");
   cy.get('[data-cy="cyDateFilter-' + dateQuestionId + 'Month"]').type("01");
   cy.get('[data-cy="cyDateFilter-' + dateQuestionId + 'Year"]').type("2000");
   clickSaveAndContinue();
 
-  cy.get('[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]').click();
-  clickSaveAndContinue();
+  yesSectionComplete();
 
   cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
 };
@@ -347,7 +348,8 @@ describe("Apply for a Grant", () => {
     fillOutRequiredChecks();
 
     fillOutCustomSectionUntilDocUpload();
-    fillOutCustomSectionFromDocUpload();
+    fillOutDocUpload();
+    fillOutCustomSectionAfterDocUpload();
 
     cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
     cy.get('[data-cy="cy-status-tag-Required checks-Completed"]');
@@ -392,14 +394,18 @@ describe("Apply for a Grant", () => {
     clickSaveAndContinue();
     clickSaveAndContinue();
 
-    fillOutCustomSectionFromDocUpload();
+    fillOutDocUpload();
+
+    clickSaveAndContinue();
+    yesSectionComplete();
+    cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
 
     cy.contains("Submit application").should("not.be.disabled");
 
     // submit
     submitApplication();
 
-    equalitySectionDecline();
+    equalitySectionAccept();
 
     cy.contains("View your applications").click();
 
