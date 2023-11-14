@@ -3,10 +3,6 @@ export const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
 export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
 
 export const signInWithOneLoginApply = (email: string, password: string) => {
-  cy.contains("Sign in with GOV.UK One Login").click();
-  cy.origin(ONE_LOGIN_BASE_URL, () => {
-    cy.contains("Sign in").click();
-  });
   signInWithOneLogin(email, password);
 };
 
@@ -15,10 +11,6 @@ export const signInWithOneLogin = (email: string, password: string) => {
     ONE_LOGIN_BASE_URL,
     { args: { email, password } },
     ({ email, password }) => {
-      clickText("Continue to One Login");
-      cy.origin(ONE_LOGIN_BASE_URL, () => {
-        cy.get('[id="sign-in-button"]').click();
-      });
       cy.get('[name="email"]').type(email);
       cy.contains("Continue").click();
       cy.get('[name="password"]').type(password);
@@ -44,6 +36,10 @@ export const signInAsApplyApplicant = () => {
 };
 
 export const signInAsFindApplicant = () => {
+  cy.contains("Sign in with GOV.UK One Login").click();
+  cy.origin(ONE_LOGIN_BASE_URL, () => {
+    cy.contains("Sign in").click();
+  });
   signInWithOneLogin(
     Cypress.env("oneLoginApplicantEmail"),
     Cypress.env("oneLoginApplicantPassword"),
