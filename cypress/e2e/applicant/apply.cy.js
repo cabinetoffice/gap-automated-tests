@@ -11,7 +11,6 @@ import {
   clickBack,
   POST_LOGIN_BASE_URL,
 } from "../../common/common";
-import { TEST_V1_GRANT } from "../../common/constants";
 
 const fillOutCustomSectionUntilDocUpload = () => {
   cy.get('[data-cy="cy-status-tag-Custom Section-Not Started"]');
@@ -280,25 +279,25 @@ const equalitySectionAccept = () => {
   );
 };
 
-const equalitySectionDecline = () => {
-  cy.contains("We have received your application");
-  cy.contains(
-    "Before you finish using the service, we’d like to ask some equality questions.",
-  );
-  cy.contains("Do you want to answer the equality questions?");
-  cy.contains(
-    "These questions are optional. We would like to understand who the grant will benefit.",
-  );
-  cy.contains("Your answers will not affect your application.");
-  cy.get("[data-cy=cy-radioInput-option-NoSkipTheEqualityQuestions]").click();
-  clickContinue();
-
-  cy.contains("Application submitted");
-  cy.contains("What happens next");
-  cy.contains(
-    "The funding organisation will contact you once they have reviewed your application.",
-  );
-};
+// const equalitySectionDecline = () => {
+//   cy.contains("We have received your application");
+//   cy.contains(
+//     "Before you finish using the service, we’d like to ask some equality questions.",
+//   );
+//   cy.contains("Do you want to answer the equality questions?");
+//   cy.contains(
+//     "These questions are optional. We would like to understand who the grant will benefit.",
+//   );
+//   cy.contains("Your answers will not affect your application.");
+//   cy.get("[data-cy=cy-radioInput-option-NoSkipTheEqualityQuestions]").click();
+//   clickContinue();
+//
+//   cy.contains("Application submitted");
+//   cy.contains("What happens next");
+//   cy.contains(
+//     "The funding organisation will contact you once they have reviewed your application.",
+//   );
+// };
 
 describe("Apply for a Grant", () => {
   beforeEach(() => {
@@ -307,7 +306,7 @@ describe("Apply for a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("can start, save, come back, continue and submit new grant application", () => {
+  it.only("can start, save, come back, continue and submit new grant application", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -509,7 +508,7 @@ describe("Apply for a Grant", () => {
 
     // TODO reenable click when MFA strategy is defined
     cy.contains("Change your sign in details in your GOV.UK One Login");
-    //.click();
+    // .click();
 
     // cy.origin(Cypress.env('oneLoginBaseUrl'), () => {
     //   cy.contains("Enter the 6 digit security code");

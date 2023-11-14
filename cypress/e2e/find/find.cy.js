@@ -5,7 +5,6 @@ import {
   signInAsFindApplicant,
   ONE_LOGIN_BASE_URL,
 } from "../../common/common";
-import { TEST_V1_GRANT } from "../../common/constants";
 
 const checkManageNotificationsInfoScreen = () => {
   cy.get("h1").should("have.text", "Manage your notifications");
@@ -52,7 +51,7 @@ describe("Find a Grant", () => {
   it("Interacts with the home page and enters a search term > 100 characters", () => {
     cy.contains("Find a grant");
 
-    //navigates to about us menu
+    // navigates to about us menu
     cy.get('[data-cy="cyaboutGrantsPageLink"]').click();
 
     cy.get('[data-cy="cyAbout usTitle"]').should("have.text", "About us");
@@ -62,7 +61,7 @@ describe("Find a Grant", () => {
       .should("have.text", "Home")
       .click();
 
-    //browse grants and perform invalid search on home page(> 100 characters)
+    // browse grants and perform invalid search on home page(> 100 characters)
     cy.get('[data-cy="cyBrowseGrantsHomePageTextLink"]').click();
 
     cy.get('[data-cy="cyhomePageLink"]')
@@ -70,13 +69,13 @@ describe("Find a Grant", () => {
       .should("have.text", "Home")
       .click();
 
-    //perform invalid search
+    // perform invalid search
     const invalidSearch = "x".repeat(101);
     cy.get('[data-cy="cyHomePageSearchInput"]').click().type(invalidSearch);
 
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
 
-    //assert the error banner is there and contains correct text
+    // assert the error banner is there and contains correct text
     cy.get('[data-cy="cyErrorBannerHeading"]').should(
       "have.text",
       "There is a problem",
@@ -163,7 +162,7 @@ describe("Find a Grant", () => {
     cy.get('[data-cy="cyPaginationNextButton"]').should("not.exist");
     cy.get('[data-cy="cyPaginationPageNumber1"]').click();
 
-    //perform invalid search
+    // perform invalid search
     const invalidSearch = "x".repeat(101);
     cy.get('[data-cy="cySearchAgainInput"]').click().type(invalidSearch);
     cy.get('[data-cy="cySearchAgainButton"]').click();
