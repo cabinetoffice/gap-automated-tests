@@ -17,7 +17,28 @@ on:
         type: string
 
 jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress install
+        uses: cypress-io/github-action@v6
+        with:
+          # Disable running of tests within install job
+          runTests: false
+          build: npm run build
+
+      - name: Save build folder
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          if-no-files-found: error
+          path: dist
+          
   reusable_e2e_test_run:
+    needs: install
     name: Run E2E Tests env:${{ inputs.environment }} suite:${{ inputs.suite }} browser:${{ inputs.browser }}
     runs-on: ubuntu-latest
     concurrency: e2e_test_run_${{ inputs.environment }}
@@ -39,68 +60,45 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
 
-      - name: Dump context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "${GITHUB_CONTEXT}"
-
       - name: Checkout repo
         uses: actions/checkout@master
 
-      - name: Generate .env
-        run: |
-          cat << EOF > .env
-          ONE_LOGIN_BASE_URL=${{ secrets[format('{0}_ONE_LOGIN_BASE_URL', inputs.environment)] }}
-          ONE_LOGIN_USERNAME=${{ secrets[format('{0}_ONE_LOGIN_USERNAME', inputs.environment)] }}
-          ONE_LOGIN_PASSWORD=${{ secrets[format('{0}_ONE_LOGIN_PASSWORD', inputs.environment)] }}
-          APPLICATION_BASE_URL=${{ secrets[format('{0}_APPLICATION_BASE_URL', inputs.environment)] }}
-          POST_LOGIN_BASE_URL=${{ secrets[format('{0}_POST_LOGIN_BASE_URL', inputs.environment)] }}
-          ONE_LOGIN_APPLICANT_EMAIL=${{ secrets.ONE_LOGIN_APPLICANT_EMAIL }}
-          ONE_LOGIN_APPLICANT_PASSWORD=${{ secrets.ONE_LOGIN_APPLICANT_PASSWORD }}
-          ONE_LOGIN_APPLICANT_SUB=${{ secrets[format('{0}_ONE_LOGIN_APPLICANT_SUB', inputs.environment)] }}
-          ONE_LOGIN_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_ADMIN_EMAIL }}
-          ONE_LOGIN_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_ADMIN_PASSWORD }}
-          ONE_LOGIN_ADMIN_SUB=${{ secrets[format('{0}_ONE_LOGIN_ADMIN_SUB', inputs.environment)] }}
-          ONE_LOGIN_SUPER_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_SUPER_ADMIN_EMAIL }}
-          ONE_LOGIN_SUPER_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_SUPER_ADMIN_PASSWORD }}
-          ONE_LOGIN_SUPER_ADMIN_SUB=${{ secrets[format('{0}_ONE_LOGIN_SUPER_ADMIN_SUB', inputs.environment)] }}
-          AWS_VPC_SG_ID=${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }}
-          USERS_DATABASE_URL =${{ secrets[format('{0}_USERS_DATABASE_URL', inputs.environment)] }}
-          USERS_DATABASE_NAME=${{ secrets[format('{0}_USERS_DATABASE_NAME', inputs.environment)] }}
-          APPLY_DATABASE_URL =${{ secrets[format('{0}_APPLY_DATABASE_URL', inputs.environment)] }}
-          APPLY_DATABASE_NAME=${{ secrets[format('{0}_APPLY_DATABASE_NAME', inputs.environment)] }}
-          CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
-          CONTENTFUL_ACCESS_TOKEN=${{ secrets[format('{0}_CONTENTFUL_ACCESS_TOKEN', inputs.environment)] }}
-          CONTENTFUL_ENVIRONMENT_ID=${{ vars[format('{0}_CONTENTFUL_ENVIRONMENT_ID', inputs.environment)] }}
-          FIRST_USER_ID=1
-          EOF
-
-      - name: Setup node
-        uses: actions/setup-node@master
+      - name: Download the build folder
+        uses: actions/download-artifact@v3
         with:
-          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+          name: build
+          path: build
 
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        id: npm-cache
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
         with:
-          path: |
-            ${{ steps.npm-cache-dir-path.outputs.dir }}
-            **/node_modules
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: |
-          npm ci
-
-      - name: Run Tests
-        run: |
-          npm run cy:run:${{ inputs.suite }} -- --browser ${{ inputs.browser }}
-
+          browser: ${{ inputs.browser }}
+          spec: ${{ inputs.suite == 'all' && 'cypress/**' || inputs.suite == 'cypress/e2e/superadmin' && 'cypress/e2e/super-admin' || ('cypress/e2e/' + inputs.suite) }}/*.cy.js
+        env:
+          CYPRESS_ONE_LOGIN_BASE_URL: ${{ secrets[format('{0}_ONE_LOGIN_BASE_URL', inputs.environment)] }}
+          CYPRESS_ONE_LOGIN_USERNAME: ${{ secrets[format('{0}_ONE_LOGIN_USERNAME', inputs.environment)] }}
+          CYPRESS_ONE_LOGIN_PASSWORD: ${{ secrets[format('{0}_ONE_LOGIN_PASSWORD', inputs.environment)] }}
+          CYPRESS_APPLICATION_BASE_URL: ${{ secrets[format('{0}_APPLICATION_BASE_URL', inputs.environment)] }}
+          CYPRESS_POST_LOGIN_BASE_URL: ${{ secrets[format('{0}_POST_LOGIN_BASE_URL', inputs.environment)] }}
+          CYPRESS_ONE_LOGIN_APPLICANT_EMAIL: ${{ secrets.ONE_LOGIN_APPLICANT_EMAIL }}
+          CYPRESS_ONE_LOGIN_APPLICANT_PASSWORD: ${{ secrets.ONE_LOGIN_APPLICANT_PASSWORD }}
+          CYPRESS_ONE_LOGIN_APPLICANT_SUB: ${{ secrets[format('{0}_ONE_LOGIN_APPLICANT_SUB', inputs.environment)] }}
+          CYPRESS_ONE_LOGIN_ADMIN_EMAIL: ${{ secrets.ONE_LOGIN_ADMIN_EMAIL }}
+          CYPRESS_ONE_LOGIN_ADMIN_PASSWORD: ${{ secrets.ONE_LOGIN_ADMIN_PASSWORD }}
+          CYPRESS_ONE_LOGIN_ADMIN_SUB: ${{ secrets[format('{0}_ONE_LOGIN_ADMIN_SUB', inputs.environment)] }}
+          CYPRESS_ONE_LOGIN_SUPER_ADMIN_EMAIL: ${{ secrets.ONE_LOGIN_SUPER_ADMIN_EMAIL }}
+          CYPRESS_ONE_LOGIN_SUPER_ADMIN_PASSWORD: ${{ secrets.ONE_LOGIN_SUPER_ADMIN_PASSWORD }}
+          CYPRESS_ONE_LOGIN_SUPER_ADMIN_SUB: ${{ secrets[format('{0}_ONE_LOGIN_SUPER_ADMIN_SUB', inputs.environment)] }}
+          CYPRESS_AWS_VPC_SG_ID: ${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }}
+          CYPRESS_USERS_DATABASE_URL: ${{ secrets[format('{0}_USERS_DATABASE_URL', inputs.environment)] }}
+          CYPRESS_USERS_DATABASE_NAME: ${{ secrets[format('{0}_USERS_DATABASE_NAME', inputs.environment)] }}
+          CYPRESS_APPLY_DATABASE_URL: ${{ secrets[format('{0}_APPLY_DATABASE_URL', inputs.environment)] }}
+          CYPRESS_APPLY_DATABASE_NAME: ${{ secrets[format('{0}_APPLY_DATABASE_NAME', inputs.environment)] }}
+          CYPRESS_CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
+          CYPRESS_CONTENTFUL_ACCESS_TOKEN: ${{ secrets[format('{0}_CONTENTFUL_ACCESS_TOKEN', inputs.environment)] }}
+          CYPRESS_CONTENTFUL_ENVIRONMENT_ID: ${{ vars[format('{0}_CONTENTFUL_ENVIRONMENT_ID', inputs.environment)] }}
+          CYPRESS_FIRST_USER_ID: 1
+          
       - name: Remove Github Actions IP from security group
         run: |
           aws ec2 revoke-security-group-ingress --group-id ${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
