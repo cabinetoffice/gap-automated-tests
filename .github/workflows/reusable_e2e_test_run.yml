@@ -74,7 +74,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           browser: ${{ inputs.browser }}
-          spec: ${{ inputs.suite == 'all' && 'cypress/**' || inputs.suite == 'superadmin' && 'cypress/e2e/super-admin' || format('cypress/e2e/{0}', inputs.suite) }}/*.cy.js
+          spec: ${{ inputs.suite == 'all' && 'cypress/**' || format('cypress/e2e/{0}/*.cy.js', inputs.suite == 'superadmin' && 'super-admin' || inputs.suite) }}
 
       - name: Remove Github Actions IP from security group
         run: |
