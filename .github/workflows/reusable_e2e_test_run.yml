@@ -73,7 +73,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           browser: ${{ inputs.browser }}
-          spec: ${{ inputs.suite == 'all' && 'cypress/**' || inputs.suite == 'superadmin' && 'cypress/e2e/super-admin' || ('cypress/e2e/' + inputs.suite) }}/*.cy.js
+          spec: ${{ inputs.suite == 'all' && 'cypress/**' || inputs.suite == 'superadmin' && 'cypress/e2e/super-admin' || format('{0}{1}', 'cypress/e2e/', inputs.suite) }}/*.cy.js
         env:
           CYPRESS_ONE_LOGIN_BASE_URL: ${{ secrets[format('{0}_ONE_LOGIN_BASE_URL', inputs.environment)] }}
           CYPRESS_ONE_LOGIN_USERNAME: ${{ secrets[format('{0}_ONE_LOGIN_USERNAME', inputs.environment)] }}
