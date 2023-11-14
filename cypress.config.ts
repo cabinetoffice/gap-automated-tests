@@ -2,10 +2,8 @@ import { defineConfig } from "cypress";
 require("dotenv").config();
 import { createTestUsers, deleteTestUsers } from "./cypress/seed/user";
 import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
-import {
-  deleteGrantAdverts,
-  publishGrantAdverts,
-} from "./cypress/seed/contentful";
+import { publishGrantAdverts } from "./cypress/seed/contentful";
+import { TEST_V1_GRANT } from "./cypress/common/constants";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 
 export default defineConfig({
@@ -29,7 +27,6 @@ export default defineConfig({
           return null;
         },
         async publishGrantsToContentful() {
-          await deleteGrantAdverts();
           await publishGrantAdverts();
 
           return null;
@@ -63,6 +60,9 @@ export default defineConfig({
       applyDbName: process.env["APPLY_DATABASE_NAME"],
       applicationBaseUrl: process.env["APPLICATION_BASE_URL"],
       postLoginBaseUrl: process.env["POST_LOGIN_BASE_URL"],
+      testV1Grant: {
+        ...TEST_V1_GRANT,
+      },
     },
     reporter: "cypress-mochawesome-reporter",
     reporterOptions: {
