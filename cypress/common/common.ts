@@ -40,7 +40,7 @@ export const signInAsApplyApplicant = () => {
 };
 
 export const signInAsFindApplicant = () => {
-  clickText("Continue to One Login");
+  clickText("Continue to GOV.UK One Login");
   cy.origin(ONE_LOGIN_BASE_URL, () => {
     cy.get('[id="sign-in-button"]').click();
   });
