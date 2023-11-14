@@ -42,6 +42,34 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@master
 
+      - name: Generate .env
+        run: |
+          cat << EOF > .env
+          ONE_LOGIN_BASE_URL=${{ secrets[format('{0}_ONE_LOGIN_BASE_URL', inputs.environment)] }}
+          ONE_LOGIN_USERNAME=${{ secrets[format('{0}_ONE_LOGIN_USERNAME', inputs.environment)] }}
+          ONE_LOGIN_PASSWORD=${{ secrets[format('{0}_ONE_LOGIN_PASSWORD', inputs.environment)] }}
+          APPLICATION_BASE_URL=${{ secrets[format('{0}_APPLICATION_BASE_URL', inputs.environment)] }}
+          POST_LOGIN_BASE_URL=${{ secrets[format('{0}_POST_LOGIN_BASE_URL', inputs.environment)] }}
+          ONE_LOGIN_APPLICANT_EMAIL=${{ secrets.ONE_LOGIN_APPLICANT_EMAIL }}
+          ONE_LOGIN_APPLICANT_PASSWORD=${{ secrets.ONE_LOGIN_APPLICANT_PASSWORD }}
+          ONE_LOGIN_APPLICANT_SUB=${{ secrets[format('{0}_ONE_LOGIN_APPLICANT_SUB', inputs.environment)] }}
+          ONE_LOGIN_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_ADMIN_EMAIL }}
+          ONE_LOGIN_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_ADMIN_PASSWORD }}
+          ONE_LOGIN_ADMIN_SUB=${{ secrets[format('{0}_ONE_LOGIN_ADMIN_SUB', inputs.environment)] }}
+          ONE_LOGIN_SUPER_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_SUPER_ADMIN_EMAIL }}
+          ONE_LOGIN_SUPER_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_SUPER_ADMIN_PASSWORD }}
+          ONE_LOGIN_SUPER_ADMIN_SUB=${{ secrets[format('{0}_ONE_LOGIN_SUPER_ADMIN_SUB', inputs.environment)] }}
+          AWS_VPC_SG_ID=${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }}
+          USERS_DATABASE_URL =${{ secrets[format('{0}_USERS_DATABASE_URL', inputs.environment)] }}
+          USERS_DATABASE_NAME=${{ secrets[format('{0}_USERS_DATABASE_NAME', inputs.environment)] }}
+          APPLY_DATABASE_URL =${{ secrets[format('{0}_APPLY_DATABASE_URL', inputs.environment)] }}
+          APPLY_DATABASE_NAME=${{ secrets[format('{0}_APPLY_DATABASE_NAME', inputs.environment)] }}
+          CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
+          CONTENTFUL_ACCESS_TOKEN=${{ secrets[format('{0}_CONTENTFUL_ACCESS_TOKEN', inputs.environment)] }}
+          CONTENTFUL_ENVIRONMENT_ID=${{ vars[format('{0}_CONTENTFUL_ENVIRONMENT_ID', inputs.environment)] }}
+          FIRST_USER_ID=1
+          EOF
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
