@@ -44,7 +44,10 @@ function publishApplicationForm() {
 function sectionsAndQuestions() {
   //add section
   cy.get('[data-cy="cy-button-addNewSection"]').click();
-  cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Custom Section");
+  cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
+  cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Custom Section", {
+    force: true,
+  });
   clickSaveAndContinue();
 
   //add question to new section
@@ -107,7 +110,10 @@ function sectionsAndQuestions() {
 
   //add section
   cy.get('[data-cy="cy-button-addNewSection"]').click();
-  cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Deletable Section");
+  cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
+  cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Deletable Section", {
+    force: true,
+  });
   clickSaveAndContinue();
   //delete section
   cy.get('[data-cy="cy_sections_deleteSectionBtn-Deletable Section"]').click();
@@ -121,8 +127,13 @@ function sectionsAndQuestions() {
 
 function addOptionalQuestion(section, questionText, description, type) {
   cy.get(section).click();
-  cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText);
-  cy.get('[data-cy="cy-hintText-text-area"]').type(description);
+  cy.get('[data-cy="cy-fieldTitle-text-input"]').click();
+  cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText, {
+    force: true,
+  });
+  cy.get('[data-cy="cy-hintText-text-area"]').type(description, {
+    force: true,
+  });
   cy.get('[data-cy="cy-radioInput-option-No"]').click();
   clickSaveAndContinue();
   cy.get(type).click();
@@ -136,16 +147,26 @@ function addOptionalMultiChoiceQuestion(
   type,
 ) {
   cy.get(section).click();
-  cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText);
-  cy.get('[data-cy="cy-hintText-text-area"]').type(description);
+  cy.get('[data-cy="cy-fieldTitle-text-input"]').click();
+  cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText, {
+    force: true,
+  });
+  cy.get('[data-cy="cy-hintText-text-area"]').type(description, {
+    force: true,
+  });
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
   clickSaveAndContinue();
   cy.get(type).click();
   clickSaveAndContinue();
 
-  cy.get('[data-cy="cy-options[0]-text-input"]').type("Choice 1");
+  cy.get('[data-cy="cy-options[0]-text-input"]').click();
+  cy.get('[data-cy="cy-options[0]-text-input"]').type("Choice 1", {
+    force: true,
+  });
   cy.get('[data-cy="cy-button-Add another option"]').click();
-  cy.get('[data-cy="cy-options[1]-text-input"]').type("Choice 2");
+  cy.get('[data-cy="cy-options[1]-text-input"]').type("Choice 2", {
+    force: true,
+  });
   cy.get('[data-cy="cy-button-Save question"]').click();
 }
 
