@@ -1,23 +1,19 @@
 // @ts-ignore
 import * as contentful from "contentful-management";
 import "dotenv/config";
+import { TEST_V1_GRANT } from "../common/constants";
 
-const SLUGS = [
-  "cypress_test_advert_contentful_slug",
-  "cypress_test_advert_contentful_slug_v2_internal",
-  "cypress_test_advert_contentful_slug_v2_external",
-];
 const ADVERTS = [
   {
     fields: {
       grantName: {
-        "en-US": "Cypress - Automated E2E Test Grant V1",
+        "en-US": TEST_V1_GRANT.name,
       },
       grantMaximumAwardDisplay: {
         "en-US": "£10,000",
       },
       grantWebpageUrl: {
-        "en-US": `${process.env.POST_LOGIN_BASE_URL}/apply/applicant/applications/-1`,
+        "en-US": TEST_V1_GRANT.applicationUrl,
       },
       grantMinimumAwardDisplay: {
         "en-US": "£1",
@@ -43,7 +39,7 @@ const ADVERTS = [
         "en-US": ["Personal / Individual"],
       },
       label: {
-        "en-US": "cypress_test_advert_contentful_slug",
+        "en-US": TEST_V1_GRANT.contentfulSlug,
       },
       grantMaximumAward: {
         "en-US": 10000,
@@ -283,6 +279,7 @@ const ADVERTS = [
     },
   },
 ];
+const SLUGS = ADVERTS.map((advert) => advert.fields.label["en-US"]);
 
 const unpublishAndDelete = async (entries) => {
   let deletionExecuted = false;
@@ -348,5 +345,3 @@ export const publishGrantAdverts = async () => {
         });
     });
 };
-
-export const deleteGrantAdverts = async () => {};
