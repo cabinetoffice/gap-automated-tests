@@ -16,29 +16,8 @@ on:
         default: SANDBOX
         type: string
 
-jobs:
-  install:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cypress install
-        uses: cypress-io/github-action@v6
-        with:
-          # Disable running of tests within install job
-          runTests: false
-          build: npm run build
-
-      - name: Save build folder
-        uses: actions/upload-artifact@v3
-        with:
-          name: build
-          if-no-files-found: error
-          path: dist
-          
+jobs:        
   reusable_e2e_test_run:
-    needs: install
     name: Run E2E Tests env:${{ inputs.environment }} suite:${{ inputs.suite }} browser:${{ inputs.browser }}
     runs-on: ubuntu-latest
     concurrency: e2e_test_run_${{ inputs.environment }}
@@ -62,12 +41,6 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@master
-
-      - name: Download the build folder
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: build
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
