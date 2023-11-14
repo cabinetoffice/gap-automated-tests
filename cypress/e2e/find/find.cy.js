@@ -5,13 +5,12 @@ import {
   signInAsFindApplicant,
   ONE_LOGIN_BASE_URL,
 } from "../../common/common";
-import { TEST_GRANT_NAME } from "../../common/constants";
 
+import { TEST_GRANT_NAME } from "../../common/constants";
 
 const checkInfoScreen = (headerText, bodyText) => {
   cy.get("h1").should("have.text", headerText);
   cy.contains(bodyText);
-
 };
 
 const checkForNoSavedSearchesOrNotifications = () => {
@@ -21,32 +20,65 @@ const checkForNoSavedSearchesOrNotifications = () => {
   );
 };
 
-
 const checkSuccessBanner = (headerElement, bodyElement, bodyText) => {
   cy.get(headerElement).should("have.text", "Success");
   cy.get(bodyElement).should("contain.text", bodyText);
 };
 
-// TODO: Implement date assertions - make sure format matches dates used on site
 const convertDate = (subscribedDate) => {
   const dateOfSubscription = new Date(subscribedDate);
-  return dateOfSubscription.toLocaleString([], {
+  const month = dateOfSubscription.toLocaleString([], {
     month: "long",
-    hour: "2-digit",
-    minute: "2-digit",
     hour12: true,
+  });
+  console.log("month: " + month);
+  const day = dateOfSubscription.getDay();
+  console.log(
+    "day (should be 14): " +
+      day.toLocaleString([], {
+        day: "numeric",
+      }),
+  );
+  const year = dateOfSubscription.getFullYear();
+  console.log("Year: " + year);
+  const hourAndPm = dateOfSubscription
+    .toLocaleString([], {
+      hour: "",
+      hour12: true,
+    })
+    .split(" ");
+  console.log("Hour: " + hourAndPm);
+  const minutes = dateOfSubscription.getMinutes();
+  console.log("Minutes : " + minutes);
+  // const amOrPm = dateOfSubscription.get
+  // console.log();
+
+  const dateAsString =
+    day +
+    " " +
+    month +
+    " " +
+    year +
+    " at " +
+    hourAndPm[0] +
+    ":" +
+    minutes +
+    hourAndPm[1];
+  console.log(dateAsString);
+  return dateAsString;
+};
 
 const countNumberOfPages = () => {
   cy.get('[data-cy="cyPaginationComponent"]')
-    .find("ul")
-    .children("li")
-    .last()
-    .prev()
-    .children("a")
-    .invoke("attr", "href")
-    .then((href) => {
-      cy.wrap(+href.split("page=")[1] - 1).as("pageCount");
-    });
+      .find("ul")
+      .children("li")
+      .last()
+      .prev()
+      .children("a")
+      .invoke("attr", "href")
+      .then((href) => {
+        cy.wrap(+href.split("page=")[1] - 1).as("pageCount");
+      });
 };
 
 const clickThroughPagination = (numberOfPages) => {
@@ -167,7 +199,6 @@ describe("Find a Grant", () => {
     checkForNoSavedSearchesOrNotifications();
   });
 
-
   it("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
     cy.task("setUpFindData");
     cy.task("publishGrantsToContentful");
@@ -183,9 +214,9 @@ describe("Find a Grant", () => {
     // cy.get('[data-cy="cyGrantNameAndLink"]').should('have.text', 'Cypress - Automated E2E Test Grant');
 
     cy.get("#cypress_test_advert_contentful_slug")
-      .children("h2")
-      .should("have.text", "Cypress - Automated E2E Test Grant")
-      .click();
+        .children("h2")
+        .should("have.text", "Cypress - Automated E2E Test Grant")
+        .click();
 
     // click 'Sign up for updates' and continue to One Login
     clickText("Sign up for updates");
@@ -193,8 +224,8 @@ describe("Find a Grant", () => {
     cy.wrap(Date.now()).as("subscribedDate");
 
     checkInfoScreen(
-      "Sign up for updates",
-      "To sign up for updates, you need to sign in with GOV.UK One Login.",
+        "Sign up for updates",
+        "To sign up for updates, you need to sign in with GOV.UK One Login.",
     );
     clickText("Continue to One Login");
 
@@ -206,35 +237,35 @@ describe("Find a Grant", () => {
 
     // check success banner and notification has appeared
     checkSuccessBanner(
-      '[data-cy="cyImportantBannerTitle"]',
-      '[data-cy="cyImportantBannerBody"]',
-      "You have signed up for updates about",
+        "#govuk-notification-banner-title",
+        '[data-cy="cyImportantBannerBody"]',
+        "You have signed up for updates about",
     );
 
     cy.get(
-      '[data-cy="cyCypress - Automated E2E Test GrantUnsubscriptionTableName"]',
+        '[data-cy="cyCypress - Automated E2E Test GrantUnsubscriptionTableName"]',
     ).should("have.text", "Cypress - Automated E2E Test Grant");
 
     // TODO : Implement Date Assertions
-    // cy.get('@subscribedDate').then((subscribedDateTimestamp) => {
-    //   const subscriptionDate = convertDate(subscribedDateTimestamp);
-    //   cy.get('[data-cy="cyCypress - Automated E2E Test GrantUnsubscriptionTableName"]')
-    //       .parent()
-    //       .next()
-    //       .should('contain.text',
-    //           "You signed up for updates on "
-    //           + subscriptionDate.getDay() + " "
-    //           + subscriptionDate.getMonth()
-    //           + subscriptionDate.getFullYear() + " at "
-    //           + subscriptionDate.getHours() + ":" + subscriptionDate.getMinutes());
-    //
-    // });
+    cy.get("@subscribedDate").then((subscribedDateTimestamp) => {
+      const subscriptionDate = convertDate(subscribedDateTimestamp);
+
+      cy.get(
+          '[data-cy="cyCypress - Automated E2E Test GrantUnsubscriptionTableName"]',
+      )
+          .parent()
+          .next()
+          .should(
+              "contain.text",
+              "You signed up for updates on " + subscriptionDate,
+          );
+    });
 
     // Cancel unsubscribe action
     clickText("Unsubscribe");
     cy.get('[data-cy="cyUnsubscribeGrantConfirmationPageTitle"]').should(
-      "have.text",
-      "Are you sure you want to unsubscribe?",
+        "have.text",
+        "Are you sure you want to unsubscribe?",
     );
     clickText("Cancel");
 
@@ -244,9 +275,9 @@ describe("Find a Grant", () => {
 
     // Check confirmation banner and that notification has been removed
     checkSuccessBanner(
-      "#govuk-notification-banner-title",
-      '[data-cy="cySubscribeSuccessMessageContent"]',
-      "You have been unsubscribed from",
+        "#govuk-notification-banner-title",
+        '[data-cy="cySubscribeSuccessMessageContent"]',
+        "You have been unsubscribed from",
     );
     checkForNoSavedSearchesOrNotifications();
 
@@ -257,20 +288,20 @@ describe("Find a Grant", () => {
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
     cy.get("#cypress_test_advert_contentful_slug")
-      .children("h2")
-      .should("have.text", "Cypress - Automated E2E Test Grant")
-      .click();
+        .children("h2")
+        .should("have.text", "Cypress - Automated E2E Test Grant")
+        .click();
 
     clickText("Sign up for updates");
 
     checkSuccessBanner(
-      "#govuk-notification-banner-title",
-      '[data-cy="cySubscribeSuccessMessageContent"]',
-      "You have signed up for updates about",
+        "#govuk-notification-banner-title",
+        '[data-cy="cySubscribeSuccessMessageContent"]',
+        "You have signed up for updates about",
     );
 
     cy.get(
-      '[data-cy="cyCypress - Automated E2E Test GrantUnsubscriptionTableName"]',
+        '[data-cy="cyCypress - Automated E2E Test GrantUnsubscriptionTableName"]',
     ).should("have.text", "Cypress - Automated E2E Test Grant");
 
     // Unsubscribe from updates
@@ -279,11 +310,12 @@ describe("Find a Grant", () => {
 
     // Check confirmation banner and that notification has been removed
     checkSuccessBanner(
-      "#govuk-notification-banner-title",
-      '[data-cy="cySubscribeSuccessMessageContent"]',
-      "You have been unsubscribed from",
+        "#govuk-notification-banner-title",
+        '[data-cy="cySubscribeSuccessMessageContent"]',
+        "You have been unsubscribed from",
     );
     checkForNoSavedSearchesOrNotifications();
+  });
 
   it("can navigate through pagination and limit search term to < 100 characters", () => {
     cy.contains("Find a grant");

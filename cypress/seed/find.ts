@@ -7,6 +7,8 @@ import {
   deleteFromSubscription,
   deleteFindUser,
 } from "./ts/deleteFindData";
+import { insertUsers } from "./ts/insertTestUsers";
+import { deleteUsers } from "./ts/deleteTestUsers";
 
 const findServiceDbName: string =
   process.env.CYPRESS_FIND_DATABASE_NAME || "postgres";
@@ -15,10 +17,17 @@ const findDatabaseUrl: string =
   process.env.CYPRESS_FIND_DATABASE_URL ||
   "postgres://postgres:postgres@localhost:5432";
 
+const findSubstitutions = {
+  [insertFindUser]: [process.env.ONE_LOGIN_APPLICANT_SUB],
+  [deleteFromUnsubscribe]: [process.env.ONE_LOGIN_APPLICANT_SUB],
+  [deleteFromSubscription]: [process.env.ONE_LOGIN_APPLICANT_SUB],
+  [deleteFindUser]: [process.env.ONE_LOGIN_APPLICANT_SUB],
+};
+
 export const createFindData = async (): Promise<void> => {
   await runSQLFromJs(
     [insertFindUser],
-    process.env.ONE_LOGIN_APPLICANT_SUB,
+    findSubstitutions,
     findServiceDbName,
     findDatabaseUrl,
   );
@@ -27,8 +36,8 @@ export const createFindData = async (): Promise<void> => {
 
 export const deleteFindData = async (): Promise<void> => {
   await runSQLFromJs(
-    [deleteFromUnsubscribe, deleteFromSubscription, deleteFindUser],
-    process.env.ONE_LOGIN_APPLICANT_SUB,
+    [deleteFromSubscription, deleteFromUnsubscribe, deleteFindUser],
+    findSubstitutions,
     findServiceDbName,
     findDatabaseUrl,
   );

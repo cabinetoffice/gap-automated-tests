@@ -1,7 +1,7 @@
 const deleteFromUnsubscribe: string = `
     DELETE FROM public.unsubscribe WHERE "userId" in (
         SELECT id FROM public.gap_user WHERE sub in (
-            'urn:fdc:gov.uk:2022:HvA7mHQsM_eNX5tAYNj2Oyj8_d3sooEtRjo7wbOaROY'
+            $1
       )
     );
 `;
@@ -11,12 +11,12 @@ const deleteFromSubscription: string = `
         WHERE "userId" IN (
         SELECT id
         FROM public.gap_user
-        WHERE sub IN ('urn:fdc:gov.uk:2022:HvA7mHQsM_eNX5tAYNj2Oyj8_d3sooEtRjo7wbOaROY'));
+        WHERE sub IN ($1));
 `;
 
 const deleteFindUser: string = `
     DELETE FROM public.gap_user
-        WHERE sub in ('urn:fdc:gov.uk:2022:HvA7mHQsM_eNX5tAYNj2Oyj8_d3sooEtRjo7wbOaROY');
+        WHERE sub in ($1);
 `;
 
 export { deleteFromUnsubscribe, deleteFromSubscription, deleteFindUser };
