@@ -25,33 +25,23 @@ const checkSuccessBanner = (headerElement, bodyElement, bodyText) => {
   cy.get(bodyElement).should("contain.text", bodyText);
 };
 
-const convertDate = (subscribedDate) => {
+const convertDateToString = (subscribedDate) => {
   const dateOfSubscription = new Date(subscribedDate);
   const month = dateOfSubscription.toLocaleString([], {
     month: "long",
     hour12: true,
   });
-  console.log("month: " + month);
-  const day = dateOfSubscription.getDay();
-  console.log(
-    "day (should be 14): " +
-      day.toLocaleString([], {
-        day: "numeric",
-      }),
-  );
+  const day = dateOfSubscription
+    .getDate()
+    .toLocaleString([], { day: "numeric" });
   const year = dateOfSubscription.getFullYear();
-  console.log("Year: " + year);
   const hourAndPm = dateOfSubscription
     .toLocaleString([], {
-      hour: "",
+      hour: "numeric",
       hour12: true,
     })
     .split(" ");
-  console.log("Hour: " + hourAndPm);
   const minutes = dateOfSubscription.getMinutes();
-  console.log("Minutes : " + minutes);
-  // const amOrPm = dateOfSubscription.get
-  // console.log();
 
   const dateAsString =
     day +
@@ -64,7 +54,7 @@ const convertDate = (subscribedDate) => {
     ":" +
     minutes +
     hourAndPm[1];
-  console.log(dateAsString);
+
   return dateAsString;
 };
 
@@ -198,7 +188,7 @@ describe("Find a Grant", () => {
     checkForNoSavedSearchesOrNotifications();
   });
 
-  it("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
+  it.only("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
     cy.task("setUpFindData");
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
@@ -220,13 +210,13 @@ describe("Find a Grant", () => {
     // click 'Sign up for updates' and continue to One Login
     clickText("Sign up for updates");
     //capture date
-    cy.wrap(Date.now()).as("subscribedDate");
+    cy.wrap(Date.now()).as("subscribedDate1");
 
     checkInfoScreen(
       "Sign up for updates",
       "To sign up for updates, you need to sign in with GOV.UK One Login.",
     );
-    clickText("Continue to One Login");
+    clickText("Continue to GOV.UK One Login");
 
     cy.origin(ONE_LOGIN_BASE_URL, () => {
       cy.get('[id="sign-in-button"]').click();
@@ -245,9 +235,8 @@ describe("Find a Grant", () => {
       `[data-cy="cy${Cypress.env("testV1Grant").name}UnsubscriptionTableName"]`,
     ).should("have.text", Cypress.env("testV1Grant").name);
 
-    // TODO : Implement Date Assertions
-    cy.get("@subscribedDate").then((subscribedDateTimestamp) => {
-      const subscriptionDate = convertDate(subscribedDateTimestamp);
+    cy.get("@subscribedDate1").then((subscribedDateTimestamp) => {
+      const subscriptionDate = convertDateToString(subscribedDateTimestamp);
 
       cy.get(
         `[data-cy="cy${
@@ -294,6 +283,7 @@ describe("Find a Grant", () => {
       .click();
 
     clickText("Sign up for updates");
+    cy.wrap(Date.now()).as("subscribedDate2");
 
     checkSuccessBanner(
       "#govuk-notification-banner-title",
@@ -304,6 +294,22 @@ describe("Find a Grant", () => {
     cy.get(
       `[data-cy="cy${Cypress.env("testV1Grant").name}UnsubscriptionTableName"]`,
     ).should("have.text", Cypress.env("testV1Grant").name);
+
+    cy.get("@subscribedDate2").then((subscribedDateTimestamp) => {
+      const subscriptionDate = convertDateToString(subscribedDateTimestamp);
+
+      cy.get(
+        `[data-cy="cy${
+          Cypress.env("testV1Grant").name
+        }UnsubscriptionTableName"]`,
+      )
+        .parent()
+        .next()
+        .should(
+          "contain.text",
+          "You signed up for updates on " + subscriptionDate,
+        );
+    });
 
     // Unsubscribe from updates
     clickText("Unsubscribe");
@@ -361,7 +367,7 @@ describe("Find a Grant", () => {
   it("Can subscribe and unsubscribe from newsletter notifications", () => {
     cy.contains("Find a grant");
     clickText("Sign up and we will email you when new grants have been added.");
-    clickText("Continue to One Login");
+    clickText("Continue to GOV.UK One Login");
     cy.origin(ONE_LOGIN_BASE_URL, () => {
       cy.get('[id="sign-in-button"]').click();
     });

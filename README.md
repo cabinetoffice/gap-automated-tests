@@ -119,3 +119,36 @@ When adding new environment variables, you must do this in several places:
 - GitHub Secrets/Variables
   - Secrets should be used instead of Variables unless you need to view the env var during/after the test run (e.g. AWS Access Key and Region are in Variables to allow us to copy the presigned url to the report)
   - If the environment variable is environment-specific (most are) then a variable should be added for both Sandbox and QA, prefixed either `SANDBOX_` or `QA_`
+
+### Capturing and Formatting a DATE
+
+Step 1) Capture the date and store it as a variable **at the moment where the subscription/saved search is logged**
+
+```js
+// click 'Sign up for updates' and continue to One Login
+clickText("Sign up for updates");
+//capture date
+cy.wrap(Date.now()).as("subscribedDate");
+```
+
+- Here, the "cy.wrap()" command is used, along with "as()" to create an **alias**. This will be used when you go to assert the captured date.
+
+Step 2) Use the alias along with the "convertDateToString()" function to store the date as a variable
+
+```js
+cy.get("@subscribedDate").then((subscribedDateTimestamp) => {
+      const subscriptionDate = convertDateToString(subscribedDateTimestamp);
+```
+
+Step 3) Assert using this date variable, which is already formatted in the way that Find a Grant requires
+
+```js
+cy.get(
+  `[data-cy="cy${Cypress.env("testV1Grant").name}UnsubscriptionTableName"]`,
+)
+  .parent()
+  .next()
+  .should("contain.text", "You signed up for updates on " + subscriptionDate);
+```
+
+- Here, an element is targeted and then in a text assertion, the date (_subscriptionDate_) is used.
