@@ -3,6 +3,10 @@ export const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
 export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
 
 export const signInWithOneLoginApply = (email: string, password: string) => {
+  cy.contains("Sign in with GOV.UK One Login").click();
+  cy.origin(ONE_LOGIN_BASE_URL, () => {
+    cy.contains("Sign in").click();
+  });
   signInWithOneLogin(email, password);
 };
 
@@ -36,9 +40,9 @@ export const signInAsApplyApplicant = () => {
 };
 
 export const signInAsFindApplicant = () => {
-  cy.contains("Sign in with GOV.UK One Login").click();
+  clickText("Continue to One Login");
   cy.origin(ONE_LOGIN_BASE_URL, () => {
-    cy.contains("Sign in").click();
+    cy.get('[id="sign-in-button"]').click();
   });
   signInWithOneLogin(
     Cypress.env("oneLoginApplicantEmail"),

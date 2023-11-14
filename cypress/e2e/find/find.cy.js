@@ -10,7 +10,7 @@ import {
   clickThroughPagination,
   countNumberOfPages,
   createSavedSearch,
-} from "./helper.cy";
+} from "./helper";
 
 describe("Find a Grant", () => {
   beforeEach(() => {
