@@ -15,6 +15,10 @@ export const signInWithOneLogin = (email: string, password: string) => {
     ONE_LOGIN_BASE_URL,
     { args: { email, password } },
     ({ email, password }) => {
+      clickText("Continue to One Login");
+      cy.origin(ONE_LOGIN_BASE_URL, () => {
+        cy.get('[id="sign-in-button"]').click();
+      });
       cy.get('[name="email"]').type(email);
       cy.contains("Continue").click();
       cy.get('[name="password"]').type(password);
@@ -72,13 +76,6 @@ export const searchForGrant = (searchTerm: string) => {
   cy.get('[name="searchTerm"]').type(searchTerm);
 
   cy.get("[data-cy=cySearchGrantsBtn]").click();
-};
-
-export const createSavedSearch = (searchTerm: string) => {
-  cy.get('[data-cy="cyNameThisSearchInput"]').type(searchTerm);
-  cy.get('[data-cy="cySaveAndContinueButton"]').click();
-  cy.get('[data-cy="cy-radio-yes"]').click();
-  cy.get('[data-cy="cySubmitNotificationsChoice"]').click();
 };
 
 export const signInToIntegrationSite = () => {
