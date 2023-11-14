@@ -11,9 +11,20 @@ import {
   clickBack,
   POST_LOGIN_BASE_URL,
 } from "../../common/common";
-import { TEST_V1_GRANT } from "../../common/constants";
 
-const fillOutCustomSectionUntilDocUpload = () => {
+const fillOutDocUpload = () => {
+  cy.get('[data-testid="file-upload-input"]').as("fileInput");
+  cy.fixture("example.doc").then((fileContent) => {
+    cy.get("@fileInput").attachFile({
+      fileContent: fileContent.toString(),
+      fileName: "example.doc",
+      mimeType: "application/msword",
+    });
+  });
+  clickSaveAndContinue();
+};
+
+const fillOutCustomSection = () => {
   cy.get('[data-cy="cy-status-tag-Custom Section-Not Started"]');
   cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
 
@@ -47,21 +58,9 @@ const fillOutCustomSectionUntilDocUpload = () => {
   cy.get('[data-cy="cy-checkbox-value-Choice 1"]').click();
   cy.get('[data-cy="cy-checkbox-value-Choice 2"]').click();
   clickSaveAndContinue();
-};
 
-const fillOutDocUpload = () => {
-  cy.get('[data-testid="file-upload-input"]').as("fileInput");
-  cy.fixture("example.doc").then((fileContent) => {
-    cy.get("@fileInput").attachFile({
-      fileContent: fileContent.toString(),
-      fileName: "example.doc",
-      mimeType: "application/msword",
-    });
-  });
-  clickSaveAndContinue();
-};
+  fillOutDocUpload();
 
-const fillOutCustomSectionAfterDocUpload = () => {
   const dateQuestionId = "e228a74a-290c-4b60-b4c1-d20b138ae10d";
   cy.get('[data-cy="cyDateFilter-' + dateQuestionId + 'Day"]').type("01");
   cy.get('[data-cy="cyDateFilter-' + dateQuestionId + 'Month"]').type("01");
@@ -347,9 +346,7 @@ describe("Apply for a Grant", () => {
 
     fillOutRequiredChecks();
 
-    fillOutCustomSectionUntilDocUpload();
-    fillOutDocUpload();
-    fillOutCustomSectionAfterDocUpload();
+    fillOutCustomSection();
 
     cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
     cy.get('[data-cy="cy-status-tag-Required checks-Completed"]');
