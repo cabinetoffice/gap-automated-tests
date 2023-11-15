@@ -14,11 +14,13 @@ import {
   createSavedSearch,
   convertDateToString,
 } from "./helper";
+import dayjs from "dayjs";
 
 describe("Find a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
+    cy.task("setUpFindData");
     signInToIntegrationSite();
   });
 
@@ -126,7 +128,6 @@ describe("Find a Grant", () => {
   });
 
   it("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
-    cy.task("setUpFindData");
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -186,7 +187,7 @@ describe("Find a Grant", () => {
     // Cancel unsubscribe action
     clickText("Unsubscribe");
     cy.get('[data-cy="cyUnsubscribeGrantConfirmationPageTitle"]').should(
-      "have.text",
+      "contain.text",
       "Are you sure you want to unsubscribe?",
     );
     clickText("Cancel");

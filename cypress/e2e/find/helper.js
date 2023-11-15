@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const checkInfoScreen = (headerText, ...bodyTexts) => {
   cy.get("h1").should("have.text", headerText);
   bodyTexts.forEach((bodyText) => {
@@ -44,42 +46,5 @@ export const clickThroughPagination = (numberOfPages) => {
   });
 };
 
-export const convertDateToString = (subscribedDate) => {
-  const dateOfSubscription = new Date(subscribedDate);
-
-  const month = dateOfSubscription.toLocaleString([], {
-    month: "long",
-    hour12: true,
-  });
-
-  const day = dateOfSubscription
-    .getDate()
-    .toLocaleString([], { day: "numeric" });
-
-  const year = dateOfSubscription.getFullYear();
-
-  const hourAndPm = dateOfSubscription
-    .toLocaleString([], {
-      hour: "numeric",
-      hour12: true,
-    })
-    .split(" ");
-
-  const minutes = dateOfSubscription
-    .getMinutes()
-    .toLocaleString(["en-GB"], { minimumIntegerDigits: 2 });
-
-  const dateAsString =
-    day +
-    " " +
-    month +
-    " " +
-    year +
-    " at " +
-    hourAndPm[0] +
-    ":" +
-    minutes +
-    hourAndPm[1];
-
-  return dateAsString;
-};
+export const convertDateToString = (date) =>
+  dayjs(date).format("D MMMM YYYY [at] h:mma");
