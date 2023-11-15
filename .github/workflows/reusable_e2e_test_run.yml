@@ -50,8 +50,6 @@ jobs:
 
       - name: Connect to OpenVPN 3 Profile
         run: |
-          touch find.ovpn
-          echo "CREATED FILE"
           echo ${{ secrets[format('{0}_FIND_OVPN_PROFILE', inputs.environment)] }} > find.ovpn
           echo "ADDED CONFIG TO FILE"
           openvpn3 config-import --config find.ovpn --name FINDVPN --persistent
