@@ -48,6 +48,16 @@ jobs:
           sudo apt install openvpn3
           openvpn3 version
 
+      - name: Connect to OpenVPN 3 Profile
+        run: |
+          touch find.ovpn
+          echo ${{ secrets[format('{0}_FIND_OVPN_PROFILE', inputs.environment)] }} > find.ovpn
+          openvpn3 config-import --config find.ovpn --name FINDVPN --persistent
+          openvpn3 config-acl --show --lock-down true --transfer-owner-session true --grant root --config FINDVPN
+          openvpn3 session-start --config find.ovpn
+          openvpn3 sessions-list
+          openvpn3 session-manage -h
+
       - name: Checkout repo
         uses: actions/checkout@master
 
