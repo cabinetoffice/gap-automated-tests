@@ -26,14 +26,18 @@ describe("Find a Grant", () => {
     cy.contains("Find a grant");
   });
 
+  it("Can navigate to information pages", () => {
+    cy.contains("Find a grant");
+
+    // navigates to about us menu
+    cy.get('[data-cy="cyaboutGrantsPageLink"]').click();
+
+    cy.get('[data-cy="cyAbout usTitle"]').should("have.text", "About us");
+  });
+
   describe("Search", () => {
     it("Interacts with the home page and enters a search term > 100 characters", () => {
       cy.contains("Find a grant");
-
-      // navigates to about us menu
-      cy.get('[data-cy="cyaboutGrantsPageLink"]').click();
-
-      cy.get('[data-cy="cyAbout usTitle"]').should("have.text", "About us");
 
       cy.get('[data-cy="cyhomePageLink"]')
         .children("a")
@@ -171,13 +175,14 @@ describe("Find a Grant", () => {
       // go to home page
       cy.contains("Find a grant");
 
+      const grantAdvertName = Cypress.env("testV1Grant").name;
       // search for and view test grant advert
-      searchForGrant(Cypress.env("testV1Grant").name);
+      searchForGrant(grantAdvertName);
       // cy.get('[data-cy="cyGrantNameAndLink"]').should('have.text', 'Cypress - Automated E2E Test Grant');
 
       cy.get(`#${Cypress.env("testV1Grant").contentfulSlug}`)
         .children("h2")
-        .should("have.text", Cypress.env("testV1Grant").name)
+        .should("have.text", grantAdvertName)
         .click();
 
       // click 'Sign up for updates' and continue to One Login
@@ -199,20 +204,15 @@ describe("Find a Grant", () => {
         "You have signed up for updates about",
       );
 
-      cy.get(
-        `[data-cy="cy${
-          Cypress.env("testV1Grant").name
-        }UnsubscriptionTableName"]`,
-      ).should("have.text", Cypress.env("testV1Grant").name);
+      cy.get(`[data-cy="cy${grantAdvertName}UnsubscriptionTableName"]`).should(
+        "have.text",
+        grantAdvertName,
+      );
 
       cy.get("@subscribedDate1").then((subscribedDateTimestamp) => {
         const subscriptionDates = convertDateToString(subscribedDateTimestamp);
 
-        cy.get(
-          `[data-cy="cy${
-            Cypress.env("testV1Grant").name
-          }UnsubscriptionTableName"]`,
-        )
+        cy.get(`[data-cy="cy${grantAdvertName}UnsubscriptionTableName"]`)
           .parent()
           .next()
           .invoke("text")
@@ -248,12 +248,12 @@ describe("Find a Grant", () => {
       // --- AUTHENTICATED JOURNEY ---
       // search for grant
       clickText("Search for grants");
-      cy.get('[name="searchTerm"]').type(Cypress.env("testV1Grant").name);
+      cy.get('[name="searchTerm"]').type(grantAdvertName);
       cy.get('[data-cy="cySearchAgainButton"]').click();
 
       cy.get(`#${Cypress.env("testV1Grant").contentfulSlug}`)
         .children("h2")
-        .should("have.text", Cypress.env("testV1Grant").name)
+        .should("have.text", grantAdvertName)
         .click();
 
       clickText("Sign up for updates");
@@ -265,19 +265,14 @@ describe("Find a Grant", () => {
         "You have signed up for updates about",
       );
 
-      cy.get(
-        `[data-cy="cy${
-          Cypress.env("testV1Grant").name
-        }UnsubscriptionTableName"]`,
-      ).should("have.text", Cypress.env("testV1Grant").name);
+      cy.get(`[data-cy="cy${grantAdvertName}UnsubscriptionTableName"]`).should(
+        "have.text",
+        grantAdvertName,
+      );
 
       cy.get("@subscribedDate2").then((subscribedDateTimestamp) => {
         const subscriptionDates = convertDateToString(subscribedDateTimestamp);
-        cy.get(
-          `[data-cy="cy${
-            Cypress.env("testV1Grant").name
-          }UnsubscriptionTableName"]`,
-        )
+        cy.get(`[data-cy="cy${grantAdvertName}UnsubscriptionTableName"]`)
           .parent()
           .next()
           .invoke("text")
@@ -327,7 +322,7 @@ describe("Find a Grant", () => {
             "be.oneOf",
             subscriptionDates.map(
               (subscriptionDate) =>
-                "You signed up for updates on " + subscriptionDate + ".",
+                `You signed up for updates on ${subscriptionDate}.`,
             ),
           );
       });

@@ -140,25 +140,25 @@ However, it's recommended to only do this if the test is flaky - it shouldn't be
 
 ### Capturing and Formatting a DATE
 
-Step 1) Capture the date and store it as a variable **at the moment where the subscription/saved search is logged**
+Step 1) Capture the date and store it as a variable **at the moment where the subscription/saved search is logged** (after signing in is a good point to set the date).
 
 ```js
-// click 'Sign up for updates' and continue to One Login
-clickText("Sign up for updates");
+// sign in
+signInAsApplicant();
 //capture date
 cy.wrap(Date.now()).as("subscribedDate");
 ```
 
 - Here, the "cy.wrap()" command is used, along with "as()" to create an **alias**. This will be used when you go to assert the captured date.
 
-Step 2) Use the alias along with the "convertDateToString()" function to store the date as a variable
+Step 2) Use the alias along with the "convertDateToString()" function to store the possible dates as a variable. (This is stored as an array of dates to prevent the a +/-1 increment to cause the date to error).
 
 ```js
 cy.get("@subscribedDate").then((subscribedDateTimestamp) => {
-      const subscriptionDate = convertDateToString(subscribedDateTimestamp);
+      const subscriptionDates = convertDateToString(subscribedDateTimestamp);
 ```
 
-Step 3) Assert using this date variable, which is already formatted in the way that Find a Grant requires
+Step 3) Assert using this date variable, which is already formatted in the way that Find a Grant requires. The **text** of the element you are trying to target is **invoked** and mapped against all possible dates.
 
 ```js
 cy.get(
@@ -166,7 +166,13 @@ cy.get(
 )
   .parent()
   .next()
-  .should("contain.text", "You signed up for updates on " + subscriptionDate);
+  .invoke("text")
+  .should(
+    "be.oneOf",
+    subscriptionDates.map(
+      (subscriptionDate) => "You signed up for updates on " + subscriptionDate,
+    ),
+  );
 ```
 
-- Here, an element is targeted and then in a text assertion, the date (_subscriptionDate_) is used.
+- Here, an element is targeted, the text is invoked so that it can be chained.Then the possible dates (_subscriptionDates_) are mapped, checking that the date is contained in this array.
