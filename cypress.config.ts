@@ -7,7 +7,7 @@ require("dotenv").config();
 
 export default defineConfig({
   e2e: {
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on) {
       // implement node event listeners here
       on("task", {
         async setUpUser() {
@@ -58,6 +58,7 @@ export default defineConfig({
       applyDbName: process.env.APPLY_DATABASE_NAME,
       applicationBaseUrl: process.env.APPLICATION_BASE_URL,
       postLoginBaseUrl: process.env.POST_LOGIN_BASE_URL,
+      firstUserId: process.env.FIRST_USER_ID,
       testV1Grant: {
         ...TEST_V1_GRANT,
       },

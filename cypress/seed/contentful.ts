@@ -1,6 +1,10 @@
 import * as contentful from "contentful-management";
 import "dotenv/config";
-import { TEST_V1_GRANT } from "../common/constants";
+import {
+  TEST_V1_GRANT,
+  TEST_V2_INTERNAL_GRANT,
+  TEST_V2_EXTERNAL_GRANT,
+} from "../common/constants";
 
 const ADVERTS = [
   {
@@ -97,14 +101,13 @@ const ADVERTS = [
   {
     fields: {
       grantName: {
-        "en-US": "Cypress - Automated E2E Test Grant V2 Internal",
+        "en-US": TEST_V2_INTERNAL_GRANT.name,
       },
       grantMaximumAwardDisplay: {
         "en-US": "£10,000",
       },
       grantWebpageUrl: {
-        "en-US":
-          "https://sandbox-gap.service.cabinetoffice.gov.uk/apply/applicant/mandatory-questions/start?schemeId=-2",
+        "en-US": TEST_V2_INTERNAL_GRANT.applicationUrl,
       },
       grantMinimumAwardDisplay: {
         "en-US": "£1",
@@ -130,7 +133,7 @@ const ADVERTS = [
         "en-US": ["Personal / Individual"],
       },
       label: {
-        "en-US": "cypress_test_advert_contentful_slug_v2_internal",
+        "en-US": TEST_V2_INTERNAL_GRANT.contentfulSlug,
       },
       grantMaximumAward: {
         "en-US": 10000,
@@ -189,13 +192,13 @@ const ADVERTS = [
   {
     fields: {
       grantName: {
-        "en-US": "Cypress - Automated E2E Test Grant V2 External",
+        "en-US": TEST_V2_EXTERNAL_GRANT.name,
       },
       grantMaximumAwardDisplay: {
         "en-US": "£10,000",
       },
       grantWebpageUrl: {
-        "en-US": "https://www.google.com",
+        "en-US": TEST_V2_EXTERNAL_GRANT.applicationUrl,
       },
       grantMinimumAwardDisplay: {
         "en-US": "£1",
@@ -221,7 +224,7 @@ const ADVERTS = [
         "en-US": ["Personal / Individual"],
       },
       label: {
-        "en-US": "cypress_test_advert_contentful_slug_v2_internal",
+        "en-US": TEST_V2_EXTERNAL_GRANT.contentfulSlug,
       },
       grantMaximumAward: {
         "en-US": 10000,

@@ -21,7 +21,11 @@ import {
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
 } from "./ts/deleteApplyData";
-import { TEST_V1_GRANT } from "../common/constants";
+import {
+  TEST_V1_GRANT,
+  TEST_V2_EXTERNAL_GRANT,
+  TEST_V2_INTERNAL_GRANT,
+} from "../common/constants";
 
 const applyServiceDbName: string =
   process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
@@ -41,7 +45,13 @@ const ADMIN_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 1);
 const APPLICANT_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 2);
 const FUNDING_ID = -Math.abs(+process.env.FIRST_USER_ID);
 const SCHEME_ID = -Math.abs(+process.env.FIRST_USER_ID);
-const ADVERT_ID = `${Math.abs(+process.env.FIRST_USER_ID)
+const ADVERT_ID_V1 = `${Math.abs(+process.env.FIRST_USER_ID)
+  .toString()
+  .padStart(8, "0")}-0000-0000-0000-000000000000`;
+const ADVERT_ID_V2_INTERNAL = `${Math.abs(+process.env.FIRST_USER_ID - 1)
+  .toString()
+  .padStart(8, "0")}-0000-0000-0000-000000000000`;
+const ADVERT_ID_V2_EXTERNAL = `${Math.abs(+process.env.FIRST_USER_ID - 2)
   .toString()
   .padStart(8, "0")}-0000-0000-0000-000000000000`;
 
@@ -85,6 +95,16 @@ const applySubstitutions = {
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
+    SCHEME_ID - 1,
+    FUNDING_ID,
+    ADMIN_ID,
+    process.env.ONE_LOGIN_ADMIN_EMAIL,
+    ADMIN_ID,
+    SCHEME_ID - 2,
+    FUNDING_ID,
+    ADMIN_ID,
+    process.env.ONE_LOGIN_ADMIN_EMAIL,
+    ADMIN_ID,
   ],
   [insertApplications]: [
     SCHEME_ID,
@@ -92,15 +112,34 @@ const applySubstitutions = {
     ADMIN_ID,
     TEST_V1_GRANT.applicationName,
     ADMIN_ID,
+    SCHEME_ID - 1,
+    SCHEME_ID - 1,
+    ADMIN_ID,
+    TEST_V2_INTERNAL_GRANT.applicationName,
+    ADMIN_ID,
   ],
   [insertAdverts]: [
-    ADVERT_ID,
+    ADVERT_ID_V1,
     TEST_V1_GRANT.contentfulId,
     TEST_V1_GRANT.contentfulSlug,
     TEST_V1_GRANT.name,
     ADMIN_ID,
     ADMIN_ID,
     SCHEME_ID,
+    ADVERT_ID_V2_INTERNAL,
+    TEST_V2_INTERNAL_GRANT.contentfulId,
+    TEST_V2_INTERNAL_GRANT.contentfulSlug,
+    TEST_V2_INTERNAL_GRANT.name,
+    ADMIN_ID,
+    ADMIN_ID,
+    SCHEME_ID - 1,
+    ADVERT_ID_V2_EXTERNAL,
+    TEST_V2_EXTERNAL_GRANT.contentfulId,
+    TEST_V2_EXTERNAL_GRANT.contentfulSlug,
+    TEST_V2_EXTERNAL_GRANT.name,
+    ADMIN_ID,
+    ADMIN_ID,
+    SCHEME_ID - 2,
   ],
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [
