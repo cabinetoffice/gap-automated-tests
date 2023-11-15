@@ -40,6 +40,10 @@ export const signInAsApplyApplicant = () => {
 };
 
 export const signInAsFindApplicant = () => {
+  clickText("Continue to GOV.UK One Login");
+  cy.origin(ONE_LOGIN_BASE_URL, () => {
+    cy.get('[id="sign-in-button"]').click();
+  });
   signInWithOneLogin(
     Cypress.env("oneLoginApplicantEmail"),
     Cypress.env("oneLoginApplicantPassword"),
