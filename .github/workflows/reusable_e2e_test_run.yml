@@ -51,14 +51,11 @@ jobs:
       - name: Connect to OpenVPN 3 Profile
         run: |
           echo "${{ secrets[format('{0}_FIND_OVPN_PROFILE', inputs.environment)] }}" > find.ovpn
-          echo "ADDED CONFIG TO FILE"
           openvpn3 config-import --config find.ovpn --name FINDVPN --persistent
           openvpn3 config-acl --show --lock-down true --transfer-owner-session true --grant root --config FINDVPN
-          openvpn3 session-start --config find.ovpn
-          echo "STARTED SESSION"
+          openvpn3 session-start --config FINDVPN
           openvpn3 sessions-list
-          openvpn3 session-manage -h
-          echo "LISTED SESSIONS"
+          openvpn3 session-stats --config FINDVPN
 
       - name: Checkout repo
         uses: actions/checkout@master
@@ -104,6 +101,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+        if: always()
+
+      - name: Disconnect from OPENVPN 3 Profile
+        run: openvpn3 session-manage --disconnect
         if: always()
 
       - name: Upload Report to S3
