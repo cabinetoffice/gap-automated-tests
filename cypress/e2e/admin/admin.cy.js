@@ -1,5 +1,4 @@
 import {
-  signInWithOneLogin,
   clickSaveAndContinue,
   yesQuestionComplete,
   saveAndExit,
@@ -21,7 +20,7 @@ describe("Create a Grant", () => {
     signInAsAdmin();
     createGrant();
 
-    //create advert
+    // create advert
     advertSection1();
     advertSection2();
     advertSection3();
@@ -50,12 +49,15 @@ describe("Create a Grant", () => {
     }
 
     function sectionsAndQuestions() {
-      //add section
+      // add section
       cy.get('[data-cy="cy-button-addNewSection"]').click();
-      cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Custom Section");
+      cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
+      cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Custom Section", {
+        force: true,
+      });
       clickSaveAndContinue();
 
-      //add question to new section
+      // add question to new section
       addOptionalQuestion(
         '[data-cy="cy_addAQuestion-Custom Section"]',
         "Custom Question 1",
@@ -113,13 +115,15 @@ describe("Create a Grant", () => {
       cy.get('[data-cy="cy_Section-Custom Question 6"]').should("exist");
       cy.get('[data-cy="cy_Section-Custom Question 7"]').should("exist");
 
-      //add section
+      // add section
       cy.get('[data-cy="cy-button-addNewSection"]').click();
+      cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
       cy.get('[data-cy="cy-sectionTitle-text-input"]').type(
         "Deletable Section",
+        { force: true },
       );
       clickSaveAndContinue();
-      //delete section
+      // delete section
       cy.get(
         '[data-cy="cy_sections_deleteSectionBtn-Deletable Section"]',
       ).click();
@@ -133,8 +137,13 @@ describe("Create a Grant", () => {
 
     function addOptionalQuestion(section, questionText, description, type) {
       cy.get(section).click();
-      cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText);
-      cy.get('[data-cy="cy-hintText-text-area"]').type(description);
+      cy.get('[data-cy="cy-fieldTitle-text-input"]').click();
+      cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText, {
+        force: true,
+      });
+      cy.get('[data-cy="cy-hintText-text-area"]').type(description, {
+        force: true,
+      });
       cy.get('[data-cy="cy-radioInput-option-No"]').click();
       clickSaveAndContinue();
       cy.get(type).click();
@@ -148,30 +157,44 @@ describe("Create a Grant", () => {
       type,
     ) {
       cy.get(section).click();
-      cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText);
-      cy.get('[data-cy="cy-hintText-text-area"]').type(description);
+      cy.get('[data-cy="cy-fieldTitle-text-input"]').click();
+      cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText, {
+        force: true,
+      });
+      cy.get('[data-cy="cy-hintText-text-area"]').type(description, {
+        force: true,
+      });
       cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
       clickSaveAndContinue();
       cy.get(type).click();
       clickSaveAndContinue();
 
-      cy.get('[data-cy="cy-options[0]-text-input"]').type("Choice 1");
+      cy.get('[data-cy="cy-options[0]-text-input"]').click();
+      cy.get('[data-cy="cy-options[0]-text-input"]').type("Choice 1", {
+        force: true,
+      });
       cy.get('[data-cy="cy-button-Add another option"]').click();
-      cy.get('[data-cy="cy-options[1]-text-input"]').type("Choice 2");
+      cy.get('[data-cy="cy-options[1]-text-input"]').type("Choice 2", {
+        force: true,
+      });
       cy.get('[data-cy="cy-button-Save question"]').click();
     }
 
     function applicationForm() {
       cy.get('[data-cy="cyBuildApplicationForm"]').click();
 
+      cy.get('[data-cy="cy-applicationName-text-input"]').click();
       cy.get('[data-cy="cy-applicationName-text-input"]').type(
         "Cypress - Grant Application",
+        { force: true },
       );
       cy.get('[data-cy="cy-button-Continue"]').click();
 
       cy.get('[data-cy="cy_Section-Eligibility Statement"]').click();
 
-      cy.get('[data-cy="cy-displayText-text-area"]').type("eligibility");
+      cy.get('[data-cy="cy-displayText-text-area"]').type("eligibility", {
+        force: true,
+      });
       saveAndExit();
 
       cy.get('[data-cy="cy_Section-due-diligence-checks"]').click();
@@ -187,7 +210,7 @@ describe("Create a Grant", () => {
 
       sectionsAndQuestions();
 
-      //publish
+      // publish
       publishApplicationForm();
     }
 
@@ -197,15 +220,22 @@ describe("Create a Grant", () => {
 
       cy.get("[data-cy=cy_addAGrantButton]").click();
 
-      cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME);
+      cy.get("[data-cy=cy-name-text-input]").click();
+      cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME, { force: true });
 
       clickSaveAndContinue();
 
-      cy.get("[data-cy=cy-ggisReference-text-input]").type(ggisNumber);
+      cy.get("[data-cy=cy-ggisReference-text-input]").click();
+      cy.get("[data-cy=cy-ggisReference-text-input]").type(ggisNumber, {
+        force: true,
+      });
 
       clickSaveAndContinue();
 
-      cy.get("[data-cy=cy-contactEmail-text-input]").type(contactEmail);
+      cy.get("[data-cy=cy-contactEmail-text-input]").click();
+      cy.get("[data-cy=cy-contactEmail-text-input]").type(contactEmail, {
+        force: true,
+      });
 
       clickSaveAndContinue();
 
@@ -272,8 +302,10 @@ describe("Create a Grant", () => {
       ).click();
 
       // TODO copy url from application form
+      cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').click();
       cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').type(
         "https://www.google.com",
+        { force: true },
       );
 
       yesQuestionComplete();
@@ -285,16 +317,28 @@ describe("Create a Grant", () => {
       ).click();
 
       const today = new Date();
-      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").type("1");
-      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateMonth]").type("1");
+      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").click();
+      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").type("1", {
+        force: true,
+      });
+      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateMonth]").type("1", {
+        force: true,
+      });
       cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateYear]").type(
         `${today.getFullYear() + 1}`,
+        { force: true },
       );
 
-      cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]").type("31");
-      cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateMonth]").type("1");
+      cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]").type("31", {
+        force: true,
+      });
+      cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateMonth]").type(
+        "1",
+        { force: true },
+      );
       cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateYear]").type(
         `${today.getFullYear() + 1}`,
+        { force: true },
       );
 
       yesQuestionComplete();
@@ -323,7 +367,8 @@ describe("Create a Grant", () => {
     function advertSection1() {
       cy.get("[data-cy=cyBuildAdvert]").click();
 
-      cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME);
+      cy.get("[data-cy=cy-name-text-input]").click();
+      cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME, { force: true });
 
       clickSaveAndContinue();
 
@@ -331,8 +376,10 @@ describe("Create a Grant", () => {
         "[data-cy='cy-1. Grant details-sublist-task-name-Short description']",
       ).click();
 
+      cy.get("[data-cy=cy-grantShortDescription-text-area]").click();
       cy.get("[data-cy=cy-grantShortDescription-text-area]").type(
         "This is a short description",
+        { force: true },
       );
 
       yesQuestionComplete();
@@ -345,7 +392,10 @@ describe("Create a Grant", () => {
 
       cy.contains("Which organisation is funding this grant?");
 
-      cy.get("[data-cy=cy-grantFunder-text-input]").type("The Cabinet Office");
+      cy.get("[data-cy=cy-grantFunder-text-input]").click();
+      cy.get("[data-cy=cy-grantFunder-text-input]").type("The Cabinet Office", {
+        force: true,
+      });
 
       yesQuestionComplete();
 

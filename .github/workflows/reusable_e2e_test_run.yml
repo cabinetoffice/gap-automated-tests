@@ -28,7 +28,7 @@ jobs:
     steps:
       - name: Get Github action IP
         id: ip
-        uses: haythem/public-ip@v1.2
+        uses: haythem/public-ip@v1.3
 
       - name: Add Github Actions IP to Security group
         run: |
@@ -38,11 +38,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-
-      - name: Dump context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "${GITHUB_CONTEXT}"
 
       - name: Checkout repo
         uses: actions/checkout@master
@@ -75,31 +70,11 @@ jobs:
           FIRST_USER_ID=1
           EOF
 
-      - name: Setup node
-        uses: actions/setup-node@master
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
         with:
-          node-version: "${{ steps.nvm.outputs.NVMRC }}"
-
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        id: npm-cache
-        with:
-          path: |
-            ${{ steps.npm-cache-dir-path.outputs.dir }}
-            **/node_modules
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: |
-          npm ci
-
-      - name: Run Tests
-        run: |
-          npm run cy:run:${{ inputs.suite }} -- --browser ${{ inputs.browser }}
+          browser: ${{ inputs.browser }}
+          spec: ${{ inputs.suite == 'all' && 'cypress/**' || format('cypress/e2e/{0}/*.cy.js', inputs.suite == 'superadmin' && 'super-admin' || inputs.suite) }}
 
       - name: Remove Github Actions IP from security group
         run: |

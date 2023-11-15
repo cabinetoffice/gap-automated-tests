@@ -11,7 +11,18 @@ import {
   clickBack,
   POST_LOGIN_BASE_URL,
 } from "../../common/common";
-import { TEST_V1_GRANT } from "../../common/constants";
+
+const fillOutDocUpload = () => {
+  cy.get('[data-testid="file-upload-input"]').as("fileInput");
+  cy.fixture("example.doc").then((fileContent) => {
+    cy.get("@fileInput").attachFile({
+      fileContent: fileContent.toString(),
+      fileName: "example.doc",
+      mimeType: "application/msword",
+    });
+  });
+  clickSaveAndContinue();
+};
 
 const fillOutCustomSection = () => {
   cy.get('[data-cy="cy-status-tag-Custom Section-Not Started"]');
@@ -48,15 +59,7 @@ const fillOutCustomSection = () => {
   cy.get('[data-cy="cy-checkbox-value-Choice 2"]').click();
   clickSaveAndContinue();
 
-  cy.get('[data-testid="file-upload-input"]').as("fileInput");
-  cy.fixture("example.doc").then((fileContent) => {
-    cy.get("@fileInput").attachFile({
-      fileContent: fileContent.toString(),
-      fileName: "example.doc",
-      mimeType: "application/msword",
-    });
-  });
-  clickSaveAndContinue();
+  fillOutDocUpload();
 
   const dateQuestionId = "e228a74a-290c-4b60-b4c1-d20b138ae10d";
   cy.get('[data-cy="cyDateFilter-' + dateQuestionId + 'Day"]').type("01");
@@ -64,8 +67,7 @@ const fillOutCustomSection = () => {
   cy.get('[data-cy="cyDateFilter-' + dateQuestionId + 'Year"]').type("2000");
   clickSaveAndContinue();
 
-  cy.get('[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]').click();
-  clickSaveAndContinue();
+  yesSectionComplete();
 
   cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
 };
@@ -277,25 +279,25 @@ const equalitySectionAccept = () => {
   );
 };
 
-const equalitySectionDecline = () => {
-  cy.contains("We have received your application");
-  cy.contains(
-    "Before you finish using the service, we’d like to ask some equality questions.",
-  );
-  cy.contains("Do you want to answer the equality questions?");
-  cy.contains(
-    "These questions are optional. We would like to understand who the grant will benefit.",
-  );
-  cy.contains("Your answers will not affect your application.");
-  cy.get("[data-cy=cy-radioInput-option-NoSkipTheEqualityQuestions]").click();
-  clickContinue();
-
-  cy.contains("Application submitted");
-  cy.contains("What happens next");
-  cy.contains(
-    "The funding organisation will contact you once they have reviewed your application.",
-  );
-};
+// const equalitySectionDecline = () => {
+//   cy.contains("We have received your application");
+//   cy.contains(
+//     "Before you finish using the service, we’d like to ask some equality questions.",
+//   );
+//   cy.contains("Do you want to answer the equality questions?");
+//   cy.contains(
+//     "These questions are optional. We would like to understand who the grant will benefit.",
+//   );
+//   cy.contains("Your answers will not affect your application.");
+//   cy.get("[data-cy=cy-radioInput-option-NoSkipTheEqualityQuestions]").click();
+//   clickContinue();
+//
+//   cy.contains("Application submitted");
+//   cy.contains("What happens next");
+//   cy.contains(
+//     "The funding organisation will contact you once they have reviewed your application.",
+//   );
+// };
 
 const fillMandatoryQuestions = (details, orgProfileFilled) => {
   // If Org Profile isn't filled go through all pages
@@ -420,7 +422,7 @@ describe("Apply for a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("can start and submit new grant application", () => {
+  it("can start, save, come back, continue and submit new grant application", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -445,51 +447,7 @@ describe("Apply for a Grant", () => {
 
     fillOutEligibity();
 
-    fillOutRequiredChecks();
-
-    fillOutCustomSection();
-
-    cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
-    cy.get('[data-cy="cy-status-tag-Required checks-Completed"]');
-    cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
-
-    submitApplication();
-
-    equalitySectionAccept();
-
-    cy.contains("View your applications").click();
-
-    cy.contains("Your applications");
-    cy.contains("All of your current and past applications are listed below.");
-    cy.contains("Name of grant");
-    cy.contains(Cypress.env("testV1Grant").applicationName);
-
-    // checks that clicking on submitted application does nothing
-    cy.get(
-      `[data-cy="cy-application-link-${
-        Cypress.env("testV1Grant").applicationName
-      }"]`,
-    ).should("not.have.attr", "href");
-  });
-
-  it("can start, save, come back, continue and submit new grant application", () => {
-    cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
-
-    searchForGrant(Cypress.env("testV1Grant").name);
-
-    cy.contains(Cypress.env("testV1Grant").name).click();
-
-    cy.contains("Start new application").invoke("removeAttr", "target").click();
-
-    signInAsApplyApplicant();
-
-    // TODO fix this, we shouldn't need to manually navigate
-    cy.visit(Cypress.env("testV1Grant").applicationUrl);
-
-    fillOutEligibity();
-
+    // test sign out and back in
     cy.contains("Save and come back later").click();
 
     signOut();
@@ -510,44 +468,7 @@ describe("Apply for a Grant", () => {
     cy.get('[data-cy="cy-status-tag-Required checks-Completed"]');
     cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
 
-    submitApplication();
-
-    equalitySectionDecline();
-
-    cy.contains("View your applications").click();
-
-    cy.contains("Your applications");
-    cy.contains("All of your current and past applications are listed below.");
-    cy.contains("Name of grant");
-    cy.contains(Cypress.env("testV1Grant").applicationName);
-  });
-
-  it("test that doc upload is required for relevant application form", () => {
-    cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
-
-    searchForGrant(Cypress.env("testV1Grant").name);
-
-    cy.contains(Cypress.env("testV1Grant").name).click();
-
-    cy.contains("Start new application").invoke("removeAttr", "target").click();
-
-    signInAsApplyApplicant();
-
-    // TODO fix this, we shouldn't need to manually navigate
-    cy.visit(Cypress.env("testV1Grant").applicationUrl);
-
-    fillOutEligibity();
-
-    fillOutRequiredChecks();
-
-    fillOutCustomSection();
-
-    cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
-    cy.get('[data-cy="cy-status-tag-Required checks-Completed"]');
-    cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
-
+    // test doc upload is required
     cy.contains("Submit application").should("not.be.disabled");
 
     cy.contains("Custom Section").click();
@@ -576,6 +497,42 @@ describe("Apply for a Grant", () => {
     cy.get('[data-cy="cy-status-tag-Custom Section-In Progress"]');
 
     cy.contains("Submit application").should("be.disabled");
+
+    // re-add doc upload
+    cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
+
+    clickSaveAndContinue();
+    clickSaveAndContinue();
+    clickSaveAndContinue();
+    clickSaveAndContinue();
+    clickSaveAndContinue();
+
+    fillOutDocUpload();
+
+    clickSaveAndContinue();
+    yesSectionComplete();
+    cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
+
+    cy.contains("Submit application").should("not.be.disabled");
+
+    // submit
+    submitApplication();
+
+    equalitySectionAccept();
+
+    cy.contains("View your applications").click();
+
+    cy.contains("Your applications");
+    cy.contains("All of your current and past applications are listed below.");
+    cy.contains("Name of grant");
+    cy.contains(Cypress.env("testV1Grant").applicationName);
+
+    // checks that clicking on submitted application does nothing
+    cy.get(
+      `[data-cy="cy-application-link-${
+        Cypress.env("testV1Grant").applicationName
+      }"]`,
+    ).should("not.have.attr", "href");
   });
 
   it("can land on application dashboard and view details", () => {
@@ -665,7 +622,7 @@ describe("Apply for a Grant", () => {
 
     // TODO reenable click when MFA strategy is defined
     cy.contains("Change your sign in details in your GOV.UK One Login");
-    //.click();
+    // .click();
 
     // cy.origin(Cypress.env('oneLoginBaseUrl'), () => {
     //   cy.contains("Enter the 6 digit security code");
