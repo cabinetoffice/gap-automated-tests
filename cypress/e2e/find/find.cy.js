@@ -5,85 +5,15 @@ import {
   signInAsFindApplicant,
   ONE_LOGIN_BASE_URL,
 } from "../../common/common";
-
-const checkInfoScreen = (headerText, ...bodyTexts) => {
-  cy.get("h1").should("have.text", headerText);
-  bodyTexts.forEach((bodyText) => {
-    cy.contains(bodyText);
-  });
-};
-
-const checkForNoSavedSearchesOrNotifications = () => {
-  cy.get('[data-cy="cyManageYourNotificationsNoData"]').should(
-    "have.text",
-    "You are not signed up for any notifications, and you don't have any saved searches.",
-  );
-};
-
-const checkSuccessBanner = (headerElement, bodyElement, bodyText) => {
-  cy.get(headerElement).should("have.text", "Success");
-  cy.get(bodyElement).should("contain.text", bodyText);
-};
-
-const convertDateToString = (subscribedDate) => {
-  const dateOfSubscription = new Date("March 13, 08 04:01");
-
-  const month = dateOfSubscription.toLocaleString([], {
-    month: "long",
-    hour12: true,
-  });
-
-  const day = dateOfSubscription
-    .getDate()
-    .toLocaleString([], { day: "numeric" });
-
-  const year = dateOfSubscription.getFullYear();
-
-  const hourAndPm = dateOfSubscription
-    .toLocaleString([], {
-      hour: "numeric",
-      hour12: true,
-    })
-    .split(" ");
-
-  const minutes = dateOfSubscription
-    .getMinutes()
-    .toLocaleString(["en-GB"], { minimumIntegerDigits: 2 });
-
-  const dateAsString =
-    day +
-    " " +
-    month +
-    " " +
-    year +
-    " at " +
-    hourAndPm[0] +
-    ":" +
-    minutes +
-    hourAndPm[1];
-
-  return dateAsString;
-};
-
-const countNumberOfPages = () => {
-  cy.get('[data-cy="cyPaginationComponent"]')
-    .find("ul")
-    .children("li")
-    .last()
-    .prev()
-    .children("a")
-    .invoke("attr", "href")
-    .then((href) => {
-      cy.wrap(+href.split("page=")[1] - 1).as("pageCount");
-    });
-};
-
-const clickThroughPagination = (numberOfPages) => {
-  Cypress._.times(numberOfPages, () => {
-    cy.get('[data-cy="cyPaginationNextButton"]').click();
-    cy.wait(300);
-  });
-};
+import {
+  checkForNoSavedSearchesOrNotifications,
+  checkInfoScreen,
+  checkSuccessBanner,
+  clickThroughPagination,
+  countNumberOfPages,
+  createSavedSearch,
+  convertDateToString,
+} from "./helper";
 
 describe("Find a Grant", () => {
   beforeEach(() => {
@@ -169,13 +99,13 @@ describe("Find a Grant", () => {
       "To manage your notifications, you need to sign in with GOV.UK One Login.",
     );
 
-    clickText("Continue to GOV.UK One Login");
-
-    cy.origin(ONE_LOGIN_BASE_URL, () => {
-      cy.get('[id="sign-in-button"]').click();
-    });
-
     signInAsFindApplicant();
+
+    checkSuccessBanner(
+      '[data-cy="cyImportantBannerTitle"]',
+      '[data-cy="cyImportantBannerBody"]',
+      "You can now access your notifications when you sign in with GOV.UK One Login.",
+    );
 
     cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
       "have.text",
@@ -223,11 +153,6 @@ describe("Find a Grant", () => {
       "Sign up for updates",
       "To sign up for updates, you need to sign in with GOV.UK One Login.",
     );
-    clickText("Continue to GOV.UK One Login");
-
-    cy.origin(ONE_LOGIN_BASE_URL, () => {
-      cy.get('[id="sign-in-button"]').click();
-    });
 
     signInAsFindApplicant();
 
@@ -371,20 +296,55 @@ describe("Find a Grant", () => {
     );
   });
 
+  it("can manage notifications through One Login when there are no notifications or saved searches", () => {
+    // journey when not logged in
+    cy.contains("Find a grant");
+    cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
+    checkInfoScreen(
+      "Manage your notifications",
+      "To manage your notifications, you need to sign in with GOV.UK One Login.",
+      "If you do not have a GOV.UK One Login, you can create one.",
+      "If you want to unsubscribe from notifications without creating a GOV.UK One Login, you can use the unsubscribe" +
+        " link in the emails we send to you.",
+    );
+    signInAsFindApplicant();
+
+    cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
+      "have.text",
+      "Manage your notifications and saved searches",
+    );
+    checkForNoSavedSearchesOrNotifications();
+
+    cy.get('[data-cy="cySearch grantsPageLink"]').click();
+    clickText("Back");
+
+    // journey when already logged in
+    cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
+    cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
+      "have.text",
+      "Manage your notifications and saved searches",
+    );
+    checkForNoSavedSearchesOrNotifications();
+  });
+
   it("Can subscribe and unsubscribe from newsletter notifications", () => {
     cy.contains("Find a grant");
+
     clickText("Sign up and we will email you when new grants have been added.");
-    clickText("Continue to GOV.UK One Login");
-    cy.origin(ONE_LOGIN_BASE_URL, () => {
-      cy.get('[id="sign-in-button"]').click();
-    });
+    //capture date
+    cy.wrap(Date.now()).as("subscribedDate");
+
     signInAsFindApplicant();
     cy.get(".govuk-heading-m").contains("Updates about new grants");
     cy.get('[data-cy="cyViewWeeklyUpdatesButton"]').should(
       "have.text",
       "View Updates",
     );
-    cy.contains("You signed up for updates");
+    cy.get("@subscribedDate").then((subscribedDateTimestamp) => {
+      const subscriptionDate = convertDateToString(subscribedDateTimestamp);
+      cy.contains("You signed up for updates on " + subscriptionDate);
+    });
+
     clickText("Unsubscribe from updates about new grants");
     clickText("Yes, unsubscribe");
     cy.get(".govuk-notification-banner__heading").contains(
@@ -392,6 +352,47 @@ describe("Find a Grant", () => {
     );
     cy.get("[data-cy='cyManageYourNotificationsNoData']").contains(
       "You are not signed up for any notifications, and you don't have any saved searches.",
+    );
+  });
+
+  it("Can subscribe and unsubscribe a saved search notification", () => {
+    cy.contains("Find a grant");
+    //start saved search login journey
+    cy.get('[data-cy="cySearchGrantsBtn"]').click();
+    cy.get('[data-cy="cy£5,000,000 plusCheckbox"]').click();
+    cy.get('[data-cy="cyApplyFilter"]').click();
+    cy.get('[data-cy="cySaveSearchLink"]').click();
+
+    //capture date
+    cy.wrap(Date.now()).as("subscribedDate");
+
+    signInAsFindApplicant();
+    createSavedSearch("test saved search");
+    checkSuccessBanner(
+      '[data-cy="cyImportantBannerTitle"]',
+      '[data-cy="cyImportantBannerBody"]',
+      "Your saved search has been added.",
+    );
+
+    //assert date
+    cy.get("@subscribedDate").then((subscribedDateTimestamp) => {
+      const subscribedDate = convertDateToString(subscribedDateTimestamp);
+      cy.contains("You saved this search on " + subscribedDate);
+    });
+
+    cy.get('[data-cy="cytest saved searchSavedSearchTableName"]').contains(
+      "test saved search",
+    );
+    //unsubscribe
+    cy.get('[data-cy="cytest saved searchDeleteLink"]').click();
+    clickText("Yes, delete");
+    cy.get('[data-cy="cytest saved searchSavedSearchTableName"]').should(
+      "not.exist",
+    );
+    checkSuccessBanner(
+      "#govuk-notification-banner-title",
+      '[data-cy="cySubscribeSuccessMessageContent"]',
+      "You have deleted the saved search called:  test saved search",
     );
   });
 });
