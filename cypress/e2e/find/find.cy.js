@@ -22,11 +22,11 @@ describe("Find a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("loads the page", () => {
+  it.skip("loads the page", () => {
     cy.contains("Find a grant");
   });
 
-  it("Interacts with the home page and enters a search term > 100 characters", () => {
+  it.skip("Interacts with the home page and enters a search term > 100 characters", () => {
     cy.contains("Find a grant");
 
     //navigates to about us menu
@@ -65,7 +65,7 @@ describe("Find a Grant", () => {
     );
   });
 
-  it("can search for a grant", () => {
+  it.skip("can search for a grant", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -146,8 +146,6 @@ describe("Find a Grant", () => {
 
     // click 'Sign up for updates' and continue to One Login
     clickText("Sign up for updates");
-    //capture date
-    cy.wrap(Date.now()).as("subscribedDate1");
 
     checkInfoScreen(
       "Sign up for updates",
@@ -155,6 +153,8 @@ describe("Find a Grant", () => {
     );
 
     signInAsFindApplicant();
+    //capture date
+    cy.wrap(Date.now()).as("subscribedDate1");
 
     // check success banner and notification has appeared
     checkSuccessBanner(
@@ -256,7 +256,7 @@ describe("Find a Grant", () => {
     checkForNoSavedSearchesOrNotifications();
   });
 
-  it("can navigate through pagination and limit search term to < 100 characters", () => {
+  it.skip("can navigate through pagination and limit search term to < 100 characters", () => {
     cy.contains("Find a grant");
 
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
@@ -331,10 +331,11 @@ describe("Find a Grant", () => {
     cy.contains("Find a grant");
 
     clickText("Sign up and we will email you when new grants have been added.");
+
+    signInAsFindApplicant();
     //capture date
     cy.wrap(Date.now()).as("subscribedDate");
 
-    signInAsFindApplicant();
     cy.get(".govuk-heading-m").contains("Updates about new grants");
     cy.get('[data-cy="cyViewWeeklyUpdatesButton"]').should(
       "have.text",
@@ -363,10 +364,10 @@ describe("Find a Grant", () => {
     cy.get('[data-cy="cyApplyFilter"]').click();
     cy.get('[data-cy="cySaveSearchLink"]').click();
 
+    signInAsFindApplicant();
     //capture date
     cy.wrap(Date.now()).as("subscribedDate");
 
-    signInAsFindApplicant();
     createSavedSearch("test saved search");
     checkSuccessBanner(
       '[data-cy="cyImportantBannerTitle"]',

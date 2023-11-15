@@ -7,8 +7,6 @@ import {
   deleteFromSubscription,
   deleteFindUser,
 } from "./ts/deleteFindData";
-import { insertUsers } from "./ts/insertTestUsers";
-import { deleteUsers } from "./ts/deleteTestUsers";
 
 const findServiceDbName: string =
   process.env.CYPRESS_FIND_DATABASE_NAME || "postgres";
