@@ -23,5 +23,5 @@ jobs:
       suite: all
       browser: chrome
       report: false
-      environment: QA
+      environment: SANDBOX
     secrets: inherit
