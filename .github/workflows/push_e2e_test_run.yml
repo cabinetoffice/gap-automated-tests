@@ -1,20 +1,8 @@
 name: Push E2E Test Run
 
 on:
-  push:
-    branches:
-      - feature/**
-      - fix/**
-      - FIX-**
-      - bug/**
-      - develop
-      - main
-      - TD**
-      - GAP**
-      - TMI**
-      - release/**
-    paths-ignore:
-      - "*.md"
+  pull_request:
+    branches: develop
 
 jobs:
   call-sandbox-chrome-reusable-e2e-test-run-workflow:

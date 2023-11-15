@@ -120,6 +120,24 @@ When adding new environment variables, you must do this in several places:
   - Secrets should be used instead of Variables unless you need to view the env var during/after the test run (e.g. AWS Access Key and Region are in Variables to allow us to copy the presigned url to the report)
   - If the environment variable is environment-specific (most are) then a variable should be added for both Sandbox and QA, prefixed either `SANDBOX_` or `QA_`
 
+### Tests that type into inputs
+
+Cypress has a bug where sometimes typing into an input won't work because the input is "disabled" - this happens mainly when it tries to type into an element before the page has fully loaded.
+
+To resolve this, you should click onto the first input you want to type in, then type, and all type actions on that page should contain a `force` option:
+
+```js
+cy.get('[data-cy="cy-title-text-input"]').click();
+cy.get('[data-cy="cy-title-text-input"]').type("title", {
+  force: true,
+});
+cy.get('[data-cy="cy-description-text-area"]').type("description", {
+  force: true,
+});
+```
+
+However, it's recommended to only do this if the test is flaky - it shouldn't be the default option as `force` is not how a user would type into the input.
+
 ### Capturing and Formatting a DATE
 
 Step 1) Capture the date and store it as a variable **at the moment where the subscription/saved search is logged**
