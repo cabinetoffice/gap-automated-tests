@@ -1,4 +1,3 @@
-// @ts-ignore
 import * as contentful from "contentful-management";
 import "dotenv/config";
 import { TEST_V1_GRANT } from "../common/constants";
@@ -103,13 +102,11 @@ const unpublishAndDelete = async (entries) => {
   for (const entry of entries.items) {
     if (SLUGS.includes(entry.fields?.label?.["en-US"])) {
       if (entry.isPublished())
-        await entry
-          .unpublish()
-          .then(() =>
-            console.log(
-              `Successfully unpublished grant advert entry ${entry.sys.id}`,
-            ),
+        await entry.unpublish().then(() => {
+          console.log(
+            `Successfully unpublished grant advert entry ${entry.sys.id}`,
           );
+        });
       else console.log(`Grant advert not published, skipping ${entry.sys.id}`);
 
       await entry.delete().then(() => {
@@ -124,41 +121,32 @@ const unpublishAndDelete = async (entries) => {
 const createAndPublish = (environment, advert) => {
   environment.createEntry("grantDetails", advert).then(async (entry) => {
     console.log(`Successfully created grant advert entry ${entry.sys.id}`);
-    await entry
-      .publish()
-      .then(() =>
-        console.log(
-          `Successfully published grant advert entry ${entry.sys.id}`,
-        ),
-      );
+    await entry.publish().then(() => {
+      console.log(`Successfully published grant advert entry ${entry.sys.id}`);
+    });
   });
 };
 
 export const publishGrantAdverts = async () => {
   console.log("Connecting to Contentful to manage grant adverts");
   const client = contentful.createClient({
-    accessToken: process.env["CONTENTFUL_ACCESS_TOKEN"],
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   });
-  await client
-    .getSpace(process.env["CONTENTFUL_SPACE_ID"])
-    .then(async (space) => {
-      await space
-        .getEnvironment(process.env["CONTENTFUL_ENVIRONMENT_ID"])
-        .then(async (environment) => {
-          await environment
-            .getEntries({ limit: 1000 })
-            .then(async (entries) => {
-              console.log("Initiating deletion of grant advert entries");
-              let deletionExecuted = await unpublishAndDelete(entries);
+  await client.getSpace(process.env.CONTENTFUL_SPACE_ID).then(async (space) => {
+    await space
+      .getEnvironment(process.env.CONTENTFUL_ENVIRONMENT_ID)
+      .then(async (environment) => {
+        await environment.getEntries({ limit: 1000 }).then(async (entries) => {
+          console.log("Initiating deletion of grant advert entries");
+          const deletionExecuted = await unpublishAndDelete(entries);
 
-              if (!deletionExecuted)
-                console.log("No grant adverts to be deleted");
+          if (!deletionExecuted) console.log("No grant adverts to be deleted");
 
-              console.log("Initiating publication of grant advert");
-              await Promise.all(
-                ADVERTS.map((advert) => createAndPublish(environment, advert)),
-              );
-            });
+          console.log("Initiating publication of grant advert");
+          await Promise.all(
+            ADVERTS.map((advert) => createAndPublish(environment, advert)),
+          );
         });
-    });
+      });
+  });
 };

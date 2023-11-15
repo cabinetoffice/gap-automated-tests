@@ -4,6 +4,13 @@
     "noEmit": true // Do not compile the JS (or TS) files in this project on build
   },
   "compileOnSave": false,
-  "exclude": ["src", "wwwroot"],
-  "include": ["file.ts"]
+  "exclude": [
+    "src",
+    "wwwroot",
+    "node_modules/**",
+    "mochawesome-report/assets/*",
+    "cypress/_examples/*",
+    ".eslintrc.js"
+  ],
+  "include": ["file.ts", "**/*.cy.js", "**/*.ts", "**/*.js"]
 }

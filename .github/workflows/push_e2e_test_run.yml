@@ -2,8 +2,7 @@ name: Push E2E Test Run
 
 on:
   pull_request:
-    branches:
-      develop
+    branches: develop
 
 jobs:
   call-sandbox-chrome-reusable-e2e-test-run-workflow:
