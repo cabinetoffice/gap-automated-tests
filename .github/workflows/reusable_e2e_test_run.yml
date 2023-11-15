@@ -106,7 +106,7 @@ jobs:
         if: always()
 
       - name: Disconnect from OPENVPN 3 Profile
-        run: openvpn3 session-manage --disconnect
+        run: openvpn3 session-manage --disconnect FINDVPN
         if: always()
 
       - name: Upload Report to S3
