@@ -5,6 +5,8 @@ import { insertFindUser } from "./ts/insertFindData";
 import {
   deleteFromUnsubscribe,
   deleteFromSubscription,
+  deleteFromNewsletter,
+  deleteFromSavedSearch,
   deleteFindUser,
 } from "./ts/deleteFindData";
 
@@ -18,6 +20,8 @@ const findSubstitutions = {
   [insertFindUser]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFromUnsubscribe]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFromSubscription]: [process.env.ONE_LOGIN_APPLICANT_SUB],
+  [deleteFromNewsletter]: [process.env.ONE_LOGIN_APPLICANT_SUB],
+  [deleteFromSavedSearch]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFindUser]: [process.env.ONE_LOGIN_APPLICANT_SUB],
 };
 
