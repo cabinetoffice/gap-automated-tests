@@ -8,11 +8,10 @@ import {
   deleteFindUser,
 } from "./ts/deleteFindData";
 
-const findServiceDbName: string =
-  process.env.CYPRESS_FIND_DATABASE_NAME || "postgres";
+const findServiceDbName: string = process.env.FIND_DATABASE_NAME || "postgres";
 
 const findDatabaseUrl: string =
-  process.env.CYPRESS_FIND_DATABASE_URL ||
+  process.env.FIND_DATABASE_URL ||
   "postgres://postgres:postgres@localhost:5432";
 
 const findSubstitutions = {

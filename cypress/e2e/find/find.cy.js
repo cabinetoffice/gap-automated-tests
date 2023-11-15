@@ -22,11 +22,11 @@ describe("Find a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it.skip("loads the page", () => {
+  it("loads the page", () => {
     cy.contains("Find a grant");
   });
 
-  it.skip("Interacts with the home page and enters a search term > 100 characters", () => {
+  it("Interacts with the home page and enters a search term > 100 characters", () => {
     cy.contains("Find a grant");
 
     //navigates to about us menu
@@ -65,7 +65,7 @@ describe("Find a Grant", () => {
     );
   });
 
-  it.skip("can search for a grant", () => {
+  it("can search for a grant", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -256,7 +256,7 @@ describe("Find a Grant", () => {
     checkForNoSavedSearchesOrNotifications();
   });
 
-  it.skip("can navigate through pagination and limit search term to < 100 characters", () => {
+  it("can navigate through pagination and limit search term to < 100 characters", () => {
     cy.contains("Find a grant");
 
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
