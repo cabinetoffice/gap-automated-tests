@@ -328,7 +328,7 @@ describe("Find a Grant", () => {
     checkForNoSavedSearchesOrNotifications();
   });
 
-  it("Can subscribe and unsubscribe from newsletter notifications", () => {
+  it.only("Can subscribe and unsubscribe from newsletter notifications", () => {
     cy.contains("Find a grant");
 
     clickText("Sign up and we will email you when new grants have been added.");

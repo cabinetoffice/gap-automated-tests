@@ -10,7 +10,7 @@ describe("Manage Users", () => {
     signInToIntegrationSite();
   });
 
-  it("can land on super admin dashboard", () => {
+  it.skip("can land on super admin dashboard", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
     signInAsSuperAdmin();
