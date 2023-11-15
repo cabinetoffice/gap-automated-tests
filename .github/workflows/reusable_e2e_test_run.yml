@@ -50,7 +50,8 @@ jobs:
 
       - name: Connect to OpenVPN 3 Profile
         run: |
-          echo ${{ secrets[format('{0}_FIND_OVPN_PROFILE', inputs.environment)] }} > find.ovpn
+          touch find.ovpn
+          cat ${{ secrets[format('{0}_FIND_OVPN_PROFILE', inputs.environment)] }} > find.ovpn
           echo "ADDED CONFIG TO FILE"
           openvpn3 config-import --config find.ovpn --name FINDVPN --persistent
           openvpn3 config-acl --show --lock-down true --transfer-owner-session true --grant root --config FINDVPN
