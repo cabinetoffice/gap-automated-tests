@@ -1,5 +1,4 @@
 import {
-  signInWithOneLogin,
   clickSaveAndContinue,
   yesQuestionComplete,
   saveAndExit,
@@ -21,7 +20,7 @@ describe("Create a Grant", () => {
     signInAsAdmin();
     createGrant();
 
-    //create advert
+    // create advert
     advertSection1();
     advertSection2();
     advertSection3();
@@ -50,7 +49,7 @@ describe("Create a Grant", () => {
     }
 
     function sectionsAndQuestions() {
-      //add section
+      // add section
       cy.get('[data-cy="cy-button-addNewSection"]').click();
       cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
       cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Custom Section", {
@@ -58,7 +57,7 @@ describe("Create a Grant", () => {
       });
       clickSaveAndContinue();
 
-      //add question to new section
+      // add question to new section
       addOptionalQuestion(
         '[data-cy="cy_addAQuestion-Custom Section"]',
         "Custom Question 1",
@@ -116,7 +115,7 @@ describe("Create a Grant", () => {
       cy.get('[data-cy="cy_Section-Custom Question 6"]').should("exist");
       cy.get('[data-cy="cy_Section-Custom Question 7"]').should("exist");
 
-      //add section
+      // add section
       cy.get('[data-cy="cy-button-addNewSection"]').click();
       cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
       cy.get('[data-cy="cy-sectionTitle-text-input"]').type(
@@ -124,7 +123,7 @@ describe("Create a Grant", () => {
         { force: true },
       );
       clickSaveAndContinue();
-      //delete section
+      // delete section
       cy.get(
         '[data-cy="cy_sections_deleteSectionBtn-Deletable Section"]',
       ).click();
@@ -211,7 +210,7 @@ describe("Create a Grant", () => {
 
       sectionsAndQuestions();
 
-      //publish
+      // publish
       publishApplicationForm();
     }
 

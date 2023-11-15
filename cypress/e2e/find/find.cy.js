@@ -3,7 +3,6 @@ import {
   signInToIntegrationSite,
   clickText,
   signInAsFindApplicant,
-  ONE_LOGIN_BASE_URL,
 } from "../../common/common";
 import {
   checkForNoSavedSearchesOrNotifications,
@@ -14,7 +13,6 @@ import {
   createSavedSearch,
   convertDateToString,
 } from "./helper";
-import dayjs from "dayjs";
 
 describe("Find a Grant", () => {
   beforeEach(() => {
@@ -32,7 +30,7 @@ describe("Find a Grant", () => {
     it("Interacts with the home page and enters a search term > 100 characters", () => {
       cy.contains("Find a grant");
 
-      //navigates to about us menu
+      // navigates to about us menu
       cy.get('[data-cy="cyaboutGrantsPageLink"]').click();
 
       cy.get('[data-cy="cyAbout usTitle"]').should("have.text", "About us");
@@ -42,7 +40,7 @@ describe("Find a Grant", () => {
         .should("have.text", "Home")
         .click();
 
-      //browse grants and perform invalid search on home page(> 100 characters)
+      // browse grants and perform invalid search on home page(> 100 characters)
       cy.get('[data-cy="cyBrowseGrantsHomePageTextLink"]').click();
 
       cy.get('[data-cy="cyhomePageLink"]')
@@ -50,13 +48,12 @@ describe("Find a Grant", () => {
         .should("have.text", "Home")
         .click();
 
-      //perform invalid search
+      // perform invalid search
       const invalidSearch = "x".repeat(101);
       cy.get('[data-cy="cyHomePageSearchInput"]').click().type(invalidSearch);
 
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
-
-      //assert the error banner is there and contains correct text
+      // assert the error banner is there and contains correct text
       cy.get('[data-cy="cyErrorBannerHeading"]').should(
         "have.text",
         "There is a problem",
@@ -110,7 +107,7 @@ describe("Find a Grant", () => {
       cy.get('[data-cy="cyPaginationNextButton"]').should("not.exist");
       cy.get('[data-cy="cyPaginationPageNumber1"]').click();
 
-      //perform invalid search
+      // perform invalid search
       const invalidSearch = "x".repeat(101);
       cy.get('[data-cy="cySearchAgainInput"]').click().type(invalidSearch);
       cy.get('[data-cy="cySearchAgainButton"]').click();
@@ -192,7 +189,7 @@ describe("Find a Grant", () => {
       );
 
       signInAsFindApplicant();
-      //capture date
+      // capture date
       cy.wrap(Date.now()).as("subscribedDate1");
 
       // check success banner and notification has appeared
@@ -314,7 +311,7 @@ describe("Find a Grant", () => {
       );
 
       signInAsFindApplicant();
-      //capture date
+      // capture date
       cy.wrap(Date.now()).as("subscribedDate");
 
       cy.get(".govuk-heading-m").contains("Updates about new grants");
@@ -347,14 +344,14 @@ describe("Find a Grant", () => {
 
     it("Can subscribe and unsubscribe a saved search notification", () => {
       cy.contains("Find a grant");
-      //start saved search login journey
+      // start saved search login journey
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
       cy.get('[data-cy="cy£5,000,000 plusCheckbox"]').click();
       cy.get('[data-cy="cyApplyFilter"]').click();
       cy.get('[data-cy="cySaveSearchLink"]').click();
 
       signInAsFindApplicant();
-      //capture date
+      // capture date
       cy.wrap(Date.now()).as("subscribedDate");
 
       createSavedSearch("test saved search");
@@ -364,7 +361,7 @@ describe("Find a Grant", () => {
         "Your saved search has been added.",
       );
 
-      //assert date
+      // assert date
       cy.get("@subscribedDate").then((subscribedDateTimestamp) => {
         const subscriptionDates = convertDateToString(subscribedDateTimestamp);
         cy.get(".govuk-table__body > .govuk-table__row > :nth-child(2)")
@@ -381,7 +378,7 @@ describe("Find a Grant", () => {
       cy.get('[data-cy="cytest saved searchSavedSearchTableName"]').contains(
         "test saved search",
       );
-      //unsubscribe
+      // unsubscribe
       cy.get('[data-cy="cytest saved searchDeleteLink"]').click();
       clickText("Yes, delete");
       cy.get('[data-cy="cytest saved searchSavedSearchTableName"]').should(
