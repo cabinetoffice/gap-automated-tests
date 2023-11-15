@@ -46,5 +46,10 @@ export const clickThroughPagination = (numberOfPages) => {
   });
 };
 
-export const convertDateToString = (date) =>
-  dayjs(date).format("D MMMM YYYY [at] h:mma");
+export const convertDateToString = (date) => {
+  const dateFormat = "D MMMM YYYY [at] h:mma";
+  const original = dayjs(date).format(dateFormat);
+  const originalInc = dayjs(date).add(1, "minute").format(dateFormat);
+  const originalDec = dayjs(date).subtract(1, "minute").format(dateFormat);
+  return [original, originalInc, originalDec];
+};
