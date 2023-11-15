@@ -37,7 +37,13 @@ export const createFindData = async (): Promise<void> => {
 
 export const deleteFindData = async (): Promise<void> => {
   await runSQLFromJs(
-    [deleteFromSubscription, deleteFromUnsubscribe, deleteFindUser],
+    [
+      deleteFromUnsubscribe,
+      deleteFromSubscription,
+      deleteFromNewsletter,
+      deleteFromSavedSearch,
+      deleteFindUser,
+    ],
     findSubstitutions,
     findServiceDbName,
     findDatabaseUrl,
