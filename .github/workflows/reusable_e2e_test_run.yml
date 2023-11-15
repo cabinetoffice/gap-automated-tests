@@ -82,6 +82,8 @@ jobs:
           USERS_DATABASE_NAME=${{ secrets[format('{0}_USERS_DATABASE_NAME', inputs.environment)] }}
           APPLY_DATABASE_URL =${{ secrets[format('{0}_APPLY_DATABASE_URL', inputs.environment)] }}
           APPLY_DATABASE_NAME=${{ secrets[format('{0}_APPLY_DATABASE_NAME', inputs.environment)] }}
+          FIND_DATABASE_URL =${{ secrets[format('{0}_FIND_DATABASE_URL', inputs.environment)] }}
+          FIND_DATABASE_NAME=${{ secrets[format('{0}_FIND_DATABASE_NAME', inputs.environment)] }}
           CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
           CONTENTFUL_ACCESS_TOKEN=${{ secrets[format('{0}_CONTENTFUL_ACCESS_TOKEN', inputs.environment)] }}
           CONTENTFUL_ENVIRONMENT_ID=${{ vars[format('{0}_CONTENTFUL_ENVIRONMENT_ID', inputs.environment)] }}
