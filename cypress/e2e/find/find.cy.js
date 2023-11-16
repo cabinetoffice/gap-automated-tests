@@ -67,9 +67,9 @@ describe("Find a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    searchForGrant(Cypress.env("testV1Grant").name);
+    searchForGrant(Cypress.env("testV1Grant").advertName);
 
-    cy.contains(Cypress.env("testV1Grant").name);
+    cy.contains(Cypress.env("testV1Grant").advertName);
 
     const grantData = {
       Location: "National",
@@ -117,12 +117,12 @@ describe("Find a Grant", () => {
 
     cy.get('[data-cy="cySearchAgainInput"]')
       .click()
-      .type(Cypress.env("testV1Grant").name);
+      .type(Cypress.env("testV1Grant").advertName);
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
     cy.get('[data-cy="cyGrantNameAndLink"]').should(
       "include.text",
-      Cypress.env("testV1Grant").name,
+      Cypress.env("testV1Grant").advertName,
     );
   });
 

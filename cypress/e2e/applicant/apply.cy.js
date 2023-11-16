@@ -311,9 +311,9 @@ describe("Apply for a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    searchForGrant(Cypress.env("testV1Grant").name);
+    searchForGrant(Cypress.env("testV1Grant").advertName);
 
-    cy.contains(Cypress.env("testV1Grant").name).click();
+    cy.contains(Cypress.env("testV1Grant").advertName).click();
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 

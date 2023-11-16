@@ -8,7 +8,7 @@ const userDatabaseUrl =
   "postgres://postgres:postgres@localhost:5432";
 
 const script = `
-SELECT sub, email, gap_user_id from public.gap_users WHERE email IN ($1, $2, $3)
+SELECT sub, email, gap_user_id, r.name from public.gap_users gu INNER JOIN public.roles_users ru  on ru.users_gap_user_id = gu.gap_user_id inner join public.roles r on r.id = ru.roles_id  WHERE email IN ($1, $2, $3) 
 `;
 
 const emails = [
