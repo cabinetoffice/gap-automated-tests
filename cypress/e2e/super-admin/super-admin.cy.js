@@ -114,5 +114,15 @@ describe("Manage Users", () => {
     cy.get(
       `[data-cy="cy_summaryListValue_${TEST_V1_GRANT.schemeName}"] > .govuk-link`,
     ).should("exist");
+
+    cy.log("Navigate to admin dashboard");
+    cy.get('[data-cy="cy-back-button"]').click();
+    cy.get('[data-cy="cyadminDashPageLink"] > .govuk-link').click();
+
+    cy.log("Checking grant shows in admin dashboard");
+    cy.get('[data-cy="cy_table_row"] > :nth-child(1)').should(
+      "contain.text",
+      "Cypress - Test Scheme V1",
+    );
   });
 });
