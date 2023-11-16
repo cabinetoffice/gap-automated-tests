@@ -97,6 +97,9 @@ describe("Manage Users", () => {
     cy.log("Clicking confirm");
     clickText("Confirm transfer");
 
+    cy.log("Hitting back button");
+    cy.get('[data-cy="cy-back-button"]').click();
+
     cy.log("Entering super admin email in search box");
     cy.get("[name=searchTerm]").type(Cypress.env("oneLoginSuperAdminEmail"));
 
@@ -108,5 +111,8 @@ describe("Manage Users", () => {
     ).click();
 
     cy.log("Verifying that the grant appears in the list");
+    cy.get(
+      `[data-cy="cy_summaryListValue_${TEST_V1_GRANT.schemeName}"] > .govuk-link`,
+    ).should("exist");
   });
 });
