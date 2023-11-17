@@ -14,9 +14,9 @@ jobs:
   call-sandbox-chrome-reusable-e2e-test-run-workflow:
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
-      suite: all
+      suite: superadmin
       browser: chrome
-      report: false
+      report: true
       notify: false
       environment: SANDBOX
     secrets: inherit
