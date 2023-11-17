@@ -29,6 +29,13 @@ on:
         options:
           - false
           - true
+      notify:
+        type: choice
+        description: Notify on Slack?
+        default: false
+        options:
+          - false
+          - true
       environment:
         type: choice
         description: Environment
@@ -44,6 +51,7 @@ jobs:
       suite: ${{ inputs.suite }}
       browser: ${{ inputs.browser }}
       report: ${{ inputs.report }}
+      notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
     secrets: inherit
     if: ${{ !cancelled() && inputs.browser != 'all' }}
@@ -53,6 +61,7 @@ jobs:
     with:
       suite: ${{ inputs.suite }}
       report: ${{ inputs.report }}
+      notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
     secrets: inherit
     if: ${{ !cancelled() && inputs.browser == 'all' }}
