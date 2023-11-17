@@ -10,6 +10,6 @@ jobs:
     with:
       suite: all
       browser: chrome
-      report: false
+      report: true
       environment: SANDBOX
     secrets: inherit
