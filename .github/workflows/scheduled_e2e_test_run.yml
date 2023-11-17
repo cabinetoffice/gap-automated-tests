@@ -11,6 +11,7 @@ jobs:
     with:
       suite: all
       report: true
+      notify: true
       environment: SANDBOX
     secrets: inherit
 
@@ -20,6 +21,7 @@ jobs:
     with:
       suite: all
       report: true
+      notify: true
       environment: QA
     secrets: inherit
 
