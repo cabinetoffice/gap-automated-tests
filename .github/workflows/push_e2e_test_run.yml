@@ -16,7 +16,7 @@ jobs:
     with:
       suite: superadmin
       browser: chrome
-      report: true
+      report: false
       notify: true
       environment: SANDBOX
     secrets: inherit
