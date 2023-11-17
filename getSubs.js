@@ -8,8 +8,17 @@ const userDatabaseUrl =
   "postgres://postgres:postgres@localhost:5432";
 
 const script = `
-SELECT sub, email, gap_user_id from public.gap_users WHERE email IN ($1, $2, $3)
-`;
+SELECT 
+  u.sub, 
+  u.email, 
+  u.gap_user_id, 
+  MAX(ru.roles_id) AS highest_role_id 
+FROM 
+  public.gap_users u 
+INNER JOIN public.roles_users ru ON ru.users_gap_user_id = u.gap_user_id 
+INNER JOIN public.roles r ON r.id = ru.roles_id 
+WHERE email IN ($1, $2, $3) 
+group by u.email, u.sub, u.gap_user_id`;
 
 const emails = [
   process.env.ONE_LOGIN_APPLICANT_EMAIL,
