@@ -1,6 +1,7 @@
 import { defineConfig } from "cypress";
 import { createTestUsers, deleteTestUsers } from "./cypress/seed/user";
 import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
+import { createFindData, deleteFindData } from "./cypress/seed/find";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
 import { TEST_V1_GRANT } from "./cypress/common/constants";
 require("dotenv").config();
@@ -21,6 +22,11 @@ export default defineConfig({
           await deleteApplyData().then(async () => {
             await createApplyData();
           });
+
+          return null;
+        },
+        async setUpFindData() {
+          await deleteFindData().then(async () => await createFindData());
 
           return null;
         },

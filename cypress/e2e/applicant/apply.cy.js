@@ -152,10 +152,10 @@ const fillOutRequiredChecks = () => {
     .and("contain", "County,")
     .and("contain", "Postcode");
   cy.get("[data-cy=cy-section-details-APPLICANT_ORG_CHARITY_NUMBER]").contains(
-    "Enter your Charity Commission number (if you have one) (optional)",
+    "Enter your Charity Commission number (if you have one)",
   );
   cy.get("[data-cy=cy-section-details-APPLICANT_ORG_COMPANIES_HOUSE]").contains(
-    "Enter your Companies House number (if you have one) (optional)",
+    "Enter your Companies House number (if you have one)",
   );
   cy.get("[data-cy=cy-section-details-APPLICANT_AMOUNT]").contains(
     "How much does your organisation require as a grant?",
