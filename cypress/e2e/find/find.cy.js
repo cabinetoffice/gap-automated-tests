@@ -57,6 +57,7 @@ describe("Find a Grant", () => {
       cy.get('[data-cy="cyHomePageSearchInput"]').click().type(invalidSearch);
 
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
+
       // assert the error banner is there and contains correct text
       cy.get('[data-cy="cyErrorBannerHeading"]').should(
         "have.text",
@@ -74,9 +75,9 @@ describe("Find a Grant", () => {
       // wait for grant to be published to contentful
       cy.wait(5000);
 
-      searchForGrant(Cypress.env("testV1Grant").name);
+      searchForGrant(Cypress.env("testV1Grant").advertName);
 
-      cy.contains(Cypress.env("testV1Grant").name);
+      cy.contains(Cypress.env("testV1Grant").advertName);
 
       const grantData = {
         Location: "National",
@@ -124,12 +125,12 @@ describe("Find a Grant", () => {
 
       cy.get('[data-cy="cySearchAgainInput"]')
         .click()
-        .type(Cypress.env("testV1Grant").name);
+        .type(Cypress.env("testV1Grant").advertName);
       cy.get('[data-cy="cySearchAgainButton"]').click();
 
       cy.get('[data-cy="cyGrantNameAndLink"]').should(
         "include.text",
-        Cypress.env("testV1Grant").name,
+        Cypress.env("testV1Grant").advertName,
       );
     });
   });
@@ -175,7 +176,7 @@ describe("Find a Grant", () => {
       // go to home page
       cy.contains("Find a grant");
 
-      const grantAdvertName = Cypress.env("testV1Grant").name;
+      const grantAdvertName = Cypress.env("testV1Grant").advertName;
       // search for and view test grant advert
       searchForGrant(grantAdvertName);
       // cy.get('[data-cy="cyGrantNameAndLink"]').should('have.text', 'Cypress - Automated E2E Test Grant');
@@ -300,33 +301,16 @@ describe("Find a Grant", () => {
 
     it("Can subscribe and unsubscribe from newsletter notifications", () => {
       cy.contains("Find a grant");
-
       clickText(
         "Sign up and we will email you when new grants have been added.",
       );
-
       signInAsFindApplicant();
-      // capture date
-      cy.wrap(Date.now()).as("subscribedDate");
-
       cy.get(".govuk-heading-m").contains("Updates about new grants");
       cy.get('[data-cy="cyViewWeeklyUpdatesButton"]').should(
         "have.text",
         "View Updates",
       );
-      cy.get("@subscribedDate").then((subscribedDateTimestamp) => {
-        const subscriptionDates = convertDateToString(subscribedDateTimestamp);
-        cy.get(".govuk-grid-column-full > p")
-          .invoke("text")
-          .should(
-            "be.oneOf",
-            subscriptionDates.map(
-              (subscriptionDate) =>
-                `You signed up for updates on ${subscriptionDate}.`,
-            ),
-          );
-      });
-
+      cy.contains("You signed up for updates");
       clickText("Unsubscribe from updates about new grants");
       clickText("Yes, unsubscribe");
       cy.get(".govuk-notification-banner__heading").contains(

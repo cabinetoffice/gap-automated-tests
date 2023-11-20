@@ -3,6 +3,12 @@ name: Push E2E Test Run
 on:
   pull_request:
     branches: develop
+  push:
+    branches:
+      - develop
+      - main
+    paths-ignore:
+      - "*.md"
 
 jobs:
   call-sandbox-chrome-reusable-e2e-test-run-workflow:
@@ -11,5 +17,6 @@ jobs:
       suite: all
       browser: chrome
       report: false
+      notify: false
       environment: SANDBOX
     secrets: inherit

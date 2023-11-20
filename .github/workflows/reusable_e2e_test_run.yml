@@ -12,6 +12,9 @@ on:
       report:
         default: false
         type: string
+      notify:
+        default: false
+        type: string
       environment:
         default: SANDBOX
         type: string
@@ -23,7 +26,7 @@ jobs:
     concurrency: e2e_test_run_${{ inputs.environment }}
     # GitHub Actions doesn't have ternaries for some reason, so this only sets the environment if we want reports
     # (so it doesn't ping every time someone pushes)
-    environment: ${{ inputs.report == 'true' && inputs.environment || '' }}
+    environment: ${{ inputs.notify == 'true' && inputs.environment || '' }}
 
     steps:
       - name: Get Github action IP

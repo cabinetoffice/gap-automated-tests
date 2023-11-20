@@ -162,7 +162,9 @@ Step 3) Assert using this date variable, which is already formatted in the way t
 
 ```js
 cy.get(
-  `[data-cy="cy${Cypress.env("testV1Grant").name}UnsubscriptionTableName"]`,
+  `[data-cy="cy${
+    Cypress.env("testV1Grant").advertName
+  }UnsubscriptionTableName"]`,
 )
   .parent()
   .next()

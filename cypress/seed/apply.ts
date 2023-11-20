@@ -22,6 +22,7 @@ import {
   deleteApplicantOrgProfiles,
 } from "./ts/deleteApplyData";
 import { TEST_V1_GRANT } from "../common/constants";
+import { v1Advert } from "./data/apply";
 
 const applyServiceDbName: string =
   process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
@@ -97,7 +98,8 @@ const applySubstitutions = {
     ADVERT_ID,
     TEST_V1_GRANT.contentfulId,
     TEST_V1_GRANT.contentfulSlug,
-    TEST_V1_GRANT.name,
+    TEST_V1_GRANT.advertName,
+    v1Advert,
     ADMIN_ID,
     ADMIN_ID,
     SCHEME_ID,
