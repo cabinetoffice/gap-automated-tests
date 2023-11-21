@@ -123,7 +123,7 @@ const applySubstitutions = {
     ADVERT_ID_V1,
     TEST_V1_GRANT.contentfulId,
     TEST_V1_GRANT.contentfulSlug,
-    TEST_V1_GRANT.name,
+    TEST_V1_GRANT.advertName,
     v1Advert,
     ADMIN_ID,
     ADMIN_ID,

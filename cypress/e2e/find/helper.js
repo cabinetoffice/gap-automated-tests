@@ -1,5 +1,15 @@
-export const checkManageNotificationsInfoScreen = () => {
-  cy.get("h1").should("have.text", "Manage your notifications");
+import dayjs from "dayjs";
+
+export const checkInfoScreen = (headerText, ...bodyTexts) => {
+  cy.get("h1").should("have.text", headerText);
+  bodyTexts.forEach((bodyText) => {
+    cy.contains(bodyText);
+  });
+};
+
+export const checkSuccessBanner = (headerElement, bodyElement, bodyText) => {
+  cy.get(headerElement).should("have.text", "Success");
+  cy.get(bodyElement).should("contain.text", bodyText);
 };
 
 export const checkForNoSavedSearchesOrNotifications = () => {
@@ -34,4 +44,12 @@ export const clickThroughPagination = (numberOfPages) => {
     cy.get('[data-cy="cyPaginationNextButton"]').click();
     cy.wait(300);
   });
+};
+
+export const convertDateToString = (date) => {
+  const dateFormat = "D MMMM YYYY [at] h:mma";
+  const original = dayjs(date).format(dateFormat);
+  const originalInc = dayjs(date).add(1, "minute").format(dateFormat);
+  const originalDec = dayjs(date).subtract(1, "minute").format(dateFormat);
+  return [original, originalInc, originalDec];
 };

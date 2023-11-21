@@ -12,6 +12,9 @@ on:
       report:
         default: false
         type: string
+      notify:
+        default: false
+        type: string
       environment:
         default: SANDBOX
         type: string
@@ -23,7 +26,7 @@ jobs:
     concurrency: e2e_test_run_${{ inputs.environment }}
     # GitHub Actions doesn't have ternaries for some reason, so this only sets the environment if we want reports
     # (so it doesn't ping every time someone pushes)
-    environment: ${{ inputs.report == 'true' && inputs.environment || '' }}
+    environment: ${{ inputs.notify == 'true' && inputs.environment || '' }}
 
     steps:
       - name: Get Github action IP
@@ -38,6 +41,24 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+
+      - name: Install OpenVPN 3
+        run: |
+          sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://packages.openvpn.net/packages-repo.gpg | sudo tee /etc/apt/keyrings/openvpn.asc
+          DISTRO=$(lsb_release -c | awk '{print $2}')
+          echo "deb [signed-by=/etc/apt/keyrings/openvpn.asc] https://packages.openvpn.net/openvpn3/debian $DISTRO main" | sudo tee /etc/apt/sources.list.d/openvpn-packages.list
+          sudo apt update
+          sudo apt install openvpn3
+          openvpn3 version
+
+      - name: Connect to OpenVPN 3 Profile
+        run: |
+          echo "${{ secrets[format('{0}_FIND_OVPN_PROFILE', inputs.environment)] }}" > find.ovpn
+          openvpn3 config-import --config find.ovpn --name FINDVPN --persistent
+          openvpn3 config-acl --show --lock-down true --transfer-owner-session true --grant root --config FINDVPN
+          openvpn3 session-start --config FINDVPN
+          openvpn3 sessions-list
+          openvpn3 session-stats --config FINDVPN
 
       - name: Checkout repo
         uses: actions/checkout@master
@@ -64,6 +85,8 @@ jobs:
           USERS_DATABASE_NAME=${{ secrets[format('{0}_USERS_DATABASE_NAME', inputs.environment)] }}
           APPLY_DATABASE_URL =${{ secrets[format('{0}_APPLY_DATABASE_URL', inputs.environment)] }}
           APPLY_DATABASE_NAME=${{ secrets[format('{0}_APPLY_DATABASE_NAME', inputs.environment)] }}
+          FIND_DATABASE_URL =${{ secrets[format('{0}_FIND_DATABASE_URL', inputs.environment)] }}
+          FIND_DATABASE_NAME=${{ secrets[format('{0}_FIND_DATABASE_NAME', inputs.environment)] }}
           CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
           CONTENTFUL_ACCESS_TOKEN=${{ secrets[format('{0}_CONTENTFUL_ACCESS_TOKEN', inputs.environment)] }}
           CONTENTFUL_ENVIRONMENT_ID=${{ vars[format('{0}_CONTENTFUL_ENVIRONMENT_ID', inputs.environment)] }}
@@ -72,6 +95,7 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        timeout-minutes: 30
         with:
           browser: ${{ inputs.browser }}
           spec: ${{ inputs.suite == 'all' && 'cypress/**' || format('cypress/e2e/{0}/*.cy.js', inputs.suite == 'superadmin' && 'super-admin' || inputs.suite) }}
@@ -83,6 +107,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+        if: always()
+
+      - name: Disconnect from OPENVPN 3 Profile
+        run: openvpn3 session-manage --config FINDVPN --disconnect
         if: always()
 
       - name: Upload Report to S3
