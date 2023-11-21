@@ -91,7 +91,7 @@ const ADVERTS = [
         "en-US": "£1 million",
       },
       grantShortDescription: {
-        "en-US": "no",
+        "en-US": "This is a short description",
       },
       grantFunder: {
         "en-US": "The Department of Business",

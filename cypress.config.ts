@@ -2,7 +2,11 @@ import { defineConfig } from "cypress";
 import { createTestUsers, deleteTestUsers } from "./cypress/seed/user";
 import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
-import { TEST_V1_GRANT } from "./cypress/common/constants";
+import {
+  TEST_V1_GRANT,
+  TEST_V2_EXTERNAL_GRANT,
+  TEST_V2_INTERNAL_GRANT,
+} from "./cypress/common/constants";
 require("dotenv").config();
 
 export default defineConfig({
@@ -61,6 +65,12 @@ export default defineConfig({
       firstUserId: process.env.FIRST_USER_ID,
       testV1Grant: {
         ...TEST_V1_GRANT,
+      },
+      testV2InternalGrant: {
+        ...TEST_V2_INTERNAL_GRANT,
+      },
+      testV2ExternalGrant: {
+        ...TEST_V2_EXTERNAL_GRANT,
       },
     },
     reporter: "cypress-mochawesome-reporter",

@@ -2,6 +2,7 @@ import {
   clickSaveAndContinue,
   clickSaveAndExit,
   yesSectionComplete,
+  clickContinue,
 } from "../../common/common";
 
 export const fillOutDocUpload = () => {
@@ -271,22 +272,22 @@ export const equalitySectionAccept = () => {
   );
 };
 
-// export const equalitySectionDecline = () => {
-//   cy.contains("We have received your application");
-//   cy.contains(
-//     "Before you finish using the service, we’d like to ask some equality questions.",
-//   );
-//   cy.contains("Do you want to answer the equality questions?");
-//   cy.contains(
-//     "These questions are optional. We would like to understand who the grant will benefit.",
-//   );
-//   cy.contains("Your answers will not affect your application.");
-//   cy.get("[data-cy=cy-radioInput-option-NoSkipTheEqualityQuestions]").click();
-//   clickContinue();
-//
-//   cy.contains("Application submitted");
-//   cy.contains("What happens next");
-//   cy.contains(
-//     "The funding organisation will contact you once they have reviewed your application.",
-//   );
-// };};
+export const equalitySectionDecline = () => {
+  cy.contains("We have received your application");
+  cy.contains(
+    "Before you finish using the service, we’d like to ask some equality questions.",
+  );
+  cy.contains("Do you want to answer the equality questions?");
+  cy.contains(
+    "These questions are optional. We would like to understand who the grant will benefit.",
+  );
+  cy.contains("Your answers will not affect your application.");
+  cy.get("[data-cy=cy-radioInput-option-NoSkipTheEqualityQuestions]").click();
+  clickContinue();
+
+  cy.contains("Application submitted");
+  cy.contains("What happens next");
+  cy.contains(
+    "The funding organisation will contact you once they have reviewed your application.",
+  );
+};

@@ -26,6 +26,7 @@ import {
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
 } from "../common/constants";
+import { v1Advert, v2ExternalAdvert, v2InternalAdvert } from "./data/apply";
 
 const applyServiceDbName: string =
   process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
@@ -123,6 +124,7 @@ const applySubstitutions = {
     TEST_V1_GRANT.contentfulId,
     TEST_V1_GRANT.contentfulSlug,
     TEST_V1_GRANT.name,
+    v1Advert,
     ADMIN_ID,
     ADMIN_ID,
     SCHEME_ID,
@@ -130,6 +132,7 @@ const applySubstitutions = {
     TEST_V2_INTERNAL_GRANT.contentfulId,
     TEST_V2_INTERNAL_GRANT.contentfulSlug,
     TEST_V2_INTERNAL_GRANT.name,
+    v2InternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
     SCHEME_ID - 1,
@@ -137,6 +140,7 @@ const applySubstitutions = {
     TEST_V2_EXTERNAL_GRANT.contentfulId,
     TEST_V2_EXTERNAL_GRANT.contentfulSlug,
     TEST_V2_EXTERNAL_GRANT.name,
+    v2ExternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
     SCHEME_ID - 2,
