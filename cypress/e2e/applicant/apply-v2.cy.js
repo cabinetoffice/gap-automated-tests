@@ -331,10 +331,9 @@ describe("Apply for a Grant V2", () => {
   });
 
   it("Mandatory questions flow - Empty, Partial Filled & Full Org Profile", () => {
-    // TODO - Uncomment when fixed
-    // cy.task("publishGrantsToContentful");
+    cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
-    // cy.wait(5000);
+    cy.wait(5000);
 
     // 1. EMPTY ORG PROFILE
 
@@ -397,7 +396,7 @@ describe("Apply for a Grant V2", () => {
     clickText("View your applications");
     clickText("Back");
 
-    // // 2. PARTIALLY FILLED ORG PROFILE
+    // // 2. PARTIALLY FILLED ORG PROFILE (Incomplete)
     //
     // // Refill Org Profile & Leave Blanks
     // cy.get('[data-cy="cy-link-card-Your organisation details"]').click();
@@ -412,7 +411,7 @@ describe("Apply for a Grant V2", () => {
     // [
     //   "addressLine1",
     //   "addressLine2",
-    //   "city",
+    //   "town",
     //   "county",
     //   "postcode"
     // ].forEach((item, index) => {
@@ -446,5 +445,8 @@ describe("Apply for a Grant V2", () => {
     // // Before you start
     // cy.contains("Before you start");
     // cy.contains("Continue").click();
+
+    // Fill the grant & check that filled org profile values are present
+    // Skip E&D Questions
   });
 });
