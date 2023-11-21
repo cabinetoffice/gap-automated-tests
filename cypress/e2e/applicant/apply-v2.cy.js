@@ -4,11 +4,13 @@ import {
   searchForGrant,
   signInAsApplyApplicant,
   clickText,
+  clickSave,
 } from "../../common/common";
 import {
   fillOutEligibity,
   submitApplication,
   equalitySectionAccept,
+  equalitySectionDecline,
 } from "./helper";
 
 // Details object
@@ -107,6 +109,110 @@ const fillMandatoryQuestions = (orgProfileFilled) => {
       .click();
   });
   clickSaveAndContinue();
+};
+
+const fillOrgProfile = () => {
+  // Open Org Profile Page
+  cy.get('[data-cy="cy-link-card-Your organisation details"]').click();
+
+  // Name
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationName"]',
+  ).click();
+  cy.get('[data-cy="cy-legalName-text-input"]').clear().type(details.name);
+  clickSave();
+
+  // Address
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationAddress"]',
+  ).click();
+  ["addressLine1", "addressLine2", "town", "county", "postcode"].forEach(
+    (item, index) => {
+      cy.get(`[data-cy=cy-${item}-text-input]`)
+        .clear()
+        .type(details.address[index]);
+    },
+  );
+  clickSave();
+
+  // Org Type
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+  cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').click();
+  clickSave();
+
+  // Companies House
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationCompaniesHouseNumber"]',
+  ).click();
+  cy.get('[data-cy="cy-companiesHouseNumber-text-input"]')
+    .clear()
+    .type(details.companiesHouse);
+  clickSave();
+
+  // Charities Commission
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationCharity"]',
+  ).click();
+  cy.get('[data-cy="cy-charityCommissionNumber-text-input"]')
+    .clear()
+    .type(details.charitiesCommission);
+  clickSave();
+
+  // Back to account
+  cy.get('[data-cy="cy-back-to-dashboard-button"]').click();
+};
+
+const partialFillOrgProfile = () => {
+  // Open Org Profile Page
+  cy.get('[data-cy="cy-link-card-Your organisation details"]').click();
+
+  // Name - Blank
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationName"]',
+  ).click();
+  cy.get('[data-cy="cy-legalName-text-input"]').clear();
+  clickSave();
+
+  // Address
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationAddress"]',
+  ).click();
+  ["addressLine1", "addressLine2", "town", "county", "postcode"].forEach(
+    (item, index) => {
+      cy.get(`[data-cy=cy-${item}-text-input]`)
+        .clear()
+        .type(details.address[index]);
+    },
+  );
+  clickSave();
+
+  // Org Type - Filled
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+  cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').click();
+  clickSave();
+
+  // Companies House - Blank
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationCompaniesHouseNumber"]',
+  ).click();
+  cy.get('[data-cy="cy-companiesHouseNumber-text-input"]').clear();
+  clickSave();
+
+  // Charities Commission
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationCharity"]',
+  ).click();
+  cy.get('[data-cy="cy-charityCommissionNumber-text-input"]')
+    .clear()
+    .type(details.charitiesCommission);
+  clickSave();
+
+  // Back to account
+  cy.get('[data-cy="cy-back-to-dashboard-button"]').click();
 };
 
 const confirmDetails = () => {
@@ -278,23 +384,29 @@ const editDetailsOnSummaryScreen = () => {
   ).contains(details.fundingLocation[0]);
 };
 
-const confirmOrgAndFundingDetails = () => {
+const confirmOrgAndFundingDetails = (suffix, orgType, fundingLocations) => {
   // Check Org Details Match
   cy.get('[data-cy="cy-section-title-link-Your Organisation"]').click();
   cy.get('[data-cy="cy-manage-section-header"]').contains("Your Organisation");
 
-  cy.get('[data-cy="cy-section-value-MyOrg1"]').should("exist");
-  cy.get('[data-cy="cy-section-value-Non-limited company"]').should("exist");
+  cy.get(`[data-cy="cy-section-value-${details.name + suffix}"]`).should(
+    "exist",
+  );
+  cy.get(`[data-cy="cy-section-value-${orgType}"]`).should("exist");
   cy.get('[data-cy="cy-organisation-value-APPLICANT_ORG_ADDRESS"]')
     .find("ul")
     .children("li")
     .each((listItem, index) => {
       cy.wrap(listItem).contains(
-        details.address[index] + "1" + (index < 4 ? "," : ""),
+        details.address[index] + suffix + (index < 4 ? "," : ""),
       );
     });
-  cy.get('[data-cy="cy-section-value-678901"]').should("exist");
-  cy.get('[data-cy="cy-section-value-123451"]').should("exist");
+  cy.get(
+    `[data-cy="cy-section-value-${details.companiesHouse + suffix}"]`,
+  ).should("exist");
+  cy.get(
+    `[data-cy="cy-section-value-${details.charitiesCommission + suffix}"]`,
+  ).should("exist");
 
   cy.get('[data-cy="cy-isComplete-question-title"]').contains(
     "Have you completed this section?",
@@ -310,10 +422,17 @@ const confirmOrgAndFundingDetails = () => {
   cy.get('[data-cy="cy-section-title-link-Funding"]').click();
   cy.get('[data-cy="cy-section-title-link-Funding"]').contains("Funding");
 
-  cy.get('[data-cy="cy-section-value-1001"]').should("exist");
-  cy.get('[data-cy="cy-organisation-value-BENEFITIARY_LOCATION"]').contains(
-    "North East (England)",
-  );
+  cy.get(
+    `[data-cy="cy-section-value-${details.howMuchFunding + suffix}"]`,
+  ).should("exist");
+  cy.get('[data-cy="cy-organisation-value-BENEFITIARY_LOCATION"] > .govuk-list')
+    .children("li")
+    .each((listItem, index) => {
+      cy.wrap(listItem).contains(
+        details.fundingLocation[index] +
+          (index < fundingLocations.length - 1 ? "," : ""),
+      );
+    });
 
   cy.get('[data-cy="cy-isComplete-question-title"]').contains(
     "Have you completed this section?",
@@ -330,22 +449,36 @@ describe("Apply for a Grant V2", () => {
     signInToIntegrationSite();
   });
 
-  it("Mandatory questions flow - Empty, Partial Filled & Full Org Profile", () => {
+  /*
+  Test Coverage:
+  - Internal Application
+  - External Application
+  - Empty Org Profile
+  - Full Org Profile
+  - Complete E&D Questions
+  - Skip E&D Questions
+   */
+  it("Mandatory Questions Flow - Empty & Filled Organisation Profile", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    // 1. EMPTY ORG PROFILE
-
-    // Sign in and start application
+    // Sign in
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant(Cypress.currentRetry);
 
-    cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    // 1. EMPTY ORG PROFILE
+    /*
+    Test Coverage:
+    - Internal Application
+    - Empty Org Profile
+    - Complete E&D Questions
+    */
 
+    // Search & Start internal application
+    cy.get('[data-cy="cy-find-a-grant-link"]').click();
     searchForGrant("Cypress");
     cy.contains(Cypress.env("testV2InternalGrant").name).click();
-
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     // Before you start
@@ -388,65 +521,117 @@ describe("Apply for a Grant V2", () => {
     );
     cy.get('[data-cy="cy-status-tag-Funding-In Progress"]').should("exist");
 
-    // Conclude Test
-    confirmOrgAndFundingDetails();
-
+    // Confirm Org & Funding Details and Submit
+    confirmOrgAndFundingDetails("1", "Non-limited company", [
+      "North East (England)",
+    ]);
     submitApplication();
+
+    // Fill E&D Questions and return to dashboard
     equalitySectionAccept();
     clickText("View your applications");
     clickText("Back");
 
-    // // 2. PARTIALLY FILLED ORG PROFILE (Incomplete)
-    //
-    // // Refill Org Profile & Leave Blanks
-    // cy.get('[data-cy="cy-link-card-Your organisation details"]').click();
-    //
-    // // Name - Blank
-    // cy.get('[data-cy="cy-organisation-details-navigation-organisationName"]').click();
-    // cy.get('[data-cy="cy-legalName-text-input"]').clear();
-    // clickSave();
-    //
-    // // Address
-    // cy.get('[data-cy="cy-organisation-details-navigation-organisationAddress"]').click();
-    // [
-    //   "addressLine1",
-    //   "addressLine2",
-    //   "town",
-    //   "county",
-    //   "postcode"
-    // ].forEach((item, index) => {
-    //   cy.get(`[data-cy=cy-${item}-text-input]`)
-    //       .clear()
-    //       .type(details.address[index]);
-    // });
-    // clickSave();
-    //
-    // // Companies House - Blank
-    // cy.get('[data-cy="cy-organisation-details-navigation-organisationCompaniesHouseNumber"]').click();
-    // cy.get('[data-cy="cy-companiesHouseNumber-text-input"]').clear();
-    // clickSave();
-    //
-    // // Charities Commission
-    // cy.get('[data-cy="cy-organisation-details-navigation-organisationCharity"]').click();
-    // cy.get('[data-cy="cy-charityCommissionNumber-text-input"]').clear().type(details.charitiesCommission);
-    //
-    // // Back to account
-    // cy.get('[data-cy="cy-back-to-dashboard-button"]').click();
-    //
-    // // Search for the grant
-    // cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
-    // searchForGrant("Cypress");
-    // cy.contains(
-    //     Cypress.env("testV2InternalGrant").name
-    // ).click();
-    //
-    // cy.contains("Start new application").invoke("removeAttr", "target").click();
-    //
-    // // Before you start
-    // cy.contains("Before you start");
-    // cy.contains("Continue").click();
+    // 2. FILLED ORG PROFILE (INCOMPLETE)
+    /*
+    Test Coverage:
+    - External Application
+    - Full Org Profile
+    */
 
-    // Fill the grant & check that filled org profile values are present
-    // Skip E&D Questions
+    // Refill Org Profile
+    fillOrgProfile();
+
+    // Search & Start external application
+    cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
+    cy.get('[data-cy="cySearchAgainInput"]').type("Cypress");
+    cy.get('[data-cy="cySearchAgainButton"]').click();
+
+    cy.contains(Cypress.env("testV2ExternalGrant").name).click();
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
+  });
+
+  it("Mandatory Questions Flow - Partially Filled Org Profile", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
+
+    // Sign in
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsApplyApplicant(Cypress.currentRetry);
+
+    /*
+    Test Coverage:
+    - Internal Application
+    - Partially Filled Org Profile
+    - Skip E&D Questions
+    */
+
+    // Partially fill org profile
+    partialFillOrgProfile();
+
+    // Search & Start new application
+    cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
+    cy.get('[data-cy="cySearchAgainInput"]').type("Cypress");
+    cy.get('[data-cy="cySearchAgainButton"]').click();
+
+    cy.contains(Cypress.env("testV2InternalGrant").name).click();
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
+
+    // Before you start
+    cy.contains("Before you start");
+    cy.contains("Continue").click();
+
+    // Name - Should be empty
+    cy.get('[data-cy="cy-name-text-input"]')
+      .should("be.empty")
+      .type(details.name);
+    clickSaveAndContinue();
+
+    // Address - should be full
+    ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
+      (item, index) => {
+        console.log(`[data-cy="cy-${item}-text-input"]`);
+        cy.get(`[data-cy="cy-${item}-text-input"]`).should(
+          "have.value",
+          details.address[index],
+        );
+      },
+    );
+    clickSaveAndContinue();
+
+    // Org Type - should be filled
+    cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').should(
+      "be.checked",
+    );
+    clickSaveAndContinue();
+
+    // Companies House - should be empty
+    cy.get('[data-cy="cy-companiesHouseNumber-text-input"]')
+      .should("be.empty")
+      .type(details.companiesHouse);
+    clickSaveAndContinue();
+
+    // Charities Commission - Should be filled
+    cy.get('[data-cy="cy-charityCommissionNumber-text-input"]').should(
+      "have.value",
+      details.charitiesCommission,
+    );
+    clickSaveAndContinue();
+
+    // Complete rest of MQ journey
+    fillMandatoryQuestions(true);
+    confirmDetails();
+    clickText("Confirm and submit");
+
+    // Complete & Submit application
+    fillOutEligibity();
+    confirmOrgAndFundingDetails("", "Limited company", details.fundingLocation);
+    submitApplication();
+
+    // Skip E&D questions and return to dashboard
+    equalitySectionDecline();
+    clickText("View your applications");
+    clickText("Back");
   });
 });
