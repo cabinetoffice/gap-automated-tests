@@ -452,7 +452,7 @@ describe("Apply for a Grant V2", () => {
     signInToIntegrationSite();
   });
 
-  it.skip("Mandatory Questions Flow - Empty & Filled Organisation Profile", () => {
+  it("Mandatory Questions Flow - Empty & Filled Organisation Profile", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -668,7 +668,7 @@ describe("Apply for a Grant V2", () => {
     clickText("Back");
   });
 
-  it.skip("Mandatory Questions Flow - Save and Exit During Flow", () => {
+  it("Mandatory Questions Flow - Save and Exit During Flow", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
