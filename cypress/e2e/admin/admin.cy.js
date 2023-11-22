@@ -4,6 +4,9 @@ import {
   saveAndExit,
   signInToIntegrationSite,
   signInAsAdmin,
+  clickText,
+  signInAsApplyApplicant,
+  searchAgainForGrant,
 } from "../../common/common";
 
 const GRANT_NAME = "Cypress Test Grant";
@@ -212,6 +215,43 @@ describe("Create a Grant", () => {
 
       // publish
       publishApplicationForm();
+
+      // TODO : Grab link
+      cy.get(".break-all-words > .govuk-link")
+        .invoke("text")
+        .then(() => {})
+        .as("advertLink");
+
+      clickText("Manage this grant");
+
+      // TODO : Add this to the grant advert
+      cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+      cy.get('[data-cy="cy-unschedule-advert-button"]').click();
+      cy.get('[data-cy="cy-radioInput-option-YesUnscheduleMyAdvert"]').click();
+      cy.get('[data-cy="cy_unscheduleConfirmation-ConfirmButton"]').click();
+      cy.get(
+        '[data-cy="cy-4. How to apply-sublist-task-name-Link to application form"]',
+      ).click();
+      cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').clear();
+      cy.get("@advertLink").then((link) => {
+        console.log(link);
+        cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').click().type(link);
+      });
+      yesQuestionComplete();
+      clickText("Review and publish");
+
+      // TODO : Sign out - Log in as an applicant, check that the grant is there
+      clickText("Sign out");
+      cy.get('[data-cy="cySignInAndApply-Link"]').click();
+      signInAsApplyApplicant();
+      cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
+      searchAgainForGrant("Cypress Test Grant");
+
+      // TODO : Sign out, then log back in as admin
+
+      // TODO : Unpublish advert
+
+      // TODO : Sign out - Log in as an applicant, check that the grant is NOT there
     }
 
     function createGrant() {

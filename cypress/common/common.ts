@@ -78,6 +78,15 @@ export const searchForGrant = (searchTerm: string) => {
   cy.get("[data-cy=cySearchGrantsBtn]").click();
 };
 
+export const searchAgainForGrant = (searchTerm: string) => {
+  cy.get('[name="searchTerm"]')
+    .should("have.attr", "placeholder")
+    .should("contains", "enter a keyword or search term here");
+  cy.get('[name="searchTerm"]').type(searchTerm);
+
+  cy.get('[data-cy="cySearchAgainButton"]').click();
+};
+
 export const signInToIntegrationSite = () => {
   console.log(BASE_URL);
   // We have to visit base url first to prevent issues with cross-origin
