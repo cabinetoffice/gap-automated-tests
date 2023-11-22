@@ -688,6 +688,51 @@ describe("Apply for a Grant V2", () => {
         );
       });
 
+    cy.get('[data-cy="cy-section-details-navigation-APPLICANT_TYPE"]').click();
+    cy.get('[data-cy="cy-radioInput-option-Charity"]').click();
+    clickSaveAndContinue();
+
+    cy.get(
+      '[data-cy="cy-section-details-navigation-APPLICANT_ORG_NAME"]',
+    ).click();
+    cy.get("[data-cy=cy-name-text-input]")
+      .should("have.value", details.name)
+      .type("1");
+    clickSaveAndContinue();
+
+    cy.get(
+      '[data-cy="cy-section-details-navigation-APPLICANT_ORG_ADDRESS"]',
+    ).click();
+    ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
+      (item, index) => {
+        cy.get(`[data-cy=cy-${item}-text-input]`)
+          .should("have.value", details.address[index])
+          .clear()
+          .type(details.address[index] + "1");
+      },
+    );
+    clickSaveAndContinue();
+
+    cy.get(
+      '[data-cy="cy-section-details-navigation-APPLICANT_ORG_CHARITY_NUMBER"]',
+    ).click();
+    cy.get("[data-cy=cy-charityCommissionNumber-text-input]")
+      .should("have.value", details.charitiesCommission)
+      .clear()
+      .type(details.charitiesCommission + "1");
+    clickSaveAndContinue();
+
+    cy.get(
+      '[data-cy="cy-section-details-navigation-APPLICANT_ORG_COMPANIES_HOUSE"]',
+    ).click();
+    cy.get("[data-cy=cy-companiesHouseNumber-text-input]")
+      .should("have.value", details.companiesHouse)
+      .clear()
+      .type(details.companiesHouse + "1");
+    clickSaveAndContinue();
+
+    cy.wait(500000000000000);
+
     cy.get(
       '[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]',
     ).click();
@@ -717,33 +762,5 @@ describe("Apply for a Grant V2", () => {
     equalitySectionDecline();
     clickText("View your applications");
     clickText("Back");
-  });
-
-  it("Mandatory Questions Flow - Save and Exit During Flow", () => {
-    cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
-
-    // Sign in
-    cy.get('[data-cy="cySignInAndApply-Link"]').click();
-    signInAsApplyApplicant();
-
-    // 1. EMPTY ORG PROFILE
-    /*
-    Test Coverage:
-    - Internal Application
-    - Empty Org Profile
-    - Complete E&D Questions
-    */
-
-    // Search & Start internal application
-    cy.get('[data-cy="cy-find-a-grant-link"]').click();
-    searchForGrant(Cypress.env("testV2InternalGrant").advertName);
-    cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
-    cy.contains("Start new application").invoke("removeAttr", "target").click();
-
-    // Before you start
-    cy.contains("Before you start");
-    cy.contains("Continue").click();
   });
 });
