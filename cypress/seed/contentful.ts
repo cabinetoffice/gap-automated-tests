@@ -101,7 +101,7 @@ const ADVERTS = [
   {
     fields: {
       grantName: {
-        "en-US": TEST_V2_INTERNAL_GRANT.name,
+        "en-US": TEST_V2_INTERNAL_GRANT.advertName,
       },
       grantMaximumAwardDisplay: {
         "en-US": "£10,000",
@@ -192,7 +192,7 @@ const ADVERTS = [
   {
     fields: {
       grantName: {
-        "en-US": TEST_V2_EXTERNAL_GRANT.name,
+        "en-US": TEST_V2_EXTERNAL_GRANT.advertName,
       },
       grantMaximumAwardDisplay: {
         "en-US": "£10,000",

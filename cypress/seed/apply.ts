@@ -49,10 +49,10 @@ const SCHEME_ID = -Math.abs(+process.env.FIRST_USER_ID);
 const ADVERT_ID_V1 = `${Math.abs(+process.env.FIRST_USER_ID)
   .toString()
   .padStart(8, "0")}-0000-0000-0000-000000000000`;
-const ADVERT_ID_V2_INTERNAL = `${Math.abs(+process.env.FIRST_USER_ID - 1)
+const ADVERT_ID_V2_INTERNAL = `${(Math.abs(+process.env.FIRST_USER_ID) + 1)
   .toString()
   .padStart(8, "0")}-0000-0000-0000-000000000000`;
-const ADVERT_ID_V2_EXTERNAL = `${Math.abs(+process.env.FIRST_USER_ID - 2)
+const ADVERT_ID_V2_EXTERNAL = `${(Math.abs(+process.env.FIRST_USER_ID) + 2)
   .toString()
   .padStart(8, "0")}-0000-0000-0000-000000000000`;
 
@@ -131,7 +131,7 @@ const applySubstitutions = {
     ADVERT_ID_V2_INTERNAL,
     TEST_V2_INTERNAL_GRANT.contentfulId,
     TEST_V2_INTERNAL_GRANT.contentfulSlug,
-    TEST_V2_INTERNAL_GRANT.name,
+    TEST_V2_INTERNAL_GRANT.advertName,
     v2InternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
@@ -139,7 +139,7 @@ const applySubstitutions = {
     ADVERT_ID_V2_EXTERNAL,
     TEST_V2_EXTERNAL_GRANT.contentfulId,
     TEST_V2_EXTERNAL_GRANT.contentfulSlug,
-    TEST_V2_EXTERNAL_GRANT.name,
+    TEST_V2_EXTERNAL_GRANT.advertName,
     v2ExternalAdvert,
     ADMIN_ID,
     ADMIN_ID,

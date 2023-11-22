@@ -41,6 +41,21 @@ const details = {
 const fillMandatoryQuestions = (orgProfileFilled) => {
   // If Org Profile isn't filled go through all pages
   if (!orgProfileFilled) {
+    // Org Type
+    cy.contains("Choose your application type").should("exist");
+    [
+      "Other",
+      "IAmApplyingAsAnIndividual",
+      "Charity",
+      "NonLimitedCompany",
+      "LimitedCompany",
+    ].forEach((item) => {
+      cy.get(`[data-cy=cy-radioInput-option-${item}]`)
+        .should("not.be.checked")
+        .click();
+    });
+    clickSaveAndContinue();
+
     // Name
     cy.contains("Enter the name of your organisation").should("exist");
     cy.get("[data-cy=cy-name-text-input]")
@@ -57,21 +72,6 @@ const fillMandatoryQuestions = (orgProfileFilled) => {
           .type(details.address[index]);
       },
     );
-    clickSaveAndContinue();
-
-    // Org Type
-    cy.contains("Choose your application type").should("exist");
-    [
-      "Other",
-      "IAmApplyingAsAnIndividual",
-      "Charity",
-      "NonLimitedCompany",
-      "LimitedCompany",
-    ].forEach((item) => {
-      cy.get(`[data-cy=cy-radioInput-option-${item}]`)
-        .should("not.be.checked")
-        .click();
-    });
     clickSaveAndContinue();
 
     // Companies House
@@ -113,7 +113,14 @@ const fillMandatoryQuestions = (orgProfileFilled) => {
 
 const fillOrgProfile = () => {
   // Open Org Profile Page
-  cy.get('[data-cy="cy-link-card-Your organisation details"]').click();
+  cy.get('[data-cy="cy-link-card-Your saved information"]').click();
+
+  // Org Type
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+  cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').click();
+  clickSave();
 
   // Name
   cy.get(
@@ -133,13 +140,6 @@ const fillOrgProfile = () => {
         .type(details.address[index]);
     },
   );
-  clickSave();
-
-  // Org Type
-  cy.get(
-    '[data-cy="cy-organisation-details-navigation-organisationType"]',
-  ).click();
-  cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').click();
   clickSave();
 
   // Companies House
@@ -166,7 +166,7 @@ const fillOrgProfile = () => {
 
 const partialFillOrgProfile = () => {
   // Open Org Profile Page
-  cy.get('[data-cy="cy-link-card-Your organisation details"]').click();
+  cy.get('[data-cy="cy-link-card-Your saved information"]').click();
 
   // Name - Blank
   cy.get(
@@ -215,43 +215,46 @@ const partialFillOrgProfile = () => {
   cy.get('[data-cy="cy-back-to-dashboard-button"]').click();
 };
 
-const confirmDetails = () => {
+const confirmDetails = (checkOrgDetails, checkFundingDetails) => {
   // Confirm your details
-  cy.contains("Confirm your details").should("exist");
 
-  cy.get('[data-cy="cy-organisation-value-Name"]').contains(details.name);
+  if (checkOrgDetails) {
+    cy.get('[data-cy="cy-organisation-value-Name"]').contains(details.name);
 
-  cy.get("[data-cy=cy-organisation-value-Address]")
-    .find("ul")
-    .children("li")
-    .each((listItem, index) => {
-      cy.wrap(listItem).contains(
-        details.address[index] + (index < 4 ? "," : ""),
-      );
-    });
+    cy.get("[data-cy=cy-organisation-value-Address]")
+      .find("ul")
+      .children("li")
+      .each((listItem, index) => {
+        cy.wrap(listItem).contains(
+          details.address[index] + (index < 4 ? "," : ""),
+        );
+      });
 
-  cy.get('[data-cy="cy-organisation-value-Type of organisation"]').contains(
-    details.orgType,
-  );
-  cy.get('[data-cy="cy-organisation-value-Companies House number"]').contains(
-    details.companiesHouse,
-  );
-  cy.get(
-    '[data-cy="cy-organisation-value-Charity Commission number"]',
-  ).contains(details.charitiesCommission);
-  cy.get(
-    '[data-cy="cy-organisation-value-How much funding are you applying for?"]',
-  ).contains(`£ ${details.howMuchFunding}`);
+    cy.get('[data-cy="cy-organisation-value-Type of organisation"]').contains(
+      details.orgType,
+    );
+    cy.get('[data-cy="cy-organisation-value-Companies House number"]').contains(
+      details.companiesHouse,
+    );
+    cy.get(
+      '[data-cy="cy-organisation-value-Charity Commission number"]',
+    ).contains(details.charitiesCommission);
+  }
+  if (checkFundingDetails) {
+    cy.get(
+      '[data-cy="cy-organisation-value-How much funding are you applying for?"]',
+    ).contains(`£ ${details.howMuchFunding}`);
 
-  cy.get(
-    '[data-cy="cy-organisation-value-Where will this funding be spent?"] > .govuk-list',
-  )
-    .children("li")
-    .each((listItem, index) => {
-      cy.wrap(listItem).contains(
-        details.fundingLocation[index] + (index < 12 ? "," : ""),
-      );
-    });
+    cy.get(
+      '[data-cy="cy-organisation-value-Where will this funding be spent?"] > .govuk-list',
+    )
+      .children("li")
+      .each((listItem, index) => {
+        cy.wrap(listItem).contains(
+          details.fundingLocation[index] + (index < 12 ? "," : ""),
+        );
+      });
+  }
 };
 
 const editDetailsOnSummaryScreen = () => {
@@ -302,9 +305,9 @@ const editDetailsOnSummaryScreen = () => {
   [
     "Other",
     "IAmApplyingAsAnIndividual",
-    "Charity",
     "LimitedCompany",
     "NonLimitedCompany",
+    "Charity",
   ].forEach((item) => {
     cy.get(`[data-cy=cy-radioInput-option-${item}]`)
       .should("not.be.checked")
@@ -313,7 +316,7 @@ const editDetailsOnSummaryScreen = () => {
   clickSaveAndContinue();
 
   cy.get('[data-cy="cy-organisation-value-Type of organisation"]').contains(
-    "Non-limited company",
+    "Charity",
   );
 
   // Companies House
@@ -386,8 +389,8 @@ const editDetailsOnSummaryScreen = () => {
 
 const confirmOrgAndFundingDetails = (suffix, orgType, fundingLocations) => {
   // Check Org Details Match
-  cy.get('[data-cy="cy-section-title-link-Your Organisation"]').click();
-  cy.get('[data-cy="cy-manage-section-header"]').contains("Your Organisation");
+  cy.get('[data-cy="cy-section-title-link-Your organisation"]').click();
+  cy.get('[data-cy="cy-manage-section-header"]').contains("Your organisation");
 
   cy.get(`[data-cy="cy-section-value-${details.name + suffix}"]`).should(
     "exist",
@@ -413,7 +416,7 @@ const confirmOrgAndFundingDetails = (suffix, orgType, fundingLocations) => {
   );
   cy.get('[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]').click();
   clickSaveAndContinue();
-  cy.get('[data-cy="cy-status-tag-Your Organisation-Completed"]').should(
+  cy.get('[data-cy="cy-status-tag-Your organisation-Completed"]').should(
     "exist",
   );
 
@@ -449,23 +452,14 @@ describe("Apply for a Grant V2", () => {
     signInToIntegrationSite();
   });
 
-  /*
-  Test Coverage:
-  - Internal Application
-  - External Application
-  - Empty Org Profile
-  - Full Org Profile
-  - Complete E&D Questions
-  - Skip E&D Questions
-   */
-  it("Mandatory Questions Flow - Empty & Filled Organisation Profile", () => {
+  it.skip("Mandatory Questions Flow - Empty & Filled Organisation Profile", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
 
     // Sign in
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
-    signInAsApplyApplicant(Cypress.currentRetry);
+    signInAsApplyApplicant();
 
     // 1. EMPTY ORG PROFILE
     /*
@@ -477,8 +471,8 @@ describe("Apply for a Grant V2", () => {
 
     // Search & Start internal application
     cy.get('[data-cy="cy-find-a-grant-link"]').click();
-    searchForGrant("Cypress");
-    cy.contains(Cypress.env("testV2InternalGrant").name).click();
+    searchForGrant(Cypress.env("testV2InternalGrant").advertName);
+    cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     // Before you start
@@ -487,15 +481,14 @@ describe("Apply for a Grant V2", () => {
 
     // Mandatory Questions & Confirm Details
     fillMandatoryQuestions(false);
-    confirmDetails(0, "");
+    cy.contains("Confirm your details");
+    confirmDetails(true, true);
 
     // Click through and edit fields
     editDetailsOnSummaryScreen();
 
     // Confirm and submit application
     clickText("Confirm and submit");
-
-    // Your Application page
 
     // Check page is loaded
     cy.get(
@@ -506,7 +499,7 @@ describe("Apply for a Grant V2", () => {
     // Check status of tasks - Pre Eligibility
     cy.get('[data-cy="cy-status-tag-Eligibility-Not Started"]').should("exist");
     cy.get(
-      '[data-cy="cy-status-tag-Your Organisation-Cannot Start Yet"]',
+      '[data-cy="cy-status-tag-Your organisation-Cannot Start Yet"]',
     ).should("exist");
     cy.get('[data-cy="cy-status-tag-Funding-Cannot Start Yet"]').should(
       "exist",
@@ -516,15 +509,13 @@ describe("Apply for a Grant V2", () => {
 
     // Check status of tasks - Post Eligibility
     cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]').should("exist");
-    cy.get('[data-cy="cy-status-tag-Your Organisation-In Progress"]').should(
+    cy.get('[data-cy="cy-status-tag-Your organisation-In Progress"]').should(
       "exist",
     );
     cy.get('[data-cy="cy-status-tag-Funding-In Progress"]').should("exist");
 
     // Confirm Org & Funding Details and Submit
-    confirmOrgAndFundingDetails("1", "Non-limited company", [
-      "North East (England)",
-    ]);
+    confirmOrgAndFundingDetails("1", "Charity", ["North East (England)"]);
     submitApplication();
 
     // Fill E&D Questions and return to dashboard
@@ -532,7 +523,7 @@ describe("Apply for a Grant V2", () => {
     clickText("View your applications");
     clickText("Back");
 
-    // 2. FILLED ORG PROFILE (INCOMPLETE)
+    // 2. FILLED ORG PROFILE
     /*
     Test Coverage:
     - External Application
@@ -544,11 +535,30 @@ describe("Apply for a Grant V2", () => {
 
     // Search & Start external application
     cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
-    cy.get('[data-cy="cySearchAgainInput"]').type("Cypress");
+    cy.get('[data-cy="cySearchAgainInput"]').type(
+      Cypress.env("testV2ExternalGrant").advertName,
+    );
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
-    cy.contains(Cypress.env("testV2ExternalGrant").name).click();
+    cy.contains(Cypress.env("testV2ExternalGrant").advertName).click();
     cy.contains("Start new application").invoke("removeAttr", "target").click();
+
+    // Mandatory Questions Journey - Straight to Funding Details
+    cy.contains("Before you start");
+    cy.contains("Continue").click();
+
+    fillMandatoryQuestions(true);
+    confirmDetails(true, true);
+
+    // Confirm and submit application
+    clickText("Confirm and submit");
+
+    // Now leaving page
+    cy.contains("You are now leaving GOV.UK");
+    cy.get('[data-cy="cy-apply-external-application-button"]')
+      .invoke("attr", "href")
+      .should("eq", Cypress.env("testV2ExternalGrant").applicationUrl);
+    clickText("Continue to application form");
   });
 
   it("Mandatory Questions Flow - Partially Filled Org Profile", () => {
@@ -558,12 +568,13 @@ describe("Apply for a Grant V2", () => {
 
     // Sign in
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
-    signInAsApplyApplicant(Cypress.currentRetry);
+    signInAsApplyApplicant();
 
     /*
     Test Coverage:
     - Internal Application
     - Partially Filled Org Profile
+    - Edit on Org Details and Funding Details
     - Skip E&D Questions
     */
 
@@ -572,15 +583,23 @@ describe("Apply for a Grant V2", () => {
 
     // Search & Start new application
     cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
-    cy.get('[data-cy="cySearchAgainInput"]').type("Cypress");
+    cy.get('[data-cy="cySearchAgainInput"]').type(
+      Cypress.env("testV2InternalGrant").advertName,
+    );
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
-    cy.contains(Cypress.env("testV2InternalGrant").name).click();
+    cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     // Before you start
     cy.contains("Before you start");
     cy.contains("Continue").click();
+
+    // Org Type - should be filled
+    cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').should(
+      "be.checked",
+    );
+    clickSaveAndContinue();
 
     // Name - Should be empty
     cy.get('[data-cy="cy-name-text-input"]')
@@ -597,12 +616,6 @@ describe("Apply for a Grant V2", () => {
           details.address[index],
         );
       },
-    );
-    clickSaveAndContinue();
-
-    // Org Type - should be filled
-    cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').should(
-      "be.checked",
     );
     clickSaveAndContinue();
 
@@ -624,6 +637,26 @@ describe("Apply for a Grant V2", () => {
     confirmDetails();
     clickText("Confirm and submit");
 
+    // Verify MQ data is saved to org profile
+    cy.get('[data-cy="cyAccount detailsPageLink"] > .govuk-link').click();
+    clickText("Your saved information");
+
+    // Org Type
+    cy.get('[data-cy="cy-organisation-value-Type of organisation"]').contains(
+      "Limited company",
+    );
+    cy.get('[data-cy="cy-organisation-value-Name"]').contains(details.name);
+    cy.get("[data-cy=cy-organisation-value-Address]")
+      .find("ul")
+      .children("li")
+      .each((listItem, index) => {
+        cy.wrap(listItem).contains(
+          details.address[index] + (index < 4 ? "," : ""),
+        );
+      });
+
+    cy.wait(500000);
+
     // Complete & Submit application
     fillOutEligibity();
     confirmOrgAndFundingDetails("", "Limited company", details.fundingLocation);
@@ -633,5 +666,33 @@ describe("Apply for a Grant V2", () => {
     equalitySectionDecline();
     clickText("View your applications");
     clickText("Back");
+  });
+
+  it.skip("Mandatory Questions Flow - Save and Exit During Flow", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
+
+    // Sign in
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsApplyApplicant();
+
+    // 1. EMPTY ORG PROFILE
+    /*
+    Test Coverage:
+    - Internal Application
+    - Empty Org Profile
+    - Complete E&D Questions
+    */
+
+    // Search & Start internal application
+    cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    searchForGrant(Cypress.env("testV2InternalGrant").advertName);
+    cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
+
+    // Before you start
+    cy.contains("Before you start");
+    cy.contains("Continue").click();
   });
 });

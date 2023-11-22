@@ -14,17 +14,19 @@ export const TEST_V1_GRANT = {
 };
 
 export const TEST_V2_INTERNAL_GRANT = {
-  name: `Cypress - Automated E2E Test Grant V2 Internal ID:${firstUserId}`,
+  advertName: `Cypress - Automated E2E Test Grant V2 Internal ID:${firstUserId}`,
   contentfulId: `cypress_test_advert_v2_internal_contentful_id_${firstUserId}`,
   contentfulSlug: `cypress_test_advert_v2_internal_contentful_slug_${firstUserId}`,
   applicationUrl: `${process.env.POST_LOGIN_BASE_URL}/apply/applicant/applications/-${secondGrantId}`,
   applicationName: "Cypress - Test Application V2 Internal",
+  schemeName: "Cypress - Test Scheme V2 Internal",
 };
 
 export const TEST_V2_EXTERNAL_GRANT = {
-  name: `Cypress - Automated E2E Test Grant V2 External ID:${firstUserId}`,
+  advertName: `Cypress - Automated E2E Test Grant V2 External ID:${firstUserId}`,
   contentfulId: `cypress_test_advert_v2_external_contentful_id_${firstUserId}`,
   contentfulSlug: `cypress_test_advert_v2_external_contentful_slug_${firstUserId}`,
   applicationUrl: "https://www.google.com",
   applicationName: "Cypress - Test Application V2 External",
+  schemeName: "Cypress - Test Scheme V2 External",
 };

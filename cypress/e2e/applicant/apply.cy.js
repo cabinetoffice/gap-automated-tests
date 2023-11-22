@@ -17,7 +17,6 @@ import {
   submitApplication,
   equalitySectionAccept,
 } from "./helper";
-// import { TEST_V1_GRANT } from "../../common/constants";
 
 describe("Apply for a Grant", () => {
   beforeEach(() => {
