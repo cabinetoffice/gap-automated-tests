@@ -637,15 +637,12 @@ describe("Apply for a Grant V2", () => {
     confirmDetails();
     clickText("Confirm and submit");
 
-    // Verify MQ data is saved to org profile
     cy.get('[data-cy="cyAccount detailsPageLink"] > .govuk-link').click();
-    clickText("Your saved information");
+    cy.get('[data-cy="cy-link-card-Your saved information"]').click();
 
-    // Org Type
     cy.get('[data-cy="cy-organisation-value-Type of organisation"]').contains(
-      "Limited company",
+      details.orgType,
     );
-    cy.get('[data-cy="cy-organisation-value-Name"]').contains(details.name);
     cy.get("[data-cy=cy-organisation-value-Address]")
       .find("ul")
       .children("li")
@@ -655,9 +652,65 @@ describe("Apply for a Grant V2", () => {
         );
       });
 
+    cy.get('[data-cy="cy-organisation-value-Companies house number"]').contains(
+      details.companiesHouse,
+    );
+    cy.get(
+      '[data-cy="cy-organisation-value-Charity commission number"]',
+    ).contains(details.charitiesCommission);
+
+    cy.get('[data-cy="cy-back-to-dashboard-button"]').click();
+
+    cy.get('[data-cy="cy-your-applications-link"]').click();
+    cy.get(
+      '[data-cy="cy-application-link-Cypress - Test Application V2 Internal"]',
+    ).click();
+
     // Complete & Submit application
     fillOutEligibity();
-    confirmOrgAndFundingDetails("", "Limited company", details.fundingLocation);
+
+    cy.get('[data-cy="cy-section-title-link-Your organisation"]').click();
+
+    cy.get(`[data-cy="cy-section-value-${details.orgType}"]`).should("exist");
+    cy.get(`[data-cy="cy-section-value-${details.name}"]`).should("exist");
+    cy.get(`[data-cy="cy-section-value-${details.companiesHouse}"]`).should(
+      "exist",
+    );
+    cy.get(
+      `[data-cy="cy-section-value-${details.charitiesCommission}"]`,
+    ).should("exist");
+    cy.get('[data-cy="cy-organisation-value-APPLICANT_ORG_ADDRESS"]')
+      .find("ul")
+      .children("li")
+      .each((listItem, index) => {
+        cy.wrap(listItem).contains(
+          details.address[index] + (index < 4 ? "," : ""),
+        );
+      });
+
+    cy.get(
+      '[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]',
+    ).click();
+    clickSaveAndContinue();
+    cy.get('[data-cy="cy-section-title-link-Funding"]').click();
+
+    cy.get(`[data-cy="cy-section-value-${details.howMuchFunding}"]`).should(
+      "exist",
+    );
+    cy.get('[data-cy="cy-organisation-value-BENEFITIARY_LOCATION"]')
+      .find("ul")
+      .children("li")
+      .each((listItem, index) => {
+        cy.wrap(listItem).contains(
+          details.fundingLocation[index] + (index < 12 ? "," : ""),
+        );
+      });
+
+    cy.get(
+      '[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]',
+    ).click();
+    clickSaveAndContinue();
+
     submitApplication();
 
     // Skip E&D questions and return to dashboard
