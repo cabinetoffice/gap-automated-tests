@@ -655,8 +655,6 @@ describe("Apply for a Grant V2", () => {
         );
       });
 
-    cy.wait(500000);
-
     // Complete & Submit application
     fillOutEligibity();
     confirmOrgAndFundingDetails("", "Limited company", details.fundingLocation);
