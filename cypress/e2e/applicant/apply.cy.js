@@ -30,9 +30,9 @@ describe("Apply for a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    searchForGrant(Cypress.env("testV1Grant").advertName);
+    searchForGrant(Cypress.env("testV1InternalGrant").advertName);
 
-    cy.contains(Cypress.env("testV1Grant").advertName).click();
+    cy.contains(Cypress.env("testV1InternalGrant").advertName).click();
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
@@ -56,7 +56,7 @@ describe("Apply for a Grant", () => {
     signInAsApplyApplicant();
 
     cy.get('[data-cy="cy-your-applications-link"]').click();
-    cy.contains(Cypress.env("testV1Grant").applicationName).click();
+    cy.contains(Cypress.env("testV1InternalGrant").applicationName).click();
 
     cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
 
@@ -125,14 +125,38 @@ describe("Apply for a Grant", () => {
     cy.contains("Your applications");
     cy.contains("All of your current and past applications are listed below.");
     cy.contains("Name of grant");
-    cy.contains(Cypress.env("testV1Grant").applicationName);
+    cy.contains(Cypress.env("testV1InternalGrant").applicationName);
 
     // checks that clicking on submitted application does nothing
     cy.get(
       `[data-cy="cy-application-link-${
-        Cypress.env("testV1Grant").applicationName
+        Cypress.env("testV1InternalGrant").applicationName
       }"]`,
     ).should("not.have.attr", "href");
+  });
+
+  it("can complete external V1 grant journey", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
+
+    // Sign in
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsApplyApplicant();
+
+    // Search & Start external application
+    cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    searchForGrant(Cypress.env("testV1ExternalGrant").advertName);
+    cy.contains(Cypress.env("testV1ExternalGrant").advertName).click();
+
+    // Check button link
+    cy.get(".govuk-grid-column-full > .govuk-button")
+      .invoke("attr", "href")
+      .should(
+        "eq",
+        "/apply/cypress_test_advert_v1_external_contentful_slug_20",
+      );
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
   });
 
   it("can land on application dashboard and view details", () => {

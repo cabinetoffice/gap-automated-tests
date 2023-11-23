@@ -215,48 +215,6 @@ const partialFillOrgProfile = () => {
   cy.get('[data-cy="cy-back-to-dashboard-button"]').click();
 };
 
-const confirmDetails = (checkOrgDetails, checkFundingDetails) => {
-  // Confirm your details
-
-  if (checkOrgDetails) {
-    cy.get('[data-cy="cy-organisation-value-Name"]').contains(details.name);
-
-    cy.get("[data-cy=cy-organisation-value-Address]")
-      .find("ul")
-      .children("li")
-      .each((listItem, index) => {
-        cy.wrap(listItem).contains(
-          details.address[index] + (index < 4 ? "," : ""),
-        );
-      });
-
-    cy.get('[data-cy="cy-organisation-value-Type of organisation"]').contains(
-      details.orgType,
-    );
-    cy.get('[data-cy="cy-organisation-value-Companies House number"]').contains(
-      details.companiesHouse,
-    );
-    cy.get(
-      '[data-cy="cy-organisation-value-Charity Commission number"]',
-    ).contains(details.charitiesCommission);
-  }
-  if (checkFundingDetails) {
-    cy.get(
-      '[data-cy="cy-organisation-value-How much funding are you applying for?"]',
-    ).contains(`£ ${details.howMuchFunding}`);
-
-    cy.get(
-      '[data-cy="cy-organisation-value-Where will this funding be spent?"] > .govuk-list',
-    )
-      .children("li")
-      .each((listItem, index) => {
-        cy.wrap(listItem).contains(
-          details.fundingLocation[index] + (index < 12 ? "," : ""),
-        );
-      });
-  }
-};
-
 const editDetailsOnSummaryScreen = () => {
   // Name
   cy.get(
@@ -387,6 +345,202 @@ const editDetailsOnSummaryScreen = () => {
   ).contains(details.fundingLocation[0]);
 };
 
+const editOrgAndFundingDetails = () => {
+  // Open Org Details page
+  cy.get('[data-cy="cy-section-title-link-Your organisation"]').click();
+
+  // Check, Change & Check the details
+
+  // Org Type
+  cy.get(`[data-cy="cy-section-value-${details.orgType}"]`).should("exist");
+
+  cy.get('[data-cy="cy-section-details-navigation-APPLICANT_TYPE"]').click();
+  cy.get('[data-cy="cy-radioInput-option-Charity"]').click();
+  clickSaveAndContinue();
+
+  cy.get(`[data-cy="cy-section-value-Charity"]`).should("exist");
+
+  // Name
+  cy.get(`[data-cy="cy-section-value-${details.name}"]`).should("exist");
+
+  cy.get(
+    '[data-cy="cy-section-details-navigation-APPLICANT_ORG_NAME"]',
+  ).click();
+  cy.get("[data-cy=cy-name-text-input]")
+    .should("have.value", details.name)
+    .type("1");
+  clickSaveAndContinue();
+
+  cy.get(`[data-cy="cy-section-value-${details.name + "1"}"]`).should("exist");
+
+  // Address
+  cy.get('[data-cy="cy-organisation-value-APPLICANT_ORG_ADDRESS"]')
+    .find("ul")
+    .children("li")
+    .each((listItem, index) => {
+      cy.wrap(listItem).contains(
+        details.address[index] + (index < 4 ? "," : ""),
+      );
+    });
+  cy.get(
+    '[data-cy="cy-section-details-navigation-APPLICANT_ORG_ADDRESS"]',
+  ).click();
+  ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
+    (item, index) => {
+      cy.get(`[data-cy=cy-${item}-text-input]`)
+        .should("have.value", details.address[index])
+        .clear()
+        .type(details.address[index] + "1");
+    },
+  );
+  clickSaveAndContinue();
+  cy.get('[data-cy="cy-organisation-value-APPLICANT_ORG_ADDRESS"]')
+    .find("ul")
+    .children("li")
+    .each((listItem, index) => {
+      cy.wrap(listItem).contains(
+        details.address[index] + "1" + (index < 4 ? "," : ""),
+      );
+    });
+
+  // Charities Commission
+  cy.get(`[data-cy="cy-section-value-${details.charitiesCommission}"]`).should(
+    "exist",
+  );
+
+  cy.get(
+    '[data-cy="cy-section-details-navigation-APPLICANT_ORG_CHARITY_NUMBER"]',
+  ).click();
+  cy.get("[data-cy=cy-charityCommissionNumber-text-input]")
+    .should("have.value", details.charitiesCommission)
+    .clear()
+    .type(details.charitiesCommission + "1");
+  clickSaveAndContinue();
+
+  cy.get(
+    `[data-cy="cy-section-value-${details.charitiesCommission + "1"}"]`,
+  ).should("exist");
+
+  // Companies House
+  cy.get(`[data-cy="cy-section-value-${details.companiesHouse}"]`).should(
+    "exist",
+  );
+
+  cy.get(
+    '[data-cy="cy-section-details-navigation-APPLICANT_ORG_COMPANIES_HOUSE"]',
+  ).click();
+  cy.get("[data-cy=cy-companiesHouseNumber-text-input]")
+    .should("have.value", details.companiesHouse)
+    .clear()
+    .type(details.companiesHouse + "1");
+  clickSaveAndContinue();
+
+  cy.get(`[data-cy="cy-section-value-${details.companiesHouse + "1"}"]`).should(
+    "exist",
+  );
+
+  // Complete section & move to funding
+  cy.get('[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]').click();
+  clickSaveAndContinue();
+  cy.get('[data-cy="cy-section-title-link-Funding"]').click();
+
+  // Check, Change & Check the details
+
+  // Funding amount
+  cy.get(`[data-cy="cy-section-value-${details.howMuchFunding}"]`).should(
+    "exist",
+  );
+
+  cy.get('[data-cy="cy-section-details-navigation-APPLICANT_AMOUNT"]').click();
+  cy.contains("How much funding are you applying for?");
+  cy.get("[data-cy=cy-fundingAmount-text-input-numeric]")
+    .should("have.value", details.howMuchFunding)
+    .clear()
+    .type(details.howMuchFunding + "1");
+  clickSaveAndContinue();
+
+  cy.get(`[data-cy="cy-section-value-${details.howMuchFunding + "1"}"]`).should(
+    "exist",
+  );
+
+  // Funding locations
+  cy.get('[data-cy="cy-organisation-value-BENEFITIARY_LOCATION"]')
+    .find("ul")
+    .children("li")
+    .each((listItem, index) => {
+      cy.wrap(listItem).contains(
+        details.fundingLocation[index] + (index < 12 ? "," : ""),
+      );
+    });
+
+  cy.get(
+    '[data-cy="cy-section-details-navigation-BENEFITIARY_LOCATION"]',
+  ).click();
+  cy.contains("Where will this funding be spent?").should("exist");
+  details.fundingLocation.forEach((item) => {
+    // cy.get('[data-cy="cy-checkbox-value-North East England"]')
+    cy.get(`[data-cy="cy-checkbox-value-${item}"]`).click();
+  });
+  cy.get(`[data-cy="cy-checkbox-value-${details.fundingLocation[0]}"]`).click();
+  clickSaveAndContinue();
+
+  cy.get('[data-cy="cy-organisation-value-BENEFITIARY_LOCATION"]').contains(
+    details.fundingLocation[0],
+  );
+
+  // Complete the section
+  cy.get('[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]').click();
+  clickSaveAndContinue();
+};
+
+const confirmDetailsOnSummaryScreen = () => {
+  // Confirm your details
+
+  // Name
+  cy.get('[data-cy="cy-organisation-value-Name"]').contains(details.name);
+
+  // Address
+  cy.get("[data-cy=cy-organisation-value-Address]")
+    .find("ul")
+    .children("li")
+    .each((listItem, index) => {
+      cy.wrap(listItem).contains(
+        details.address[index] + (index < 4 ? "," : ""),
+      );
+    });
+
+  // Org Type
+  cy.get('[data-cy="cy-organisation-value-Type of organisation"]').contains(
+    details.orgType,
+  );
+
+  // Companies House
+  cy.get('[data-cy="cy-organisation-value-Companies House number"]').contains(
+    details.companiesHouse,
+  );
+
+  // Charities Commission
+  cy.get(
+    '[data-cy="cy-organisation-value-Charity Commission number"]',
+  ).contains(details.charitiesCommission);
+
+  // How much funding
+  cy.get(
+    '[data-cy="cy-organisation-value-How much funding are you applying for?"]',
+  ).contains(`£ ${details.howMuchFunding}`);
+
+  // Funding locations
+  cy.get(
+    '[data-cy="cy-organisation-value-Where will this funding be spent?"] > .govuk-list',
+  )
+    .children("li")
+    .each((listItem, index) => {
+      cy.wrap(listItem).contains(
+        details.fundingLocation[index] + (index < 12 ? "," : ""),
+      );
+    });
+};
+
 const confirmOrgAndFundingDetails = (suffix, orgType, fundingLocations) => {
   // Check Org Details Match
   cy.get('[data-cy="cy-section-title-link-Your organisation"]').click();
@@ -482,7 +636,7 @@ describe("Apply for a Grant V2", () => {
     // Mandatory Questions & Confirm Details
     fillMandatoryQuestions(false);
     cy.contains("Confirm your details");
-    confirmDetails(true, true);
+    confirmDetailsOnSummaryScreen(true, true);
 
     // Click through and edit fields
     editDetailsOnSummaryScreen();
@@ -548,7 +702,7 @@ describe("Apply for a Grant V2", () => {
     cy.contains("Continue").click();
 
     fillMandatoryQuestions(true);
-    confirmDetails(true, true);
+    confirmDetailsOnSummaryScreen(true, true);
 
     // Confirm and submit application
     clickText("Confirm and submit");
@@ -634,7 +788,7 @@ describe("Apply for a Grant V2", () => {
 
     // Complete rest of MQ journey
     fillMandatoryQuestions(true);
-    confirmDetails();
+    confirmDetailsOnSummaryScreen();
     clickText("Confirm and submit");
 
     cy.get('[data-cy="cyAccount detailsPageLink"] > .govuk-link').click();
@@ -668,97 +822,10 @@ describe("Apply for a Grant V2", () => {
 
     // Complete & Submit application
     fillOutEligibity();
+    editOrgAndFundingDetails();
 
-    cy.get('[data-cy="cy-section-title-link-Your organisation"]').click();
-
-    cy.get(`[data-cy="cy-section-value-${details.orgType}"]`).should("exist");
-    cy.get(`[data-cy="cy-section-value-${details.name}"]`).should("exist");
-    cy.get(`[data-cy="cy-section-value-${details.companiesHouse}"]`).should(
-      "exist",
-    );
-    cy.get(
-      `[data-cy="cy-section-value-${details.charitiesCommission}"]`,
-    ).should("exist");
-    cy.get('[data-cy="cy-organisation-value-APPLICANT_ORG_ADDRESS"]')
-      .find("ul")
-      .children("li")
-      .each((listItem, index) => {
-        cy.wrap(listItem).contains(
-          details.address[index] + (index < 4 ? "," : ""),
-        );
-      });
-
-    cy.get('[data-cy="cy-section-details-navigation-APPLICANT_TYPE"]').click();
-    cy.get('[data-cy="cy-radioInput-option-Charity"]').click();
-    clickSaveAndContinue();
-
-    cy.get(
-      '[data-cy="cy-section-details-navigation-APPLICANT_ORG_NAME"]',
-    ).click();
-    cy.get("[data-cy=cy-name-text-input]")
-      .should("have.value", details.name)
-      .type("1");
-    clickSaveAndContinue();
-
-    cy.get(
-      '[data-cy="cy-section-details-navigation-APPLICANT_ORG_ADDRESS"]',
-    ).click();
-    ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
-      (item, index) => {
-        cy.get(`[data-cy=cy-${item}-text-input]`)
-          .should("have.value", details.address[index])
-          .clear()
-          .type(details.address[index] + "1");
-      },
-    );
-    clickSaveAndContinue();
-
-    cy.get(
-      '[data-cy="cy-section-details-navigation-APPLICANT_ORG_CHARITY_NUMBER"]',
-    ).click();
-    cy.get("[data-cy=cy-charityCommissionNumber-text-input]")
-      .should("have.value", details.charitiesCommission)
-      .clear()
-      .type(details.charitiesCommission + "1");
-    clickSaveAndContinue();
-
-    cy.get(
-      '[data-cy="cy-section-details-navigation-APPLICANT_ORG_COMPANIES_HOUSE"]',
-    ).click();
-    cy.get("[data-cy=cy-companiesHouseNumber-text-input]")
-      .should("have.value", details.companiesHouse)
-      .clear()
-      .type(details.companiesHouse + "1");
-    clickSaveAndContinue();
-
-    cy.wait(500000000000000);
-
-    cy.get(
-      '[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]',
-    ).click();
-    clickSaveAndContinue();
-    cy.get('[data-cy="cy-section-title-link-Funding"]').click();
-
-    cy.get(`[data-cy="cy-section-value-${details.howMuchFunding}"]`).should(
-      "exist",
-    );
-    cy.get('[data-cy="cy-organisation-value-BENEFITIARY_LOCATION"]')
-      .find("ul")
-      .children("li")
-      .each((listItem, index) => {
-        cy.wrap(listItem).contains(
-          details.fundingLocation[index] + (index < 12 ? "," : ""),
-        );
-      });
-
-    cy.get(
-      '[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]',
-    ).click();
-    clickSaveAndContinue();
-
+    // Submit & skip E&D questions and return to dashboard
     submitApplication();
-
-    // Skip E&D questions and return to dashboard
     equalitySectionDecline();
     clickText("View your applications");
     clickText("Back");

@@ -22,11 +22,17 @@ import {
   deleteApplicantOrgProfiles,
 } from "./ts/deleteApplyData";
 import {
-  TEST_V1_GRANT,
+  TEST_V1_INTERNAL_GRANT,
+  TEST_V1_EXTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
 } from "../common/constants";
-import { v1Advert, v2ExternalAdvert, v2InternalAdvert } from "./data/apply";
+import {
+  v1InternalAdvert,
+  v1ExternalAdvert,
+  v2ExternalAdvert,
+  v2InternalAdvert,
+} from "./data/apply";
 
 const applyServiceDbName: string =
   process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
@@ -106,12 +112,17 @@ const applySubstitutions = {
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
+    SCHEME_ID - 3,
+    FUNDING_ID,
+    ADMIN_ID,
+    process.env.ONE_LOGIN_ADMIN_EMAIL,
+    ADMIN_ID,
   ],
   [insertApplications]: [
     SCHEME_ID,
     SCHEME_ID,
     ADMIN_ID,
-    TEST_V1_GRANT.applicationName,
+    TEST_V1_INTERNAL_GRANT.applicationName,
     ADMIN_ID,
     SCHEME_ID - 1,
     SCHEME_ID - 1,
@@ -121,10 +132,10 @@ const applySubstitutions = {
   ],
   [insertAdverts]: [
     ADVERT_ID_V1,
-    TEST_V1_GRANT.contentfulId,
-    TEST_V1_GRANT.contentfulSlug,
-    TEST_V1_GRANT.advertName,
-    v1Advert,
+    TEST_V1_INTERNAL_GRANT.contentfulId,
+    TEST_V1_INTERNAL_GRANT.contentfulSlug,
+    TEST_V1_INTERNAL_GRANT.advertName,
+    v1InternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
     SCHEME_ID,
@@ -144,6 +155,14 @@ const applySubstitutions = {
     ADMIN_ID,
     ADMIN_ID,
     SCHEME_ID - 2,
+    ADVERT_ID_V2_EXTERNAL,
+    TEST_V1_EXTERNAL_GRANT.contentfulId,
+    TEST_V1_EXTERNAL_GRANT.contentfulSlug,
+    TEST_V1_EXTERNAL_GRANT.advertName,
+    v1ExternalAdvert,
+    ADMIN_ID,
+    ADMIN_ID,
+    SCHEME_ID - 3,
   ],
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [

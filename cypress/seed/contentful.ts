@@ -1,7 +1,8 @@
 import * as contentful from "contentful-management";
 import "dotenv/config";
 import {
-  TEST_V1_GRANT,
+  TEST_V1_INTERNAL_GRANT,
+  TEST_V1_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
 } from "../common/constants";
@@ -10,13 +11,13 @@ const ADVERTS = [
   {
     fields: {
       grantName: {
-        "en-US": TEST_V1_GRANT.advertName,
+        "en-US": TEST_V1_INTERNAL_GRANT.advertName,
       },
       grantMaximumAwardDisplay: {
         "en-US": "£10,000",
       },
       grantWebpageUrl: {
-        "en-US": TEST_V1_GRANT.applicationUrl,
+        "en-US": TEST_V1_INTERNAL_GRANT.applicationUrl,
       },
       grantMinimumAwardDisplay: {
         "en-US": "£1",
@@ -42,7 +43,98 @@ const ADVERTS = [
         "en-US": ["Personal / Individual"],
       },
       label: {
-        "en-US": TEST_V1_GRANT.contentfulSlug,
+        "en-US": TEST_V1_INTERNAL_GRANT.contentfulSlug,
+      },
+      grantMaximumAward: {
+        "en-US": 10000,
+      },
+      grantTotalAwardAmount: {
+        "en-US": 1000000,
+      },
+      grantApplicationCloseDate: {
+        "en-US": "2040-10-24T23:59",
+      },
+      grantObjectivesTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantSupportingInfoTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantMinimumAward: {
+        "en-US": 1,
+      },
+      grantApplyTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantApplicationOpenDate: {
+        "en-US": "2023-08-24T00:01",
+      },
+      grantEligibilityTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantTotalAwardDisplay: {
+        "en-US": "£1 million",
+      },
+      grantShortDescription: {
+        "en-US": "This is a short description",
+      },
+      grantFunder: {
+        "en-US": "The Department of Business",
+      },
+    },
+  },
+  {
+    fields: {
+      grantName: {
+        "en-US": TEST_V1_EXTERNAL_GRANT.advertName,
+      },
+      grantMaximumAwardDisplay: {
+        "en-US": "£10,000",
+      },
+      grantWebpageUrl: {
+        "en-US": TEST_V1_EXTERNAL_GRANT.applicationUrl,
+      },
+      grantMinimumAwardDisplay: {
+        "en-US": "£1",
+      },
+      grantSummaryTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantDatesTab: {
+        "en-US": {
+          nodeType: "document",
+          content: [],
+          data: {},
+        },
+      },
+      grantLocation: {
+        "en-US": ["National"],
+      },
+      grantApplicantType: {
+        "en-US": ["Personal / Individual"],
+      },
+      label: {
+        "en-US": TEST_V1_EXTERNAL_GRANT.contentfulSlug,
       },
       grantMaximumAward: {
         "en-US": 10000,

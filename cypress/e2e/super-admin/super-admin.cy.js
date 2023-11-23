@@ -3,7 +3,7 @@ import {
   signInToIntegrationSite,
   clickText,
 } from "../../common/common";
-import { TEST_V1_GRANT } from "../../common/constants";
+import { TEST_V1_INTERNAL_GRANT } from "../../common/constants";
 
 describe("Manage Users", () => {
   beforeEach(() => {
@@ -39,7 +39,7 @@ describe("Manage Users", () => {
 
     cy.log("Clicking change on first grant");
     cy.get(
-      `[data-cy="cy_summaryListValue_${TEST_V1_GRANT.schemeName}"] > .govuk-link`,
+      `[data-cy="cy_summaryListValue_${TEST_V1_INTERNAL_GRANT.schemeName}"] > .govuk-link`,
     ).click();
 
     cy.log("Entering an email address not registered in the system");
@@ -112,7 +112,7 @@ describe("Manage Users", () => {
 
     cy.log("Verifying that the grant appears in the list");
     cy.get(
-      `[data-cy="cy_summaryListValue_${TEST_V1_GRANT.schemeName}"] > .govuk-link`,
+      `[data-cy="cy_summaryListValue_${TEST_V1_INTERNAL_GRANT.schemeName}"] > .govuk-link`,
     ).should("exist");
 
     cy.log("Navigate to admin dashboard");

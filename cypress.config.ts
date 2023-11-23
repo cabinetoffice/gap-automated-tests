@@ -4,7 +4,8 @@ import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
 import {
-  TEST_V1_GRANT,
+  TEST_V1_INTERNAL_GRANT,
+  TEST_V1_EXTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
 } from "./cypress/common/constants";
@@ -69,8 +70,11 @@ export default defineConfig({
       applicationBaseUrl: process.env.APPLICATION_BASE_URL,
       postLoginBaseUrl: process.env.POST_LOGIN_BASE_URL,
       firstUserId: process.env.FIRST_USER_ID,
-      testV1Grant: {
-        ...TEST_V1_GRANT,
+      testV1InternalGrant: {
+        ...TEST_V1_INTERNAL_GRANT,
+      },
+      testV1ExternalGrant: {
+        ...TEST_V1_EXTERNAL_GRANT,
       },
       testV2InternalGrant: {
         ...TEST_V2_INTERNAL_GRANT,
