@@ -11,6 +11,7 @@ import {
   submitApplication,
   equalitySectionAccept,
   equalitySectionDecline,
+  fillMandatoryQuestions,
 } from "./helper";
 
 // Details object
@@ -36,79 +37,6 @@ const details = {
     "Northern Ireland",
     "Outside of the UK",
   ],
-};
-
-const fillMandatoryQuestions = (orgProfileFilled) => {
-  // If Org Profile isn't filled go through all pages
-  if (!orgProfileFilled) {
-    // Org Type
-    cy.contains("Choose your application type").should("exist");
-    [
-      "Other",
-      "IAmApplyingAsAnIndividual",
-      "Charity",
-      "NonLimitedCompany",
-      "LimitedCompany",
-    ].forEach((item) => {
-      cy.get(`[data-cy=cy-radioInput-option-${item}]`)
-        .should("not.be.checked")
-        .click();
-    });
-    clickSaveAndContinue();
-
-    // Name
-    cy.contains("Enter the name of your organisation").should("exist");
-    cy.get("[data-cy=cy-name-text-input]")
-      .should("have.value", "")
-      .type(details.name);
-    clickSaveAndContinue();
-
-    // Address
-    cy.contains("Enter your organisation's address").should("exist");
-    ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
-      (item, index) => {
-        cy.get(`[data-cy=cy-${item}-text-input]`)
-          .should("have.value", "")
-          .type(details.address[index]);
-      },
-    );
-    clickSaveAndContinue();
-
-    // Companies House
-    cy.contains("Enter your Companies House number (if you have one)").should(
-      "exist",
-    );
-    cy.get("[data-cy=cy-companiesHouseNumber-text-input]")
-      .should("have.value", "")
-      .type(details.companiesHouse);
-    clickSaveAndContinue();
-
-    // Charities Commission
-    cy.contains(
-      "Enter your Charity Commission number (if you have one)",
-    ).should("exist");
-    cy.get("[data-cy=cy-charityCommissionNumber-text-input]")
-      .should("have.value", "")
-      .type(details.charitiesCommission);
-    clickSaveAndContinue();
-  }
-
-  // How much funding
-  cy.contains("How much funding are you applying for?").should("exist");
-  cy.get("[data-cy=cy-fundingAmount-text-input-numeric]")
-    .should("have.value", "")
-    .type(details.howMuchFunding);
-  clickSaveAndContinue();
-
-  // Where will this funding be spent
-  cy.contains("Where will this funding be spent?").should("exist");
-  details.fundingLocation.forEach((item) => {
-    // cy.get('[data-cy="cy-checkbox-value-North East England"]')
-    cy.get(`[data-cy="cy-checkbox-value-${item}"]`)
-      .should("not.be.checked")
-      .click();
-  });
-  clickSaveAndContinue();
 };
 
 const fillOrgProfile = () => {
@@ -634,7 +562,7 @@ describe("Apply for a Grant V2", () => {
     cy.contains("Continue").click();
 
     // Mandatory Questions & Confirm Details
-    fillMandatoryQuestions(false);
+    fillMandatoryQuestions(false, details);
     cy.contains("Confirm your details");
     confirmDetailsOnSummaryScreen(true, true);
 
@@ -701,7 +629,7 @@ describe("Apply for a Grant V2", () => {
     cy.contains("Before you start");
     cy.contains("Continue").click();
 
-    fillMandatoryQuestions(true);
+    fillMandatoryQuestions(true, details);
     confirmDetailsOnSummaryScreen(true, true);
 
     // Confirm and submit application
@@ -787,7 +715,7 @@ describe("Apply for a Grant V2", () => {
     clickSaveAndContinue();
 
     // Complete rest of MQ journey
-    fillMandatoryQuestions(true);
+    fillMandatoryQuestions(true, details);
     confirmDetailsOnSummaryScreen();
     clickText("Confirm and submit");
 

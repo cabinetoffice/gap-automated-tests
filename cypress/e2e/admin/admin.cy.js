@@ -4,9 +4,39 @@ import {
   saveAndExit,
   signInToIntegrationSite,
   signInAsAdmin,
+  signInAsApplyApplicant,
+  signOut,
+  fillMandatoryQuestions,
+  searchForGrant,
 } from "../../common/common";
 
-const GRANT_NAME = "Cypress Test Grant";
+const GRANT_NAME = `Cypress Admin E2E Test Grant ID:${Cypress.env(
+  "firstUserId",
+)}`;
+
+const MQ_DETAILS = {
+  name: "MyOrg",
+  address: ["addressLine1", "addressLine2", "city", "county", "postcod"],
+  orgType: "Limited company",
+  companiesHouse: "12345",
+  charitiesCommission: "67890",
+  howMuchFunding: "100",
+  fundingLocation: [
+    "North East (England)",
+    "North West (England)",
+    "Yorkshire and the Humber",
+    "East Midlands (England)",
+    "West Midlands (England)",
+    "East England",
+    "London",
+    "South East (England)",
+    "South West (England)",
+    "Scotland",
+    "Wales",
+    "Northern Ireland",
+    "Outside of the UK",
+  ],
+};
 
 describe("Create a Grant", () => {
   beforeEach(() => {
@@ -405,6 +435,292 @@ describe("Create a Grant", () => {
 
       yesQuestionComplete();
     }
+  });
+
+  it("mq admin flow", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+
+    createGrant();
+
+    // create advert
+    advertSection1();
+    advertSection2();
+    advertSection3();
+    advertSection4();
+    advertSection5();
+
+    publishAdvert();
+
+    applicationForm();
+
+    function publishApplicationForm() {
+      cy.get('[data-cy="cy_publishApplication-button"]').click();
+
+      cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+      cy.get('[data-cy="cy_publishConfirmation-ConfirmButton"]').click();
+    }
+
+    function publishAdvert() {
+      cy.get('[data-cy="cy-publish-advert-button"]').click();
+
+      cy.get('[data-cy="cy-button-Confirm and publish"]').click();
+
+      cy.get('[data-cy="cy-advert-published"]').should("exist");
+
+      cy.get('[data-cy="back-to-my-account-button"]').click();
+    }
+
+    function applicationForm() {
+      cy.get('[data-cy="cyBuildApplicationForm"]').click();
+
+      cy.get('[data-cy="cy-applicationName-text-input"]').click();
+      cy.get('[data-cy="cy-applicationName-text-input"]').type(GRANT_NAME, {
+        force: true,
+      });
+      cy.get('[data-cy="cy-button-Continue"]').click();
+
+      cy.get('[data-cy="cy_Section-Eligibility Statement"]').click();
+
+      cy.get('[data-cy="cy-displayText-text-area"]').type("eligibility", {
+        force: true,
+      });
+      saveAndExit();
+
+      cy.get('[data-cy="cy_Section-due-diligence-checks"]').click();
+
+      // the diligence checks page throws a React error in the background of loading the page, and cypress stops
+      // processing on any exception. This line just tells it to continue on an unchecked exception.
+      cy.on("uncaught:exception", () => false);
+
+      cy.get(
+        '[data-cy="cy-checkbox-value-I understand that applicants will be asked for this information"]',
+      ).click();
+      saveAndExit();
+
+      // publish
+      publishApplicationForm();
+    }
+
+    function createGrant() {
+      const ggisNumber = "Cypress Test GGIS Number";
+      const contactEmail = "test@and-cypress-email.com";
+
+      cy.get("[data-cy=cy_addAGrantButton]").click();
+
+      cy.get("[data-cy=cy-name-text-input]").click();
+      cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME, { force: true });
+
+      clickSaveAndContinue();
+
+      cy.get("[data-cy=cy-ggisReference-text-input]").click();
+      cy.get("[data-cy=cy-ggisReference-text-input]").type(ggisNumber, {
+        force: true,
+      });
+
+      clickSaveAndContinue();
+
+      cy.get("[data-cy=cy-contactEmail-text-input]").click();
+      cy.get("[data-cy=cy-contactEmail-text-input]").type(contactEmail, {
+        force: true,
+      });
+
+      clickSaveAndContinue();
+
+      cy.get("[data-cy='cy_summaryListValue_Grant name']").contains(GRANT_NAME);
+
+      cy.get(
+        "[data-cy='cy_summaryListValue_GGIS Scheme Reference Number']",
+      ).contains(ggisNumber);
+
+      cy.get("[data-cy='cy_summaryListValue_Support email address']").contains(
+        contactEmail,
+      );
+
+      cy.get("[data-cy=cy_addAGrantConfirmationPageButton]").click();
+
+      cy.contains(GRANT_NAME).parent().contains("View").click();
+    }
+
+    function advertSection5() {
+      cy.get(
+        '[data-cy="cy-5. Further information-sublist-task-name-Eligibility information"]',
+      ).click();
+
+      getIframeBody("#grantEligibilityTab_ifr")
+        .find("p")
+        .type("This is our Eligibility information", { force: true });
+
+      yesQuestionComplete();
+
+      getIframeBody("#grantSummaryTab_ifr")
+        .find("p")
+        .type("This is our Summary information", { force: true });
+
+      yesQuestionComplete();
+
+      getIframeBody("#grantDatesTab_ifr")
+        .find("p")
+        .type("This is our Date information", { force: true });
+
+      yesQuestionComplete();
+
+      getIframeBody("#grantObjectivesTab_ifr")
+        .find("p")
+        .type("This is our Objectives information", { force: true });
+
+      yesQuestionComplete();
+
+      getIframeBody("#grantApplyTab_ifr")
+        .find("p")
+        .type("This is our application information", { force: true });
+
+      yesQuestionComplete();
+
+      getIframeBody("#grantSupportingInfoTab_ifr")
+        .find("p")
+        .type("This is our supporting information", { force: true });
+
+      yesQuestionComplete();
+    }
+
+    function advertSection4() {
+      cy.get(
+        '[data-cy="cy-4. How to apply-sublist-task-name-Link to application form"]',
+      ).click();
+
+      cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').click();
+      cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').type(
+        "https://www.google.com",
+        { force: true },
+      );
+
+      yesQuestionComplete();
+    }
+
+    function advertSection3() {
+      cy.get(
+        "[data-cy='cy-3. Application dates-sublist-task-name-Opening and closing dates']",
+      ).click();
+
+      const today = new Date();
+      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").click();
+      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").type("1", {
+        force: true,
+      });
+      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateMonth]").type("1", {
+        force: true,
+      });
+      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateYear]").type(
+        `${today.getFullYear()}`,
+        { force: true },
+      );
+
+      cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]").type("31", {
+        force: true,
+      });
+      cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateMonth]").type(
+        "1",
+        { force: true },
+      );
+      cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateYear]").type(
+        `${today.getFullYear() + 1}`,
+        { force: true },
+      );
+
+      yesQuestionComplete();
+    }
+
+    function advertSection2() {
+      cy.get(
+        "[data-cy='cy-2. Award amounts-sublist-task-name-How much funding is available?']",
+      ).click();
+
+      cy.get("[data-cy=cy-grantTotalAwardAmount-text-input-numeric]").click();
+      cy.get("[data-cy=cy-grantTotalAwardAmount-text-input-numeric]").type(
+        "10000",
+        { force: true },
+      );
+      cy.get("[data-cy=cy-grantMaximumAward-text-input-numeric]").type("50", {
+        force: true,
+      });
+      cy.get("[data-cy=cy-grantMinimumAward-text-input-numeric]").type("10", {
+        force: true,
+      });
+
+      yesQuestionComplete();
+    }
+
+    function advertSection1() {
+      cy.get("[data-cy=cyBuildAdvert]").click();
+
+      cy.get("[data-cy=cy-name-text-input]").click();
+      cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME, { force: true });
+
+      clickSaveAndContinue();
+
+      cy.get(
+        "[data-cy='cy-1. Grant details-sublist-task-name-Short description']",
+      ).click();
+
+      cy.get("[data-cy=cy-grantShortDescription-text-area]").click();
+      cy.get("[data-cy=cy-grantShortDescription-text-area]").type(
+        "This is a short description",
+        { force: true },
+      );
+
+      yesQuestionComplete();
+
+      cy.contains("Where is the grant available?");
+
+      cy.get("[data-cy=cy-checkbox-value-National]").click();
+
+      yesQuestionComplete();
+
+      cy.contains("Which organisation is funding this grant?");
+
+      cy.get("[data-cy=cy-grantFunder-text-input]").click();
+      cy.get("[data-cy=cy-grantFunder-text-input]").type("The Cabinet Office", {
+        force: true,
+      });
+
+      yesQuestionComplete();
+
+      cy.contains("Who can apply for this grant?");
+
+      cy.get("[data-cy='cy-checkbox-value-Personal / Individual']").click();
+
+      yesQuestionComplete();
+    }
+
+    // Sign in as admin
+    // Create the grant
+    // Sign out
+    // Log back in as applicant
+    // Fill application and submit
+    // Sign out
+    // Log back in as admin
+    // Open the grant
+    // Manage Due Diligence Page
+    // Download the stuff
+
+    // Sign out and complete application as applicant
+    signOut();
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsApplyApplicant();
+
+    // Search & Start internal application
+    cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    searchForGrant(GRANT_NAME);
+    cy.contains(GRANT_NAME).click();
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
+
+    // Before you start
+    cy.contains("Before you start");
+    cy.contains("Continue").click();
+
+    // Mandatory Questions & Confirm Details
+    fillMandatoryQuestions(false, MQ_DETAILS);
   });
 });
 
