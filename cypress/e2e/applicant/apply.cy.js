@@ -164,7 +164,7 @@ describe("Apply for a Grant", () => {
 
     signInAsApplyApplicant();
 
-    cy.contains("Your organisation details").click();
+    cy.contains("Your saved information").click();
 
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationName]",

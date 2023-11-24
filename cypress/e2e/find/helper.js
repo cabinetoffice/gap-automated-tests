@@ -42,7 +42,7 @@ export const countNumberOfPages = () => {
 export const clickThroughPagination = (numberOfPages) => {
   Cypress._.times(numberOfPages, () => {
     cy.get('[data-cy="cyPaginationNextButton"]').click();
-    cy.wait(300);
+    cy.wait(750);
   });
 };
 
