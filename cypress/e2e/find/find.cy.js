@@ -89,12 +89,11 @@ describe("Find a Grant", () => {
         "Closing date": "24 October 2040, 11:59pm",
       };
       Object.entries(grantData).forEach(([key, value]) => {
-        cy.get(
-          `#${Cypress.env("testV1InternalGrant").contentfulSlug}`,
-        ).contains(key);
-        cy.get(
-          `#${Cypress.env("testV1InternalGrant").contentfulSlug}`,
-        ).contains(value);
+        const elementId = `#${
+          Cypress.env("testV1InternalGrant").contentfulSlug
+        }`;
+        cy.get(elementId).contains(key);
+        cy.get(elementId).contains(value);
       });
     });
 

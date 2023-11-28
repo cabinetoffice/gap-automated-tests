@@ -15,7 +15,7 @@ import {
 } from "./helper";
 
 // Details object
-const details = {
+const MQ_DETAILS = {
   name: "MyOrg",
   address: ["addressLine1", "addressLine2", "city", "county", "postcod"],
   orgType: "Limited company",
@@ -28,7 +28,6 @@ const details = {
     "Yorkshire and the Humber",
     "East Midlands (England)",
     "West Midlands (England)",
-    "East England",
     "London",
     "South East (England)",
     "South West (England)",
@@ -54,7 +53,7 @@ const fillOrgProfile = () => {
   cy.get(
     '[data-cy="cy-organisation-details-navigation-organisationName"]',
   ).click();
-  cy.get('[data-cy="cy-legalName-text-input"]').clear().type(details.name);
+  cy.get('[data-cy="cy-legalName-text-input"]').clear().type(MQ_DETAILS.name);
   clickSave();
 
   // Address
@@ -65,7 +64,7 @@ const fillOrgProfile = () => {
     (item, index) => {
       cy.get(`[data-cy=cy-${item}-text-input]`)
         .clear()
-        .type(details.address[index]);
+        .type(MQ_DETAILS.address[index]);
     },
   );
   clickSave();
@@ -76,7 +75,7 @@ const fillOrgProfile = () => {
   ).click();
   cy.get('[data-cy="cy-companiesHouseNumber-text-input"]')
     .clear()
-    .type(details.companiesHouse);
+    .type(MQ_DETAILS.companiesHouse);
   clickSave();
 
   // Charities Commission
@@ -85,7 +84,7 @@ const fillOrgProfile = () => {
   ).click();
   cy.get('[data-cy="cy-charityCommissionNumber-text-input"]')
     .clear()
-    .type(details.charitiesCommission);
+    .type(MQ_DETAILS.charitiesCommission);
   clickSave();
 
   // Back to account
@@ -111,7 +110,7 @@ const partialFillOrgProfile = () => {
     (item, index) => {
       cy.get(`[data-cy=cy-${item}-text-input]`)
         .clear()
-        .type(details.address[index]);
+        .type(MQ_DETAILS.address[index]);
     },
   );
   clickSave();
@@ -136,7 +135,7 @@ const partialFillOrgProfile = () => {
   ).click();
   cy.get('[data-cy="cy-charityCommissionNumber-text-input"]')
     .clear()
-    .type(details.charitiesCommission);
+    .type(MQ_DETAILS.charitiesCommission);
   clickSave();
 
   // Back to account
@@ -151,11 +150,13 @@ const editDetailsOnSummaryScreen = () => {
 
   cy.contains("Enter the name of your organisation").should("exist");
   cy.get("[data-cy=cy-name-text-input]")
-    .should("have.value", details.name)
+    .should("have.value", MQ_DETAILS.name)
     .type("1");
   clickSaveAndContinue();
 
-  cy.get('[data-cy="cy-organisation-value-Name"]').contains(details.name + "1");
+  cy.get('[data-cy="cy-organisation-value-Name"]').contains(
+    MQ_DETAILS.name + "1",
+  );
 
   // Address
   cy.get(
@@ -166,9 +167,9 @@ const editDetailsOnSummaryScreen = () => {
   ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
     (item, index) => {
       cy.get(`[data-cy=cy-${item}-text-input]`)
-        .should("have.value", details.address[index])
+        .should("have.value", MQ_DETAILS.address[index])
         .clear()
-        .type(details.address[index] + "1");
+        .type(MQ_DETAILS.address[index] + "1");
     },
   );
   clickSaveAndContinue();
@@ -178,7 +179,7 @@ const editDetailsOnSummaryScreen = () => {
     .children("li")
     .each((listItem, index) => {
       cy.wrap(listItem).contains(
-        details.address[index] + "1" + (index < 4 ? "," : ""),
+        MQ_DETAILS.address[index] + "1" + (index < 4 ? "," : ""),
       );
     });
 
@@ -212,13 +213,13 @@ const editDetailsOnSummaryScreen = () => {
 
   cy.contains("Enter your Companies House number (if you have one)");
   cy.get("[data-cy=cy-companiesHouseNumber-text-input]")
-    .should("have.value", details.companiesHouse)
+    .should("have.value", MQ_DETAILS.companiesHouse)
     .clear()
-    .type(details.companiesHouse + "1");
+    .type(MQ_DETAILS.companiesHouse + "1");
   clickSaveAndContinue();
 
   cy.get('[data-cy="cy-organisation-value-Companies House number"]').contains(
-    details.companiesHouse + "1",
+    MQ_DETAILS.companiesHouse + "1",
   );
 
   // Charities Commission
@@ -228,14 +229,14 @@ const editDetailsOnSummaryScreen = () => {
 
   cy.contains("Enter your Charity Commission number (if you have one)");
   cy.get("[data-cy=cy-charityCommissionNumber-text-input]")
-    .should("have.value", details.charitiesCommission)
+    .should("have.value", MQ_DETAILS.charitiesCommission)
     .clear()
-    .type(details.charitiesCommission + "1");
+    .type(MQ_DETAILS.charitiesCommission + "1");
   clickSaveAndContinue();
 
   cy.get(
     '[data-cy="cy-organisation-value-Charity Commission number"]',
-  ).contains(details.charitiesCommission + "1");
+  ).contains(MQ_DETAILS.charitiesCommission + "1");
 
   // How much funding
   cy.get(
@@ -244,14 +245,14 @@ const editDetailsOnSummaryScreen = () => {
 
   cy.contains("How much funding are you applying for?");
   cy.get("[data-cy=cy-fundingAmount-text-input-numeric]")
-    .should("have.value", details.howMuchFunding)
+    .should("have.value", MQ_DETAILS.howMuchFunding)
     .clear()
-    .type(details.howMuchFunding + "1");
+    .type(MQ_DETAILS.howMuchFunding + "1");
   clickSaveAndContinue();
 
   cy.get(
     '[data-cy="cy-organisation-value-How much funding are you applying for?"]',
-  ).contains(`£ ${details.howMuchFunding}1`);
+  ).contains(`£ ${MQ_DETAILS.howMuchFunding}1`);
 
   // Where will this funding be spent
   cy.get(
@@ -259,18 +260,19 @@ const editDetailsOnSummaryScreen = () => {
   ).click();
 
   cy.contains("Where will this funding be spent?").should("exist");
-  details.fundingLocation.forEach((item) => {
-    // cy.get('[data-cy="cy-checkbox-value-North East England"]')
+  MQ_DETAILS.fundingLocation.forEach((item) => {
     cy.get(`[data-cy="cy-checkbox-value-${item}"]`)
       .should("be.checked")
       .click();
   });
-  cy.get(`[data-cy="cy-checkbox-value-${details.fundingLocation[0]}"]`).click();
+  cy.get(
+    `[data-cy="cy-checkbox-value-${MQ_DETAILS.fundingLocation[0]}"]`,
+  ).click();
   clickSaveAndContinue();
 
   cy.get(
     '[data-cy="cy-organisation-value-Where will this funding be spent?"] > .govuk-list > li',
-  ).contains(details.fundingLocation[0]);
+  ).contains(MQ_DETAILS.fundingLocation[0]);
 };
 
 const editOrgAndFundingDetails = () => {
@@ -280,7 +282,7 @@ const editOrgAndFundingDetails = () => {
   // Check, Change & Check the details
 
   // Org Type
-  cy.get(`[data-cy="cy-section-value-${details.orgType}"]`).should("exist");
+  cy.get(`[data-cy="cy-section-value-${MQ_DETAILS.orgType}"]`).should("exist");
 
   cy.get('[data-cy="cy-section-details-navigation-APPLICANT_TYPE"]').click();
   cy.get('[data-cy="cy-radioInput-option-Charity"]').click();
@@ -289,17 +291,19 @@ const editOrgAndFundingDetails = () => {
   cy.get(`[data-cy="cy-section-value-Charity"]`).should("exist");
 
   // Name
-  cy.get(`[data-cy="cy-section-value-${details.name}"]`).should("exist");
+  cy.get(`[data-cy="cy-section-value-${MQ_DETAILS.name}"]`).should("exist");
 
   cy.get(
     '[data-cy="cy-section-details-navigation-APPLICANT_ORG_NAME"]',
   ).click();
   cy.get("[data-cy=cy-name-text-input]")
-    .should("have.value", details.name)
+    .should("have.value", MQ_DETAILS.name)
     .type("1");
   clickSaveAndContinue();
 
-  cy.get(`[data-cy="cy-section-value-${details.name + "1"}"]`).should("exist");
+  cy.get(`[data-cy="cy-section-value-${MQ_DETAILS.name + "1"}"]`).should(
+    "exist",
+  );
 
   // Address
   cy.get('[data-cy="cy-organisation-value-APPLICANT_ORG_ADDRESS"]')
@@ -307,7 +311,7 @@ const editOrgAndFundingDetails = () => {
     .children("li")
     .each((listItem, index) => {
       cy.wrap(listItem).contains(
-        details.address[index] + (index < 4 ? "," : ""),
+        MQ_DETAILS.address[index] + (index < 4 ? "," : ""),
       );
     });
   cy.get(
@@ -316,9 +320,9 @@ const editOrgAndFundingDetails = () => {
   ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
     (item, index) => {
       cy.get(`[data-cy=cy-${item}-text-input]`)
-        .should("have.value", details.address[index])
+        .should("have.value", MQ_DETAILS.address[index])
         .clear()
-        .type(details.address[index] + "1");
+        .type(MQ_DETAILS.address[index] + "1");
     },
   );
   clickSaveAndContinue();
@@ -327,30 +331,30 @@ const editOrgAndFundingDetails = () => {
     .children("li")
     .each((listItem, index) => {
       cy.wrap(listItem).contains(
-        details.address[index] + "1" + (index < 4 ? "," : ""),
+        MQ_DETAILS.address[index] + "1" + (index < 4 ? "," : ""),
       );
     });
 
   // Charities Commission
-  cy.get(`[data-cy="cy-section-value-${details.charitiesCommission}"]`).should(
-    "exist",
-  );
+  cy.get(
+    `[data-cy="cy-section-value-${MQ_DETAILS.charitiesCommission}"]`,
+  ).should("exist");
 
   cy.get(
     '[data-cy="cy-section-details-navigation-APPLICANT_ORG_CHARITY_NUMBER"]',
   ).click();
   cy.get("[data-cy=cy-charityCommissionNumber-text-input]")
-    .should("have.value", details.charitiesCommission)
+    .should("have.value", MQ_DETAILS.charitiesCommission)
     .clear()
-    .type(details.charitiesCommission + "1");
+    .type(MQ_DETAILS.charitiesCommission + "1");
   clickSaveAndContinue();
 
   cy.get(
-    `[data-cy="cy-section-value-${details.charitiesCommission + "1"}"]`,
+    `[data-cy="cy-section-value-${MQ_DETAILS.charitiesCommission + "1"}"]`,
   ).should("exist");
 
   // Companies House
-  cy.get(`[data-cy="cy-section-value-${details.companiesHouse}"]`).should(
+  cy.get(`[data-cy="cy-section-value-${MQ_DETAILS.companiesHouse}"]`).should(
     "exist",
   );
 
@@ -358,14 +362,14 @@ const editOrgAndFundingDetails = () => {
     '[data-cy="cy-section-details-navigation-APPLICANT_ORG_COMPANIES_HOUSE"]',
   ).click();
   cy.get("[data-cy=cy-companiesHouseNumber-text-input]")
-    .should("have.value", details.companiesHouse)
+    .should("have.value", MQ_DETAILS.companiesHouse)
     .clear()
-    .type(details.companiesHouse + "1");
+    .type(MQ_DETAILS.companiesHouse + "1");
   clickSaveAndContinue();
 
-  cy.get(`[data-cy="cy-section-value-${details.companiesHouse + "1"}"]`).should(
-    "exist",
-  );
+  cy.get(
+    `[data-cy="cy-section-value-${MQ_DETAILS.companiesHouse + "1"}"]`,
+  ).should("exist");
 
   // Complete section & move to funding
   cy.get('[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]').click();
@@ -375,21 +379,21 @@ const editOrgAndFundingDetails = () => {
   // Check, Change & Check the details
 
   // Funding amount
-  cy.get(`[data-cy="cy-section-value-${details.howMuchFunding}"]`).should(
+  cy.get(`[data-cy="cy-section-value-${MQ_DETAILS.howMuchFunding}"]`).should(
     "exist",
   );
 
   cy.get('[data-cy="cy-section-details-navigation-APPLICANT_AMOUNT"]').click();
   cy.contains("How much funding are you applying for?");
   cy.get("[data-cy=cy-fundingAmount-text-input-numeric]")
-    .should("have.value", details.howMuchFunding)
+    .should("have.value", MQ_DETAILS.howMuchFunding)
     .clear()
-    .type(details.howMuchFunding + "1");
+    .type(MQ_DETAILS.howMuchFunding + "1");
   clickSaveAndContinue();
 
-  cy.get(`[data-cy="cy-section-value-${details.howMuchFunding + "1"}"]`).should(
-    "exist",
-  );
+  cy.get(
+    `[data-cy="cy-section-value-${MQ_DETAILS.howMuchFunding + "1"}"]`,
+  ).should("exist");
 
   // Funding locations
   cy.get('[data-cy="cy-organisation-value-BENEFITIARY_LOCATION"]')
@@ -397,7 +401,7 @@ const editOrgAndFundingDetails = () => {
     .children("li")
     .each((listItem, index) => {
       cy.wrap(listItem).contains(
-        details.fundingLocation[index] + (index < 12 ? "," : ""),
+        MQ_DETAILS.fundingLocation[index] + (index < 12 ? "," : ""),
       );
     });
 
@@ -405,15 +409,17 @@ const editOrgAndFundingDetails = () => {
     '[data-cy="cy-section-details-navigation-BENEFITIARY_LOCATION"]',
   ).click();
   cy.contains("Where will this funding be spent?").should("exist");
-  details.fundingLocation.forEach((item) => {
+  MQ_DETAILS.fundingLocation.forEach((item) => {
     // cy.get('[data-cy="cy-checkbox-value-North East England"]')
     cy.get(`[data-cy="cy-checkbox-value-${item}"]`).click();
   });
-  cy.get(`[data-cy="cy-checkbox-value-${details.fundingLocation[0]}"]`).click();
+  cy.get(
+    `[data-cy="cy-checkbox-value-${MQ_DETAILS.fundingLocation[0]}"]`,
+  ).click();
   clickSaveAndContinue();
 
   cy.get('[data-cy="cy-organisation-value-BENEFITIARY_LOCATION"]').contains(
-    details.fundingLocation[0],
+    MQ_DETAILS.fundingLocation[0],
   );
 
   // Complete the section
@@ -425,7 +431,7 @@ const confirmDetailsOnSummaryScreen = () => {
   // Confirm your details
 
   // Name
-  cy.get('[data-cy="cy-organisation-value-Name"]').contains(details.name);
+  cy.get('[data-cy="cy-organisation-value-Name"]').contains(MQ_DETAILS.name);
 
   // Address
   cy.get("[data-cy=cy-organisation-value-Address]")
@@ -433,29 +439,29 @@ const confirmDetailsOnSummaryScreen = () => {
     .children("li")
     .each((listItem, index) => {
       cy.wrap(listItem).contains(
-        details.address[index] + (index < 4 ? "," : ""),
+        MQ_DETAILS.address[index] + (index < 4 ? "," : ""),
       );
     });
 
   // Org Type
   cy.get('[data-cy="cy-organisation-value-Type of organisation"]').contains(
-    details.orgType,
+    MQ_DETAILS.orgType,
   );
 
   // Companies House
   cy.get('[data-cy="cy-organisation-value-Companies House number"]').contains(
-    details.companiesHouse,
+    MQ_DETAILS.companiesHouse,
   );
 
   // Charities Commission
   cy.get(
     '[data-cy="cy-organisation-value-Charity Commission number"]',
-  ).contains(details.charitiesCommission);
+  ).contains(MQ_DETAILS.charitiesCommission);
 
   // How much funding
   cy.get(
     '[data-cy="cy-organisation-value-How much funding are you applying for?"]',
-  ).contains(`£ ${details.howMuchFunding}`);
+  ).contains(`£ ${MQ_DETAILS.howMuchFunding}`);
 
   // Funding locations
   cy.get(
@@ -464,7 +470,8 @@ const confirmDetailsOnSummaryScreen = () => {
     .children("li")
     .each((listItem, index) => {
       cy.wrap(listItem).contains(
-        details.fundingLocation[index] + (index < 12 ? "," : ""),
+        MQ_DETAILS.fundingLocation[index] +
+          (index < MQ_DETAILS.fundingLocation.length - 1 ? "," : ""),
       );
     });
 };
@@ -474,7 +481,7 @@ const confirmOrgAndFundingDetails = (suffix, orgType, fundingLocations) => {
   cy.get('[data-cy="cy-section-title-link-Your organisation"]').click();
   cy.get('[data-cy="cy-manage-section-header"]').contains("Your organisation");
 
-  cy.get(`[data-cy="cy-section-value-${details.name + suffix}"]`).should(
+  cy.get(`[data-cy="cy-section-value-${MQ_DETAILS.name + suffix}"]`).should(
     "exist",
   );
   cy.get(`[data-cy="cy-section-value-${orgType}"]`).should("exist");
@@ -483,14 +490,14 @@ const confirmOrgAndFundingDetails = (suffix, orgType, fundingLocations) => {
     .children("li")
     .each((listItem, index) => {
       cy.wrap(listItem).contains(
-        details.address[index] + suffix + (index < 4 ? "," : ""),
+        MQ_DETAILS.address[index] + suffix + (index < 4 ? "," : ""),
       );
     });
   cy.get(
-    `[data-cy="cy-section-value-${details.companiesHouse + suffix}"]`,
+    `[data-cy="cy-section-value-${MQ_DETAILS.companiesHouse + suffix}"]`,
   ).should("exist");
   cy.get(
-    `[data-cy="cy-section-value-${details.charitiesCommission + suffix}"]`,
+    `[data-cy="cy-section-value-${MQ_DETAILS.charitiesCommission + suffix}"]`,
   ).should("exist");
 
   cy.get('[data-cy="cy-isComplete-question-title"]').contains(
@@ -508,13 +515,13 @@ const confirmOrgAndFundingDetails = (suffix, orgType, fundingLocations) => {
   cy.get('[data-cy="cy-section-title-link-Funding"]').contains("Funding");
 
   cy.get(
-    `[data-cy="cy-section-value-${details.howMuchFunding + suffix}"]`,
+    `[data-cy="cy-section-value-${MQ_DETAILS.howMuchFunding + suffix}"]`,
   ).should("exist");
   cy.get('[data-cy="cy-organisation-value-BENEFITIARY_LOCATION"] > .govuk-list')
     .children("li")
     .each((listItem, index) => {
       cy.wrap(listItem).contains(
-        details.fundingLocation[index] +
+        MQ_DETAILS.fundingLocation[index] +
           (index < fundingLocations.length - 1 ? "," : ""),
       );
     });
@@ -562,7 +569,7 @@ describe("Apply for a Grant V2", () => {
     cy.contains("Continue").click();
 
     // Mandatory Questions & Confirm Details
-    fillMandatoryQuestions(false, details);
+    fillMandatoryQuestions(false, MQ_DETAILS);
     cy.contains("Confirm your details");
     confirmDetailsOnSummaryScreen(true, true);
 
@@ -629,7 +636,7 @@ describe("Apply for a Grant V2", () => {
     cy.contains("Before you start");
     cy.contains("Continue").click();
 
-    fillMandatoryQuestions(true, details);
+    fillMandatoryQuestions(true, MQ_DETAILS);
     confirmDetailsOnSummaryScreen(true, true);
 
     // Confirm and submit application
@@ -686,16 +693,15 @@ describe("Apply for a Grant V2", () => {
     // Name - Should be empty
     cy.get('[data-cy="cy-name-text-input"]')
       .should("be.empty")
-      .type(details.name);
+      .type(MQ_DETAILS.name);
     clickSaveAndContinue();
 
     // Address - should be full
     ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
       (item, index) => {
-        console.log(`[data-cy="cy-${item}-text-input"]`);
         cy.get(`[data-cy="cy-${item}-text-input"]`).should(
           "have.value",
-          details.address[index],
+          MQ_DETAILS.address[index],
         );
       },
     );
@@ -704,18 +710,18 @@ describe("Apply for a Grant V2", () => {
     // Companies House - should be empty
     cy.get('[data-cy="cy-companiesHouseNumber-text-input"]')
       .should("be.empty")
-      .type(details.companiesHouse);
+      .type(MQ_DETAILS.companiesHouse);
     clickSaveAndContinue();
 
     // Charities Commission - Should be filled
     cy.get('[data-cy="cy-charityCommissionNumber-text-input"]').should(
       "have.value",
-      details.charitiesCommission,
+      MQ_DETAILS.charitiesCommission,
     );
     clickSaveAndContinue();
 
     // Complete rest of MQ journey
-    fillMandatoryQuestions(true, details);
+    fillMandatoryQuestions(true, MQ_DETAILS);
     confirmDetailsOnSummaryScreen();
     clickText("Confirm and submit");
 
@@ -723,23 +729,23 @@ describe("Apply for a Grant V2", () => {
     cy.get('[data-cy="cy-link-card-Your saved information"]').click();
 
     cy.get('[data-cy="cy-organisation-value-Type of organisation"]').contains(
-      details.orgType,
+      MQ_DETAILS.orgType,
     );
     cy.get("[data-cy=cy-organisation-value-Address]")
       .find("ul")
       .children("li")
       .each((listItem, index) => {
         cy.wrap(listItem).contains(
-          details.address[index] + (index < 4 ? "," : ""),
+          MQ_DETAILS.address[index] + (index < 4 ? "," : ""),
         );
       });
 
     cy.get('[data-cy="cy-organisation-value-Companies house number"]').contains(
-      details.companiesHouse,
+      MQ_DETAILS.companiesHouse,
     );
     cy.get(
       '[data-cy="cy-organisation-value-Charity commission number"]',
-    ).contains(details.charitiesCommission);
+    ).contains(MQ_DETAILS.charitiesCommission);
 
     cy.get('[data-cy="cy-back-to-dashboard-button"]').click();
 

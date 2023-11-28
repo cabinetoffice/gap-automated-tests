@@ -154,7 +154,7 @@ describe("Apply for a Grant", () => {
       .invoke("attr", "href")
       .should(
         "eq",
-        "/apply/cypress_test_advert_v1_external_contentful_slug_20",
+        `/apply/${Cypress.env("testV1ExternalGrant").contentfulSlug}`,
       );
     cy.contains("Start new application").invoke("removeAttr", "target").click();
   });

@@ -106,12 +106,10 @@ export const fillOutRequiredChecks = () => {
   );
   clickSaveAndContinue();
 
-  cy.contains(
-    "Enter your Charity Commission number (if you have one) (optional)",
-  );
+  cy.contains("Enter your Charity Commission number (if you have one)");
   clickSaveAndContinue();
 
-  cy.contains("Enter your Companies House number (if you have one) (optional)");
+  cy.contains("Enter your Companies House number (if you have one)");
   clickSaveAndContinue();
 
   cy.contains("How much does your organisation require as a grant?");
@@ -362,5 +360,6 @@ export const fillMandatoryQuestions = (orgProfileComplete, details) => {
       .should("not.be.checked")
       .click();
   });
+  cy.wait(5000000);
   clickSaveAndContinue();
 };
