@@ -401,7 +401,8 @@ const editOrgAndFundingDetails = () => {
     .children("li")
     .each((listItem, index) => {
       cy.wrap(listItem).contains(
-        MQ_DETAILS.fundingLocation[index] + (index < 12 ? "," : ""),
+        MQ_DETAILS.fundingLocation[index] +
+          (index < MQ_DETAILS.fundingLocation.length - 1 ? "," : ""),
       );
     });
 
