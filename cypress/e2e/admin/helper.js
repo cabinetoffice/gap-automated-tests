@@ -140,12 +140,47 @@ function addOptionalMultiChoiceQuestion(
   cy.get('[data-cy="cy-button-Save question"]').click();
 }
 
-export function publishAdvert() {
+const getIframeDocument = (iFrameSelector) => {
+  return (
+    cy
+      .get(iFrameSelector)
+      // Cypress yields jQuery element, which has the real
+      // DOM element under property "0".
+      // From the real DOM iframe element we can get
+      // the "document" element, it is stored in "contentDocument" property
+      // Cypress "its" command can access deep properties using dot notation
+      // https://on.cypress.io/its
+      .its("0.contentDocument")
+      .should("exist")
+  );
+};
+
+const getIframeBody = (iFrameSelector) => {
+  cy.wait(2000);
+  // get the document
+  return (
+    getIframeDocument(iFrameSelector)
+      // automatically retries until body is loaded
+      .its("body")
+      .should("not.be.undefined")
+      // wraps "body" DOM element to allow
+      // chaining more Cypress commands, like ".find(...)"
+      .then(cy.wrap)
+  );
+};
+
+export function publishAdvert(scheduled) {
   cy.get('[data-cy="cy-publish-advert-button"]').click();
 
-  cy.get('[data-cy="cy-button-Schedule my advert"]').click();
+  cy.get(
+    `[data-cy="cy-button-${
+      scheduled ? "Schedule my advert" : "Confirm and publish"
+    }"]`,
+  ).click();
 
-  cy.get('[data-cy="cy-advert-scheduled"]').should("exist");
+  cy.get(
+    `[data-cy="cy-advert-${scheduled ? "scheduled" : "published"}"]`,
+  ).should("exist");
 
   cy.get('[data-cy="back-to-my-account-button"]').click();
 }
@@ -184,7 +219,7 @@ export function applicationForm() {
   publishApplicationForm();
 }
 
-export function createGrant() {
+export function createGrant(GRANT_NAME) {
   const ggisNumber = "Cypress Test GGIS Number";
   const contactEmail = "test@and-cypress-email.com";
 
@@ -281,7 +316,7 @@ export function advertSection4() {
   yesQuestionComplete();
 }
 
-export function advertSection3() {
+export function advertSection3(scheduled) {
   cy.get(
     "[data-cy='cy-3. Application dates-sublist-task-name-Opening and closing dates']",
   ).click();
@@ -295,7 +330,7 @@ export function advertSection3() {
     force: true,
   });
   cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateYear]").type(
-    `${today.getFullYear() + 1}`,
+    `${today.getFullYear() + (scheduled ? 1 : 0)}`,
     { force: true },
   );
 
@@ -333,7 +368,7 @@ export function advertSection2() {
   yesQuestionComplete();
 }
 
-export function advertSection1() {
+export function advertSection1(GRANT_NAME) {
   cy.get("[data-cy=cyBuildAdvert]").click();
 
   cy.get("[data-cy=cy-name-text-input]").click();

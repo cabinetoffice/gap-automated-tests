@@ -54,32 +54,36 @@ describe("Create a Grant", () => {
   it("can create a new Grant and create advert", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
-    createGrant();
+    createGrant(GRANT_NAME);
 
     // create advert
-    advertSection1();
+    advertSection1(GRANT_NAME);
     advertSection2();
-    advertSection3();
+    advertSection3(false);
     advertSection4();
     advertSection5();
 
-    publishAdvert();
+    publishAdvert(false);
 
     applicationForm();
   });
 
   it("mq admin flow", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
+
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
 
-    createGrant();
+    createGrant(GRANT_NAME);
 
-    advertSection1();
+    advertSection1(GRANT_NAME);
     advertSection2();
-    advertSection3();
+    advertSection3(false);
     advertSection4();
     advertSection5();
-    publishAdvert();
+    publishAdvert(false);
 
     // Sign in as admin
     // Create the grant
@@ -111,32 +115,3 @@ describe("Create a Grant", () => {
     fillMandatoryQuestions(false, MQ_DETAILS);
   });
 });
-
-// const getIframeDocument = (iFrameSelector) => {
-//   return (
-//     cy
-//       .get(iFrameSelector)
-//       // Cypress yields jQuery element, which has the real
-//       // DOM element under property "0".
-//       // From the real DOM iframe element we can get
-//       // the "document" element, it is stored in "contentDocument" property
-//       // Cypress "its" command can access deep properties using dot notation
-//       // https://on.cypress.io/its
-//       .its("0.contentDocument")
-//       .should("exist")
-//   );
-// };
-//
-// const getIframeBody = (iFrameSelector) => {
-//   cy.wait(2000);
-//   // get the document
-//   return (
-//     getIframeDocument(iFrameSelector)
-//       // automatically retries until body is loaded
-//       .its("body")
-//       .should("not.be.undefined")
-//       // wraps "body" DOM element to allow
-//       // chaining more Cypress commands, like ".find(...)"
-//       .then(cy.wrap)
-//   );
-// };
