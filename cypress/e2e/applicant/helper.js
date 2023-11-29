@@ -360,6 +360,5 @@ export const fillMandatoryQuestions = (orgProfileComplete, details) => {
       .should("not.be.checked")
       .click();
   });
-  cy.wait(5000000);
   clickSaveAndContinue();
 };
