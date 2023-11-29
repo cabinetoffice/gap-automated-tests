@@ -107,5 +107,21 @@ describe("Create a Grant", () => {
     signOut();
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
+
+    // View grant and get due diligence data
+    cy.get('[data-cy="cy_SchemeListButton"]').click();
+    cy.get(
+      '[data-cy="cy_linkToScheme_Cypress - Test Scheme V2 External"]',
+    ).click();
+    cy.get(".govuk-button--secondary").click();
+
+    // Check download link works
+    cy.get(":nth-child(4) > .govuk-link")
+      .invoke("attr", "href")
+      .then((url) => {
+        cy.request(url).then((response) => {
+          expect(response.status).to.eq(200);
+        });
+      });
   });
 });
