@@ -96,11 +96,18 @@ const ADVERTS = [
   },
 ];
 const SLUGS = ADVERTS.map((advert) => advert.fields.label["en-US"]);
+const ADVERT_TITLES = [
+  `Cypress Admin E2E Test Grant ID:${process.env.FIRST_USER_ID}`,
+  `Cypress Test Grant`,
+];
 
 const unpublishAndDelete = async (entries) => {
   let deletionExecuted = false;
   for (const entry of entries.items) {
-    if (SLUGS.includes(entry.fields?.label?.["en-US"])) {
+    if (
+      SLUGS.includes(entry.fields?.label?.["en-US"]) ||
+      ADVERT_TITLES.includes(entry.fields?.grantName?.["en-US"])
+    ) {
       if (entry.isPublished())
         await entry.unpublish().then(() => {
           console.log(

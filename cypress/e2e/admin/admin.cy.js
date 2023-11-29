@@ -426,7 +426,7 @@ describe("Create a Grant", () => {
     }
 
     function checkAdvertIsPublished() {
-      // TODO : Grab link
+      // Get link as an alias
       cy.get(".break-all-words > .govuk-link")
         .invoke("text")
         .then(() => {})
@@ -434,7 +434,7 @@ describe("Create a Grant", () => {
 
       clickText("Manage this grant");
 
-      // TODO : Add this to the grant advert
+      // Add application form link to the grant advert
       cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
       cy.get('[data-cy="cy-unpublish-advert-button"]').click();
       cy.get('[data-cy="cy-radioInput-option-YesUnpublishMyAdvert"]').click();
@@ -449,6 +449,7 @@ describe("Create a Grant", () => {
       });
       yesQuestionComplete();
       clickText("Review and publish");
+      cy.get('[data-cy="cy-button-Confirm and publish"]').click();
 
       // TODO : Sign out - Log in as an applicant, check that the grant is there
       clickText("Sign out");
@@ -456,6 +457,7 @@ describe("Create a Grant", () => {
       signInAsApplyApplicant();
       cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
       searchAgainForGrant("Cypress Test Grant");
+      // TODO : Loop through grants until Cypress Test Grant is found (involves pagination)
 
       // TODO : Sign out, then log back in as admin
     }
