@@ -4,6 +4,7 @@ import {
   signInAsApplyApplicant,
   signOut,
   searchForGrant,
+  clickText,
 } from "../../common/common";
 import {
   publishAdvert,
@@ -68,22 +69,10 @@ describe("Create a Grant", () => {
     applicationForm();
   });
 
-  it("mq admin flow", () => {
+  it("V2 External - Download due dilligence data", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
-
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
-    signInAsAdmin();
-
-    createGrant(GRANT_NAME);
-
-    advertSection1(GRANT_NAME);
-    advertSection2();
-    advertSection3(false);
-    advertSection4();
-    advertSection5();
-    publishAdvert(false);
 
     // Sign in as admin
     // Create the grant
@@ -97,14 +86,13 @@ describe("Create a Grant", () => {
     // Download the stuff
 
     // Sign out and complete application as applicant
-    signOut();
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();
 
     // Search & Start internal application
     cy.get('[data-cy="cy-find-a-grant-link"]').click();
-    searchForGrant(GRANT_NAME);
-    cy.contains(GRANT_NAME).click();
+    searchForGrant(Cypress.env("testV2ExternalGrant").advertName);
+    cy.contains(Cypress.env("testV2ExternalGrant").advertName).click();
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     // Before you start
@@ -113,5 +101,11 @@ describe("Create a Grant", () => {
 
     // Mandatory Questions & Confirm Details
     fillMandatoryQuestions(false, MQ_DETAILS);
+    clickText("Confirm and submit");
+
+    // Sign in as admin
+    signOut();
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
   });
 });
