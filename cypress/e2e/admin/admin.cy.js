@@ -60,11 +60,11 @@ describe("Create a Grant", () => {
     // create advert
     advertSection1(GRANT_NAME);
     advertSection2();
-    advertSection3(false);
+    advertSection3(true);
     advertSection4();
     advertSection5();
 
-    publishAdvert(false);
+    publishAdvert(true);
 
     applicationForm();
   });
