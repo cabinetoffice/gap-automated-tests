@@ -182,7 +182,6 @@ describe("Find a Grant", () => {
       const grantAdvertName = Cypress.env("testV1InternalGrant").advertName;
       // search for and view test grant advert
       searchForGrant(grantAdvertName);
-      // cy.get('[data-cy="cyGrantNameAndLink"]').should('have.text', 'Cypress - Automated E2E Test Grant');
 
       cy.get(`#${Cypress.env("testV1InternalGrant").contentfulSlug}`)
         .children("h2")

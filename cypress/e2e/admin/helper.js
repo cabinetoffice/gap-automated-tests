@@ -70,13 +70,12 @@ function sectionsAndQuestions() {
     '[data-cy="cy-radioInput-option-Date"]',
   );
 
-  cy.get('[data-cy="cy_Section-Custom Question 1"]').should("exist");
-  cy.get('[data-cy="cy_Section-Custom Question 2"]').should("exist");
-  cy.get('[data-cy="cy_Section-Custom Question 3"]').should("exist");
-  cy.get('[data-cy="cy_Section-Custom Question 4"]').should("exist");
-  cy.get('[data-cy="cy_Section-Custom Question 5"]').should("exist");
-  cy.get('[data-cy="cy_Section-Custom Question 6"]').should("exist");
-  cy.get('[data-cy="cy_Section-Custom Question 7"]').should("exist");
+  const questionIndexes = Array.from({ length: 7 }, (_, index) =>
+    String(index + 1),
+  );
+  questionIndexes.forEach((idx) => {
+    cy.get(`[data-cy="cy_Section-Custom Question ${idx}"]`).should("exist");
+  });
 
   // add section
   cy.get('[data-cy="cy-button-addNewSection"]').click();
