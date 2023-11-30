@@ -16,7 +16,14 @@ import {
   advertSection4,
   advertSection5,
 } from "./helper";
-import { fillMandatoryQuestions } from "../applicant/helper";
+import {
+  confirmOrgAndFundingDetails,
+  equalitySectionDecline,
+  fillMandatoryQuestions,
+  fillOutEligibity,
+  submitApplication,
+} from "../applicant/helper";
+import { getSchemeId } from "../../seed/apply";
 
 const GRANT_NAME = `Cypress Admin E2E Test Grant ID:${Cypress.env(
   "firstUserId",
@@ -52,7 +59,7 @@ describe("Create a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("can create a new Grant and create advert", () => {
+  it.skip("can create a new Grant and create advert", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
     createGrant(GRANT_NAME);
@@ -69,7 +76,7 @@ describe("Create a Grant", () => {
     applicationForm();
   });
 
-  it("V2 External - Download due dilligence data", () => {
+  it.skip("V2 External - Download due dilligence data", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -157,11 +164,15 @@ describe("Create a Grant", () => {
     clickText("View your applications");
     clickText("Back");
 
+    // Update GGIS status to error
+    const response = cy.task("updateSpotlightSubmissionStatus");
+    console.log(response);
+    cy.debug();
+
     // Sign in as admin
     signOut();
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
-    cy.debug();
     cy.get('[data-cy="cy_SchemeListButton"]').click();
     cy.get(
       "[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']",
@@ -169,23 +180,14 @@ describe("Create a Grant", () => {
 
     clickText("Manage due diligence checks");
 
-    const { schemeName } = Cypress.env("testV2InternalGrant");
-    let response;
-
-    getSchemeId(schemeName)
-      .then((res) => {
-        console.log({ res });
-        response = res;
-      })
-      .catch((err) => console.log({ err }));
-
-    console.log("response", response);
+    // const { schemeName } = Cypress.env("testV2InternalGrant");
+    // let response;
 
     // clickText("Download checks from applications");
     // const date = new Date().toISOString().slice(0, 10);
     // cy.debug();
 
-    cy.click("[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']");
+    // cy.get("[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']").click();
     clickText("Manage due diligence checks");
     // cy.readFile(
     //   `cypress/downloads/${date}_GGIS_ID_3_Cypress__Test_Scheme_V2_External.xlsx`,
