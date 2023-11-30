@@ -124,4 +124,71 @@ describe("Create a Grant", () => {
         });
       });
   });
+
+  it("Spotlight test (placeholder name)", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
+    // Sign out and complete application as applicant
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsApplyApplicant();
+    cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    searchForGrant(Cypress.env("testV2InternalGrant").advertName);
+    cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
+
+    cy.contains("Before you start");
+    cy.contains("Continue").click();
+
+    fillMandatoryQuestions(false, MQ_DETAILS);
+    clickText("Confirm and submit");
+    fillOutEligibity();
+
+    confirmOrgAndFundingDetails(
+      "",
+      "Limited company",
+      MQ_DETAILS.fundingLocation,
+      MQ_DETAILS,
+    );
+    submitApplication();
+
+    // Fill E&D Questions and return to dashboard
+    equalitySectionDecline();
+    clickText("View your applications");
+    clickText("Back");
+
+    // Sign in as admin
+    signOut();
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+    cy.debug();
+    cy.get('[data-cy="cy_SchemeListButton"]').click();
+    cy.get(
+      "[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']",
+    ).click();
+
+    clickText("Manage due diligence checks");
+
+    const { schemeName } = Cypress.env("testV2InternalGrant");
+    let response;
+
+    getSchemeId(schemeName)
+      .then((res) => {
+        console.log({ res });
+        response = res;
+      })
+      .catch((err) => console.log({ err }));
+
+    console.log("response", response);
+
+    // clickText("Download checks from applications");
+    // const date = new Date().toISOString().slice(0, 10);
+    // cy.debug();
+
+    cy.click("[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']");
+    clickText("Manage due diligence checks");
+    // cy.readFile(
+    //   `cypress/downloads/${date}_GGIS_ID_3_Cypress__Test_Scheme_V2_External.xlsx`,
+    // ).should("exist");
+  });
 });
