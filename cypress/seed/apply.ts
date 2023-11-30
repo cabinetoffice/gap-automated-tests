@@ -33,6 +33,7 @@ import {
   v2ExternalAdvert,
   v2InternalAdvert,
 } from "./data/apply";
+import { getSchemeIdFromName } from "./ts/selectApplyData";
 
 const applyServiceDbName: string =
   process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
@@ -222,4 +223,21 @@ export const deleteApplyData = async (): Promise<void> => {
     applyDatabaseUrl,
   );
   console.log("Successfully removed data from Apply database");
+};
+
+export const getSchemeId = async (schemeName) => {
+  console.log({ schemeName });
+  const args = [Cypress.env("oneLoginAdminEmail"), schemeName];
+  console.log({ args });
+
+  const row = await runSQLFromJs(
+    [getSchemeIdFromName],
+    {
+      [getSchemeIdFromName]: args,
+    },
+    applyServiceDbName,
+    applyDatabaseUrl,
+  );
+  console.log({ row });
+  return row;
 };
