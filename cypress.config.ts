@@ -1,6 +1,10 @@
 import { defineConfig } from "cypress";
 import { createTestUsers, deleteTestUsers } from "./cypress/seed/user";
-import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
+import {
+  createApplyData,
+  deleteApplyData,
+  getSchemeId,
+} from "./cypress/seed/apply";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
 import {
@@ -16,6 +20,13 @@ export default defineConfig({
     setupNodeEvents(on) {
       // implement node event listeners here
       on("task", {
+        async updateSpotlightSubmissionStatus() {
+          await getSchemeId().then(async (scheme) => {
+            return scheme;
+          });
+
+          return 1;
+        },
         async setUpUser() {
           await deleteTestUsers().then(async () => {
             await createTestUsers();

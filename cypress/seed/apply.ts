@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { runSQLFromJs } from "./database";
 import {
   insertApplicants,
@@ -33,7 +32,9 @@ import {
   v2ExternalAdvert,
   v2InternalAdvert,
 } from "./data/apply";
-import { getSchemeIdFromName } from "./ts/selectApplyData";
+import { getGrantScheme, getSchemeIdFromName } from "./ts/selectApplyData";
+import { updateSpotlightSubmissionStatus } from "./ts/updateApplyData";
+require("dotenv").config();
 
 const applyServiceDbName: string =
   process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
@@ -225,15 +226,13 @@ export const deleteApplyData = async (): Promise<void> => {
   console.log("Successfully removed data from Apply database");
 };
 
-export const getSchemeId = async (schemeName) => {
-  console.log({ schemeName });
-  const args = [Cypress.env("oneLoginAdminEmail"), schemeName];
-  console.log({ args });
+export const getSchemeId = async () => {
+  // const args = [Cypress.env("oneLoginAdminEmail"), schemeName];
 
   const row = await runSQLFromJs(
-    [getSchemeIdFromName],
+    [updateSpotlightSubmissionStatus],
     {
-      [getSchemeIdFromName]: args,
+      [updateSpotlightSubmissionStatus]: [],
     },
     applyServiceDbName,
     applyDatabaseUrl,
