@@ -8,6 +8,7 @@ import {
   insertSchemes,
   insertApplications,
   insertAdverts,
+  addSpotlightBatchRow,
 } from "./ts/insertApplyData";
 import {
   deleteAdverts,
@@ -19,6 +20,8 @@ import {
   deleteUsers,
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
+  deleteSpotlightBatchRow,
+  deleteSpotlightSubmissionRow,
 } from "./ts/deleteApplyData";
 import {
   TEST_V1_INTERNAL_GRANT,
@@ -32,8 +35,14 @@ import {
   v2ExternalAdvert,
   v2InternalAdvert,
 } from "./data/apply";
-import { getGrantScheme, getSchemeIdFromName } from "./ts/selectApplyData";
-import { updateSpotlightSubmissionStatus } from "./ts/updateApplyData";
+
+import {
+  addSubmissionToMostRecentBatch,
+  updateSpotlightSubmissionStatus,
+  removeQueuedSpotlightSubmissions,
+  readdQueuedSpotlightSubmissions,
+} from "./ts/updateApplyData";
+
 require("dotenv").config();
 
 const applyServiceDbName: string =
@@ -64,6 +73,14 @@ const ADVERT_ID_V2_INTERNAL = `${(Math.abs(+process.env.FIRST_USER_ID) + 1)
   .toString()
   .padStart(8, "0")}-0000-0000-0000-000000000000`;
 const ADVERT_ID_V2_EXTERNAL = `${(Math.abs(+process.env.FIRST_USER_ID) + 2)
+  .toString()
+  .padStart(8, "0")}-0000-0000-0000-000000000000`;
+
+const SPOTLIGHT_SUBMISSION_ID = `${(Math.abs(+process.env.FIRST_USER_ID) + 4)
+  .toString()
+  .padStart(8, "0")}-0000-0000-0000-000000000000`;
+
+const SPOTLIGHT_BATCH_ID = `${(Math.abs(+process.env.FIRST_USER_ID) + 5)
   .toString()
   .padStart(8, "0")}-0000-0000-0000-000000000000`;
 
@@ -226,17 +243,88 @@ export const deleteApplyData = async (): Promise<void> => {
   console.log("Successfully removed data from Apply database");
 };
 
-export const getSchemeId = async () => {
-  // const args = [Cypress.env("oneLoginAdminEmail"), schemeName];
+export const cleanupTestSpotlightSubmissions = async () => {
+  await runSQLFromJs(
+    [readdQueuedSpotlightSubmissions],
+    null,
+    applyServiceDbName,
+    applyDatabaseUrl,
+  );
+};
+
+export const updateSpotlightSubmission = async (status: string) => {
+  await runSQLFromJs(
+    [removeQueuedSpotlightSubmissions],
+    null,
+    applyServiceDbName,
+    applyDatabaseUrl,
+  );
 
   const row = await runSQLFromJs(
     [updateSpotlightSubmissionStatus],
     {
-      [updateSpotlightSubmissionStatus]: [],
+      [updateSpotlightSubmissionStatus]: [
+        status,
+        SPOTLIGHT_SUBMISSION_ID,
+        SCHEME_ID - 1,
+      ],
     },
     applyServiceDbName,
     applyDatabaseUrl,
   );
-  console.log({ row });
+
+  return row;
+};
+
+export const addToRecentBatch = async () => {
+  const row = await runSQLFromJs(
+    [addSubmissionToMostRecentBatch],
+    {
+      [addSubmissionToMostRecentBatch]: [
+        SPOTLIGHT_SUBMISSION_ID,
+        SPOTLIGHT_BATCH_ID,
+      ],
+    },
+    applyServiceDbName,
+    applyDatabaseUrl,
+  );
+
+  return row;
+};
+
+export const deleteSpotlightBatch = async () => {
+  const row = await runSQLFromJs(
+    [deleteSpotlightBatchRow],
+    {
+      [deleteSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
+    },
+    applyServiceDbName,
+    applyDatabaseUrl,
+  );
+
+  return row;
+};
+
+export const deleteSpotlightSubmission = async () => {
+  await runSQLFromJs(
+    [deleteSpotlightSubmissionRow],
+    {
+      [deleteSpotlightSubmissionRow]: [SCHEME_ID - 1],
+    },
+    applyServiceDbName,
+    applyDatabaseUrl,
+  );
+};
+
+export const addSpotlightBatch = async () => {
+  const row = await runSQLFromJs(
+    [addSpotlightBatchRow],
+    {
+      [addSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
+    },
+    applyServiceDbName,
+    applyDatabaseUrl,
+  );
+
   return row;
 };

@@ -5,6 +5,8 @@ import {
   signOut,
   searchForGrant,
   clickText,
+  clickBack,
+  clickSaveAndContinue,
 } from "../../common/common";
 import {
   publishAdvert,
@@ -23,7 +25,6 @@ import {
   fillOutEligibity,
   submitApplication,
 } from "../applicant/helper";
-import { getSchemeId } from "../../seed/apply";
 
 const GRANT_NAME = `Cypress Admin E2E Test Grant ID:${Cypress.env(
   "firstUserId",
@@ -123,16 +124,10 @@ describe("Create a Grant", () => {
     cy.get(".govuk-button--secondary").click();
 
     // Check download link works
-    cy.get(":nth-child(4) > .govuk-link")
-      .invoke("attr", "href")
-      .then((url) => {
-        cy.request(url).then((response) => {
-          expect(response.status).to.eq(200);
-        });
-      });
+    assertDownloadUrlWorks({ selector: ":nth-child(4) > .govuk-link" });
   });
 
-  it("Spotlight test (placeholder name)", () => {
+  it("Spotlight admin test", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -165,14 +160,14 @@ describe("Create a Grant", () => {
     clickText("Back");
 
     // Update GGIS status to error
-    const response = cy.task("updateSpotlightSubmissionStatus");
-    console.log(response);
-    cy.debug();
 
     // Sign in as admin
     signOut();
+    cy.task("updateSpotlightSubmissionStatus", "SENT");
+
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
+
     cy.get('[data-cy="cy_SchemeListButton"]').click();
     cy.get(
       "[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']",
@@ -180,17 +175,55 @@ describe("Create a Grant", () => {
 
     clickText("Manage due diligence checks");
 
-    // const { schemeName } = Cypress.env("testV2InternalGrant");
-    // let response;
+    cy.contains("You have 1 application in Spotlight.");
+    assertDownloadUrlWorks({ selector: ":nth-child(4) > .govuk-link" });
+    assertDownloadUrlWorks({ selector: ":nth-child(6) > .govuk-link" });
 
-    // clickText("Download checks from applications");
-    // const date = new Date().toISOString().slice(0, 10);
-    // cy.debug();
+    clickBack();
 
-    // cy.get("[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']").click();
+    cy.task("updateSpotlightSubmissionStatus", "GGIS_ERROR");
+
+    cy.task("addSpotlightBatch");
+    cy.task("addSubmissionToMostRecentBatch");
+
     clickText("Manage due diligence checks");
-    // cy.readFile(
-    //   `cypress/downloads/${date}_GGIS_ID_3_Cypress__Test_Scheme_V2_External.xlsx`,
-    // ).should("exist");
+
+    cy.contains(
+      "Spotlight did not recognise the GGIS reference number for your grant.",
+    );
+
+    clickText("Check that your grant reference number is correct.");
+
+    cy.get('[data-cy="cy-ggisReference-text-input"]').clear();
+
+    cy.get('[data-cy="cy-ggisReference-text-input"]').type("GGIS_ID_NEW");
+
+    clickSaveAndContinue();
+
+    cy.get(
+      '[data-cy="cy_summaryListValue_GGIS Scheme Reference Number"]',
+    ).contains("GGIS_ID_NEW");
+
+    cy.task("updateSpotlightSubmissionStatus", "SEND_ERROR");
+    clickText("Manage due diligence checks");
+    cy.contains(
+      "Due to a service outage, we cannot automatically send data to Spotlight at the moment. This affects 1 of your records.",
+    );
+    clickBack();
+    cy.task("updateSpotlightSubmissionStatus", "VALIDATION_ERROR");
+    clickText("Manage due diligence checks");
+    cy.debug();
+    cy.contains("We can't send your data to Spotlight");
+    cy.task("cleanupTestSpotlightSubmissions");
   });
 });
+
+const assertDownloadUrlWorks = ({ selector }) => {
+  cy.get(selector)
+    .invoke("attr", "href")
+    .then((url) => {
+      cy.request(url).then((response) => {
+        expect(response.status).to.eq(200);
+      });
+    });
+};

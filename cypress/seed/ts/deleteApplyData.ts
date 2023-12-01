@@ -62,7 +62,17 @@ const deleteFailedSpotlightOauthAudit = `
 DELETE FROM public.spotlight_oauth_audit WHERE user_id = $1;
 `;
 
+const deleteSpotlightBatchRow = `
+    DELETE FROM public.spotlight_batch WHERE id = $1;`;
+
+const deleteSpotlightSubmissionRow: string = `
+    DELETE FROM public.spotlight_submission
+    WHERE grant_scheme = $1;
+`;
+
 export {
+  deleteSpotlightSubmissionRow,
+  deleteSpotlightBatchRow,
   deleteFailedSpotlightOauthAudit,
   deleteAdverts,
   deleteSubmissions,
