@@ -60,7 +60,7 @@ describe("Create a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it.skip("can create a new Grant and create advert", () => {
+  it("can create a new Grant and create advert", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
     createGrant(GRANT_NAME);
@@ -77,7 +77,7 @@ describe("Create a Grant", () => {
     applicationForm();
   });
 
-  it.skip("V2 External - Download due dilligence data", () => {
+  it("V2 External - Download due dilligence data", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -127,7 +127,7 @@ describe("Create a Grant", () => {
     assertDownloadUrlWorks({ selector: ":nth-child(4) > .govuk-link" });
   });
 
-  it("Spotlight admin test", () => {
+  it("Can access and use 'Manage Due Dillegence Checks' (spotlight)", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
@@ -153,15 +153,10 @@ describe("Create a Grant", () => {
       MQ_DETAILS,
     );
     submitApplication();
-
-    // Fill E&D Questions and return to dashboard
     equalitySectionDecline();
     clickText("View your applications");
     clickText("Back");
 
-    // Update GGIS status to error
-
-    // Sign in as admin
     signOut();
     cy.task("updateSpotlightSubmissionStatus", "SENT");
 
@@ -176,6 +171,8 @@ describe("Create a Grant", () => {
     clickText("Manage due diligence checks");
 
     cy.contains("You have 1 application in Spotlight.");
+    
+    //due dilligence downloads
     assertDownloadUrlWorks({ selector: ":nth-child(4) > .govuk-link" });
     assertDownloadUrlWorks({ selector: ":nth-child(6) > .govuk-link" });
 
