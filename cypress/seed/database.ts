@@ -19,7 +19,10 @@ export const runSQLFromJs = async (
 
     for (const sqlScript of sqlScripts) {
       // console.log("sqlScript: ", sqlScript, substitutions[sqlScript]);
-      const res = await client.query(sqlScript, substitutions[sqlScript] || []);
+      const res = await client.query(
+        sqlScript,
+        substitutions?.[sqlScript] || [],
+      );
       console.log(res);
       response.push(res.rows);
     }
