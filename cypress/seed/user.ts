@@ -6,6 +6,8 @@ import {
   insertUsers,
 } from "./ts/insertTestUsers";
 import { deleteUsers, deleteDepartments } from "./ts/deleteTestUsers";
+import { addFailedSpotlightOauthAudit } from "./ts/insertApplyData";
+import { deleteFailedSpotlightOauthAudit } from "./ts/deleteApplyData";
 
 const userServiceDbName: string =
   process.env.USERS_DATABASE_NAME || "gapuserlocaldb";
@@ -78,3 +80,23 @@ export const deleteTestUsers = async (): Promise<void> => {
   );
   console.log("Successfully removed test users");
 };
+
+export const addFailedOauthAudit = async () =>
+  runSQLFromJs(
+    [addFailedSpotlightOauthAudit],
+    {
+      [addFailedSpotlightOauthAudit]: [SUPER_ADMIN_ID],
+    },
+    userServiceDbName,
+    userDatabaseUrl,
+  );
+
+export const deleteFailedOauthAudit = async () =>
+  runSQLFromJs(
+    [deleteFailedSpotlightOauthAudit],
+    {
+      [deleteFailedSpotlightOauthAudit]: [SUPER_ADMIN_ID],
+    },
+    userServiceDbName,
+    userDatabaseUrl,
+  );

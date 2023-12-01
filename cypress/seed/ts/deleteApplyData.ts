@@ -58,7 +58,12 @@ const deleteApplicantOrgProfiles: string = `
 DELETE FROM public.grant_applicant_organisation_profile WHERE applicant_id IN ($1, $2, $3);
 `;
 
+const deleteFailedSpotlightOauthAudit = `
+DELETE FROM public.spotlight_oauth_audit WHERE user_id = $1;
+`;
+
 export {
+  deleteFailedSpotlightOauthAudit,
   deleteAdverts,
   deleteSubmissions,
   deleteApplications,
