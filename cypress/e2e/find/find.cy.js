@@ -3,13 +3,13 @@ import {
   signInToIntegrationSite,
   clickText,
   signInAsFindApplicant,
+  clickThroughPagination,
+  countNumberOfPages,
 } from "../../common/common";
 import {
   checkForNoSavedSearchesOrNotifications,
   checkInfoScreen,
   checkSuccessBanner,
-  clickThroughPagination,
-  countNumberOfPages,
   createSavedSearch,
   convertDateToString,
 } from "./helper";

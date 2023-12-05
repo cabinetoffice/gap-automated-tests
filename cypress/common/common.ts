@@ -143,3 +143,23 @@ export const yesQuestionComplete = () => {
 export const saveAndExit = () => {
   clickText("Save and exit");
 };
+
+export const countNumberOfPages = () => {
+  cy.get('[data-cy="cyPaginationComponent"]')
+    .find("ul")
+    .children("li")
+    .last()
+    .prev()
+    .children("a")
+    .invoke("attr", "href")
+    .then((href) => {
+      cy.wrap(+href.split("page=")[1] - 1).as("pageCount");
+    });
+};
+
+export const clickThroughPagination = (numberOfPages) => {
+  Cypress._.times(numberOfPages, () => {
+    cy.get('[data-cy="cyPaginationNextButton"]').click();
+    cy.wait(300);
+  });
+};

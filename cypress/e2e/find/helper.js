@@ -26,26 +26,6 @@ export const createSavedSearch = (searchTerm) => {
   cy.get('[data-cy="cySubmitNotificationsChoice"]').click();
 };
 
-export const countNumberOfPages = () => {
-  cy.get('[data-cy="cyPaginationComponent"]')
-    .find("ul")
-    .children("li")
-    .last()
-    .prev()
-    .children("a")
-    .invoke("attr", "href")
-    .then((href) => {
-      cy.wrap(+href.split("page=")[1] - 1).as("pageCount");
-    });
-};
-
-export const clickThroughPagination = (numberOfPages) => {
-  Cypress._.times(numberOfPages, () => {
-    cy.get('[data-cy="cyPaginationNextButton"]').click();
-    cy.wait(300);
-  });
-};
-
 export const convertDateToString = (date) => {
   const dateFormat = "D MMMM YYYY [at] h:mma";
   const original = dayjs(date).format(dateFormat);
