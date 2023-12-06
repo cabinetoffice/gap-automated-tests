@@ -14,7 +14,7 @@ import {
   cleanupTestSpotlightSubmissions,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
-} from "./cypress/seed/apply";
+} from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
 import {
@@ -51,7 +51,7 @@ export default defineConfig({
           await addToRecentBatch();
           return null;
         },
-        async updateSpotlightSubmissionStatus(status: string) {
+        async updateSpotlightSubmissionStatus(status) {
           await updateSpotlightSubmission(status);
           return null;
         },

@@ -4,6 +4,9 @@ import {
   clickText,
 } from "../../common/common";
 import { TEST_V1_INTERNAL_GRANT } from "../../common/constants";
+import { TASKS } from "./constants";
+
+const { ADD_TEST_OAUTH_AUDIT, DELETE_FAILED_OAUTH_AUDIT } = TASKS;
 
 describe("Manage Users", () => {
   beforeEach(() => {
@@ -130,7 +133,7 @@ describe("Manage Users", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     cy.log("Signing in as super admin");
     signInAsSuperAdmin();
-    cy.task("addTestOauthAudit");
+    cy.task(ADD_TEST_OAUTH_AUDIT);
     clickText("Integrations");
     reconnectSpotlight();
     clickText("Integrations");
@@ -141,8 +144,8 @@ describe("Manage Users", () => {
     cy.get("[data-cy='cy_table_row-for-Status-row-0-cell-1']").contains(
       "Connected",
     );
-    //cleanup
-    cy.task("deleteFailedOauthAudit");
+    // cleanup
+    cy.task(DELETE_FAILED_OAUTH_AUDIT);
   });
 });
 

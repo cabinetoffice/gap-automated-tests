@@ -81,8 +81,8 @@ export const deleteTestUsers = async (): Promise<void> => {
   console.log("Successfully removed test users");
 };
 
-export const addFailedOauthAudit = async () =>
-  runSQLFromJs(
+export const addFailedOauthAudit = async () => {
+  await runSQLFromJs(
     [addFailedSpotlightOauthAudit],
     {
       [addFailedSpotlightOauthAudit]: [SUPER_ADMIN_ID],
@@ -90,9 +90,10 @@ export const addFailedOauthAudit = async () =>
     userServiceDbName,
     userDatabaseUrl,
   );
+};
 
-export const deleteFailedOauthAudit = async () =>
-  runSQLFromJs(
+export const deleteFailedOauthAudit = async () => {
+  await runSQLFromJs(
     [deleteFailedSpotlightOauthAudit],
     {
       [deleteFailedSpotlightOauthAudit]: [SUPER_ADMIN_ID],
@@ -100,3 +101,4 @@ export const deleteFailedOauthAudit = async () =>
     userServiceDbName,
     userDatabaseUrl,
   );
+};

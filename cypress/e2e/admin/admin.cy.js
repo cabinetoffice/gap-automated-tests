@@ -25,33 +25,22 @@ import {
   fillOutEligibity,
   submitApplication,
 } from "../applicant/helper";
+import {
+  MQ_DETAILS,
+  GRANT_NAME,
+  TASKS,
+  SPOTLIGHT_SUBMISSION_STATUS,
+} from "./constants";
 
-const GRANT_NAME = `Cypress Admin E2E Test Grant ID:${Cypress.env(
-  "firstUserId",
-)}`;
+const {
+  UPDATE_SPOTLIGHT_SUBMISSION_STATUS,
+  ADD_SPOTLIGHT_BATCH,
+  ADD_SUBMISSION_TO_MOST_RECENT_BATCH,
+  CLEANUP_TEST_SPOTLIGHT_SUBMISSIONS,
+} = TASKS;
 
-const MQ_DETAILS = {
-  name: "MyOrg",
-  address: ["addressLine1", "addressLine2", "city", "county", "postcod"],
-  orgType: "Limited company",
-  companiesHouse: "12345",
-  charitiesCommission: "67890",
-  howMuchFunding: "100",
-  fundingLocation: [
-    "North East (England)",
-    "North West (England)",
-    "Yorkshire and the Humber",
-    "East Midlands (England)",
-    "West Midlands (England)",
-    "London",
-    "South East (England)",
-    "South West (England)",
-    "Scotland",
-    "Wales",
-    "Northern Ireland",
-    "Outside of the UK",
-  ],
-};
+const { SENT, SEND_ERROR, GGIS_ERROR, VALIDATION_ERROR } =
+  SPOTLIGHT_SUBMISSION_STATUS;
 
 describe("Create a Grant", () => {
   beforeEach(() => {
@@ -158,7 +147,7 @@ describe("Create a Grant", () => {
     clickText("Back");
 
     signOut();
-    cy.task("updateSpotlightSubmissionStatus", "SENT");
+    cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SENT);
 
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
@@ -171,17 +160,17 @@ describe("Create a Grant", () => {
     clickText("Manage due diligence checks");
 
     cy.contains("You have 1 application in Spotlight.");
-    
-    //due dilligence downloads
+
+    // due dilligence downloads
     assertDownloadUrlWorks({ selector: ":nth-child(4) > .govuk-link" });
     assertDownloadUrlWorks({ selector: ":nth-child(6) > .govuk-link" });
 
     clickBack();
 
-    cy.task("updateSpotlightSubmissionStatus", "GGIS_ERROR");
+    cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, GGIS_ERROR);
 
-    cy.task("addSpotlightBatch");
-    cy.task("addSubmissionToMostRecentBatch");
+    cy.task(ADD_SPOTLIGHT_BATCH);
+    cy.task(ADD_SUBMISSION_TO_MOST_RECENT_BATCH);
 
     clickText("Manage due diligence checks");
 
@@ -201,17 +190,17 @@ describe("Create a Grant", () => {
       '[data-cy="cy_summaryListValue_GGIS Scheme Reference Number"]',
     ).contains("GGIS_ID_NEW");
 
-    cy.task("updateSpotlightSubmissionStatus", "SEND_ERROR");
+    cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SEND_ERROR);
     clickText("Manage due diligence checks");
     cy.contains(
       "Due to a service outage, we cannot automatically send data to Spotlight at the moment. This affects 1 of your records.",
     );
     clickBack();
-    cy.task("updateSpotlightSubmissionStatus", "VALIDATION_ERROR");
+    cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, VALIDATION_ERROR);
     clickText("Manage due diligence checks");
     cy.debug();
     cy.contains("We can't send your data to Spotlight");
-    cy.task("cleanupTestSpotlightSubmissions");
+    cy.task(CLEANUP_TEST_SPOTLIGHT_SUBMISSIONS);
   });
 });
 
