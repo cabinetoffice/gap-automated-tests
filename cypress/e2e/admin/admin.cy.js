@@ -16,7 +16,7 @@ import {
   advertSection4,
   advertSection5,
 } from "./helper";
-import { fillMandatoryQuestions } from "../applicant/helper";
+import { fillMqFunding } from "../applicant/helper";
 
 const GRANT_NAME = `Cypress Admin E2E Test Grant ID:${Cypress.env(
   "firstUserId",
@@ -100,7 +100,7 @@ describe("Create a Grant", () => {
     cy.contains("Continue").click();
 
     // Mandatory Questions & Confirm Details
-    fillMandatoryQuestions(false, MQ_DETAILS);
+    fillMqFunding(MQ_DETAILS);
     clickText("Confirm and submit");
 
     // Sign in as admin

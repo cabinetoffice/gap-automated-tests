@@ -10,13 +10,25 @@ import {
   submitApplication,
   equalitySectionAccept,
   equalitySectionDecline,
-  fillMandatoryQuestions,
   fillOrgProfile,
   partialFillOrgProfile,
   editDetailsOnSummaryScreen,
-  editOrgAndFundingDetails,
   confirmDetailsOnSummaryScreen,
   confirmOrgAndFundingDetails,
+  fillMqOrgQuestionsAsLimitedCompany,
+  fillMqFunding,
+  validateMqNonLimitedJourney,
+  validateMqIndividualJourney,
+  validateMqIndividualSummaryScreen,
+  editOrgTypeToNonLimitedCompany,
+  validateMqNonLimitedSummaryScreen,
+  editOrgTypeToLimitedCompany,
+  validateMqLimitedCompanySummaryScreen,
+  editOrgDetails,
+  editFundingDetails,
+  validateOrgDetailsForNonLimitedCompany,
+  validateOrgDetailsForIndividual,
+  validateOrgDetailsForCharity,
 } from "./helper";
 
 // Details object
@@ -78,7 +90,28 @@ describe("Apply for a Grant V2", () => {
     cy.contains("Continue").click();
 
     // Mandatory Questions & Confirm Details
-    fillMandatoryQuestions(false, MQ_DETAILS);
+    fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
+
+    // Check journeys are valid for Non-Limited Company and Individual
+
+    // Go back to Org Type, change to Non-Limited Company and check that Companies House and Charity Commission are skipped
+    validateMqNonLimitedJourney();
+
+    // Go back to Org Type, change to Individual and check that Companies House and Charity Commission are skipped and that copy is changed
+    validateMqIndividualJourney();
+
+    fillMqFunding(MQ_DETAILS);
+
+    validateMqIndividualSummaryScreen();
+
+    // Edit Org Type to Non-Limited Company and check that Summary screen is correct
+    editOrgTypeToNonLimitedCompany();
+    validateMqNonLimitedSummaryScreen();
+
+    // Edit Org Type to Limited Company and check that Summary screen is correct
+    editOrgTypeToLimitedCompany();
+    validateMqLimitedCompanySummaryScreen();
+
     cy.contains("Confirm your details");
     confirmDetailsOnSummaryScreen(MQ_DETAILS);
 
@@ -111,6 +144,10 @@ describe("Apply for a Grant V2", () => {
       "exist",
     );
     cy.get('[data-cy="cy-status-tag-Funding-In Progress"]').should("exist");
+
+    validateOrgDetailsForNonLimitedCompany();
+    validateOrgDetailsForIndividual();
+    validateOrgDetailsForCharity();
 
     // Confirm Org & Funding Details and Submit
     confirmOrgAndFundingDetails(
@@ -150,7 +187,7 @@ describe("Apply for a Grant V2", () => {
     cy.contains("Before you start");
     cy.contains("Continue").click();
 
-    fillMandatoryQuestions(true, MQ_DETAILS);
+    fillMqFunding(MQ_DETAILS);
     confirmDetailsOnSummaryScreen(MQ_DETAILS);
 
     // Confirm and submit application
@@ -235,7 +272,7 @@ describe("Apply for a Grant V2", () => {
     clickSaveAndContinue();
 
     // Complete rest of MQ journey
-    fillMandatoryQuestions(true, MQ_DETAILS);
+    fillMqFunding(MQ_DETAILS);
     confirmDetailsOnSummaryScreen(MQ_DETAILS);
     clickText("Confirm and submit");
 
@@ -270,7 +307,8 @@ describe("Apply for a Grant V2", () => {
 
     // Complete & Submit application
     fillOutEligibity();
-    editOrgAndFundingDetails(MQ_DETAILS);
+    editOrgDetails(MQ_DETAILS);
+    editFundingDetails(MQ_DETAILS);
 
     // Submit & skip E&D questions and return to dashboard
     submitApplication();
