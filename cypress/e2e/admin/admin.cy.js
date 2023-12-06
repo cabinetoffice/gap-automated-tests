@@ -23,6 +23,7 @@ import {
   confirmOrgAndFundingDetails,
   equalitySectionDecline,
   fillMandatoryQuestions,
+  fillOutCustomSection,
   fillOutEligibity,
   fillOutRequiredChecks,
   submitApplication,
