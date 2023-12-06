@@ -228,13 +228,10 @@ describe("Create a Grant", () => {
     ).click();
 
     // Check download link works
-    cy.get('[data-cy="cy_Scheme-details-page-button-Download required checks"]')
-      .should("not.be.disabled")
-      .invoke("attr", "href")
-      .then((url) => {
-        cy.request(url).then((response) => {
-          expect(response.status).to.eq(200);
-        });
-      });
+    assert200(
+      cy.get(
+        '[data-cy="cy_Scheme-details-page-button-Download required checks"]',
+      ),
+    );
   });
 });
