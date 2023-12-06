@@ -259,7 +259,7 @@ describe("Apply for a Grant", () => {
     cy.go("back");
 
     log(
-      "Apply Dashboard & Profile - Checking adming and super-admin dashboard returns 404",
+      "Apply Dashboard & Profile - Checking admin and super-admin dashboard returns 404",
     );
     ["/apply/admin/dashboard", "/apply/admin/super-admin-dashboard"].forEach(
       (page) => {
