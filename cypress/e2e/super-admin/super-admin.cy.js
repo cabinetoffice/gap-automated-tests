@@ -2,8 +2,12 @@ import {
   signInAsSuperAdmin,
   signInToIntegrationSite,
   clickText,
+  assert200,
 } from "../../common/common";
 import { TEST_V1_INTERNAL_GRANT } from "../../common/constants";
+import { TASKS } from "./constants";
+
+const { ADD_TEST_OAUTH_AUDIT, DELETE_FAILED_OAUTH_AUDIT } = TASKS;
 
 describe("Manage Users", () => {
   beforeEach(() => {
@@ -125,4 +129,27 @@ describe("Manage Users", () => {
       "Cypress - Test Scheme V1",
     );
   });
+
+  it("can reconnect spotlight", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    cy.task(ADD_TEST_OAUTH_AUDIT);
+    clickText("Integrations");
+    reconnectSpotlight();
+    clickText("Integrations");
+    cy.get("[data-cy='cy_table_row-for-Integration-row-0-cell-0']").contains(
+      "Spotlight",
+    );
+    cy.get('[data-cy="cy_table_row-for-Status-row-0-cell-1"]');
+    cy.get("[data-cy='cy_table_row-for-Status-row-0-cell-1']").contains(
+      "Connected",
+    );
+    // cleanup
+    cy.task(DELETE_FAILED_OAUTH_AUDIT);
+  });
 });
+
+const reconnectSpotlight = () => {
+  assert200(cy.contains("Reconnect"));
+};

@@ -39,7 +39,7 @@ INSERT INTO public.grant_scheme(grant_scheme_id, funder_id, version, ggis_identi
     VALUES ($1, $2, 1, 'GGIS_ID_1', NOW(), NOW(), $3, 'Cypress - Test Scheme V1 Internal', $4, $5),
            ($6, $7, 2, 'GGIS_ID_2', NOW(), NOW(), $8, 'Cypress - Test Scheme V2 Internal', $9, $10),
            ($11, $12, 2, 'GGIS_ID_3', NOW(), NOW(), $13, 'Cypress - Test Scheme V2 External', $14, $15),
-           ($16, $17, 2, 'GGIS_ID_4', NOW(), NOW(), $18, 'Cypress - Test Scheme V1 External', $19, $20);
+           ($16, $17, 1, 'GGIS_ID_4', NOW(), NOW(), $18, 'Cypress - Test Scheme V1 External', $19, $20);
 `;
 
 const insertApplications: string = `
@@ -61,10 +61,21 @@ INSERT INTO public.grant_advert(grant_advert_id, contentful_entry_id, contentful
         ($1, $2, $3, now(), $4, now(), $5, 'PUBLISHED', 1, $6, $7, $8, now(), now() + interval '3 days', null, null, null),
         ($9, $10, $11, now(), $12, now(), $13, 'PUBLISHED', 2, $14, $15, $16, now(), now() + interval '3 days', null, null, null),
         ($17, $18, $19, now(), $20, now(), $21, 'PUBLISHED', 2, $22, $23, $24, now(), now() + interval '3 days', null, null, null ),
-        ($25, $26, $27, now(), $28, now(), $29, 'PUBLISHED', 2, $30, $31, $32, now(), now() + interval '3 days', null, null, null );
+        ($25, $26, $27, now(), $28, now(), $29, 'PUBLISHED', 1, $30, $31, $32, now(), now() + interval '3 days', null, null, null );
 `;
 
+const addFailedSpotlightOauthAudit = `
+INSERT INTO public.spotlight_oauth_audit(event, status, user_id, timestamp)
+VALUES ('AUTHORISE', 'FAILURE', $1, now());
+`;
+
+const addSpotlightBatchRow = `
+    INSERT INTO public.spotlight_batch(id, status, last_send_attempt, version, created, last_updated)
+    VALUES ($1, 'FAILURE', NOW(), 1, NOW(), NOW());`;
+
 export {
+  addSpotlightBatchRow,
+  addFailedSpotlightOauthAudit,
   insertApplicants,
   insertUsers,
   insertFundingOrgs,

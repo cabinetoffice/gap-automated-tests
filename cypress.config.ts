@@ -1,6 +1,20 @@
 import { defineConfig } from "cypress";
-import { createTestUsers, deleteTestUsers } from "./cypress/seed/user";
-import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
+import {
+  addFailedOauthAudit,
+  createTestUsers,
+  deleteTestUsers,
+  deleteFailedOauthAudit,
+} from "./cypress/seed/user";
+import {
+  createApplyData,
+  deleteApplyData,
+  updateSpotlightSubmission,
+  addToRecentBatch,
+  addSpotlightBatch,
+  cleanupTestSpotlightSubmissions,
+  deleteSpotlightBatch,
+  deleteSpotlightSubmission,
+} from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
 import {
@@ -16,6 +30,37 @@ export default defineConfig({
     setupNodeEvents(on) {
       // implement node event listeners here
       on("task", {
+        async addTestOauthAudit() {
+          await deleteFailedOauthAudit().then(async () => {
+            await addFailedOauthAudit();
+          });
+          return null;
+        },
+        async deleteFailedOauthAudit() {
+          await deleteFailedOauthAudit();
+          return null;
+        },
+
+        async addSpotlightBatch() {
+          await deleteSpotlightBatch().then(async () => {
+            await addSpotlightBatch();
+          });
+          return null;
+        },
+        async addSubmissionToMostRecentBatch() {
+          await addToRecentBatch();
+          return null;
+        },
+        async updateSpotlightSubmissionStatus(status) {
+          await updateSpotlightSubmission(status);
+          return null;
+        },
+        async cleanupTestSpotlightSubmissions() {
+          await deleteSpotlightSubmission();
+          await deleteSpotlightBatch();
+          await cleanupTestSpotlightSubmissions();
+          return null;
+        },
         async setUpUser() {
           await deleteTestUsers().then(async () => {
             await createTestUsers();
