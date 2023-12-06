@@ -9,21 +9,17 @@ export const runSQLFromJs = async (
   dbUrl: string,
 ): Promise<unknown[]> => {
   const response = [];
-  console.log({ dbUrl, dbName, substitutions });
   try {
     const connectionString: string = getConnectionStringByDbName(dbUrl, dbName);
-    console.log({ connectionString });
 
     const client = new Client({ connectionString });
     await client.connect();
 
     for (const sqlScript of sqlScripts) {
-      // console.log("sqlScript: ", sqlScript, substitutions[sqlScript]);
       const res = await client.query(
         sqlScript,
         substitutions?.[sqlScript] || [],
       );
-      console.log(res);
       response.push(res.rows);
     }
     await client.end();
