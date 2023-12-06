@@ -126,7 +126,7 @@ describe("Create a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    // Sign out and complete application as applicant
+    // Sign in and complete application as applicant
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();
 
