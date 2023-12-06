@@ -16,7 +16,14 @@ import {
   advertSection4,
   advertSection5,
 } from "./helper";
-import { fillMandatoryQuestions } from "../applicant/helper";
+import {
+  equalitySectionDecline,
+  fillMandatoryQuestions,
+  fillOutCustomSection,
+  fillOutEligibity,
+  fillOutRequiredChecks,
+  submitApplication,
+} from "../applicant/helper";
 
 const GRANT_NAME = `Cypress Admin E2E Test Grant ID:${Cypress.env(
   "firstUserId",
@@ -74,17 +81,6 @@ describe("Create a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
-    // Sign in as admin
-    // Create the grant
-    // Sign out
-    // Log back in as applicant
-    // Fill application and submit
-    // Sign out
-    // Log back in as admin
-    // Open the grant
-    // Manage Due Diligence Page
-    // Download the stuff
-
     // Sign out and complete application as applicant
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();
@@ -117,6 +113,50 @@ describe("Create a Grant", () => {
 
     // Check download link works
     cy.get(":nth-child(4) > .govuk-link")
+      .invoke("attr", "href")
+      .then((url) => {
+        cy.request(url).then((response) => {
+          expect(response.status).to.eq(200);
+        });
+      });
+  });
+
+  it("V1 Internal - Download Due Diligence Data", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
+
+    // Sign in and complete application as applicant
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsApplyApplicant();
+
+    // Search & Start internal application
+    cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    searchForGrant(Cypress.env("testV1InternalGrant").advertName);
+    cy.contains(Cypress.env("testV1InternalGrant").advertName).click();
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
+
+    // Complete application
+    fillOutEligibity();
+    fillOutRequiredChecks();
+    fillOutCustomSection();
+    submitApplication();
+    equalitySectionDecline();
+
+    // Sign in as admin
+    signOut();
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+
+    // View V1 internal grant
+    cy.get('[data-cy="cy_SchemeListButton"]').click();
+    cy.get(
+      '[data-cy="cy_linkToScheme_Cypress - Test Scheme V1 Internal"]',
+    ).click();
+
+    // Check download link works
+    cy.get('[data-cy="cy_Scheme-details-page-button-Download required checks"]')
+      .should("not.be.disabled")
       .invoke("attr", "href")
       .then((url) => {
         cy.request(url).then((response) => {
