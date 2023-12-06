@@ -7,6 +7,7 @@ import {
   clickText,
   clickBack,
   clickSaveAndContinue,
+  assert200,
 } from "../../common/common";
 import {
   publishAdvert,
