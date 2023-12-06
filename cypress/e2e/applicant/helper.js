@@ -428,11 +428,23 @@ export const validateMqIndividualJourney = () => {
   cy.contains("How much funding are you applying for?").should("exist");
 };
 
-export const validateMqIndividualSummaryScreen = () => {
+export const validateMqOrgFieldsWithoutCompaniesHouseOrCharityCommission =
+  () => {
+    cy.contains("Name").should("exist");
+    cy.contains("Address").should("exist");
+    cy.contains("Companies House number").should("not.exist");
+    cy.contains("Charity Commission number").should("not.exist");
+  };
+
+export const validateMqOrgFieldsWithCompaniesHouseAndCharityCommission = () => {
   cy.contains("Name").should("exist");
   cy.contains("Address").should("exist");
-  cy.contains("Companies House number").should("not.exist");
-  cy.contains("Charity Commission number").should("not.exist");
+  cy.contains("Companies House number").should("exist");
+  cy.contains("Charity Commission number").should("exist");
+};
+
+export const validateMqIndividualSummaryScreen = () => {
+  validateMqOrgFieldsWithoutCompaniesHouseOrCharityCommission();
   cy.contains("How much funding are you applying for?").should("exist");
   cy.contains("Where will this funding be spent?").should("exist");
 };
@@ -452,10 +464,7 @@ export const editOrgTypeToNonLimitedCompany = () => {
 };
 
 export const validateMqNonLimitedSummaryScreen = () => {
-  cy.contains("Name").should("exist");
-  cy.contains("Address").should("exist");
-  cy.contains("Companies House number").should("not.exist");
-  cy.contains("Charity Commission number").should("not.exist");
+  validateMqOrgFieldsWithoutCompaniesHouseOrCharityCommission();
   cy.contains("How much funding are you applying for?").should("exist");
   cy.contains("Where will this funding be spent?").should("exist");
 };
@@ -475,10 +484,7 @@ export const editOrgTypeToLimitedCompany = () => {
 };
 
 export const validateMqLimitedCompanySummaryScreen = () => {
-  cy.contains("Name").should("exist");
-  cy.contains("Address").should("exist");
-  cy.contains("Companies House number").should("exist");
-  cy.contains("Charity Commission number").should("exist");
+  validateMqOrgFieldsWithCompaniesHouseAndCharityCommission();
   cy.contains("How much funding are you applying for?").should("exist");
   cy.contains("Where will this funding be spent?").should("exist");
 };
@@ -540,6 +546,50 @@ export const partialFillOrgProfile = (details) => {
   // Open Org Profile Page
   cy.get('[data-cy="cy-link-card-Your saved information"]').click();
 
+  cy.get('[data-cy="cy-organisation-details-Type of organisation"]').should(
+    "exist",
+  );
+  cy.get('[data-cy="cy-organisation-details-Type of application"]').should(
+    "not.exist",
+  );
+  // TODO re-enable when GAP-2334 is merged (gap-find-apply-web)
+  // validateMqOrgFieldsWithCompaniesHouseAndCharityCommission();
+
+  // Non-limited company
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+  cy.get('[data-cy="cy-radioInput-option-NonLimitedCompany"]').click();
+  clickSave();
+  cy.get('[data-cy="cy-organisation-details-Type of organisation"]').should(
+    "exist",
+  );
+  cy.get('[data-cy="cy-organisation-details-Type of application"]').should(
+    "not.exist",
+  );
+  validateMqOrgFieldsWithoutCompaniesHouseOrCharityCommission();
+
+  // Individual
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+  cy.get('[data-cy="cy-radioInput-option-IAmApplyingAsAnIndividual"]').click();
+  clickSave();
+  cy.get('[data-cy="cy-organisation-details-Type of application"]').should(
+    "exist",
+  );
+  cy.get('[data-cy="cy-organisation-details-Type of organisation"]').should(
+    "not.exist",
+  );
+  validateMqOrgFieldsWithoutCompaniesHouseOrCharityCommission();
+
+  // Org Type - Filled
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+  cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').click();
+  clickSave();
+
   // Name - Blank
   cy.get(
     '[data-cy="cy-organisation-details-navigation-organisationName"]',
@@ -558,13 +608,6 @@ export const partialFillOrgProfile = (details) => {
         .type(details.address[index]);
     },
   );
-  clickSave();
-
-  // Org Type - Filled
-  cy.get(
-    '[data-cy="cy-organisation-details-navigation-organisationType"]',
-  ).click();
-  cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').click();
   clickSave();
 
   // Companies House - Blank
