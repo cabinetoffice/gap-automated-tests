@@ -4,6 +4,7 @@ import {
   searchForGrant,
   signInAsApplyApplicant,
   clickText,
+  log,
 } from "../../common/common";
 import {
   fillOutEligibity,
@@ -67,6 +68,7 @@ describe("Apply for a Grant V2", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
+    log("Signing in as applicant");
     // Sign in
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();
@@ -78,8 +80,8 @@ describe("Apply for a Grant V2", () => {
     - Empty Org Profile
     - Complete E&D Questions
     */
-
     // Search & Start internal application
+    log("Running empty org profile journey");
     cy.get('[data-cy="cy-find-a-grant-link"]').click();
     searchForGrant(Cypress.env("testV2InternalGrant").advertName);
     cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
@@ -90,25 +92,32 @@ describe("Apply for a Grant V2", () => {
     cy.contains("Continue").click();
 
     // Mandatory Questions & Confirm Details
+    log("Filling out MQ as Limited Company");
     fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
 
     // Check journeys are valid for Non-Limited Company and Individual
 
     // Go back to Org Type, change to Non-Limited Company and check that Companies House and Charity Commission are skipped
+    log("Filling out MQ as Non-Limited Company");
     validateMqNonLimitedJourney();
 
     // Go back to Org Type, change to Individual and check that Companies House and Charity Commission are skipped and that copy is changed
+    log("Filling out MQ as Individual");
     validateMqIndividualJourney();
 
+    log("Filling out MQ funding");
     fillMqFunding(MQ_DETAILS);
 
+    log("Validating MQ summary screen for Individual");
     validateMqIndividualSummaryScreen();
 
     // Edit Org Type to Non-Limited Company and check that Summary screen is correct
+    log("Validating MQ summary screen for Non-Limited Company");
     editOrgTypeToNonLimitedCompany();
     validateMqNonLimitedSummaryScreen();
 
     // Edit Org Type to Limited Company and check that Summary screen is correct
+    log("Validating MQ summary screen for Limited Company");
     editOrgTypeToLimitedCompany();
     validateMqLimitedCompanySummaryScreen();
 
@@ -116,9 +125,11 @@ describe("Apply for a Grant V2", () => {
     confirmDetailsOnSummaryScreen(MQ_DETAILS);
 
     // Click through and edit fields
+    log("Editing details from summary screen");
     editDetailsOnSummaryScreen(MQ_DETAILS);
 
-    // Confirm and submit application
+    // Confirm and submit mandatory questions
+    log("Submitting MQ");
     clickText("Confirm and submit");
 
     // Check page is loaded
@@ -136,6 +147,7 @@ describe("Apply for a Grant V2", () => {
       "exist",
     );
 
+    log("Filling out Eligibility");
     fillOutEligibity();
 
     // Check status of tasks - Post Eligibility
@@ -145,8 +157,11 @@ describe("Apply for a Grant V2", () => {
     );
     cy.get('[data-cy="cy-status-tag-Funding-In Progress"]').should("exist");
 
+    log("Validating Org Details for Non-Limited Company");
     validateOrgDetailsForNonLimitedCompany();
+    log("Validating Org Details for Individual Company");
     validateOrgDetailsForIndividual();
+    log("Validating MQ summary screen for Charity");
     validateOrgDetailsForCharity();
 
     // Confirm Org & Funding Details and Submit
@@ -156,9 +171,11 @@ describe("Apply for a Grant V2", () => {
       ["North East (England)"],
       MQ_DETAILS,
     );
+    log("Submitting application");
     submitApplication();
 
     // Fill E&D Questions and return to dashboard
+    log("Filling out equality section");
     equalitySectionAccept();
     clickText("View your applications");
     clickText("Back");
@@ -170,10 +187,14 @@ describe("Apply for a Grant V2", () => {
     - Full Org Profile
     */
 
+    log("MQ Filled Org Profile journey");
+
     // Refill Org Profile
+    log("Filling out Org Profile");
     fillOrgProfile(MQ_DETAILS);
 
     // Search & Start external application
+    log("Search for external application");
     cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
     cy.get('[data-cy="cySearchAgainInput"]').type(
       Cypress.env("testV2ExternalGrant").advertName,
@@ -184,16 +205,21 @@ describe("Apply for a Grant V2", () => {
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     // Mandatory Questions Journey - Straight to Funding Details
+    log("Beginning MQ external flow for filled profile");
     cy.contains("Before you start");
     cy.contains("Continue").click();
 
     fillMqFunding(MQ_DETAILS);
+
+    log("Confirming details on summary screen");
     confirmDetailsOnSummaryScreen(MQ_DETAILS);
 
+    log("Submitting MQ");
     // Confirm and submit application
     clickText("Confirm and submit");
 
     // Now leaving page
+    log("Exiting to external application form");
     cy.contains("You are now leaving GOV.UK");
     cy.get('[data-cy="cy-apply-external-application-button"]')
       .invoke("attr", "href")
