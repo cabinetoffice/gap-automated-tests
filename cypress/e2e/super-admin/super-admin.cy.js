@@ -2,6 +2,7 @@ import {
   signInAsSuperAdmin,
   signInToIntegrationSite,
   clickText,
+  assert200,
 } from "../../common/common";
 import { TEST_V1_INTERNAL_GRANT } from "../../common/constants";
 import { TASKS } from "./constants";
@@ -150,11 +151,5 @@ describe("Manage Users", () => {
 });
 
 const reconnectSpotlight = () => {
-  cy.contains("Reconnect")
-    .invoke("attr", "href")
-    .then((url) => {
-      cy.request(url).then((response) => {
-        expect(response.status).to.eq(200);
-      });
-    });
+  assert200(cy.contains("Reconnect"));
 };

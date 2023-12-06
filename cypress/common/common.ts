@@ -134,3 +134,14 @@ export const yesQuestionComplete = () => {
 export const saveAndExit = () => {
   clickText("Save and exit");
 };
+
+export const assert200 = (element: Cypress.Chainable) => {
+  element
+    .should("not.be.disabled")
+    .invoke("attr", "href")
+    .then((url) => {
+      cy.request(url).then((response) => {
+        expect(response.status).to.eq(200);
+      });
+    });
+};

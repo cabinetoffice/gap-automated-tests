@@ -113,7 +113,7 @@ describe("Create a Grant", () => {
     cy.get(".govuk-button--secondary").click();
 
     // Check download link works
-    assertDownloadUrlWorks({ selector: ":nth-child(4) > .govuk-link" });
+    assert200(cy.get(":nth-child(4) > .govuk-link"));
   });
 
   it("Can access and use 'Manage Due Dillegence Checks' (spotlight)", () => {
@@ -162,8 +162,8 @@ describe("Create a Grant", () => {
     cy.contains("You have 1 application in Spotlight.");
 
     // due dilligence downloads
-    assertDownloadUrlWorks({ selector: ":nth-child(4) > .govuk-link" });
-    assertDownloadUrlWorks({ selector: ":nth-child(6) > .govuk-link" });
+    assert200(cy.get(":nth-child(4) > .govuk-link"));
+    assert200(cy.get(":nth-child(6) > .govuk-link"));
 
     clickBack();
 
@@ -203,13 +203,3 @@ describe("Create a Grant", () => {
     cy.task(CLEANUP_TEST_SPOTLIGHT_SUBMISSIONS);
   });
 });
-
-const assertDownloadUrlWorks = ({ selector }) => {
-  cy.get(selector)
-    .invoke("attr", "href")
-    .then((url) => {
-      cy.request(url).then((response) => {
-        expect(response.status).to.eq(200);
-      });
-    });
-};
