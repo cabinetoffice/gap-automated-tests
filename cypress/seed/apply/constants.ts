@@ -1,5 +1,3 @@
-import "dotenv/config";
-import { runSQLFromJs } from "./database";
 import {
   insertApplicants,
   insertUsers,
@@ -9,7 +7,7 @@ import {
   insertSchemes,
   insertApplications,
   insertAdverts,
-} from "./ts/insertApplyData";
+} from "../ts/insertApplyData";
 import {
   deleteAdverts,
   deleteSubmissions,
@@ -20,50 +18,71 @@ import {
   deleteUsers,
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
-} from "./ts/deleteApplyData";
+} from "../ts/deleteApplyData";
 import {
   TEST_V1_INTERNAL_GRANT,
   TEST_V1_EXTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
-} from "../common/constants";
+} from "../../common/constants";
 import {
   v1InternalAdvert,
   v1ExternalAdvert,
   v2ExternalAdvert,
   v2InternalAdvert,
-} from "./data/apply";
+} from "../data/apply";
 
-const applyServiceDbName: string =
-  process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
+import { getTestID, getUUID } from "./helper";
 
-const applyDatabaseUrl: string =
+require("dotenv").config();
+
+const applyServiceDbName = process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
+
+const applyDatabaseUrl =
   process.env.APPLY_DATABASE_URL ||
   "postgres://postgres:postgres@localhost:5432";
 
-const allSubs: string[] = [
+const allSubs = [
   process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
   process.env.ONE_LOGIN_ADMIN_SUB,
   process.env.ONE_LOGIN_APPLICANT_SUB,
 ];
 
-const SUPER_ADMIN_ID = -Math.abs(+process.env.FIRST_USER_ID);
-const ADMIN_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 1);
-const APPLICANT_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 2);
-const FUNDING_ID = -Math.abs(+process.env.FIRST_USER_ID);
-const SCHEME_ID = -Math.abs(+process.env.FIRST_USER_ID);
-const ADVERT_ID_V1_INTERNAL = `${Math.abs(+process.env.FIRST_USER_ID)
-  .toString()
-  .padStart(8, "0")}-0000-0000-0000-000000000000`;
-const ADVERT_ID_V1_EXTERNAL = `${Math.abs(+process.env.FIRST_USER_ID + 3)
-  .toString()
-  .padStart(8, "0")}-0000-0000-0000-000000000000`;
-const ADVERT_ID_V2_INTERNAL = `${(Math.abs(+process.env.FIRST_USER_ID) + 1)
-  .toString()
-  .padStart(8, "0")}-0000-0000-0000-000000000000`;
-const ADVERT_ID_V2_EXTERNAL = `${(Math.abs(+process.env.FIRST_USER_ID) + 2)
-  .toString()
-  .padStart(8, "0")}-0000-0000-0000-000000000000`;
+const SUPER_ADMIN_ID = getTestID();
+const ADMIN_ID = getTestID(1);
+const APPLICANT_ID = getTestID(2);
+const FUNDING_ID = getTestID();
+const SCHEME_ID = getTestID();
+
+const ADVERT_ID_V1_INTERNAL = getUUID();
+const ADVERT_ID_V1_EXTERNAL = getUUID(3);
+const ADVERT_ID_V2_INTERNAL = getUUID(1);
+const ADVERT_ID_V2_EXTERNAL = getUUID(2);
+const SPOTLIGHT_SUBMISSION_ID = getUUID(4);
+const SPOTLIGHT_BATCH_ID = getUUID(5);
+
+const MQ_DETAILS = {
+  name: "MyOrg",
+  address: ["addressLine1", "addressLine2", "city", "county", "postcod"],
+  orgType: "Limited company",
+  companiesHouse: "12345",
+  charitiesCommission: "67890",
+  howMuchFunding: "100",
+  fundingLocation: [
+    "North East (England)",
+    "North West (England)",
+    "Yorkshire and the Humber",
+    "East Midlands (England)",
+    "West Midlands (England)",
+    "London",
+    "South East (England)",
+    "South West (England)",
+    "Scotland",
+    "Wales",
+    "Northern Ireland",
+    "Outside of the UK",
+  ],
+};
 
 const applySubstitutions = {
   [insertApplicants]: [
@@ -185,41 +204,20 @@ const applySubstitutions = {
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 
-export const createApplyData = async (): Promise<void> => {
-  await runSQLFromJs(
-    [
-      insertApplicants,
-      insertUsers,
-      insertFundingOrgs,
-      insertAdmins,
-      insertGrantApplicantOrgProfiles,
-      insertSchemes,
-      insertApplications,
-      insertAdverts,
-    ],
-    applySubstitutions,
-    applyServiceDbName,
-    applyDatabaseUrl,
-  );
-  console.log("Successfully added data to Apply database");
-};
-
-export const deleteApplyData = async (): Promise<void> => {
-  await runSQLFromJs(
-    [
-      deleteAdverts,
-      deleteSubmissions,
-      deleteApplications,
-      deleteSchemes,
-      deleteAdmins,
-      deleteApplicants,
-      deleteUsers,
-      deleteFundingOrgs,
-      deleteApplicantOrgProfiles,
-    ],
-    applySubstitutions,
-    applyServiceDbName,
-    applyDatabaseUrl,
-  );
-  console.log("Successfully removed data from Apply database");
+export {
+  applySubstitutions,
+  applyServiceDbName,
+  applyDatabaseUrl,
+  SUPER_ADMIN_ID,
+  ADMIN_ID,
+  APPLICANT_ID,
+  FUNDING_ID,
+  SCHEME_ID,
+  ADVERT_ID_V1_INTERNAL,
+  ADVERT_ID_V1_EXTERNAL,
+  ADVERT_ID_V2_INTERNAL,
+  ADVERT_ID_V2_EXTERNAL,
+  SPOTLIGHT_SUBMISSION_ID,
+  SPOTLIGHT_BATCH_ID,
+  MQ_DETAILS,
 };

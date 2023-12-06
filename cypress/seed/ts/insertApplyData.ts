@@ -64,7 +64,18 @@ INSERT INTO public.grant_advert(grant_advert_id, contentful_entry_id, contentful
         ($25, $26, $27, now(), $28, now(), $29, 'PUBLISHED', 1, $30, $31, $32, now(), now() + interval '3 days', null, null, null );
 `;
 
+const addFailedSpotlightOauthAudit = `
+INSERT INTO public.spotlight_oauth_audit(event, status, user_id, timestamp)
+VALUES ('AUTHORISE', 'FAILURE', $1, now());
+`;
+
+const addSpotlightBatchRow = `
+    INSERT INTO public.spotlight_batch(id, status, last_send_attempt, version, created, last_updated)
+    VALUES ($1, 'FAILURE', NOW(), 1, NOW(), NOW());`;
+
 export {
+  addSpotlightBatchRow,
+  addFailedSpotlightOauthAudit,
   insertApplicants,
   insertUsers,
   insertFundingOrgs,
