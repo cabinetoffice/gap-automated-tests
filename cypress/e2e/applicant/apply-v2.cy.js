@@ -233,6 +233,7 @@ describe("Apply for a Grant V2", () => {
     cy.wait(5000);
 
     // Sign in
+    log("Logging in as applicant");
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();
 
@@ -245,35 +246,43 @@ describe("Apply for a Grant V2", () => {
     */
 
     // Partially fill org profile
+    log("Partially filling org profile");
     partialFillOrgProfile(MQ_DETAILS);
 
     // Search & Start new application
+    log("Searching for application");
     cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
     cy.get('[data-cy="cySearchAgainInput"]').type(
       Cypress.env("testV2InternalGrant").advertName,
     );
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
+    log("Beginning application for V2 Internal grant");
     cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
     // Before you start
+    log("Beginning MQ flow for V2 Internal Partial");
     cy.contains("Before you start");
     cy.contains("Continue").click();
 
     // Org Type - should be filled
+
+    log("V2 Internal MQ Partial - MQ Org Type Limited Company");
     cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').should(
       "be.checked",
     );
     clickSaveAndContinue();
 
     // Name - Should be empty
+    log("V2 Internal MQ Partial - MQ Name");
     cy.get('[data-cy="cy-name-text-input"]')
       .should("be.empty")
       .type(MQ_DETAILS.name);
     clickSaveAndContinue();
 
     // Address - should be full
+    log("V2 Internal MQ Partial - MQ Address");
     ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
       (item, index) => {
         cy.get(`[data-cy="cy-${item}-text-input"]`).should(
@@ -285,12 +294,14 @@ describe("Apply for a Grant V2", () => {
     clickSaveAndContinue();
 
     // Companies House - should be empty
+    log("V2 Internal MQ Partial - MQ Companies House");
     cy.get('[data-cy="cy-companiesHouseNumber-text-input"]')
       .should("be.empty")
       .type(MQ_DETAILS.companiesHouse);
     clickSaveAndContinue();
 
     // Charities Commission - Should be filled
+    log("V2 Internal MQ Partial - MQ Charity Commission");
     cy.get('[data-cy="cy-charityCommissionNumber-text-input"]').should(
       "have.value",
       MQ_DETAILS.charitiesCommission,
@@ -298,16 +309,21 @@ describe("Apply for a Grant V2", () => {
     clickSaveAndContinue();
 
     // Complete rest of MQ journey
+    log("V2 Internal MQ Partial - MQ Funding");
     fillMqFunding(MQ_DETAILS);
+    log("V2 Internal MQ Partial - MQ Summary");
     confirmDetailsOnSummaryScreen(MQ_DETAILS);
+    log("V2 Internal MQ Partial - Submit MQ");
     clickText("Confirm and submit");
 
     cy.get('[data-cy="cyAccount detailsPageLink"] > .govuk-link').click();
     cy.get('[data-cy="cy-link-card-Your saved information"]').click();
 
+    log("V2 Internal MQ Partial - Checking profile org type");
     cy.get('[data-cy="cy-organisation-value-Type of organisation"]').contains(
       MQ_DETAILS.orgType,
     );
+    log("V2 Internal MQ Partial - Checking profile address");
     cy.get("[data-cy=cy-organisation-value-Address]")
       .find("ul")
       .children("li")
@@ -317,26 +333,33 @@ describe("Apply for a Grant V2", () => {
         );
       });
 
-    cy.get('[data-cy="cy-organisation-value-Companies house number"]').contains(
+    log("V2 Internal MQ Partial - Checking profile Companies House");
+    cy.get('[data-cy="cy-organisation-value-Companies House number"]').contains(
       MQ_DETAILS.companiesHouse,
     );
+    log("V2 Internal MQ Partial - Checking profile Charity Commission");
     cy.get(
-      '[data-cy="cy-organisation-value-Charity commission number"]',
+      '[data-cy="cy-organisation-value-Charity Commission number"]',
     ).contains(MQ_DETAILS.charitiesCommission);
 
     cy.get('[data-cy="cy-back-to-dashboard-button"]').click();
 
+    log("V2 Internal MQ Partial - Navigate to application");
     cy.get('[data-cy="cy-your-applications-link"]').click();
     cy.get(
       '[data-cy="cy-application-link-Cypress - Test Application V2 Internal"]',
     ).click();
 
     // Complete & Submit application
+    log("V2 Internal MQ Partial - Fill out Eligibility");
     fillOutEligibity();
+    log("V2 Internal MQ Partial - Edit Org Details");
     editOrgDetails(MQ_DETAILS);
+    log("V2 Internal MQ Partial - Edit Funding Details");
     editFundingDetails(MQ_DETAILS);
 
     // Submit & skip E&D questions and return to dashboard
+    log("V2 Internal MQ Partial - Submitting application");
     submitApplication();
     equalitySectionDecline();
     clickText("View your applications");
