@@ -97,7 +97,7 @@ it("Can apply for a V1 Grant", () => {
   log("Apply V1 Internal Grant - Searching for grant");
   searchForGrant(ADVERT_NAME);
 
-  log("Apply V1 Internal Grant - beginning application");
+  log("Apply V1 Internal Grant - Beginning application");
   applyForGrant(ADVERT_NAME);
 
   log("Apply V1 Internal Grant - Signing in as applicant");

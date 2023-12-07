@@ -168,7 +168,7 @@ describe("Apply for a Grant V2", () => {
     );
     validateOrgDetailsForNonLimitedCompany();
     log(
-      "Apply V2 Internal MQ Partial - Validating Org Details for Individual Company",
+      "Apply V2 Internal MQ Partial - Validating Org Details for Individual",
     );
     validateOrgDetailsForIndividual();
     log(
