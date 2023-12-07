@@ -6,16 +6,23 @@ export const runSQLFromJs = async (
   substitutions: any,
   dbName: string,
   dbUrl: string,
-): Promise<void> => {
+): Promise<unknown[]> => {
+  const response = [];
   try {
     const connectionString: string = getConnectionStringByDbName(dbUrl, dbName);
+
     const client = new Client({ connectionString });
     await client.connect();
+
     for (const sqlScript of sqlScripts) {
-      // console.log("sqlScript: ", sqlScript, substitutions[sqlScript]);
-      await client.query(sqlScript, substitutions[sqlScript] || []);
+      const res = await client.query(
+        sqlScript,
+        substitutions?.[sqlScript] || [],
+      );
+      response.push(res.rows);
     }
     await client.end();
+    return response;
   } catch (error) {
     console.error("Error executing SQL script: ", error);
   }

@@ -1,15 +1,50 @@
 import {
-  clickSaveAndContinue,
-  yesQuestionComplete,
-  saveAndExit,
   signInToIntegrationSite,
   signInAsAdmin,
-  clickText,
   signInAsApplyApplicant,
-  searchAgainForGrant,
+  signOut,
+  searchForGrant,
+  clickText,
+  clickBack,
+  clickSaveAndContinue,
+  assert200,
 } from "../../common/common";
+import {
+  publishAdvert,
+  applicationForm,
+  createGrant,
+  advertSection1,
+  advertSection2,
+  advertSection3,
+  advertSection4,
+  advertSection5,
+} from "./helper";
+import {
+  confirmOrgAndFundingDetails,
+  equalitySectionDecline,
+  fillMqFunding,
+  fillMqOrgQuestionsAsLimitedCompany,
+  fillOutCustomSection,
+  fillOutEligibity,
+  fillOutRequiredChecks,
+  submitApplication,
+} from "../applicant/helper";
+import {
+  MQ_DETAILS,
+  GRANT_NAME,
+  TASKS,
+  SPOTLIGHT_SUBMISSION_STATUS,
+} from "./constants";
 
-const GRANT_NAME = "Cypress Test Grant";
+const {
+  UPDATE_SPOTLIGHT_SUBMISSION_STATUS,
+  ADD_SPOTLIGHT_BATCH,
+  ADD_SUBMISSION_TO_MOST_RECENT_BATCH,
+  CLEANUP_TEST_SPOTLIGHT_SUBMISSIONS,
+} = TASKS;
+
+const { SENT, SEND_ERROR, GGIS_ERROR, VALIDATION_ERROR } =
+  SPOTLIGHT_SUBMISSION_STATUS;
 
 describe("Create a Grant", () => {
   beforeEach(() => {
@@ -21,474 +56,186 @@ describe("Create a Grant", () => {
   it("can create a new Grant and create advert", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
-    createGrant();
+    createGrant(GRANT_NAME);
 
     // create advert
-    advertSection1();
+    advertSection1(GRANT_NAME);
     advertSection2();
-    advertSection3();
+    advertSection3(true);
     advertSection4();
     advertSection5();
 
-    publishAdvert();
+    publishAdvert(true);
 
     applicationForm();
+  });
 
-    function publishApplicationForm() {
-      cy.get('[data-cy="cy_publishApplication-button"]').click();
+  it("V2 External - Download due dilligence data", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
 
-      cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
-      cy.get('[data-cy="cy_publishConfirmation-ConfirmButton"]').click();
-    }
+    // Sign out and complete application as applicant
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsApplyApplicant();
 
-    function publishAdvert() {
-      cy.get('[data-cy="cy-publish-advert-button"]').click();
+    // Search & Start internal application
+    cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    searchForGrant(Cypress.env("testV2ExternalGrant").advertName);
+    cy.contains(Cypress.env("testV2ExternalGrant").advertName).click();
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-      // cy.get('[data-cy="cy-button-Schedule my advert"]').click();
+    // Before you start
+    cy.contains("Before you start");
+    cy.contains("Continue").click();
 
-      cy.get('[data-cy="cy-button-Confirm and publish"]').click();
+    // Mandatory Questions & Confirm Details
+    fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
+    fillMqFunding(MQ_DETAILS);
+    clickText("Confirm and submit");
 
-      cy.get('[data-cy="cy-advert-published"]').should("exist");
+    // Sign in as admin
+    signOut();
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
 
-      cy.get('[data-cy="back-to-my-account-button"]').click();
-    }
+    // View grant and get due diligence data
+    cy.get('[data-cy="cy_SchemeListButton"]').click();
+    cy.get(
+      '[data-cy="cy_linkToScheme_Cypress - Test Scheme V2 External"]',
+    ).click();
+    cy.get(".govuk-button--secondary").click();
 
-    function sectionsAndQuestions() {
-      // add section
-      cy.get('[data-cy="cy-button-addNewSection"]').click();
-      cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
-      cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Custom Section", {
-        force: true,
-      });
-      clickSaveAndContinue();
+    // Check download link works
+    assert200(cy.get(":nth-child(4) > .govuk-link"));
+  });
 
-      // add question to new section
-      addOptionalQuestion(
-        '[data-cy="cy_addAQuestion-Custom Section"]',
-        "Custom Question 1",
-        "Short description",
-        '[data-cy="cy-radioInput-option-YesNo"]',
-      );
+  it("Can access and use 'Manage Due Dillegence Checks' (spotlight)", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
+    // Sign out and complete application as applicant
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsApplyApplicant();
+    cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    searchForGrant(Cypress.env("testV2InternalGrant").advertName);
+    cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
 
-      addOptionalQuestion(
-        '[data-cy="cy_addAQuestion-Custom Section"]',
-        "Custom Question 2",
-        "Short description",
-        '[data-cy="cy-radioInput-option-ShortAnswer"]',
-      );
+    cy.contains("Before you start");
+    cy.contains("Continue").click();
 
-      addOptionalQuestion(
-        '[data-cy="cy_addAQuestion-Custom Section"]',
-        "Custom Question 3",
-        "Short description",
-        '[data-cy="cy-radioInput-option-LongAnswer"]',
-      );
+    fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
+    fillMqFunding(MQ_DETAILS);
+    clickText("Confirm and submit");
+    fillOutEligibity();
 
-      addOptionalMultiChoiceQuestion(
-        '[data-cy="cy_addAQuestion-Custom Section"]',
-        "Custom Question 4",
-        "Short description",
-        '[data-cy="cy-radioInput-option-MultipleChoice"]',
-      );
+    confirmOrgAndFundingDetails(
+      "",
+      "Limited company",
+      MQ_DETAILS.fundingLocation,
+      MQ_DETAILS,
+    );
+    submitApplication();
+    equalitySectionDecline();
+    clickText("View your applications");
+    clickText("Back");
 
-      addOptionalMultiChoiceQuestion(
-        '[data-cy="cy_addAQuestion-Custom Section"]',
-        "Custom Question 5",
-        "Short description",
-        '[data-cy="cy-radioInput-option-MultipleSelect"]',
-      );
+    signOut();
+    cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SENT);
 
-      addOptionalQuestion(
-        '[data-cy="cy_addAQuestion-Custom Section"]',
-        "Custom Question 6",
-        "Short description",
-        '[data-cy="cy-radioInput-option-DocumentUpload"]',
-      );
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
 
-      addOptionalQuestion(
-        '[data-cy="cy_addAQuestion-Custom Section"]',
-        "Custom Question 7",
-        "Short description",
-        '[data-cy="cy-radioInput-option-Date"]',
-      );
+    cy.get('[data-cy="cy_SchemeListButton"]').click();
+    cy.get(
+      "[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']",
+    ).click();
 
-      cy.get('[data-cy="cy_Section-Custom Question 1"]').should("exist");
-      cy.get('[data-cy="cy_Section-Custom Question 2"]').should("exist");
-      cy.get('[data-cy="cy_Section-Custom Question 3"]').should("exist");
-      cy.get('[data-cy="cy_Section-Custom Question 4"]').should("exist");
-      cy.get('[data-cy="cy_Section-Custom Question 5"]').should("exist");
-      cy.get('[data-cy="cy_Section-Custom Question 6"]').should("exist");
-      cy.get('[data-cy="cy_Section-Custom Question 7"]').should("exist");
+    clickText("Manage due diligence checks");
 
-      // add section
-      cy.get('[data-cy="cy-button-addNewSection"]').click();
-      cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
-      cy.get('[data-cy="cy-sectionTitle-text-input"]').type(
-        "Deletable Section",
-        { force: true },
-      );
-      clickSaveAndContinue();
-      // delete section
+    cy.contains("You have 1 application in Spotlight.");
+
+    // due dilligence downloads
+    assert200(cy.get(":nth-child(4) > .govuk-link"));
+    assert200(cy.get(":nth-child(6) > .govuk-link"));
+
+    clickBack();
+
+    cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, GGIS_ERROR);
+
+    cy.task(ADD_SPOTLIGHT_BATCH);
+    cy.task(ADD_SUBMISSION_TO_MOST_RECENT_BATCH);
+
+    clickText("Manage due diligence checks");
+
+    cy.contains(
+      "Spotlight did not recognise the GGIS reference number for your grant.",
+    );
+
+    clickText("Check that your grant reference number is correct.");
+
+    cy.get('[data-cy="cy-ggisReference-text-input"]').clear();
+
+    cy.get('[data-cy="cy-ggisReference-text-input"]').type("GGIS_ID_NEW");
+
+    clickSaveAndContinue();
+
+    cy.get(
+      '[data-cy="cy_summaryListValue_GGIS Scheme Reference Number"]',
+    ).contains("GGIS_ID_NEW");
+
+    cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SEND_ERROR);
+    clickText("Manage due diligence checks");
+    cy.contains(
+      "Due to a service outage, we cannot automatically send data to Spotlight at the moment. This affects 1 of your records.",
+    );
+    clickBack();
+    cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, VALIDATION_ERROR);
+    clickText("Manage due diligence checks");
+    cy.debug();
+    cy.contains("We can't send your data to Spotlight");
+    cy.task(CLEANUP_TEST_SPOTLIGHT_SUBMISSIONS);
+  });
+
+  it("V1 Internal - Download Due Diligence Data", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
+
+    // Sign in and complete application as applicant
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsApplyApplicant();
+
+    // Search & Start internal application
+    cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    searchForGrant(Cypress.env("testV1InternalGrant").advertName);
+    cy.contains(Cypress.env("testV1InternalGrant").advertName).click();
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
+
+    // Complete application
+    fillOutEligibity();
+    fillOutRequiredChecks();
+    fillOutCustomSection();
+    submitApplication();
+    equalitySectionDecline();
+
+    // Sign in as admin
+    signOut();
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+
+    // View V1 internal grant
+    cy.get('[data-cy="cy_SchemeListButton"]').click();
+    cy.get(
+      '[data-cy="cy_linkToScheme_Cypress - Test Scheme V1 Internal"]',
+    ).click();
+
+    // Check download link works
+    assert200(
       cy.get(
-        '[data-cy="cy_sections_deleteSectionBtn-Deletable Section"]',
-      ).click();
-      cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
-      cy.get('[data-cy="cy-button-Confirm"]').click();
-
-      cy.get(
-        '[data-cy="cy_sections_deleteSectionBtn-Deletable Section"]',
-      ).should("not.exist");
-    }
-
-    function addOptionalQuestion(section, questionText, description, type) {
-      cy.get(section).click();
-      cy.get('[data-cy="cy-fieldTitle-text-input"]').click();
-      cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText, {
-        force: true,
-      });
-      cy.get('[data-cy="cy-hintText-text-area"]').type(description, {
-        force: true,
-      });
-      cy.get('[data-cy="cy-radioInput-option-No"]').click();
-      clickSaveAndContinue();
-      cy.get(type).click();
-      clickSaveAndContinue();
-    }
-
-    function addOptionalMultiChoiceQuestion(
-      section,
-      questionText,
-      description,
-      type,
-    ) {
-      cy.get(section).click();
-      cy.get('[data-cy="cy-fieldTitle-text-input"]').click();
-      cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText, {
-        force: true,
-      });
-      cy.get('[data-cy="cy-hintText-text-area"]').type(description, {
-        force: true,
-      });
-      cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
-      clickSaveAndContinue();
-      cy.get(type).click();
-      clickSaveAndContinue();
-
-      cy.get('[data-cy="cy-options[0]-text-input"]').click();
-      cy.get('[data-cy="cy-options[0]-text-input"]').type("Choice 1", {
-        force: true,
-      });
-      cy.get('[data-cy="cy-button-Add another option"]').click();
-      cy.get('[data-cy="cy-options[1]-text-input"]').type("Choice 2", {
-        force: true,
-      });
-      cy.get('[data-cy="cy-button-Save question"]').click();
-    }
-
-    function applicationForm() {
-      cy.get('[data-cy="cyBuildApplicationForm"]').click();
-
-      cy.get('[data-cy="cy-applicationName-text-input"]').click();
-      cy.get('[data-cy="cy-applicationName-text-input"]').type(
-        "Cypress - Grant Application",
-        { force: true },
-      );
-      cy.get('[data-cy="cy-button-Continue"]').click();
-
-      cy.get('[data-cy="cy_Section-Eligibility Statement"]').click();
-
-      cy.get('[data-cy="cy-displayText-text-area"]').type("eligibility", {
-        force: true,
-      });
-      saveAndExit();
-
-      cy.get('[data-cy="cy_Section-due-diligence-checks"]').click();
-
-      // the diligence checks page throws a React error in the background of loading the page, and cypress stops
-      // processing on any exception. This line just tells it to continue on an unchecked exception.
-      cy.on("uncaught:exception", () => false);
-
-      cy.get(
-        '[data-cy="cy-checkbox-value-I understand that applicants will be asked for this information"]',
-      ).click();
-      saveAndExit();
-
-      sectionsAndQuestions();
-
-      // publish
-      publishApplicationForm();
-
-      checkAdvertIsPublished();
-
-      // TODO : Unpublish advert
-
-      // TODO : Sign out - Log in as an applicant, check that the grant is NOT there
-    }
-
-    function createGrant() {
-      const ggisNumber = "Cypress Test GGIS Number";
-      const contactEmail = "test@and-cypress-email.com";
-
-      cy.get("[data-cy=cy_addAGrantButton]").click();
-
-      cy.get("[data-cy=cy-name-text-input]").click();
-      cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME, { force: true });
-
-      clickSaveAndContinue();
-
-      cy.get("[data-cy=cy-ggisReference-text-input]").click();
-      cy.get("[data-cy=cy-ggisReference-text-input]").type(ggisNumber, {
-        force: true,
-      });
-
-      clickSaveAndContinue();
-
-      cy.get("[data-cy=cy-contactEmail-text-input]").click();
-      cy.get("[data-cy=cy-contactEmail-text-input]").type(contactEmail, {
-        force: true,
-      });
-
-      clickSaveAndContinue();
-
-      cy.get("[data-cy='cy_summaryListValue_Grant name']").contains(GRANT_NAME);
-
-      cy.get(
-        "[data-cy='cy_summaryListValue_GGIS Scheme Reference Number']",
-      ).contains(ggisNumber);
-
-      cy.get("[data-cy='cy_summaryListValue_Support email address']").contains(
-        contactEmail,
-      );
-
-      cy.get("[data-cy=cy_addAGrantConfirmationPageButton]").click();
-
-      cy.contains(GRANT_NAME).parent().contains("View").click();
-    }
-
-    function advertSection5() {
-      cy.get(
-        '[data-cy="cy-5. Further information-sublist-task-name-Eligibility information"]',
-      ).click();
-
-      getIframeBody("#grantEligibilityTab_ifr")
-        .find("p")
-        .type("This is our Eligibility information", { force: true });
-
-      yesQuestionComplete();
-
-      getIframeBody("#grantSummaryTab_ifr")
-        .find("p")
-        .type("This is our Summary information", { force: true });
-
-      yesQuestionComplete();
-
-      getIframeBody("#grantDatesTab_ifr")
-        .find("p")
-        .type("This is our Date information", { force: true });
-
-      yesQuestionComplete();
-
-      getIframeBody("#grantObjectivesTab_ifr")
-        .find("p")
-        .type("This is our Objectives information", { force: true });
-
-      yesQuestionComplete();
-
-      getIframeBody("#grantApplyTab_ifr")
-        .find("p")
-        .type("This is our application information", { force: true });
-
-      yesQuestionComplete();
-
-      getIframeBody("#grantSupportingInfoTab_ifr")
-        .find("p")
-        .type("This is our supporting information", { force: true });
-
-      yesQuestionComplete();
-    }
-
-    function advertSection4() {
-      cy.get(
-        '[data-cy="cy-4. How to apply-sublist-task-name-Link to application form"]',
-      ).click();
-
-      // TODO copy url from application form
-      cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').click();
-      cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').type(
-        "https://www.google.com",
-        { force: true },
-      );
-
-      yesQuestionComplete();
-    }
-
-    function advertSection3() {
-      cy.get(
-        "[data-cy='cy-3. Application dates-sublist-task-name-Opening and closing dates']",
-      ).click();
-
-      const today = new Date();
-      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").click();
-      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").type(
-        today.getDate().toString(),
-        {
-          force: true,
-        },
-      );
-      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateMonth]").type(
-        today.getMonth().toLocaleString([], {
-          numeric: true,
-        }),
-        {
-          force: true,
-        },
-      );
-      cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateYear]").type(
-        `${today.getFullYear()}`,
-        { force: true },
-      );
-
-      cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]").type("31", {
-        force: true,
-      });
-      cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateMonth]").type(
-        "1",
-        { force: true },
-      );
-      cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateYear]").type(
-        `${today.getFullYear() + 1}`,
-        { force: true },
-      );
-
-      yesQuestionComplete();
-    }
-
-    function advertSection2() {
-      cy.get(
-        "[data-cy='cy-2. Award amounts-sublist-task-name-How much funding is available?']",
-      ).click();
-
-      cy.get("[data-cy=cy-grantTotalAwardAmount-text-input-numeric]").click();
-      cy.get("[data-cy=cy-grantTotalAwardAmount-text-input-numeric]").type(
-        "10000",
-        { force: true },
-      );
-      cy.get("[data-cy=cy-grantMaximumAward-text-input-numeric]").type("50", {
-        force: true,
-      });
-      cy.get("[data-cy=cy-grantMinimumAward-text-input-numeric]").type("10", {
-        force: true,
-      });
-
-      yesQuestionComplete();
-    }
-
-    function advertSection1() {
-      cy.get("[data-cy=cyBuildAdvert]").click();
-
-      cy.get("[data-cy=cy-name-text-input]").click();
-      cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME, { force: true });
-
-      clickSaveAndContinue();
-
-      cy.get(
-        "[data-cy='cy-1. Grant details-sublist-task-name-Short description']",
-      ).click();
-
-      cy.get("[data-cy=cy-grantShortDescription-text-area]").click();
-      cy.get("[data-cy=cy-grantShortDescription-text-area]").type(
-        "This is a short description",
-        { force: true },
-      );
-
-      yesQuestionComplete();
-
-      cy.contains("Where is the grant available?");
-
-      cy.get("[data-cy=cy-checkbox-value-National]").click();
-
-      yesQuestionComplete();
-
-      cy.contains("Which organisation is funding this grant?");
-
-      cy.get("[data-cy=cy-grantFunder-text-input]").click();
-      cy.get("[data-cy=cy-grantFunder-text-input]").type("The Cabinet Office", {
-        force: true,
-      });
-
-      yesQuestionComplete();
-
-      cy.contains("Who can apply for this grant?");
-
-      cy.get("[data-cy='cy-checkbox-value-Personal / Individual']").click();
-
-      yesQuestionComplete();
-    }
-
-    function checkAdvertIsPublished() {
-      // Get link as an alias
-      cy.get(".break-all-words > .govuk-link")
-        .invoke("text")
-        .then(() => {})
-        .as("advertLink");
-
-      clickText("Manage this grant");
-
-      // Add application form link to the grant advert
-      cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
-      cy.get('[data-cy="cy-unpublish-advert-button"]').click();
-      cy.get('[data-cy="cy-radioInput-option-YesUnpublishMyAdvert"]').click();
-      cy.get('[data-cy="cy_unpublishConfirmation-ConfirmButton"]').click();
-      cy.get(
-        '[data-cy="cy-4. How to apply-sublist-task-name-Link to application form"]',
-      ).click();
-      cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').clear();
-      cy.get("@advertLink").then((link) => {
-        console.log(link);
-        cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').click().type(link);
-      });
-      yesQuestionComplete();
-      clickText("Review and publish");
-      cy.get('[data-cy="cy-button-Confirm and publish"]').click();
-
-      // TODO : Sign out - Log in as an applicant, check that the grant is there
-      clickText("Sign out");
-      cy.get('[data-cy="cySignInAndApply-Link"]').click();
-      signInAsApplyApplicant();
-      cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
-      searchAgainForGrant("Cypress Test Grant");
-      // TODO : Loop through grants until Cypress Test Grant is found (involves pagination)
-
-      // TODO : Sign out, then log back in as admin
-    }
+        '[data-cy="cy_Scheme-details-page-button-Download required checks"]',
+      ),
+    );
   });
 });
-
-const getIframeDocument = (iFrameSelector) => {
-  return (
-    cy
-      .get(iFrameSelector)
-      // Cypress yields jQuery element, which has the real
-      // DOM element under property "0".
-      // From the real DOM iframe element we can get
-      // the "document" element, it is stored in "contentDocument" property
-      // Cypress "its" command can access deep properties using dot notation
-      // https://on.cypress.io/its
-      .its("0.contentDocument")
-      .should("exist")
-  );
-};
-
-const getIframeBody = (iFrameSelector) => {
-  cy.wait(2000);
-  // get the document
-  return (
-    getIframeDocument(iFrameSelector)
-      // automatically retries until body is loaded
-      .its("body")
-      .should("not.be.undefined")
-      // wraps "body" DOM element to allow
-      // chaining more Cypress commands, like ".find(...)"
-      .then(cy.wrap)
-  );
-};

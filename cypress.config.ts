@@ -1,16 +1,66 @@
 import { defineConfig } from "cypress";
-import { createTestUsers, deleteTestUsers } from "./cypress/seed/user";
-import { createApplyData, deleteApplyData } from "./cypress/seed/apply";
+import {
+  addFailedOauthAudit,
+  createTestUsers,
+  deleteTestUsers,
+  deleteFailedOauthAudit,
+} from "./cypress/seed/user";
+import {
+  createApplyData,
+  deleteApplyData,
+  updateSpotlightSubmission,
+  addToRecentBatch,
+  addSpotlightBatch,
+  cleanupTestSpotlightSubmissions,
+  deleteSpotlightBatch,
+  deleteSpotlightSubmission,
+} from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
-import { TEST_V1_GRANT } from "./cypress/common/constants";
+import {
+  TEST_V1_INTERNAL_GRANT,
+  TEST_V1_EXTERNAL_GRANT,
+  TEST_V2_EXTERNAL_GRANT,
+  TEST_V2_INTERNAL_GRANT,
+} from "./cypress/common/constants";
 require("dotenv").config();
 
 export default defineConfig({
   e2e: {
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on) {
       // implement node event listeners here
       on("task", {
+        async addTestOauthAudit() {
+          await deleteFailedOauthAudit().then(async () => {
+            await addFailedOauthAudit();
+          });
+          return null;
+        },
+        async deleteFailedOauthAudit() {
+          await deleteFailedOauthAudit();
+          return null;
+        },
+
+        async addSpotlightBatch() {
+          await deleteSpotlightBatch().then(async () => {
+            await addSpotlightBatch();
+          });
+          return null;
+        },
+        async addSubmissionToMostRecentBatch() {
+          await addToRecentBatch();
+          return null;
+        },
+        async updateSpotlightSubmissionStatus(status) {
+          await updateSpotlightSubmission(status);
+          return null;
+        },
+        async cleanupTestSpotlightSubmissions() {
+          await deleteSpotlightSubmission();
+          await deleteSpotlightBatch();
+          await cleanupTestSpotlightSubmissions();
+          return null;
+        },
         async setUpUser() {
           await deleteTestUsers().then(async () => {
             await createTestUsers();
@@ -64,8 +114,18 @@ export default defineConfig({
       applyDbName: process.env.APPLY_DATABASE_NAME,
       applicationBaseUrl: process.env.APPLICATION_BASE_URL,
       postLoginBaseUrl: process.env.POST_LOGIN_BASE_URL,
-      testV1Grant: {
-        ...TEST_V1_GRANT,
+      firstUserId: process.env.FIRST_USER_ID,
+      testV1InternalGrant: {
+        ...TEST_V1_INTERNAL_GRANT,
+      },
+      testV1ExternalGrant: {
+        ...TEST_V1_EXTERNAL_GRANT,
+      },
+      testV2InternalGrant: {
+        ...TEST_V2_INTERNAL_GRANT,
+      },
+      testV2ExternalGrant: {
+        ...TEST_V2_EXTERNAL_GRANT,
       },
     },
     reporter: "cypress-mochawesome-reporter",

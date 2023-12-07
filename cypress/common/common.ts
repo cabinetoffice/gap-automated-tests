@@ -163,3 +163,19 @@ export const clickThroughPagination = (numberOfPages) => {
     cy.wait(300);
   });
 };
+
+export const assert200 = (element: Cypress.Chainable) => {
+  element
+    .should("not.be.disabled")
+    .invoke("attr", "href")
+    .then((url) => {
+      cy.request(url).then((response) => {
+        expect(response.status).to.eq(200);
+      });
+    });
+};
+
+export const log = (message: string) => {
+  cy.log(message);
+  cy.task("log", message);
+};

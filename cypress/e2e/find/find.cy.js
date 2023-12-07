@@ -75,9 +75,9 @@ describe("Find a Grant", () => {
       // wait for grant to be published to contentful
       cy.wait(5000);
 
-      searchForGrant(Cypress.env("testV1Grant").advertName);
+      searchForGrant(Cypress.env("testV1InternalGrant").advertName);
 
-      cy.contains(Cypress.env("testV1Grant").advertName);
+      cy.contains(Cypress.env("testV1InternalGrant").advertName);
 
       const grantData = {
         Location: "National",
@@ -89,8 +89,11 @@ describe("Find a Grant", () => {
         "Closing date": "24 October 2040, 11:59pm",
       };
       Object.entries(grantData).forEach(([key, value]) => {
-        cy.get(`#${Cypress.env("testV1Grant").contentfulSlug}`).contains(key);
-        cy.get(`#${Cypress.env("testV1Grant").contentfulSlug}`).contains(value);
+        const elementId = `#${
+          Cypress.env("testV1InternalGrant").contentfulSlug
+        }`;
+        cy.get(elementId).contains(key);
+        cy.get(elementId).contains(value);
       });
     });
 
@@ -125,12 +128,12 @@ describe("Find a Grant", () => {
 
       cy.get('[data-cy="cySearchAgainInput"]')
         .click()
-        .type(Cypress.env("testV1Grant").advertName);
+        .type(Cypress.env("testV1InternalGrant").advertName);
       cy.get('[data-cy="cySearchAgainButton"]').click();
 
       cy.get('[data-cy="cyGrantNameAndLink"]').should(
         "include.text",
-        Cypress.env("testV1Grant").advertName,
+        Cypress.env("testV1InternalGrant").advertName,
       );
     });
   });
@@ -176,12 +179,11 @@ describe("Find a Grant", () => {
       // go to home page
       cy.contains("Find a grant");
 
-      const grantAdvertName = Cypress.env("testV1Grant").advertName;
+      const grantAdvertName = Cypress.env("testV1InternalGrant").advertName;
       // search for and view test grant advert
       searchForGrant(grantAdvertName);
-      // cy.get('[data-cy="cyGrantNameAndLink"]').should('have.text', 'Cypress - Automated E2E Test Grant');
 
-      cy.get(`#${Cypress.env("testV1Grant").contentfulSlug}`)
+      cy.get(`#${Cypress.env("testV1InternalGrant").contentfulSlug}`)
         .children("h2")
         .should("have.text", grantAdvertName)
         .click();
@@ -252,7 +254,7 @@ describe("Find a Grant", () => {
       cy.get('[name="searchTerm"]').type(grantAdvertName);
       cy.get('[data-cy="cySearchAgainButton"]').click();
 
-      cy.get(`#${Cypress.env("testV1Grant").contentfulSlug}`)
+      cy.get(`#${Cypress.env("testV1InternalGrant").contentfulSlug}`)
         .children("h2")
         .should("have.text", grantAdvertName)
         .click();

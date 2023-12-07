@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "cy:open:watch": "npx cypress open --config watchForFileChanges=true",
-    "cy:open:nowatch": "npx cypress open --config watchForFileChanges=false",
+    "cy:open:nowatch": "echo \"You can just use npm run cy:open\" && npx cypress open --config watchForFileChanges=false",
     "cy:open": "npx cypress open --config watchForFileChanges=false",
     "cy:run:all": "npx cypress run",
     "cy:run:find": "npx cypress run --spec \"cypress/e2e/find/*.cy.js\"",
