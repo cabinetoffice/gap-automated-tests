@@ -167,9 +167,7 @@ describe("Apply for a Grant V2", () => {
       "Apply V2 Internal MQ Partial - Validating Org Details for Non-Limited Company",
     );
     validateOrgDetailsForNonLimitedCompany();
-    log(
-      "Apply V2 Internal MQ Partial - Validating Org Details for Individual",
-    );
+    log("Apply V2 Internal MQ Partial - Validating Org Details for Individual");
     validateOrgDetailsForIndividual();
     log(
       "Apply V2 Internal MQ Partial - Validating MQ summary screen for Charity",
@@ -352,14 +350,12 @@ describe("Apply for a Grant V2", () => {
       });
 
     log("Apply V2 Internal MQ Partial - Checking profile Companies House");
-    // y.get('[data-cy="cy-organisation-value-Companies House number"]').contains(
-    cy.get('[data-cy="cy-organisation-value-Companies house number"]').contains(
+    cy.get('[data-cy="cy-organisation-value-Companies House number"]').contains(
       MQ_DETAILS.companiesHouse,
     );
     log("Apply V2 Internal MQ Partial - Checking profile Charity Commission");
     cy.get(
-      '[data-cy="cy-organisation-value-Charity commission number"]',
-      // '[data-cy="cy-organisation-value-Charity Commission number"]',
+      '[data-cy="cy-organisation-value-Charity Commission number"]',
     ).contains(MQ_DETAILS.charitiesCommission);
 
     cy.get('[data-cy="cy-back-to-dashboard-button"]').click();
