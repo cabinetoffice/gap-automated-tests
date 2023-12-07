@@ -18,6 +18,7 @@ import {
   advertSection3,
   advertSection4,
   advertSection5,
+  checkAdvertIsPublished,
 } from "./helper";
 import {
   confirmOrgAndFundingDetails,
@@ -50,6 +51,7 @@ describe("Create a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
+    cy.task("setUpFindData");
     signInToIntegrationSite();
   });
 
@@ -61,13 +63,19 @@ describe("Create a Grant", () => {
     // create advert
     advertSection1(GRANT_NAME);
     advertSection2();
-    advertSection3(true);
+    advertSection3(false);
     advertSection4();
     advertSection5();
 
-    publishAdvert(true);
+    publishAdvert(false);
 
     applicationForm();
+
+    checkAdvertIsPublished(GRANT_NAME);
+
+    // TODO : Unpublish advert
+
+    // TODO : Sign out - Log in as an applicant, check that the grant is NOT there
   });
 
   it("V2 External - Download due dilligence data", () => {

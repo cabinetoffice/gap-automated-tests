@@ -1,8 +1,13 @@
 import {
   clickSaveAndContinue,
+  clickText,
   saveAndExit,
+  searchAgainForGrant,
+  signInAsApplyApplicant,
   yesQuestionComplete,
 } from "../../common/common";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { GRANT_NAME } from "./constants";
 
 function publishApplicationForm() {
   cy.get('[data-cy="cy_publishApplication-button"]').click();
@@ -218,14 +223,14 @@ export function applicationForm() {
   publishApplicationForm();
 }
 
-export function createGrant(GRANT_NAME) {
+export function createGrant(grantName) {
   const ggisNumber = "Cypress Test GGIS Number";
   const contactEmail = "test@and-cypress-email.com";
 
   cy.get("[data-cy=cy_addAGrantButton]").click();
 
   cy.get("[data-cy=cy-name-text-input]").click();
-  cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME, { force: true });
+  cy.get("[data-cy=cy-name-text-input]").type(grantName, { force: true });
 
   clickSaveAndContinue();
 
@@ -243,7 +248,7 @@ export function createGrant(GRANT_NAME) {
 
   clickSaveAndContinue();
 
-  cy.get("[data-cy='cy_summaryListValue_Grant name']").contains(GRANT_NAME);
+  cy.get("[data-cy='cy_summaryListValue_Grant name']").contains(grantName);
 
   cy.get(
     "[data-cy='cy_summaryListValue_GGIS Scheme Reference Number']",
@@ -255,7 +260,7 @@ export function createGrant(GRANT_NAME) {
 
   cy.get("[data-cy=cy_addAGrantConfirmationPageButton]").click();
 
-  cy.contains(GRANT_NAME).parent().contains("View").click();
+  cy.contains(grantName).parent().contains("View").click();
 }
 
 export function advertSection5() {
@@ -408,3 +413,40 @@ export function advertSection1(GRANT_NAME) {
 
   yesQuestionComplete();
 }
+
+export const checkAdvertIsPublished = (grantName) => {
+  // Get link as an alias
+  cy.get(".break-all-words > .govuk-link")
+    .invoke("text")
+    .then(() => {})
+    .as("advertLink");
+
+  clickText("Manage this grant");
+
+  // Add application form link to the grant advert
+  cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+  cy.get('[data-cy="cy-unpublish-advert-button"]').click();
+  cy.get('[data-cy="cy-radioInput-option-YesUnpublishMyAdvert"]').click();
+  cy.get('[data-cy="cy_unpublishConfirmation-ConfirmButton"]').click();
+  cy.get(
+    '[data-cy="cy-4. How to apply-sublist-task-name-Link to application form"]',
+  ).click();
+  cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').clear();
+  cy.get("@advertLink").then((link) => {
+    console.log(link);
+    cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').click().type(link);
+  });
+  yesQuestionComplete();
+  clickText("Review and publish");
+  cy.get('[data-cy="cy-button-Confirm and publish"]').click();
+
+  // TODO : Sign out - Log in as an applicant, check that the grant is there
+  clickText("Sign out");
+  cy.get('[data-cy="cySignInAndApply-Link"]').click();
+  signInAsApplyApplicant();
+  cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
+  searchAgainForGrant(grantName);
+  // TODO : Loop through grants until Cypress Test Grant is found (involves pagination)
+
+  // TODO : Sign out, then log back in as admin
+};

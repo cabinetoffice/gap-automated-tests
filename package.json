@@ -22,7 +22,7 @@
     "clean:install": "npm run clean && npm install",
     "vpc:add": "source .env && aws ec2 authorize-security-group-ingress --group-id $AWS_VPC_SG_ID --protocol tcp --port 5432 --cidr $(curl ifconfig.me)/32",
     "vpc:remove": "source .env && aws ec2 revoke-security-group-ingress --group-id $AWS_VPC_SG_ID --protocol tcp --port 5432 --cidr $(curl ifconfig.me)/32",
-    "vpc:add:print": "source .env && echo \"aws ec2 authorize-security-group-ingress --group-id $AWS_VPC_SG_ID --protocol tcp --port 5432 --cidr $(curl ipconfig.io/ip)/32\"",
+    "vpc:add:print": "source .env && echo \"aws ec2 authorize-security-group-ingress --group-id $AWS_VPC_SG_ID --protocol tcp --port 5432 --cidr $(curl ipinfo.io/ip)/32\"",
     "env:switch": "node envSwitch.js",
     "subs": "node getSubs.js"
   },

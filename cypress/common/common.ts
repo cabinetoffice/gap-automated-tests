@@ -69,21 +69,20 @@ export const signOut = () => {
   cy.contains("Find a grant");
 };
 
-export const searchForGrant = (searchTerm: string) => {
+const typeIntoSearchBar = (searchTerm: string) => {
   cy.get('[name="searchTerm"]')
     .should("have.attr", "placeholder")
     .should("contains", "enter a keyword or search term here");
   cy.get('[name="searchTerm"]').type(searchTerm);
+};
 
+export const searchForGrant = (searchTerm: string) => {
+  typeIntoSearchBar(searchTerm);
   cy.get("[data-cy=cySearchGrantsBtn]").click();
 };
 
 export const searchAgainForGrant = (searchTerm: string) => {
-  cy.get('[name="searchTerm"]')
-    .should("have.attr", "placeholder")
-    .should("contains", "enter a keyword or search term here");
-  cy.get('[name="searchTerm"]').type(searchTerm);
-
+  typeIntoSearchBar(searchTerm);
   cy.get('[data-cy="cySearchAgainButton"]').click();
 };
 
@@ -157,10 +156,40 @@ export const countNumberOfPages = () => {
     });
 };
 
-export const clickThroughPagination = (numberOfPages) => {
-  Cypress._.times(numberOfPages, () => {
+export const clickThroughPagination = (pageCount) => {
+  Cypress._.times(pageCount, () => {
     cy.get('[data-cy="cyPaginationNextButton"]').click();
     cy.wait(300);
+  });
+};
+
+export const findGrantOnSearchPage = (grantName, pageCount) => {
+  let grantFound = false;
+  Cypress._.times(pageCount, () => {
+    cy.wait(1000);
+    cy.get(".grants_list li h2 a").each(($grant, index) => {
+      console.log("GRANT TEXT: " + $grant.text() + "(" + index + ")");
+      if (grantFound) {
+        return;
+      }
+      if ($grant.text() === grantName) {
+        cy.wrap($grant).click();
+        grantFound = true;
+      }
+    });
+    cy.get(".grants_list li h2 a").invoke("map", ($grant) => {
+      if (grantFound) {
+        return;
+      }
+      if ($grant.innerText === grantName) {
+        cy.wrap($grant).click();
+        grantFound = true;
+      }
+      console.log("GRANT object: " + $grant);
+      console.log("grant text: " + $grant.innerText);
+    });
+    cy.get('[data-cy="cyPaginationNextButton"]').click();
+    cy.wait(1000);
   });
 };
 
