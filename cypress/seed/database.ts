@@ -1,6 +1,5 @@
 import { Client } from "pg";
 import "dotenv/config";
-import { cloneWith } from "cypress/types/lodash";
 
 export const runSQLFromJs = async (
   sqlScripts: string[],

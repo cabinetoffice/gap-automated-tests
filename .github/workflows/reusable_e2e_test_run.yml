@@ -95,7 +95,7 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
-        timeout-minutes: 30
+        timeout-minutes: 40
         with:
           browser: ${{ inputs.browser }}
           spec: ${{ inputs.suite == 'all' && 'cypress/**' || format('cypress/e2e/{0}/*.cy.js', inputs.suite == 'superadmin' && 'super-admin' || inputs.suite) }}

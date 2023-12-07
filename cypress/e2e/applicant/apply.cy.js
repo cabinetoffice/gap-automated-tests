@@ -8,6 +8,7 @@ import {
   signOut,
   clickBack,
   POST_LOGIN_BASE_URL,
+  log,
 } from "../../common/common";
 import {
   fillOutDocUpload,
@@ -25,17 +26,19 @@ describe("Apply for a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("can start, save, come back, continue and submit new grant application", () => {
+  it("Can start, save, come back, continue and submit new grant application for V1 Internal Grant", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
 
+    log("Apply V1 Internal Grant - Searching for grant");
     searchForGrant(Cypress.env("testV1InternalGrant").advertName);
 
     cy.contains(Cypress.env("testV1InternalGrant").advertName).click();
 
     cy.contains("Start new application").invoke("removeAttr", "target").click();
 
+    log("Apply V1 Internal Grant - Signing in as applicant");
     signInAsApplyApplicant();
 
     // checks 'mailto' support email link
@@ -45,23 +48,29 @@ describe("Apply for a Grant", () => {
       `mailto:${Cypress.env("oneLoginAdminEmail")}`,
     );
 
+    log("Apply V1 Internal Grant - Filling out Eligibility");
     fillOutEligibity();
 
     // test sign out and back in
+    log("Apply V1 Internal Grant - Signing out");
     cy.contains("Save and come back later").click();
 
     signOut();
 
+    log("Apply V1 Internal Grant - Signing back in as applicant");
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsApplyApplicant();
 
+    log("Apply V1 Internal Grant - Returning to in progress application");
     cy.get('[data-cy="cy-your-applications-link"]').click();
     cy.contains(Cypress.env("testV1InternalGrant").applicationName).click();
 
     cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
 
+    log("Apply V1 Internal Grant - Filling out Required Checks");
     fillOutRequiredChecks();
 
+    log("Apply V1 Internal Grant - Filling out Custom Section");
     fillOutCustomSection();
 
     cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
@@ -69,6 +78,7 @@ describe("Apply for a Grant", () => {
     cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
 
     // test doc upload is required
+    log("Apply V1 Internal Grant - Removing uploaded doc from submission");
     cy.contains("Submit application").should("not.be.disabled");
 
     cy.contains("Custom Section").click();
@@ -99,6 +109,7 @@ describe("Apply for a Grant", () => {
     cy.contains("Submit application").should("be.disabled");
 
     // re-add doc upload
+    log("Apply V1 Internal Grant - Re-adding uploaded doc to submission");
     cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
 
     clickSaveAndContinue();
@@ -116,10 +127,13 @@ describe("Apply for a Grant", () => {
     cy.contains("Submit application").should("not.be.disabled");
 
     // submit
+    log("Apply V1 Internal Grant - Submitting application");
     submitApplication();
 
+    log("Apply V1 Internal Grant - Filling out equality section");
     equalitySectionAccept();
 
+    log("Apply V1 Internal Grant - Viewing submission");
     cy.contains("View your applications").click();
 
     cy.contains("Your applications");
@@ -135,21 +149,24 @@ describe("Apply for a Grant", () => {
     ).should("not.have.attr", "href");
   });
 
-  it("can complete external V1 grant journey", () => {
+  it("Can complete V1 External grant journey", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
 
     // Sign in
+    log("Apply V1 External Grant - Signing in as applicant");
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();
 
     // Search & Start external application
+    log("Apply V1 External Grant - Searching for grant");
     cy.get('[data-cy="cy-find-a-grant-link"]').click();
     searchForGrant(Cypress.env("testV1ExternalGrant").advertName);
     cy.contains(Cypress.env("testV1ExternalGrant").advertName).click();
 
     // Check button link
+    log("Apply V1 External Grant - Checking link for external application");
     cy.get(".govuk-grid-column-full > .govuk-button")
       .invoke("attr", "href")
       .should(
@@ -162,10 +179,13 @@ describe("Apply for a Grant", () => {
   it("can land on application dashboard and view details", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
+    log("Apply Dashboard & Profile - Signing in as applicant");
     signInAsApplyApplicant();
 
+    log("Apply Dashboard & Profile - Viewing profile");
     cy.contains("Your saved information").click();
 
+    log("Apply Dashboard & Profile - Editing name");
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationName]",
     ).click();
@@ -176,6 +196,7 @@ describe("Apply for a Grant", () => {
       "Organisation Name",
     );
 
+    log("Apply Dashboard & Profile - Editing address");
     const addressData = [
       "Address line 1",
       "Address line 2",
@@ -202,6 +223,7 @@ describe("Apply for a Grant", () => {
         );
       });
 
+    log("Apply Dashboard & Profile - Editing org type");
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationType]",
     ).click();
@@ -213,6 +235,7 @@ describe("Apply for a Grant", () => {
     clickSave();
     cy.contains("Limited company").should("exist");
 
+    log("Apply Dashboard & Profile - Editing Companies House number");
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationCompaniesHouseNumber]",
     ).click();
@@ -220,6 +243,7 @@ describe("Apply for a Grant", () => {
     clickSave();
     cy.contains("01234").should("exist");
 
+    log("Apply Dashboard & Profile - Editing Charity Commission number");
     cy.get(
       "[data-cy=cy-organisation-details-navigation-organisationCharity]",
     ).click();
@@ -227,12 +251,16 @@ describe("Apply for a Grant", () => {
     clickSave();
     cy.contains("56789").should("exist");
 
+    log("Apply Dashboard & Profile - Returning to dashboard");
     cy.contains("Back to my account").click();
 
     cy.get("[data-cy=cy-find-a-grant-link").click();
     cy.get("[data-cy=cyHomePageTitle]").should("have.text", "Find a grant");
     cy.go("back");
 
+    log(
+      "Apply Dashboard & Profile - Checking admin and super-admin dashboard returns 404",
+    );
     ["/apply/admin/dashboard", "/apply/admin/super-admin-dashboard"].forEach(
       (page) => {
         cy.visit(`${POST_LOGIN_BASE_URL}${page}`, { failOnStatusCode: false })
@@ -242,6 +270,7 @@ describe("Apply for a Grant", () => {
       },
     );
 
+    log("Apply Dashboard & Profile - Editing One Login details");
     cy.contains("Your sign in details").click();
 
     // TODO reenable click when MFA strategy is defined

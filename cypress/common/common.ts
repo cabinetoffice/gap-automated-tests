@@ -145,3 +145,8 @@ export const assert200 = (element: Cypress.Chainable) => {
       });
     });
 };
+
+export const log = (message: string) => {
+  cy.log(message);
+  cy.task("log", message);
+};

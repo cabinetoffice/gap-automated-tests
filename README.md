@@ -9,13 +9,14 @@ There are example tests contained at `cypress/_examples` to use as a guide when 
 ## Getting Started
 
 - To install dependencies, run `npm install`
-- You'll then need to copy the `.env.example` file to a file called `.env` and enter the login in details for the accounts you will use for testing. You can obtain these by talking to Conor Fayle or Connor MacQueen.
-  - `ONE_LOGIN_SANDBOX_` properties used for signing in to the One Login integration environment - this is a static username/password for the whole environment.
+- You'll then need to copy the `.env.example` file to a file called `.env` and enter the login in details for the accounts you will use for testing. You can obtain these by following the steps below.
+  - `ONE_LOGIN_SANDBOX_` properties used for signing in to the One Login integration environment - this is a static username/password for the whole environment, and you can obtain these by speaking to Conor Fayle (or probably most devs by this point).
   - The other email/password combinations are for specific accounts.
 - ESLint, Prettier and Husky are installed, so your code will auto-format when committing changes.
 - Make sure you are whilelisted in the VPC for the environment you're running in. This can be done by
   - Running the command `npm run vpc:add`
     - To remove yourself: `npm run vpc:remove`
+    - If you don't have AWS access, you can run `npm run vpc:add:print` which will output the command with your IP address and the VPC Security Group ID, so that you can send this to someone with AWS access to execute it for you.
   - Or following the steps in [Confluence Page](https://technologyprogramme.atlassian.net/wiki/spaces/GAS/pages/2511798342/Connecting+to+the+Apply+Databases).
 - Tests can be run against QA or Sandbox. You'll need to have the appropriate .env file in order to be able to run tests against each environment. The current `.env` file in use should be called simply `.env` and the other should be called `.env.qa` or `.env.sandbox` respectively.
   - There is a command to switch your current environment between the two: `npm run env:switch`
@@ -40,7 +41,7 @@ There are example tests contained at `cypress/_examples` to use as a guide when 
   ```
   8. Copy the output into your .env
   9. Fill in the passwords
-- You _must_ set the .env FIRST_USER_ID to a number unique to yourself. It will iterate up by the number of users (3 at the time of writing) so please ensure there are no collisions.
+- You _must_ set the .env FIRST_USER_ID to a number unique to yourself. It will iterate up by the number of users and grants (3 at the time of writing) so please ensure there are no collisions.
 
 ## Running tests
 
@@ -49,17 +50,23 @@ There are example tests contained at `cypress/_examples` to use as a guide when 
 To run the tests in the GUI, you have two options. The one you choose dictates whether the tests automatically rerun when you make changes to them.
 
 - `npm run cy:open:watch`
-- `npm run cy:open:nowatch`
+- `npm run cy:open:nowatch` / `npm run cy:open`
 
 Both of these will open a window that will allow you to select your browser, then select test suites to run.
 
-It can be useful to have file watching on when debugging failures `npm run cy:open:watch`.
+It can be useful to have file watching on when debugging failures: `npm run cy:open:watch`
 
 However, if you are writing tests for a new journey, it can often be better to turn it off `npm run cy:open:nowatch`, allowing you to run through the journey and obtain the required data selectors etc. without the tests running every time you make a change.
 
+You can just use `npm run cy:open` as well which will do the same thing as `npm run cy:open:nowatch`
+
 ### Console
 
-To run the tests in the command line, run `npm run cy:run:all` - this will output the Cypress report in your console, and also generate a HTML report as below.
+To run all the tests via the command line, run:
+
+- `npm run cy:run:all`
+
+This will output the Cypress report in your console, and also generate a HTML report as below.
 Alternatively you can run them for a single suite:
 
 - `npm run cy:run:find`
@@ -76,6 +83,32 @@ Cypress is built on top of Mocha, so any reporting tool that works for Mocha wil
 # Writing tests
 
 When writing tests, there are a few things to keep in mind.
+
+### Logging actions
+
+You should log every major action that you perform, particularly if this action takes a while. You don't need to log every assertion, but having periodic logs helps us check that the tests are running correctly during the run on GitHub Actions. There are examples in the apply journeys of the types of things that should be logged, e.g.
+
+```js
+it("Can apply for a V1 Grant", () => {
+  cy.task("publishGrantsToContentful");
+  // wait for grant to be published to contentful
+  cy.wait(5000);
+
+  log("Apply V1 Internal Grant - Searching for grant");
+  searchForGrant(ADVERT_NAME);
+
+  log("Apply V1 Internal Grant - Beginning application");
+  applyForGrant(ADVERT_NAME);
+
+  log("Apply V1 Internal Grant - Signing in as applicant");
+  signInAsApplyApplicant();
+
+  log("Apply V1 Internal Grant - Filling out Eligibility");
+  fillOutEligibity();
+
+  // ...etc
+});
+```
 
 ### Common actions
 

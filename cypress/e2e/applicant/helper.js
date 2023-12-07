@@ -4,6 +4,7 @@ import {
   yesSectionComplete,
   clickContinue,
   clickSave,
+  clickBack,
 } from "../../common/common";
 
 export const fillOutDocUpload = () => {
@@ -291,61 +292,62 @@ export const equalitySectionDecline = () => {
   );
 };
 
-export const fillMandatoryQuestions = (orgProfileComplete, details) => {
-  // If Org Profile isn't filled go through all pages
-  if (!orgProfileComplete) {
-    // Org Type
-    cy.contains("Choose your application type").should("exist");
-    [
-      "Other",
-      "IAmApplyingAsAnIndividual",
-      "Charity",
-      "NonLimitedCompany",
-      "LimitedCompany",
-    ].forEach((item) => {
-      cy.get(`[data-cy=cy-radioInput-option-${item}]`)
-        .should("not.be.checked")
-        .click();
-    });
-    clickSaveAndContinue();
+export const fillMqOrgQuestionsAsLimitedCompany = (details) => {
+  // Org Type
+  cy.contains("Choose your application type").should("exist");
+  [
+    "Other",
+    "IAmApplyingAsAnIndividual",
+    "Charity",
+    "NonLimitedCompany",
+    "LimitedCompany",
+  ].forEach((item) => {
+    cy.get(`[data-cy=cy-radioInput-option-${item}]`)
+      .should("not.be.checked")
+      .click();
+  });
+  clickSaveAndContinue();
 
-    // Name
-    cy.contains("Enter the name of your organisation").should("exist");
-    cy.get("[data-cy=cy-name-text-input]")
-      .should("have.value", "")
-      .type(details.name);
-    clickSaveAndContinue();
+  // Name
+  cy.contains("Enter your full name").should("not.exist");
+  cy.contains("Enter the name of your organisation").should("exist");
+  cy.get("[data-cy=cy-name-text-input]")
+    .should("have.value", "")
+    .type(details.name);
+  clickSaveAndContinue();
 
-    // Address
-    cy.contains("Enter your organisation's address").should("exist");
-    ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
-      (item, index) => {
-        cy.get(`[data-cy=cy-${item}-text-input]`)
-          .should("have.value", "")
-          .type(details.address[index]);
-      },
-    );
-    clickSaveAndContinue();
+  // Address
+  cy.contains("Enter your address").should("not.exist");
+  cy.contains("Enter your organisation's address").should("exist");
+  ["addressLine1", "addressLine2", "city", "county", "postcode"].forEach(
+    (item, index) => {
+      cy.get(`[data-cy=cy-${item}-text-input]`)
+        .should("have.value", "")
+        .type(details.address[index]);
+    },
+  );
+  clickSaveAndContinue();
 
-    // Companies House
-    cy.contains("Enter your Companies House number (if you have one)").should(
-      "exist",
-    );
-    cy.get("[data-cy=cy-companiesHouseNumber-text-input]")
-      .should("have.value", "")
-      .type(details.companiesHouse);
-    clickSaveAndContinue();
+  // Companies House
+  cy.contains("Enter your Companies House number (if you have one)").should(
+    "exist",
+  );
+  cy.get("[data-cy=cy-companiesHouseNumber-text-input]")
+    .should("have.value", "")
+    .type(details.companiesHouse);
+  clickSaveAndContinue();
 
-    // Charities Commission
-    cy.contains(
-      "Enter your Charity Commission number (if you have one)",
-    ).should("exist");
-    cy.get("[data-cy=cy-charityCommissionNumber-text-input]")
-      .should("have.value", "")
-      .type(details.charitiesCommission);
-    clickSaveAndContinue();
-  }
+  // Charities Commission
+  cy.contains("Enter your Charity Commission number (if you have one)").should(
+    "exist",
+  );
+  cy.get("[data-cy=cy-charityCommissionNumber-text-input]")
+    .should("have.value", "")
+    .type(details.charitiesCommission);
+  clickSaveAndContinue();
+};
 
+export const fillMqFunding = (details) => {
   // How much funding
   cy.contains("How much funding are you applying for?").should("exist");
   cy.get("[data-cy=cy-fundingAmount-text-input-numeric]")
@@ -362,6 +364,129 @@ export const fillMandatoryQuestions = (orgProfileComplete, details) => {
       .click();
   });
   clickSaveAndContinue();
+};
+
+export const validateMqNonLimitedJourney = () => {
+  clickBack();
+  cy.contains("Enter your Charity Commission number (if you have one)");
+  clickBack();
+  cy.contains("Enter your Companies House number (if you have one)");
+  clickBack();
+  cy.contains("Enter your organisation's address");
+  clickBack();
+  cy.contains("Enter the name of your organisation");
+  clickBack();
+  cy.contains("Choose your application type");
+  cy.get(`[data-cy=cy-radioInput-option-NonLimitedCompany]`)
+    .should("not.be.checked")
+    .click();
+  cy.get(`[data-cy=cy-radioInput-option-LimitedCompany]`).should(
+    "not.be.checked",
+  );
+  clickSaveAndContinue();
+
+  // Name
+  cy.contains("Enter your full name").should("not.exist");
+  cy.contains("Enter the name of your organisation").should("exist");
+  clickSaveAndContinue();
+
+  // Address
+  cy.contains("Enter your address").should("not.exist");
+  cy.contains("Enter your organisation's address").should("exist");
+  clickSaveAndContinue();
+
+  // How much funding
+  cy.contains("How much funding are you applying for?").should("exist");
+};
+
+export const validateMqIndividualJourney = () => {
+  clickBack();
+  cy.contains("Enter your organisation's address");
+  clickBack();
+  cy.contains("Enter the name of your organisation");
+  clickBack();
+  cy.contains("Choose your application type");
+  cy.get(`[data-cy=cy-radioInput-option-IAmApplyingAsAnIndividual]`)
+    .should("not.be.checked")
+    .click();
+  cy.get(`[data-cy=cy-radioInput-option-NonLimitedCompany]`).should(
+    "not.be.checked",
+  );
+  clickSaveAndContinue();
+
+  // Name
+  cy.contains("Enter the name of your organisation").should("not.exist");
+  cy.contains("Enter your full name").should("exist");
+  clickSaveAndContinue();
+
+  // Address
+  cy.contains("Enter your organisation's address").should("not.exist");
+  cy.contains("Enter your address").should("exist");
+  clickSaveAndContinue();
+
+  // How much funding
+  cy.contains("How much funding are you applying for?").should("exist");
+};
+
+export const validateMqOrgFieldsWithoutCompaniesHouseOrCharityCommission =
+  () => {
+    cy.contains("Name").should("exist");
+    cy.contains("Address").should("exist");
+    cy.contains("Companies House number").should("not.exist");
+    cy.contains("Charity Commission number").should("not.exist");
+  };
+
+export const validateMqOrgFieldsWithCompaniesHouseAndCharityCommission = () => {
+  cy.contains("Name").should("exist");
+  cy.contains("Address").should("exist");
+  cy.contains("Companies House number").should("exist");
+  cy.contains("Charity Commission number").should("exist");
+};
+
+export const validateMqIndividualSummaryScreen = () => {
+  validateMqOrgFieldsWithoutCompaniesHouseOrCharityCommission();
+  cy.contains("How much funding are you applying for?").should("exist");
+  cy.contains("Where will this funding be spent?").should("exist");
+};
+
+export const editOrgTypeToNonLimitedCompany = () => {
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+
+  cy.get(`[data-cy=cy-radioInput-option-NonLimitedCompany]`)
+    .should("not.be.checked")
+    .click();
+  cy.get(`[data-cy=cy-radioInput-option-IAmApplyingAsAnIndividual]`).should(
+    "not.be.checked",
+  );
+  clickSaveAndContinue();
+};
+
+export const validateMqNonLimitedSummaryScreen = () => {
+  validateMqOrgFieldsWithoutCompaniesHouseOrCharityCommission();
+  cy.contains("How much funding are you applying for?").should("exist");
+  cy.contains("Where will this funding be spent?").should("exist");
+};
+
+export const editOrgTypeToLimitedCompany = () => {
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+
+  cy.get(`[data-cy=cy-radioInput-option-LimitedCompany]`)
+    .should("not.be.checked")
+    .click();
+  cy.get(`[data-cy=cy-radioInput-option-NonLimitedCompany]`).should(
+    "not.be.checked",
+  );
+  clickSaveAndContinue();
+};
+
+export const validateMqLimitedCompanySummaryScreen = () => {
+  validateMqOrgFieldsWithCompaniesHouseAndCharityCommission();
+  cy.contains("How much funding are you applying for?").should("exist");
+  cy.contains("Where will this funding be spent?").should("exist");
 };
 
 export const fillOrgProfile = (details) => {
@@ -421,6 +546,50 @@ export const partialFillOrgProfile = (details) => {
   // Open Org Profile Page
   cy.get('[data-cy="cy-link-card-Your saved information"]').click();
 
+  cy.get('[data-cy="cy-organisation-details-Type of organisation"]').should(
+    "exist",
+  );
+  cy.get('[data-cy="cy-organisation-details-Type of application"]').should(
+    "not.exist",
+  );
+  // TODO re-enable when GAP-2334 is merged (gap-find-apply-web)
+  // validateMqOrgFieldsWithCompaniesHouseAndCharityCommission();
+
+  // Non-limited company
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+  cy.get('[data-cy="cy-radioInput-option-NonLimitedCompany"]').click();
+  clickSave();
+  cy.get('[data-cy="cy-organisation-details-Type of organisation"]').should(
+    "exist",
+  );
+  cy.get('[data-cy="cy-organisation-details-Type of application"]').should(
+    "not.exist",
+  );
+  validateMqOrgFieldsWithoutCompaniesHouseOrCharityCommission();
+
+  // Individual
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+  cy.get('[data-cy="cy-radioInput-option-IAmApplyingAsAnIndividual"]').click();
+  clickSave();
+  cy.get('[data-cy="cy-organisation-details-Type of application"]').should(
+    "exist",
+  );
+  cy.get('[data-cy="cy-organisation-details-Type of organisation"]').should(
+    "not.exist",
+  );
+  validateMqOrgFieldsWithoutCompaniesHouseOrCharityCommission();
+
+  // Org Type - Filled
+  cy.get(
+    '[data-cy="cy-organisation-details-navigation-organisationType"]',
+  ).click();
+  cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').click();
+  clickSave();
+
   // Name - Blank
   cy.get(
     '[data-cy="cy-organisation-details-navigation-organisationName"]',
@@ -439,13 +608,6 @@ export const partialFillOrgProfile = (details) => {
         .type(details.address[index]);
     },
   );
-  clickSave();
-
-  // Org Type - Filled
-  cy.get(
-    '[data-cy="cy-organisation-details-navigation-organisationType"]',
-  ).click();
-  cy.get('[data-cy="cy-radioInput-option-LimitedCompany"]').click();
   clickSave();
 
   // Companies House - Blank
@@ -597,7 +759,7 @@ export const editDetailsOnSummaryScreen = (details) => {
   ).contains(details.fundingLocation[0]);
 };
 
-export const editOrgAndFundingDetails = (details) => {
+export const editOrgDetails = (details) => {
   // Open Org Details page
   cy.get('[data-cy="cy-section-title-link-Your organisation"]').click();
 
@@ -697,6 +859,9 @@ export const editOrgAndFundingDetails = (details) => {
   // Complete section & move to funding
   cy.get('[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]').click();
   clickSaveAndContinue();
+};
+
+export const editFundingDetails = (details) => {
   cy.get('[data-cy="cy-section-title-link-Funding"]').click();
 
   // Check, Change & Check the details
@@ -797,6 +962,57 @@ export const confirmDetailsOnSummaryScreen = (details) => {
           (index < details.fundingLocation.length - 1 ? "," : ""),
       );
     });
+};
+
+export const validateOrgDetailsForNonLimitedCompany = () => {
+  cy.get('[data-cy="cy-section-title-link-Your organisation"]').click();
+  cy.get('[data-cy="cy-section-details-navigation-APPLICANT_TYPE"]').click();
+  cy.get('[data-cy="cy-radioInput-option-NonLimitedCompany"]').click();
+  clickSaveAndContinue();
+
+  cy.contains("Type of organisation").should("exist");
+  cy.contains("Type of application").should("not.exist");
+  cy.contains("Name").should("exist");
+  cy.contains("Address").should("exist");
+  cy.contains("Companies House number").should("not.exist");
+  cy.contains("Charity Commission number").should("not.exist");
+  yesSectionComplete();
+  cy.contains("Your organisation").should("exist");
+  cy.contains("Your details").should("not.exist");
+};
+
+export const validateOrgDetailsForIndividual = () => {
+  cy.get('[data-cy="cy-section-title-link-Your organisation"]').click();
+  cy.get('[data-cy="cy-section-details-navigation-APPLICANT_TYPE"]').click();
+  cy.get('[data-cy="cy-radioInput-option-IAmApplyingAsAnIndividual"]').click();
+  clickSaveAndContinue();
+
+  cy.contains("Type of application").should("exist");
+  cy.contains("Type of organisation").should("not.exist");
+  cy.contains("Name").should("exist");
+  cy.contains("Address").should("exist");
+  cy.contains("Companies House number").should("not.exist");
+  cy.contains("Charity Commission number").should("not.exist");
+  yesSectionComplete();
+  cy.contains("Your organisation").should("not.exist");
+  cy.contains("Your details").should("exist");
+};
+
+export const validateOrgDetailsForCharity = () => {
+  cy.get('[data-cy="cy-section-title-link-Your details"]').click();
+  cy.get('[data-cy="cy-section-details-navigation-APPLICANT_TYPE"]').click();
+  cy.get('[data-cy="cy-radioInput-option-Charity"]').click();
+  clickSaveAndContinue();
+
+  cy.contains("Type of organisation").should("exist");
+  cy.contains("Type of application").should("not.exist");
+  cy.contains("Name").should("exist");
+  cy.contains("Address").should("exist");
+  cy.contains("Companies House number").should("exist");
+  cy.contains("Charity Commission number").should("exist");
+  yesSectionComplete();
+  cy.contains("Your organisation").should("exist");
+  cy.contains("Your details").should("not.exist");
 };
 
 export const confirmOrgAndFundingDetails = (

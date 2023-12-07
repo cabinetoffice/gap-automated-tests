@@ -22,7 +22,8 @@ import {
 import {
   confirmOrgAndFundingDetails,
   equalitySectionDecline,
-  fillMandatoryQuestions,
+  fillMqFunding,
+  fillMqOrgQuestionsAsLimitedCompany,
   fillOutCustomSection,
   fillOutEligibity,
   fillOutRequiredChecks,
@@ -89,7 +90,8 @@ describe("Create a Grant", () => {
     cy.contains("Continue").click();
 
     // Mandatory Questions & Confirm Details
-    fillMandatoryQuestions(false, MQ_DETAILS);
+    fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
+    fillMqFunding(MQ_DETAILS);
     clickText("Confirm and submit");
 
     // Sign in as admin
@@ -123,7 +125,8 @@ describe("Create a Grant", () => {
     cy.contains("Before you start");
     cy.contains("Continue").click();
 
-    fillMandatoryQuestions(false, MQ_DETAILS);
+    fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
+    fillMqFunding(MQ_DETAILS);
     clickText("Confirm and submit");
     fillOutEligibity();
 
