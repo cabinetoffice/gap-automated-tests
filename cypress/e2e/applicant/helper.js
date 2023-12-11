@@ -552,8 +552,7 @@ export const partialFillOrgProfile = (details) => {
   cy.get('[data-cy="cy-organisation-details-Type of application"]').should(
     "not.exist",
   );
-  // TODO re-enable when GAP-2334 is merged (gap-find-apply-web)
-  // validateMqOrgFieldsWithCompaniesHouseAndCharityCommission();
+  validateMqOrgFieldsWithCompaniesHouseAndCharityCommission();
 
   // Non-limited company
   cy.get(
