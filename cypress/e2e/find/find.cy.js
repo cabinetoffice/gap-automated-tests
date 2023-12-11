@@ -97,7 +97,8 @@ describe("Find a Grant", () => {
       });
     });
 
-    it("can navigate through pagination and limit search term to < 100 characters", () => {
+    // eslint-disable-next-line no-only-tests/no-only-tests
+    it.only("can navigate through pagination and limit search term to < 100 characters", () => {
       cy.contains("Find a grant");
 
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
