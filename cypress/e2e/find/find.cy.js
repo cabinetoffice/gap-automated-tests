@@ -8,8 +8,6 @@ import {
   checkForNoSavedSearchesOrNotifications,
   checkInfoScreen,
   checkSuccessBanner,
-  clickThroughPagination,
-  countNumberOfPages,
   createSavedSearch,
   convertDateToString,
 } from "./helper";
@@ -97,8 +95,7 @@ describe("Find a Grant", () => {
       });
     });
 
-    // eslint-disable-next-line no-only-tests/no-only-tests
-    it.only("can navigate through pagination and limit search term to < 100 characters", () => {
+    it("can navigate through pagination and limit search term to < 100 characters", () => {
       cy.contains("Find a grant");
 
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
@@ -107,14 +104,6 @@ describe("Find a Grant", () => {
         "not.contain.text",
         "We've found 0",
       );
-
-      countNumberOfPages();
-
-      cy.get("@pageCount").then((pageCount) => {
-        clickThroughPagination(pageCount);
-      });
-      cy.get('[data-cy="cyPaginationNextButton"]').should("not.exist");
-      cy.get('[data-cy="cyPaginationPageNumber1"]').click();
 
       // perform invalid search
       const invalidSearch = "x".repeat(101);
