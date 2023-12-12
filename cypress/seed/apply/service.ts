@@ -26,6 +26,7 @@ import {
 import {
   addSubmissionToMostRecentBatch,
   insertMandatoryQuestions,
+  insertSpotlightSubmission,
   insertSubmissions,
   readdQueuedSpotlightSubmissions,
   removeQueuedSpotlightSubmissions,
@@ -136,7 +137,7 @@ const addSpotlightBatch = async () => {
 
 const insertSubmissionsAndMQs = async () => {
   await runSqlForApply(
-    [insertSubmissions, insertMandatoryQuestions],
+    [insertSubmissions, insertMandatoryQuestions, insertSpotlightSubmission],
     applyUpdateSubstitutions,
   );
 };

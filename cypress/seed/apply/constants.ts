@@ -39,6 +39,7 @@ import { getTestID, getUUID } from "./helper";
 import {
   addSubmissionToMostRecentBatch,
   insertMandatoryQuestions,
+  insertSpotlightSubmission,
   insertSubmissions,
 } from "../ts/updateApplyData";
 
@@ -258,6 +259,11 @@ const applyUpdateSubstitutions = {
     APPLICANT_ID,
     APPLICANT_ID,
     ADVERT_ID_V2_EXTERNAL,
+  ],
+  [insertSpotlightSubmission]: [
+    SPOTLIGHT_SUBMISSION_ID,
+    ADVERT_ID_V2_INTERNAL,
+    V2_INTERNAL_SCHEME_ID,
   ],
 };
 

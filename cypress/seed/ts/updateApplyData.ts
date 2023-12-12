@@ -50,6 +50,13 @@ INSERT INTO public.grant_mandatory_questions (id, grant_scheme_id, submission_id
     );
 `;
 
+const insertSpotlightSubmission = `
+INSERT INTO public.spotlight_submission (id, grant_mandatory_questions_id, grant_scheme, status, last_send_attempt, version, created, last_updated)
+    VALUES (
+        $1, $2, $3, 'QUEUED', null, 1, now(), now()
+    )
+`;
+
 export {
   readdQueuedSpotlightSubmissions,
   removeQueuedSpotlightSubmissions,
@@ -57,4 +64,5 @@ export {
   addSubmissionToMostRecentBatch,
   insertSubmissions,
   insertMandatoryQuestions,
+  insertSpotlightSubmission,
 };

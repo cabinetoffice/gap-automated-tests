@@ -101,43 +101,6 @@ describe("Create a Grant", () => {
   });
 
   it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
-    // cy.task("publishGrantsToContentful");
-    // // wait for grant to be published to contentful
-    // cy.wait(5000);
-    //
-    // // ===========================================
-    // // Populate data instead of completing journey
-    //
-    // // Sign out and complete application as applicant
-    // cy.get('[data-cy="cySignInAndApply-Link"]').click();
-    // signInAsApplyApplicant();
-    // cy.get('[data-cy="cy-find-a-grant-link"]').click();
-    // searchForGrant(Cypress.env("testV2InternalGrant").advertName);
-    // cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
-    // cy.contains("Start new application").invoke("removeAttr", "target").click();
-    //
-    // cy.contains("Before you start");
-    // cy.contains("Continue").click();
-    //
-    // fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
-    // fillMqFunding(MQ_DETAILS);
-    // clickText("Confirm and submit");
-    // fillOutEligibity();
-    //
-    // confirmOrgAndFundingDetails(
-    //   "",
-    //   "Limited company",
-    //   MQ_DETAILS.fundingLocation,
-    //   MQ_DETAILS,
-    // );
-    // submitApplication();
-    // equalitySectionDecline();
-    // clickText("View your applications");
-    // clickText("Back");
-    //
-    // signOut();
-    // ===========================================
-
     // Populate data instead of completing journey
     cy.task("insertSubmissionsAndMQs");
 
