@@ -120,7 +120,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-        if: ${{ !cancelled() }}
+        if: always()
 
       - name: Upload Report to S3
         # there should be only one report generated from the run, so grab it for manipulation
