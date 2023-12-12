@@ -35,3 +35,15 @@
 //     }
 //   }
 // }
+
+require("cypress-downloadfile/lib/downloadFileCommand");
+
+// @ts-expect-error The types seem to be incorrect on this function, but it does work as described in the comments above
+Cypress.Commands.add("parseXlsx", (inputFile) => {
+  return cy.task("parseXlsx", { filePath: inputFile });
+});
+
+// @ts-expect-error The types seem to be incorrect on this function, but it does work as described in the comments above
+Cypress.Commands.add("unzip", (input) => {
+  return cy.task("unzip", input);
+});

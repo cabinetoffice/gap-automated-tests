@@ -52,7 +52,11 @@ const SUPER_ADMIN_ID = getTestID();
 const ADMIN_ID = getTestID(1);
 const APPLICANT_ID = getTestID(2);
 const FUNDING_ID = getTestID();
-const SCHEME_ID = getTestID();
+
+const V1_INTERNAL_SCHEME_ID = getTestID();
+const V1_EXTERNAL_SCHEME_ID = getTestID(3);
+const V2_INTERNAL_SCHEME_ID = getTestID(1);
+const V2_EXTERNAL_SCHEME_ID = getTestID(2);
 
 const ADVERT_ID_V1_INTERNAL = getUUID();
 const ADVERT_ID_V1_EXTERNAL = getUUID(3);
@@ -119,35 +123,35 @@ const applySubstitutions = {
     APPLICANT_ID,
   ],
   [insertSchemes]: [
-    SCHEME_ID,
+    V1_INTERNAL_SCHEME_ID,
     FUNDING_ID,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
-    SCHEME_ID - 1,
+    V2_INTERNAL_SCHEME_ID,
     FUNDING_ID,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
-    SCHEME_ID - 2,
+    V2_EXTERNAL_SCHEME_ID,
     FUNDING_ID,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
-    SCHEME_ID - 3,
+    V1_EXTERNAL_SCHEME_ID,
     FUNDING_ID,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
   ],
   [insertApplications]: [
-    SCHEME_ID,
-    SCHEME_ID,
+    V1_INTERNAL_SCHEME_ID,
+    V1_INTERNAL_SCHEME_ID,
     ADMIN_ID,
     TEST_V1_INTERNAL_GRANT.applicationName,
     ADMIN_ID,
-    SCHEME_ID - 1,
-    SCHEME_ID - 1,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_SCHEME_ID,
     ADMIN_ID,
     TEST_V2_INTERNAL_GRANT.applicationName,
     ADMIN_ID,
@@ -160,7 +164,7 @@ const applySubstitutions = {
     v1InternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
-    SCHEME_ID,
+    V1_INTERNAL_SCHEME_ID,
     ADVERT_ID_V2_INTERNAL,
     TEST_V2_INTERNAL_GRANT.contentfulId,
     TEST_V2_INTERNAL_GRANT.contentfulSlug,
@@ -168,7 +172,7 @@ const applySubstitutions = {
     v2InternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
-    SCHEME_ID - 1,
+    V2_INTERNAL_SCHEME_ID,
     ADVERT_ID_V2_EXTERNAL,
     TEST_V2_EXTERNAL_GRANT.contentfulId,
     TEST_V2_EXTERNAL_GRANT.contentfulSlug,
@@ -176,7 +180,7 @@ const applySubstitutions = {
     v2ExternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
-    SCHEME_ID - 2,
+    V2_EXTERNAL_SCHEME_ID,
     ADVERT_ID_V1_EXTERNAL,
     TEST_V1_EXTERNAL_GRANT.contentfulId,
     TEST_V1_EXTERNAL_GRANT.contentfulSlug,
@@ -184,7 +188,7 @@ const applySubstitutions = {
     v1ExternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
-    SCHEME_ID - 3,
+    V1_EXTERNAL_SCHEME_ID,
   ],
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [
@@ -212,7 +216,10 @@ export {
   ADMIN_ID,
   APPLICANT_ID,
   FUNDING_ID,
-  SCHEME_ID,
+  V1_INTERNAL_SCHEME_ID,
+  V1_EXTERNAL_SCHEME_ID,
+  V2_INTERNAL_SCHEME_ID,
+  V2_EXTERNAL_SCHEME_ID,
   ADVERT_ID_V1_INTERNAL,
   ADVERT_ID_V1_EXTERNAL,
   ADVERT_ID_V2_INTERNAL,

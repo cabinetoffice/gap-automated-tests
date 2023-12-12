@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import {
   clickSaveAndContinue,
   saveAndExit,
@@ -408,3 +409,6 @@ export function advertSection1(GRANT_NAME) {
 
   yesQuestionComplete();
 }
+
+export const convertDateToString = (date, dateFormat = "YYYY-MM-DD") =>
+  dayjs(date).format(dateFormat);

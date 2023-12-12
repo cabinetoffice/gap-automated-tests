@@ -8,6 +8,7 @@ import {
   clickBack,
   clickSaveAndContinue,
   assert200,
+  log,
 } from "../../common/common";
 import {
   publishAdvert,
@@ -18,6 +19,7 @@ import {
   advertSection3,
   advertSection4,
   advertSection5,
+  convertDateToString,
 } from "./helper";
 import {
   confirmOrgAndFundingDetails,
@@ -75,6 +77,9 @@ describe("Create a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
+    // ===========================================
+    // Populate data instead of completing journey
+
     // Sign out and complete application as applicant
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();
@@ -96,6 +101,8 @@ describe("Create a Grant", () => {
 
     // Sign in as admin
     signOut();
+    // ===========================================
+
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
 
@@ -108,12 +115,44 @@ describe("Create a Grant", () => {
 
     // Check download link works
     assert200(cy.get(":nth-child(4) > .govuk-link"));
+
+    cy.contains("Download due diligence information")
+      .invoke("attr", "href")
+      .then((url) => {
+        log(Cypress.env("postLoginBaseUrl") + url);
+        cy.downloadFile(
+          Cypress.env("postLoginBaseUrl") + url,
+          "cypress/downloads",
+          "submission_export.xlsx",
+        );
+      });
+
+    cy.parseXlsx("/cypress/downloads/submission_export.xlsx").then(
+      (jsonData) => {
+        const data = [
+          "MyOrg",
+          "addressLine1, addressLine2",
+          "city",
+          "county",
+          "postcod",
+          "100",
+          "67890",
+          "12345",
+          "Limited company",
+        ];
+        expect(jsonData[0].data[1]).to.include.members(data);
+      },
+    );
   });
 
-  it("Can access and use 'Manage Due Dillegence Checks' (spotlight)", () => {
+  it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
+
+    // ===========================================
+    // Populate data instead of completing journey
+
     // Sign out and complete application as applicant
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();
@@ -142,6 +181,8 @@ describe("Create a Grant", () => {
     clickText("Back");
 
     signOut();
+    // ===========================================
+
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SENT);
 
     cy.get("[data-cy=cySignInAndApply-Link]").click();
@@ -160,6 +201,72 @@ describe("Create a Grant", () => {
     assert200(cy.get(":nth-child(4) > .govuk-link"));
     assert200(cy.get(":nth-child(6) > .govuk-link"));
 
+    // cy.contains("Log in to Spotlight")
+    //   .invoke("attr", "href")
+    //   .then(url => {
+    //     expect(url).to.equal('https://cabinetoffice-spotlight.force.com/s/login/');
+    //   });
+
+    cy.contains("download the information you need to run checks")
+      .invoke("attr", "href")
+      .then((url) => {
+        log(Cypress.env("postLoginBaseUrl") + url);
+        cy.downloadFile(
+          Cypress.env("postLoginBaseUrl") + url,
+          "cypress/downloads",
+          "spotlight_checks.zip",
+        );
+      });
+
+    cy.unzip({ path: "cypress/downloads/", file: "spotlight_checks.zip" });
+
+    cy.parseXlsx(
+      `/cypress/downloads/${convertDateToString(
+        Date.now(),
+      )}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`,
+    ).then((jsonData) => {
+      const data = [
+        "MyOrg",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcod",
+        "100",
+        "67890",
+        "12345",
+      ];
+      expect(jsonData[0].data[1]).to.include.members(data);
+    });
+
+    cy.contains("Download checks from applications")
+      .invoke("attr", "href")
+      .then((url) => {
+        log(Cypress.env("postLoginBaseUrl") + url);
+        cy.downloadFile(
+          Cypress.env("postLoginBaseUrl") + url,
+          "cypress/downloads",
+          "submission_export.xlsx",
+        );
+      });
+
+    cy.parseXlsx("/cypress/downloads/submission_export.xlsx").then(
+      (jsonData) => {
+        const data = [
+          "MyOrg",
+          "addressLine1, addressLine2",
+          "city",
+          "county",
+          "postcod",
+          "100",
+          "67890",
+          "12345",
+          "Limited company",
+        ];
+        expect(jsonData[0].data[1]).to.include.members(data);
+      },
+    );
+
+    // Check error message
     clickBack();
 
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, GGIS_ERROR);
@@ -203,6 +310,9 @@ describe("Create a Grant", () => {
     // wait for grant to be published to contentful
     cy.wait(5000);
 
+    // ===========================================
+    // Populate data instead of completing journey
+
     // Sign in and complete application as applicant
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();
@@ -222,6 +332,8 @@ describe("Create a Grant", () => {
 
     // Sign in as admin
     signOut();
+    // ===========================================
+
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
 
@@ -236,6 +348,31 @@ describe("Create a Grant", () => {
       cy.get(
         '[data-cy="cy_Scheme-details-page-button-Download required checks"]',
       ),
+    );
+
+    cy.contains("Download required checks")
+      .invoke("attr", "href")
+      .then((url) => {
+        log(Cypress.env("postLoginBaseUrl") + url);
+        cy.downloadFile(
+          Cypress.env("postLoginBaseUrl") + url,
+          "cypress/downloads",
+          "submission_export.xlsx",
+        );
+      });
+
+    cy.parseXlsx("/cypress/downloads/submission_export.xlsx").then(
+      (jsonData) => {
+        const data = [
+          "My First Org",
+          "Address line 1, Address line 2",
+          "Town",
+          "County",
+          "Postcode",
+          "100",
+        ];
+        expect(jsonData[0].data[1]).to.include.members(data);
+      },
     );
   });
 });

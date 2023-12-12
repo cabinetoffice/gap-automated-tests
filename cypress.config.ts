@@ -1,4 +1,5 @@
 import { defineConfig } from "cypress";
+import { downloadFile } from "cypress-downloadfile/lib/addPlugin";
 import {
   addFailedOauthAudit,
   createTestUsers,
@@ -23,6 +24,9 @@ import {
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
 } from "./cypress/common/constants";
+const xlsx = require("node-xlsx").default;
+const fs = require("fs");
+const decompress = require("decompress");
 require("dotenv").config();
 
 export default defineConfig({
@@ -84,6 +88,25 @@ export default defineConfig({
           await publishGrantAdverts();
 
           return null;
+        },
+        downloadFile,
+        async parseXlsx({ filePath }) {
+          return await new Promise((resolve, reject) => {
+            try {
+              const jsonData = xlsx.parse(
+                fs.readFileSync(__dirname + filePath),
+              );
+              resolve(jsonData);
+            } catch (e) {
+              reject(e);
+            }
+          });
+        },
+        unzip({ path, file }) {
+          return decompress(
+            path + file,
+            path + "unzip/" + file.replace(".zip", ""),
+          );
         },
         log(message) {
           console.log(message);

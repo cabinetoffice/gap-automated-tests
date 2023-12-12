@@ -7,6 +7,8 @@ node_modules/
 .idea/
 .DS_Store
 
+cypress/downloads
+
 cypress/screenshots
 cypress/report.txt
 results/

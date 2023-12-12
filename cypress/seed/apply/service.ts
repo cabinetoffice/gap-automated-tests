@@ -30,7 +30,7 @@ import {
   updateSpotlightSubmissionStatus,
 } from "../ts/updateApplyData";
 import {
-  SCHEME_ID,
+  V2_INTERNAL_SCHEME_ID,
   SPOTLIGHT_BATCH_ID,
   SPOTLIGHT_SUBMISSION_ID,
   applyDatabaseUrl,
@@ -100,7 +100,7 @@ const updateSpotlightSubmission = async (status: string) => {
       [updateSpotlightSubmissionStatus]: [
         status,
         SPOTLIGHT_SUBMISSION_ID,
-        SCHEME_ID - 1,
+        V2_INTERNAL_SCHEME_ID,
       ],
     },
     applyServiceDbName,
@@ -143,7 +143,7 @@ const deleteSpotlightSubmission = async () => {
   await runSQLFromJs(
     [deleteSpotlightSubmissionRow],
     {
-      [deleteSpotlightSubmissionRow]: [SCHEME_ID - 1],
+      [deleteSpotlightSubmissionRow]: [V2_INTERNAL_SCHEME_ID],
     },
     applyServiceDbName,
     applyDatabaseUrl,
