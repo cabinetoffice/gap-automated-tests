@@ -15,6 +15,7 @@ import {
   cleanupTestSpotlightSubmissions,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
+  getExportedSubmissionUrlAndLocation,
 } from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
@@ -107,6 +108,9 @@ export default defineConfig({
             path + file,
             path + "unzip/" + file.replace(".zip", ""),
           );
+        },
+        async getExportedSubmissionUrlAndLocation(schemeId: string) {
+          return await getExportedSubmissionUrlAndLocation(schemeId);
         },
         log(message) {
           console.log(message);

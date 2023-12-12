@@ -123,26 +123,24 @@ describe("Create a Grant", () => {
         cy.downloadFile(
           Cypress.env("postLoginBaseUrl") + url,
           "cypress/downloads",
-          "submission_export.xlsx",
+          "required_checks.xlsx",
         );
       });
 
-    cy.parseXlsx("/cypress/downloads/submission_export.xlsx").then(
-      (jsonData) => {
-        const data = [
-          "MyOrg",
-          "addressLine1, addressLine2",
-          "city",
-          "county",
-          "postcod",
-          "100",
-          "67890",
-          "12345",
-          "Limited company",
-        ];
-        expect(jsonData[0].data[1]).to.include.members(data);
-      },
-    );
+    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
+      const data = [
+        "MyOrg",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcod",
+        "100",
+        "67890",
+        "12345",
+        "Limited company",
+      ];
+      expect(jsonData[0].data[1]).to.include.members(data);
+    });
   });
 
   it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
@@ -245,26 +243,24 @@ describe("Create a Grant", () => {
         cy.downloadFile(
           Cypress.env("postLoginBaseUrl") + url,
           "cypress/downloads",
-          "submission_export.xlsx",
+          "required_checks.xlsx",
         );
       });
 
-    cy.parseXlsx("/cypress/downloads/submission_export.xlsx").then(
-      (jsonData) => {
-        const data = [
-          "MyOrg",
-          "addressLine1, addressLine2",
-          "city",
-          "county",
-          "postcod",
-          "100",
-          "67890",
-          "12345",
-          "Limited company",
-        ];
-        expect(jsonData[0].data[1]).to.include.members(data);
-      },
-    );
+    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
+      const data = [
+        "MyOrg",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcod",
+        "100",
+        "67890",
+        "12345",
+        "Limited company",
+      ];
+      expect(jsonData[0].data[1]).to.include.members(data);
+    });
 
     // Check error message
     clickBack();
@@ -357,22 +353,57 @@ describe("Create a Grant", () => {
         cy.downloadFile(
           Cypress.env("postLoginBaseUrl") + url,
           "cypress/downloads",
-          "submission_export.xlsx",
+          "required_checks.xlsx",
         );
       });
 
-    cy.parseXlsx("/cypress/downloads/submission_export.xlsx").then(
-      (jsonData) => {
-        const data = [
-          "My First Org",
-          "Address line 1, Address line 2",
-          "Town",
-          "County",
-          "Postcode",
-          "100",
-        ];
-        expect(jsonData[0].data[1]).to.include.members(data);
-      },
-    );
+    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
+      const data = [
+        "My First Org",
+        "Address line 1, Address line 2",
+        "Town",
+        "County",
+        "Postcode",
+        "100",
+      ];
+      expect(jsonData[0].data[1]).to.include.members(data);
+    });
+
+    cy.get(
+      '[data-cy="cy_Scheme-details-page-button-View submitted application"]',
+    ).click();
+
+    cy.get('[data-cy="cy-button-Download submitted applications"]').click();
+
+    cy.contains("A list of applications is being created");
+
+    cy.wait(10000);
+    cy.task(
+      "getExportedSubmissionUrlAndLocation",
+      Cypress.env("testV1InternalGrant").schemeId,
+    ).then((submission) => {
+      cy.visit(submission.url);
+
+      cy.contains("Download")
+        .invoke("attr", "href")
+        .then((url) => {
+          log(Cypress.env("postLoginBaseUrl") + url);
+          cy.downloadFile(
+            Cypress.env("postLoginBaseUrl") + url,
+            "cypress/downloads",
+            "submission_export.zip",
+          );
+        });
+
+      cy.unzip({ path: "cypress/downloads/", file: "submission_export.zip" });
+
+      cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
+
+      cy.readFile(
+        `cypress/downloads/unzip/submission_export/${
+          submission.location.split(".zip")[0]
+        }_2.odt`,
+      );
+    });
   });
 });
