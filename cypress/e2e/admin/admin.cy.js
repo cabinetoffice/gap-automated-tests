@@ -221,7 +221,7 @@ describe("Create a Grant", () => {
     cy.unzip({ path: "cypress/downloads/", file: "spotlight_checks.zip" });
 
     cy.parseXlsx(
-      `/cypress/downloads/${convertDateToString(
+      `/cypress/downloads/unzip/spotlight_checks/${convertDateToString(
         Date.now(),
       )}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`,
     ).then((jsonData) => {
