@@ -7,6 +7,7 @@ import {
   insertSchemes,
   insertApplications,
   insertAdverts,
+  addSpotlightBatchRow,
 } from "../ts/insertApplyData";
 import {
   deleteAdverts,
@@ -18,6 +19,8 @@ import {
   deleteUsers,
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
+  deleteSpotlightSubmissionRow,
+  deleteSpotlightBatchRow,
 } from "../ts/deleteApplyData";
 import {
   TEST_V1_INTERNAL_GRANT,
@@ -33,6 +36,12 @@ import {
 } from "../data/apply";
 
 import { getTestID, getUUID } from "./helper";
+import {
+  addSubmissionToMostRecentBatch,
+  insertMandatoryQuestions,
+  insertSpotlightSubmission,
+  insertSubmissions,
+} from "../ts/updateApplyData";
 import { getExportedSubmission } from "../ts/selectApplyData";
 
 require("dotenv").config();
@@ -91,7 +100,7 @@ const MQ_DETAILS = {
   ],
 };
 
-const applySubstitutions = {
+const applyInsertSubstitutions = {
   [insertApplicants]: [
     SUPER_ADMIN_ID,
     process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
@@ -201,6 +210,9 @@ const applySubstitutions = {
     ADMIN_ID,
     ...allSubs,
   ],
+};
+
+const applyDeleteSubstitutions = {
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [
     SUPER_ADMIN_ID,
@@ -219,8 +231,58 @@ const applySubstitutions = {
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 
+const spotlightSubstitutions = {
+  [addSubmissionToMostRecentBatch]: [
+    SPOTLIGHT_SUBMISSION_ID,
+    SPOTLIGHT_BATCH_ID,
+  ],
+  [deleteSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
+  [deleteSpotlightSubmissionRow]: [V2_INTERNAL_SCHEME_ID],
+  [addSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
+};
+
+const applyUpdateSubstitutions = {
+  [insertSubmissions]: [
+    ADVERT_ID_V1_INTERNAL,
+    APPLICANT_ID,
+    V1_INTERNAL_SCHEME_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V1_INTERNAL_SCHEME_ID,
+    ADVERT_ID_V1_INTERNAL,
+    ADVERT_ID_V2_INTERNAL,
+    APPLICANT_ID,
+    V2_INTERNAL_SCHEME_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V2_INTERNAL_SCHEME_ID,
+    ADVERT_ID_V2_INTERNAL,
+  ],
+  [insertMandatoryQuestions]: [
+    ADVERT_ID_V2_INTERNAL,
+    V2_INTERNAL_SCHEME_ID,
+    ADVERT_ID_V2_INTERNAL,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    ADVERT_ID_V2_INTERNAL,
+    ADVERT_ID_V2_EXTERNAL,
+    V2_EXTERNAL_SCHEME_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    ADVERT_ID_V2_EXTERNAL,
+  ],
+  [insertSpotlightSubmission]: [
+    SPOTLIGHT_SUBMISSION_ID,
+    ADVERT_ID_V2_INTERNAL,
+    V2_INTERNAL_SCHEME_ID,
+  ],
+};
+
 export {
-  applySubstitutions,
+  applyInsertSubstitutions,
+  applyDeleteSubstitutions,
+  applyUpdateSubstitutions,
+  spotlightSubstitutions,
   applyServiceDbName,
   applyDatabaseUrl,
   postLoginBaseUrl,

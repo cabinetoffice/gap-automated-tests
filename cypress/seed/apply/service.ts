@@ -25,17 +25,22 @@ import {
 } from "../ts/insertApplyData";
 import {
   addSubmissionToMostRecentBatch,
+  insertMandatoryQuestions,
+  insertSpotlightSubmission,
+  insertSubmissions,
   readdQueuedSpotlightSubmissions,
   removeQueuedSpotlightSubmissions,
   updateSpotlightSubmissionStatus,
 } from "../ts/updateApplyData";
 import {
   V2_INTERNAL_SCHEME_ID,
-  SPOTLIGHT_BATCH_ID,
   SPOTLIGHT_SUBMISSION_ID,
   applyDatabaseUrl,
   applyServiceDbName,
-  applySubstitutions,
+  spotlightSubstitutions,
+  applyInsertSubstitutions,
+  applyDeleteSubstitutions,
+  applyUpdateSubstitutions,
   postLoginBaseUrl,
 } from "./constants";
 import { getExportedSubmission } from "../ts/selectApplyData";
@@ -60,7 +65,7 @@ const createApplyData = async (): Promise<void> => {
       insertApplications,
       insertAdverts,
     ],
-    applySubstitutions,
+    applyInsertSubstitutions,
   );
   console.log("Successfully added data to Apply database");
 };
@@ -78,7 +83,7 @@ const deleteApplyData = async (): Promise<void> => {
       deleteFundingOrgs,
       deleteApplicantOrgProfiles,
     ],
-    applySubstitutions,
+    applyDeleteSubstitutions,
   );
   console.log("Successfully removed data from Apply database");
 };
@@ -102,40 +107,48 @@ const updateSpotlightSubmission = async (status: string) => {
 };
 
 const addToRecentBatch = async () => {
-  const row = await runSqlForApply([addSubmissionToMostRecentBatch], {
-    [addSubmissionToMostRecentBatch]: [
-      SPOTLIGHT_SUBMISSION_ID,
-      SPOTLIGHT_BATCH_ID,
-    ],
-  });
+  const row = await runSqlForApply(
+    [addSubmissionToMostRecentBatch],
+    spotlightSubstitutions,
+  );
 
   return row;
 };
 
 const deleteSpotlightBatch = async () => {
-  const row = await runSqlForApply([deleteSpotlightBatchRow], {
-    [deleteSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
-  });
+  const row = await runSqlForApply(
+    [deleteSpotlightBatchRow],
+    spotlightSubstitutions,
+  );
 
   return row;
 };
 
 const deleteSpotlightSubmission = async () => {
-  await runSqlForApply([deleteSpotlightSubmissionRow], {
-    [deleteSpotlightSubmissionRow]: [V2_INTERNAL_SCHEME_ID],
-  });
+  await runSqlForApply([deleteSpotlightSubmissionRow], spotlightSubstitutions);
 };
 
 const addSpotlightBatch = async () => {
-  const row = await runSqlForApply([addSpotlightBatchRow], {
-    [addSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
-  });
+  const row = await runSqlForApply(
+    [addSpotlightBatchRow],
+    spotlightSubstitutions,
+  );
 
   return row;
 };
 
+const insertSubmissionsAndMQs = async () => {
+  await runSqlForApply(
+    [insertSubmissions, insertMandatoryQuestions, insertSpotlightSubmission],
+    applyUpdateSubstitutions,
+  );
+};
+
 const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
-  const row = await runSqlForApply([getExportedSubmission], applySubstitutions);
+  const row = await runSqlForApply(
+    [getExportedSubmission],
+    applyInsertSubstitutions,
+  );
   console.log(schemeId, row[0][0]);
   return {
     url: `${postLoginBaseUrl}/apply/admin/scheme/${schemeId}/${row[0][0].export_batch_id}`,
@@ -146,6 +159,7 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
 export {
   createApplyData,
   deleteApplyData,
+  insertSubmissionsAndMQs,
   cleanupTestSpotlightSubmissions,
   updateSpotlightSubmission,
   addToRecentBatch,
