@@ -15,6 +15,7 @@ import {
   cleanupTestSpotlightSubmissions,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
+  insertSubmissionsAndMQs,
 } from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
@@ -86,6 +87,11 @@ export default defineConfig({
         },
         async publishGrantsToContentful() {
           await publishGrantAdverts();
+
+          return null;
+        },
+        async insertSubmissionsAndMQs() {
+          await insertSubmissionsAndMQs();
 
           return null;
         },

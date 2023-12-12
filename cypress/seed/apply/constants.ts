@@ -7,6 +7,7 @@ import {
   insertSchemes,
   insertApplications,
   insertAdverts,
+  addSpotlightBatchRow,
 } from "../ts/insertApplyData";
 import {
   deleteAdverts,
@@ -18,6 +19,8 @@ import {
   deleteUsers,
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
+  deleteSpotlightSubmissionRow,
+  deleteSpotlightBatchRow,
 } from "../ts/deleteApplyData";
 import {
   TEST_V1_INTERNAL_GRANT,
@@ -33,6 +36,11 @@ import {
 } from "../data/apply";
 
 import { getTestID, getUUID } from "./helper";
+import {
+  addSubmissionToMostRecentBatch,
+  insertMandatoryQuestions,
+  insertSubmissions,
+} from "../ts/updateApplyData";
 
 require("dotenv").config();
 
@@ -88,7 +96,7 @@ const MQ_DETAILS = {
   ],
 };
 
-const applySubstitutions = {
+const applyInsertSubstitutions = {
   [insertApplicants]: [
     SUPER_ADMIN_ID,
     process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
@@ -190,6 +198,9 @@ const applySubstitutions = {
     ADMIN_ID,
     V1_EXTERNAL_SCHEME_ID,
   ],
+};
+
+const applyDeleteSubstitutions = {
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [
     SUPER_ADMIN_ID,
@@ -208,8 +219,34 @@ const applySubstitutions = {
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 
+const spotlightSubstitutions = {
+  [addSubmissionToMostRecentBatch]: [
+    SPOTLIGHT_SUBMISSION_ID,
+    SPOTLIGHT_BATCH_ID,
+  ],
+  [deleteSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
+  [deleteSpotlightSubmissionRow]: [V2_INTERNAL_SCHEME_ID],
+  [addSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
+};
+
+const applyUpdateSubstitutions = {
+  [insertSubmissions]: [
+    ADVERT_ID_V1_INTERNAL,
+    APPLICANT_ID,
+    V1_INTERNAL_SCHEME_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V1_INTERNAL_SCHEME_ID,
+    ADVERT_ID_V1_INTERNAL,
+  ],
+  [insertMandatoryQuestions]: [],
+};
+
 export {
-  applySubstitutions,
+  applyInsertSubstitutions,
+  applyDeleteSubstitutions,
+  applyUpdateSubstitutions,
+  spotlightSubstitutions,
   applyServiceDbName,
   applyDatabaseUrl,
   SUPER_ADMIN_ID,

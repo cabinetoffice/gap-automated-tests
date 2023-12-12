@@ -26,9 +26,7 @@ import {
   equalitySectionDecline,
   fillMqFunding,
   fillMqOrgQuestionsAsLimitedCompany,
-  fillOutCustomSection,
   fillOutEligibity,
-  fillOutRequiredChecks,
   submitApplication,
 } from "../applicant/helper";
 import {
@@ -306,33 +304,8 @@ describe("Create a Grant", () => {
   });
 
   it("V1 Internal - Download Due Diligence Data", () => {
-    cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
-
-    // ===========================================
     // Populate data instead of completing journey
-
-    // Sign in and complete application as applicant
-    cy.get('[data-cy="cySignInAndApply-Link"]').click();
-    signInAsApplyApplicant();
-
-    // Search & Start internal application
-    cy.get('[data-cy="cy-find-a-grant-link"]').click();
-    searchForGrant(Cypress.env("testV1InternalGrant").advertName);
-    cy.contains(Cypress.env("testV1InternalGrant").advertName).click();
-    cy.contains("Start new application").invoke("removeAttr", "target").click();
-
-    // Complete application
-    fillOutEligibity();
-    fillOutRequiredChecks();
-    fillOutCustomSection();
-    submitApplication();
-    equalitySectionDecline();
-
-    // Sign in as admin
-    signOut();
-    // ===========================================
+    cy.task("insertSubmissionsAndMQs");
 
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
