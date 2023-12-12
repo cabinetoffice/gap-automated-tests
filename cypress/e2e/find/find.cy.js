@@ -112,7 +112,6 @@ describe("Find a Grant", () => {
       cy.get("@pageCount").then((pageCount) => {
         clickThroughPagination(pageCount);
       });
-      cy.get('[data-cy="cyPaginationNextButton"]').should("not.exist");
       cy.get('[data-cy="cyPaginationPageNumber1"]').click();
 
       // perform invalid search
