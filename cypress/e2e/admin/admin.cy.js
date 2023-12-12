@@ -39,18 +39,27 @@ describe("Create a Grant", () => {
 
   it("can create a new Grant and create advert", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
+    log("Admin grant creation journey - Signing in as admin");
     signInAsAdmin();
+    log("Admin grant creation journey - creating Grant");
     createGrant(GRANT_NAME);
 
     // create advert
+    log("Admin grant creation journey - creating Advert Section 1");
     advertSection1(GRANT_NAME);
+    log("Admin grant creation journey - creating Advert Section 2");
     advertSection2();
+    log("Admin grant creation journey - creating Advert Section 3");
     advertSection3(true);
+    log("Admin grant creation journey - creating Advert Section 4");
     advertSection4();
+    log("Admin grant creation journey - creating Advert Section 5");
     advertSection5();
 
+    log("Admin grant creation journey - publishing advert");
     publishAdvert(true);
 
+    log("Admin grant creation journey - creating application form");
     applicationForm();
   });
 
