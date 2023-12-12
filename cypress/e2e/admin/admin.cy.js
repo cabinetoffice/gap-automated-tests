@@ -78,26 +78,24 @@ describe("Create a Grant", () => {
         cy.downloadFile(
           Cypress.env("postLoginBaseUrl") + url,
           "cypress/downloads",
-          "submission_export.xlsx",
+          "required_checks.xlsx",
         );
       });
 
-    cy.parseXlsx("/cypress/downloads/submission_export.xlsx").then(
-      (jsonData) => {
-        const data = [
-          "MyOrg",
-          "addressLine1, addressLine2",
-          "city",
-          "county",
-          "postcod",
-          "100",
-          "67890",
-          "12345",
-          "Limited company",
-        ];
-        expect(jsonData[0].data[1]).to.include.members(data);
-      },
-    );
+    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
+      const data = [
+        "MyOrg",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcod",
+        "100",
+        "67890",
+        "12345",
+        "Limited company",
+      ];
+      expect(jsonData[0].data[1]).to.include.members(data);
+    });
   });
 
   it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
@@ -164,26 +162,24 @@ describe("Create a Grant", () => {
         cy.downloadFile(
           Cypress.env("postLoginBaseUrl") + url,
           "cypress/downloads",
-          "submission_export.xlsx",
+          "required_checks.xlsx",
         );
       });
 
-    cy.parseXlsx("/cypress/downloads/submission_export.xlsx").then(
-      (jsonData) => {
-        const data = [
-          "MyOrg",
-          "addressLine1, addressLine2",
-          "city",
-          "county",
-          "postcod",
-          "100",
-          "67890",
-          "12345",
-          "Limited company",
-        ];
-        expect(jsonData[0].data[1]).to.include.members(data);
-      },
-    );
+    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
+      const data = [
+        "MyOrg",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcod",
+        "100",
+        "67890",
+        "12345",
+        "Limited company",
+      ];
+      expect(jsonData[0].data[1]).to.include.members(data);
+    });
 
     cy.contains("You have 1 application in Spotlight.");
 
@@ -253,22 +249,20 @@ describe("Create a Grant", () => {
         cy.downloadFile(
           Cypress.env("postLoginBaseUrl") + url,
           "cypress/downloads",
-          "submission_export.xlsx",
+          "required_checks.xlsx",
         );
       });
 
-    cy.parseXlsx("/cypress/downloads/submission_export.xlsx").then(
-      (jsonData) => {
-        const data = [
-          "My First Org",
-          "Address line 1, Address line 2",
-          "Town",
-          "County",
-          "Postcode",
-          "100",
-        ];
-        expect(jsonData[0].data[1]).to.include.members(data);
-      },
-    );
+    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
+      const data = [
+        "My First Org",
+        "Address line 1, Address line 2",
+        "Town",
+        "County",
+        "Postcode",
+        "100",
+      ];
+      expect(jsonData[0].data[1]).to.include.members(data);
+    });
   });
 });
