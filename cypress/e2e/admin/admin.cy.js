@@ -1,9 +1,6 @@
 import {
   signInToIntegrationSite,
   signInAsAdmin,
-  signInAsApplyApplicant,
-  signOut,
-  searchForGrant,
   clickText,
   clickBack,
   clickSaveAndContinue,
@@ -21,20 +18,7 @@ import {
   advertSection5,
   convertDateToString,
 } from "./helper";
-import {
-  confirmOrgAndFundingDetails,
-  equalitySectionDecline,
-  fillMqFunding,
-  fillMqOrgQuestionsAsLimitedCompany,
-  fillOutEligibity,
-  submitApplication,
-} from "../applicant/helper";
-import {
-  MQ_DETAILS,
-  GRANT_NAME,
-  TASKS,
-  SPOTLIGHT_SUBMISSION_STATUS,
-} from "./constants";
+import { GRANT_NAME, TASKS, SPOTLIGHT_SUBMISSION_STATUS } from "./constants";
 
 const {
   UPDATE_SPOTLIGHT_SUBMISSION_STATUS,
@@ -70,36 +54,9 @@ describe("Create a Grant", () => {
     applicationForm();
   });
 
-  it("V2 External - Download due dilligence data", () => {
-    cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
-
-    // ===========================================
+  it("V2 External - Download due diligence data", () => {
     // Populate data instead of completing journey
-
-    // Sign out and complete application as applicant
-    cy.get('[data-cy="cySignInAndApply-Link"]').click();
-    signInAsApplyApplicant();
-
-    // Search & Start internal application
-    cy.get('[data-cy="cy-find-a-grant-link"]').click();
-    searchForGrant(Cypress.env("testV2ExternalGrant").advertName);
-    cy.contains(Cypress.env("testV2ExternalGrant").advertName).click();
-    cy.contains("Start new application").invoke("removeAttr", "target").click();
-
-    // Before you start
-    cy.contains("Before you start");
-    cy.contains("Continue").click();
-
-    // Mandatory Questions & Confirm Details
-    fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
-    fillMqFunding(MQ_DETAILS);
-    clickText("Confirm and submit");
-
-    // Sign in as admin
-    signOut();
-    // ===========================================
+    cy.task("insertSubmissionsAndMQs");
 
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
@@ -144,42 +101,45 @@ describe("Create a Grant", () => {
   });
 
   it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
-    cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
-
+    // cy.task("publishGrantsToContentful");
+    // // wait for grant to be published to contentful
+    // cy.wait(5000);
+    //
+    // // ===========================================
+    // // Populate data instead of completing journey
+    //
+    // // Sign out and complete application as applicant
+    // cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    // signInAsApplyApplicant();
+    // cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    // searchForGrant(Cypress.env("testV2InternalGrant").advertName);
+    // cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
+    // cy.contains("Start new application").invoke("removeAttr", "target").click();
+    //
+    // cy.contains("Before you start");
+    // cy.contains("Continue").click();
+    //
+    // fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
+    // fillMqFunding(MQ_DETAILS);
+    // clickText("Confirm and submit");
+    // fillOutEligibity();
+    //
+    // confirmOrgAndFundingDetails(
+    //   "",
+    //   "Limited company",
+    //   MQ_DETAILS.fundingLocation,
+    //   MQ_DETAILS,
+    // );
+    // submitApplication();
+    // equalitySectionDecline();
+    // clickText("View your applications");
+    // clickText("Back");
+    //
+    // signOut();
     // ===========================================
+
     // Populate data instead of completing journey
-
-    // Sign out and complete application as applicant
-    cy.get('[data-cy="cySignInAndApply-Link"]').click();
-    signInAsApplyApplicant();
-    cy.get('[data-cy="cy-find-a-grant-link"]').click();
-    searchForGrant(Cypress.env("testV2InternalGrant").advertName);
-    cy.contains(Cypress.env("testV2InternalGrant").advertName).click();
-    cy.contains("Start new application").invoke("removeAttr", "target").click();
-
-    cy.contains("Before you start");
-    cy.contains("Continue").click();
-
-    fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
-    fillMqFunding(MQ_DETAILS);
-    clickText("Confirm and submit");
-    fillOutEligibity();
-
-    confirmOrgAndFundingDetails(
-      "",
-      "Limited company",
-      MQ_DETAILS.fundingLocation,
-      MQ_DETAILS,
-    );
-    submitApplication();
-    equalitySectionDecline();
-    clickText("View your applications");
-    clickText("Back");
-
-    signOut();
-    // ===========================================
+    cy.task("insertSubmissionsAndMQs");
 
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SENT);
 
@@ -193,9 +153,7 @@ describe("Create a Grant", () => {
 
     clickText("Manage due diligence checks");
 
-    cy.contains("You have 1 application in Spotlight.");
-
-    // due dilligence downloads
+    // due diligence downloads
     assert200(cy.get(":nth-child(4) > .govuk-link"));
     assert200(cy.get(":nth-child(6) > .govuk-link"));
 
@@ -263,6 +221,8 @@ describe("Create a Grant", () => {
         expect(jsonData[0].data[1]).to.include.members(data);
       },
     );
+
+    cy.contains("You have 1 application in Spotlight.");
 
     // Check error message
     clickBack();
