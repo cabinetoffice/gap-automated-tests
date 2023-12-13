@@ -67,12 +67,17 @@ describe("Create a Grant", () => {
 
   it("V2 External - Download due diligence data", () => {
     // Populate data instead of completing journey
+    log(
+      "Admin V2 External - Due Diligence download - inserting submissions, mq and spotlight submissions",
+    );
     cy.task("insertSubmissionsAndMQs");
 
+    log("Admin V2 External - Due Diligence download - signing in as admin");
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
 
     // View grant and get due diligence data
+    log("Admin V2 External - Due Diligence download - viewing grant");
     cy.get('[data-cy="cy_SchemeListButton"]').click();
     cy.get(
       '[data-cy="cy_linkToScheme_Cypress - Test Scheme V2 External"]',
@@ -82,14 +87,20 @@ describe("Create a Grant", () => {
     // Check download link works
     assert200(cy.get(":nth-child(4) > .govuk-link"));
 
+    log(
+      "Admin V2 External - Due Diligence download - downloading due diligence",
+    );
     downloadFileFromLink(
       cy.contains("Download due diligence information"),
       "required_checks.xlsx",
     );
 
+    log(
+      "Admin V2 External - Due Diligence download - validating due diligence",
+    );
     validateXlsx("/cypress/downloads/required_checks.xlsx", [
       [
-        "00000010-0000-0000-0000-000000000000",
+        Cypress.env("testV1InternalGrant").advertId,
         "V2 External Limited company",
         "addressLine1, addressLine2",
         "city",
@@ -106,13 +117,20 @@ describe("Create a Grant", () => {
 
   it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
     // Populate data instead of completing journey
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - inserting submissions, mq and spotlight submissions",
+    );
     cy.task("insertSubmissionsAndMQs");
 
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SENT);
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - signing in as admin",
+    );
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
 
+    log("Admin V2 Internal - Manage Due Diligence & Spotlight - viewing grant");
     cy.get('[data-cy="cy_SchemeListButton"]').click();
     cy.get(
       "[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']",
@@ -124,20 +142,29 @@ describe("Create a Grant", () => {
     assert200(cy.get(":nth-child(4) > .govuk-link"));
     assert200(cy.get(":nth-child(6) > .govuk-link"));
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - downloading Spotlight checks",
+    );
     downloadFileFromLink(
       cy.contains("download the information you need to run checks"),
       "spotlight_checks.zip",
     );
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - unzipping Spotlight checks",
+    );
     cy.unzip({ path: "cypress/downloads/", file: "spotlight_checks.zip" });
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - validating Spotlight checks",
+    );
     const timestamp = convertDateToString(Date.now());
     const filePath = "/cypress/downloads/unzip/spotlight_checks";
 
     const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`;
     validateXlsx(limitedCompanyFileName, [
       [
-        "00000011-0000-0000-0000-000000000000",
+        Cypress.env("testV2InternalGrant").advertId,
         "V2 Internal Limited company",
         "addressLine1, addressLine2",
         "city",
@@ -153,7 +180,7 @@ describe("Create a Grant", () => {
     const nonLimitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_non_limited_companies.xlsx`;
     validateXlsx(nonLimitedCompanyFileName, [
       [
-        "00000012-0000-0000-0000-000000000000",
+        Cypress.env("testV2ExternalGrant").advertId,
         "V2 Internal Non-limited company",
         "addressLine1, addressLine2",
         "city",
@@ -166,14 +193,20 @@ describe("Create a Grant", () => {
       ],
     ]);
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - downloading due diligence",
+    );
     downloadFileFromLink(
       cy.contains("Download checks from applications"),
       "required_checks.xlsx",
     );
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - validating due diligence",
+    );
     validateXlsx("/cypress/downloads/required_checks.xlsx", [
       [
-        "00000011-0000-0000-0000-000000000000",
+        Cypress.env("testV2InternalGrant").advertId,
         "V2 Internal Limited company",
         "addressLine1, addressLine2",
         "city",
@@ -186,7 +219,7 @@ describe("Create a Grant", () => {
         "",
       ],
       [
-        "00000012-0000-0000-0000-000000000000",
+        Cypress.env("testV2ExternalGrant").advertId,
         "V2 Internal Non-limited company",
         "addressLine1, addressLine2",
         "city",
@@ -199,7 +232,7 @@ describe("Create a Grant", () => {
         "",
       ],
       [
-        "00000013-0000-0000-0000-000000000000",
+        Cypress.env("testV1ExternalGrant").advertId,
         "V2 Internal Individual",
         "addressLine1, addressLine2",
         "city",
@@ -216,6 +249,9 @@ describe("Create a Grant", () => {
     cy.contains("You have 2 applications in Spotlight.");
 
     // Check error message
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - validating spotlight error messages",
+    );
     clickBack();
 
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, GGIS_ERROR);
@@ -225,6 +261,9 @@ describe("Create a Grant", () => {
 
     clickText("Manage due diligence checks");
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - validating invalid GGIS# spotlight error messages",
+    );
     cy.contains(
       "Spotlight did not recognise the GGIS reference number for your grant.",
     );
@@ -241,6 +280,9 @@ describe("Create a Grant", () => {
       '[data-cy="cy_summaryListValue_GGIS Scheme Reference Number"]',
     ).contains("GGIS_ID_NEW");
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - validating spotlight service outage error messages",
+    );
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SEND_ERROR);
     clickText("Manage due diligence checks");
     cy.contains(
@@ -256,12 +298,17 @@ describe("Create a Grant", () => {
 
   it("V1 Internal - Download Due Diligence Data", () => {
     // Populate data instead of completing journey
+    log(
+      "Admin V1 Internal - Download Due Diligence - inserting submissions, mq and spotlight submissions",
+    );
     cy.task("insertSubmissionsAndMQs");
 
+    log("Admin V1 Internal - Download Due Diligence - signing in as admin");
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
 
     // View V1 internal grant
+    log("Admin V1 Internal - Download Due Diligence - viewing grant");
     cy.get('[data-cy="cy_SchemeListButton"]').click();
     cy.get(
       '[data-cy="cy_linkToScheme_Cypress - Test Scheme V1 Internal"]',
@@ -274,14 +321,20 @@ describe("Create a Grant", () => {
       ),
     );
 
+    log(
+      "Admin V1 Internal - Download Due Diligence - downloading required checks",
+    );
     downloadFileFromLink(
       cy.contains("Download required checks"),
       "required_checks.xlsx",
     );
 
+    log(
+      "Admin V1 Internal - Download Due Diligence - validating required checks",
+    );
     validateXlsx("/cypress/downloads/required_checks.xlsx", [
       [
-        "00000010-0000-0000-0000-000000000000",
+        Cypress.env("testV1InternalGrant").advertId,
         "V1 Internal Limited company",
         "Address line 1, Address line 2",
         "Town",

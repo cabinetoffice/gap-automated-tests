@@ -172,5 +172,6 @@ export default defineConfig({
       json: false,
       overwrite: false,
     },
+    baseUrl: process.env.APPLICATION_BASE_URL,
   },
 });
