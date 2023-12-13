@@ -93,16 +93,18 @@ describe("Create a Grant", () => {
 
     cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
       const data = [
-        "MyOrg",
+        "V2 External Limited company",
         "addressLine1, addressLine2",
         "city",
         "county",
-        "postcod",
+        "postcode",
         "100",
         "67890",
         "12345",
         "Limited company",
       ];
+      expect(jsonData[0].data).to.have.length(2);
+      console.log(JSON.stringify(jsonData[0].data));
       expect(jsonData[0].data[1]).to.include.members(data);
     });
   });
@@ -152,15 +154,37 @@ describe("Create a Grant", () => {
       )}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`,
     ).then((jsonData) => {
       const data = [
-        "MyOrg",
+        "V2 Internal Limited company",
         "addressLine1, addressLine2",
         "city",
         "county",
-        "postcod",
+        "postcode",
         "100",
         "67890",
         "12345",
       ];
+      // Header and one row
+      expect(jsonData[0].data).to.have.length(2);
+      expect(jsonData[0].data[1]).to.include.members(data);
+    });
+
+    cy.parseXlsx(
+      `/cypress/downloads/unzip/spotlight_checks/${convertDateToString(
+        Date.now(),
+      )}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_non_limited_companies.xlsx`,
+    ).then((jsonData) => {
+      const data = [
+        "V2 Internal Non-limited company",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcode",
+        "100",
+        "67890",
+        "12345",
+      ];
+      // Header and one row
+      expect(jsonData[0].data).to.have.length(2);
       expect(jsonData[0].data[1]).to.include.members(data);
     });
 
@@ -177,11 +201,11 @@ describe("Create a Grant", () => {
 
     cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
       const data = [
-        "MyOrg",
+        "V2 Internal Limited company",
         "addressLine1, addressLine2",
         "city",
         "county",
-        "postcod",
+        "postcode",
         "100",
         "67890",
         "12345",
@@ -190,7 +214,7 @@ describe("Create a Grant", () => {
       expect(jsonData[0].data[1]).to.include.members(data);
     });
 
-    cy.contains("You have 1 application in Spotlight.");
+    cy.contains("You have 2 applications in Spotlight.");
 
     // Check error message
     clickBack();
@@ -221,7 +245,7 @@ describe("Create a Grant", () => {
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SEND_ERROR);
     clickText("Manage due diligence checks");
     cy.contains(
-      "Due to a service outage, we cannot automatically send data to Spotlight at the moment. This affects 1 of your records.",
+      "Due to a service outage, we cannot automatically send data to Spotlight at the moment. This affects 2 of your records.",
     );
     clickBack();
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, VALIDATION_ERROR);
