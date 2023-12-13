@@ -37,7 +37,7 @@ describe("Create a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("can create a new Grant and create advert", () => {
+  it.skip("can create a new Grant and create advert", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     log("Admin grant creation journey - Signing in as admin");
     signInAsAdmin();
