@@ -22,12 +22,12 @@ import {
   insertGrantApplicantOrgProfiles,
   insertSchemes,
   insertUsers,
-} from "../ts/insertApplyData";
-import {
   addSubmissionToMostRecentBatch,
   insertMandatoryQuestions,
   insertSpotlightSubmission,
   insertSubmissions,
+} from "../ts/insertApplyData";
+import {
   readdQueuedSpotlightSubmissions,
   removeQueuedSpotlightSubmissions,
   updateSpotlightSubmissionStatus,

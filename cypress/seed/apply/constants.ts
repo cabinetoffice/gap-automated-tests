@@ -8,6 +8,10 @@ import {
   insertApplications,
   insertAdverts,
   addSpotlightBatchRow,
+  addSubmissionToMostRecentBatch,
+  insertMandatoryQuestions,
+  insertSpotlightSubmission,
+  insertSubmissions,
 } from "../ts/insertApplyData";
 import {
   deleteAdverts,
@@ -36,12 +40,6 @@ import {
 } from "../data/apply";
 
 import { getTestID, getUUID } from "./helper";
-import {
-  addSubmissionToMostRecentBatch,
-  insertMandatoryQuestions,
-  insertSpotlightSubmission,
-  insertSubmissions,
-} from "../ts/updateApplyData";
 
 require("dotenv").config();
 
