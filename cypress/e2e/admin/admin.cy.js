@@ -72,15 +72,15 @@ describe("Create a Grant", () => {
 
     cy.log("Logged into admin account - asserting on dashboard content");
     cy.contains("Your grants");
-    cy.contains("Cypress - Test Scheme V1 Internal");
-    cy.contains("Cypress - Test Scheme V2 Internal");
+    cy.contains(Cypress.env("testV1InternalGrant").schemeName);
+    cy.contains(Cypress.env("testV2InternalGrant").schemeName);
     cy.contains("View all grants").click();
     cy.contains("All grants");
     cy.log("asserting on content within the 'all grants' page");
-    cy.contains("Cypress - Test Scheme V2 External");
-    cy.contains("Cypress - Test Scheme V1 External");
-    cy.contains("Cypress - Test Scheme V1 Internal");
-    cy.contains("Cypress - Test Scheme V2 Internal");
+    cy.contains(Cypress.env("testV2ExternalGrant").schemeName);
+    cy.contains(Cypress.env("testV1ExternalGrant").schemeName);
+    cy.contains(Cypress.env("testV2InternalGrant").schemeName);
+    cy.contains(Cypress.env("testV1InternalGrant").schemeName);
     clickText("View");
     cy.contains("Grant summary");
     cy.log("asserting the admin cannot view the super admin dashboard");
@@ -99,9 +99,7 @@ describe("Create a Grant", () => {
     cy.log("Changing user roles");
     clickText("Change Roles");
     cy.log("Adding a department");
-    cy.get(
-      ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
-    ).click();
+    cy.contains("Change").first().click();
     clickText("Cypress - Test Department");
     clickText("Change department");
     signOut();
