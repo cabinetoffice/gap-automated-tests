@@ -1,4 +1,3 @@
-import "dotenv/config";
 import {
   signInToIntegrationSite,
   signInAsAdmin,
