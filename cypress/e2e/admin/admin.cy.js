@@ -6,6 +6,8 @@ import {
   clickSaveAndContinue,
   assert200,
   log,
+  validateXlsx,
+  downloadFileFromLink,
 } from "../../common/common";
 import {
   publishAdvert,
@@ -80,19 +82,14 @@ describe("Create a Grant", () => {
     // Check download link works
     assert200(cy.get(":nth-child(4) > .govuk-link"));
 
-    cy.contains("Download due diligence information")
-      .invoke("attr", "href")
-      .then((url) => {
-        log(Cypress.env("postLoginBaseUrl") + url);
-        cy.downloadFile(
-          Cypress.env("postLoginBaseUrl") + url,
-          "cypress/downloads",
-          "required_checks.xlsx",
-        );
-      });
+    downloadFileFromLink(
+      cy.contains("Download due diligence information"),
+      "required_checks.xlsx",
+    );
 
-    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
-      const data = [
+    validateXlsx("/cypress/downloads/required_checks.xlsx", [
+      [
+        "00000010-0000-0000-0000-000000000000",
         "V2 External Limited company",
         "addressLine1, addressLine2",
         "city",
@@ -102,11 +99,9 @@ describe("Create a Grant", () => {
         "67890",
         "12345",
         "Limited company",
-      ];
-      expect(jsonData[0].data).to.have.length(2);
-      console.log(JSON.stringify(jsonData[0].data));
-      expect(jsonData[0].data[1]).to.include.members(data);
-    });
+        "",
+      ],
+    ]);
   });
 
   it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
@@ -129,31 +124,20 @@ describe("Create a Grant", () => {
     assert200(cy.get(":nth-child(4) > .govuk-link"));
     assert200(cy.get(":nth-child(6) > .govuk-link"));
 
-    // cy.contains("Log in to Spotlight")
-    //   .invoke("attr", "href")
-    //   .then(url => {
-    //     expect(url).to.equal('https://cabinetoffice-spotlight.force.com/s/login/');
-    //   });
-
-    cy.contains("download the information you need to run checks")
-      .invoke("attr", "href")
-      .then((url) => {
-        log(Cypress.env("postLoginBaseUrl") + url);
-        cy.downloadFile(
-          Cypress.env("postLoginBaseUrl") + url,
-          "cypress/downloads",
-          "spotlight_checks.zip",
-        );
-      });
+    downloadFileFromLink(
+      cy.contains("download the information you need to run checks"),
+      "spotlight_checks.zip",
+    );
 
     cy.unzip({ path: "cypress/downloads/", file: "spotlight_checks.zip" });
 
-    cy.parseXlsx(
-      `/cypress/downloads/unzip/spotlight_checks/${convertDateToString(
-        Date.now(),
-      )}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`,
-    ).then((jsonData) => {
-      const data = [
+    const timestamp = convertDateToString(Date.now());
+    const filePath = "/cypress/downloads/unzip/spotlight_checks";
+
+    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`;
+    validateXlsx(limitedCompanyFileName, [
+      [
+        "00000011-0000-0000-0000-000000000000",
         "V2 Internal Limited company",
         "addressLine1, addressLine2",
         "city",
@@ -162,45 +146,34 @@ describe("Create a Grant", () => {
         "100",
         "67890",
         "12345",
-      ];
-      // Header and one row
-      expect(jsonData[0].data).to.have.length(2);
-      expect(jsonData[0].data[1]).to.include.members(data);
-    });
+        "",
+      ],
+    ]);
 
-    cy.parseXlsx(
-      `/cypress/downloads/unzip/spotlight_checks/${convertDateToString(
-        Date.now(),
-      )}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_non_limited_companies.xlsx`,
-    ).then((jsonData) => {
-      const data = [
+    const nonLimitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_non_limited_companies.xlsx`;
+    validateXlsx(nonLimitedCompanyFileName, [
+      [
+        "00000012-0000-0000-0000-000000000000",
         "V2 Internal Non-limited company",
         "addressLine1, addressLine2",
         "city",
         "county",
         "postcode",
         "100",
-        "67890",
-        "12345",
-      ];
-      // Header and one row
-      expect(jsonData[0].data).to.have.length(2);
-      expect(jsonData[0].data[1]).to.include.members(data);
-    });
+        "",
+        "",
+        "",
+      ],
+    ]);
 
-    cy.contains("Download checks from applications")
-      .invoke("attr", "href")
-      .then((url) => {
-        log(Cypress.env("postLoginBaseUrl") + url);
-        cy.downloadFile(
-          Cypress.env("postLoginBaseUrl") + url,
-          "cypress/downloads",
-          "required_checks.xlsx",
-        );
-      });
+    downloadFileFromLink(
+      cy.contains("Download checks from applications"),
+      "required_checks.xlsx",
+    );
 
-    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
-      const data = [
+    validateXlsx("/cypress/downloads/required_checks.xlsx", [
+      [
+        "00000011-0000-0000-0000-000000000000",
         "V2 Internal Limited company",
         "addressLine1, addressLine2",
         "city",
@@ -210,9 +183,35 @@ describe("Create a Grant", () => {
         "67890",
         "12345",
         "Limited company",
-      ];
-      expect(jsonData[0].data[1]).to.include.members(data);
-    });
+        "",
+      ],
+      [
+        "00000012-0000-0000-0000-000000000000",
+        "V2 Internal Non-limited company",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcode",
+        "100",
+        "",
+        "",
+        "Non-limited company",
+        "",
+      ],
+      [
+        "00000013-0000-0000-0000-000000000000",
+        "V2 Internal Individual",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcode",
+        "100",
+        "",
+        "",
+        "I am applying as an Individual",
+        "",
+      ],
+    ]);
 
     cy.contains("You have 2 applications in Spotlight.");
 
@@ -275,27 +274,24 @@ describe("Create a Grant", () => {
       ),
     );
 
-    cy.contains("Download required checks")
-      .invoke("attr", "href")
-      .then((url) => {
-        log(Cypress.env("postLoginBaseUrl") + url);
-        cy.downloadFile(
-          Cypress.env("postLoginBaseUrl") + url,
-          "cypress/downloads",
-          "required_checks.xlsx",
-        );
-      });
+    downloadFileFromLink(
+      cy.contains("Download required checks"),
+      "required_checks.xlsx",
+    );
 
-    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
-      const data = [
-        "My First Org",
+    validateXlsx("/cypress/downloads/required_checks.xlsx", [
+      [
+        "00000010-0000-0000-0000-000000000000",
+        "V1 Internal Limited company",
         "Address line 1, Address line 2",
         "Town",
         "County",
         "Postcode",
         "100",
-      ];
-      expect(jsonData[0].data[1]).to.include.members(data);
-    });
+        "",
+        "",
+        "",
+      ],
+    ]);
   });
 });

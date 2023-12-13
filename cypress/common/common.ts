@@ -146,6 +146,27 @@ export const assert200 = (element: Cypress.Chainable) => {
     });
 };
 
+export const downloadFileFromLink = (
+  element: Cypress.Chainable,
+  filename: string,
+  options = { prepend: true },
+) => {
+  element.invoke("attr", "href").then((url) => {
+    const urlToDownload = options.prepend
+      ? Cypress.env("postLoginBaseUrl") + url
+      : url;
+    cy.downloadFile(urlToDownload, "cypress/downloads", filename);
+  });
+};
+
+export const validateXlsx = (file: string, data: string[][]) => {
+  cy.parseXlsx(file).then((jsonData) => {
+    const rows = jsonData[0].data.slice(1);
+    expect(rows).to.have.length(data.length);
+    expect(rows).to.have.deep.members(data);
+  });
+};
+
 export const log = (message: string) => {
   cy.log(message);
   cy.task("log", message);
