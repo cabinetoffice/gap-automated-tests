@@ -125,8 +125,6 @@ const applyInsertSubstitutions = {
     process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_SUB,
-    APPLICANT_ID,
-    process.env.ONE_LOGIN_APPLICANT_SUB,
   ],
   [insertFundingOrgs]: [FUNDING_ID],
   [insertAdmins]: [

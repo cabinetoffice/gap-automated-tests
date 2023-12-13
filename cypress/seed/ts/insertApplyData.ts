@@ -134,6 +134,7 @@ INSERT INTO public.spotlight_submission (id, grant_mandatory_questions_id, grant
 `;
 
 export {
+  addSubmissionToMostRecentBatch,
   addSpotlightBatchRow,
   addFailedSpotlightOauthAudit,
   insertApplicants,
@@ -147,5 +148,4 @@ export {
   insertSpotlightSubmission,
   insertSubmissions,
   insertMandatoryQuestions,
-  addSubmissionToMostRecentBatch,
 };

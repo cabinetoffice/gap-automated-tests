@@ -146,6 +146,12 @@ export const assert200 = (element: Cypress.Chainable) => {
     });
 };
 
+export const assert404 = (url: string) => {
+  cy.request({ url, failOnStatusCode: false })
+    .its("status")
+    .should("equal", 404);
+};
+
 export const downloadFileFromLink = (
   element: Cypress.Chainable,
   filename: string,
