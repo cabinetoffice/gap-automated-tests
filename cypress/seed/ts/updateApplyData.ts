@@ -17,14 +17,8 @@ const readdQueuedSpotlightSubmissions = `
     WHERE last_send_attempt = '1980-01-01 11:11:11.47596';
 `;
 
-const addSubmissionToMostRecentBatch = `
-    INSERT INTO public.spotlight_batch_submission(spotlight_submission_id, spotlight_batch_id)
-    VALUES ($1, $2);
-`;
-
 export {
   readdQueuedSpotlightSubmissions,
   removeQueuedSpotlightSubmissions,
   updateSpotlightSubmissionStatus,
-  addSubmissionToMostRecentBatch,
 };

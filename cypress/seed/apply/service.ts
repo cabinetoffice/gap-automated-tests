@@ -22,9 +22,9 @@ import {
   insertGrantApplicantOrgProfiles,
   insertSchemes,
   insertUsers,
+  addSubmissionToMostRecentBatch,
 } from "../ts/insertApplyData";
 import {
-  addSubmissionToMostRecentBatch,
   readdQueuedSpotlightSubmissions,
   removeQueuedSpotlightSubmissions,
   updateSpotlightSubmissionStatus,

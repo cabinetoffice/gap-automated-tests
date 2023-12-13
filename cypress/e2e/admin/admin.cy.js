@@ -1,3 +1,4 @@
+import "dotenv/config";
 import {
   signInToIntegrationSite,
   signInAsAdmin,
@@ -8,6 +9,9 @@ import {
   clickBack,
   clickSaveAndContinue,
   assert200,
+  BASE_URL,
+  assert404,
+  signInAsSuperAdmin,
 } from "../../common/common";
 import {
   publishAdvert,
@@ -46,11 +50,63 @@ const {
 const { SENT, SEND_ERROR, GGIS_ERROR, VALIDATION_ERROR } =
   SPOTLIGHT_SUBMISSION_STATUS;
 
+const ADMIN_DASHBOARD_URL = `${BASE_URL}/apply/admin/dashboard`;
+const SUPER_ADMIN_DASHBOARD_URL = `${BASE_URL}/apply/admin/super-admin-dashboard`;
+
 describe("Create a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
     signInToIntegrationSite();
+  });
+
+  it("Applicant cannot view the admin dashboard", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsApplyApplicant();
+    assert404(ADMIN_DASHBOARD_URL);
+  });
+
+  it("Admin can view the dashboard, cannot access the super-admin dashboard", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+    cy.contains("Your grants");
+    cy.contains("Cypress - Test Scheme V1 Internal");
+    cy.contains("Cypress - Test Scheme V2 Internal");
+    cy.contains("View all grants").click();
+    cy.contains("All grants");
+    cy.contains("Cypress - Test Scheme V2 External");
+    cy.contains("Cypress - Test Scheme V1 External");
+    cy.contains("Cypress - Test Scheme V1 Internal");
+    cy.contains("Cypress - Test Scheme V2 Internal");
+    clickText("View");
+    cy.contains("Grant summary");
+    assert404(SUPER_ADMIN_DASHBOARD_URL);
+  });
+
+  it("Applicant promoted to admin can view the dashboard", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsSuperAdmin();
+    cy.log("Entering super admin email in search box");
+    cy.get("[name=searchTerm]").type(Cypress.env("oneLoginApplicantEmail"));
+    cy.get("[data-cy=cy-button-Search]").click();
+    cy.contains("Edit").first().click();
+    clickText("Change");
+    cy.get("[data-cy=cy-checkbox-value-3]").check();
+    clickText("Change Roles");
+    cy.get(
+      ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
+    ).click();
+    clickText("Cypress - Test Department");
+    clickText("Change department");
+    signOut();
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsApplyApplicant();
+    cy.contains("Manage a grant");
+    cy.contains(
+      "Use this service to add your grant details and build an application form for applicants to use.",
+    );
+    cy.contains("Add grant details");
+    cy.contains("Start by adding the details of your grant.");
   });
 
   it("can create a new Grant and create advert", () => {

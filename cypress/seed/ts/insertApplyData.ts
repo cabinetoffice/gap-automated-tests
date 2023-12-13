@@ -10,8 +10,7 @@ const insertUsers: string = `
 INSERT INTO public.gap_user (gap_user_id, user_sub)
     VALUES
     ($1, $2),
-    ($3, $4),
-    ($5, $6);
+    ($3, $4);
 `;
 
 const insertFundingOrgs: string = `
@@ -73,7 +72,13 @@ const addSpotlightBatchRow = `
     INSERT INTO public.spotlight_batch(id, status, last_send_attempt, version, created, last_updated)
     VALUES ($1, 'FAILURE', NOW(), 1, NOW(), NOW());`;
 
+const addSubmissionToMostRecentBatch = `
+    INSERT INTO public.spotlight_batch_submission(spotlight_submission_id, spotlight_batch_id)
+    VALUES ($1, $2);
+`;
+
 export {
+  addSubmissionToMostRecentBatch,
   addSpotlightBatchRow,
   addFailedSpotlightOauthAudit,
   insertApplicants,
