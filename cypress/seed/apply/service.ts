@@ -44,7 +44,10 @@ import {
   V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
 } from "./constants";
 
-const runSqlForApply = async (scripts: string[], substitutions: any) =>
+const runSqlForApply = async (
+  scripts: string[],
+  substitutions: Record<string, any[]>,
+) =>
   await runSQLFromJs(
     scripts,
     substitutions,

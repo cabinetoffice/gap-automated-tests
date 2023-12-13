@@ -38,12 +38,11 @@
 
 require("cypress-downloadfile/lib/downloadFileCommand");
 
-// @ts-expect-error The types seem to be incorrect on this function, but it does work as described in the comments above
-Cypress.Commands.add("parseXlsx", (inputFile) => {
+type Command = keyof Cypress.Chainable;
+Cypress.Commands.add("parseXlsx" as Command, (inputFile) => {
   return cy.task("parseXlsx", { filePath: inputFile });
 });
 
-// @ts-expect-error The types seem to be incorrect on this function, but it does work as described in the comments above
-Cypress.Commands.add("unzip", (input) => {
+Cypress.Commands.add("unzip" as Command, (input) => {
   return cy.task("unzip", input);
 });
