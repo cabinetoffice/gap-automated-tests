@@ -13,6 +13,7 @@ import {
   log,
   validateXlsx,
   downloadFileFromLink,
+  searchForGrant,
 } from "../../common/common";
 import {
   publishAdvert,
@@ -24,8 +25,16 @@ import {
   advertSection4,
   advertSection5,
   convertDateToString,
+  validateSubmissionDownload,
 } from "./helper";
 import { GRANT_NAME, TASKS, SPOTLIGHT_SUBMISSION_STATUS } from "./constants";
+import {
+  equalitySectionDecline,
+  fillOutCustomSection,
+  fillOutEligibity,
+  fillOutRequiredChecks,
+  submitApplication,
+} from "../applicant/helper";
 
 const {
   UPDATE_SPOTLIGHT_SUBMISSION_STATUS,
@@ -374,23 +383,7 @@ describe("Create a Grant", () => {
     log(
       "Admin V2 Internal - Manage Due Diligence & Spotlight - Validating downloaded submission export",
     );
-    cy.task(
-      "getExportedSubmissionUrlAndLocation",
-      Cypress.env("testV2InternalGrant").schemeId,
-    ).then((submission) => {
-      cy.visit(submission.url);
-
-      downloadFileFromLink(cy.contains("Download"), "submission_export.zip");
-
-      cy.unzip({ path: "cypress/downloads/", file: "submission_export.zip" });
-
-      const folder = "cypress/downloads/unzip/submission_export";
-      // Filename is limited to 50 characters before _1 is added
-      const submissionFileName = submission.location
-        .split(".zip")[0]
-        .substring(0, 50);
-      cy.readFile(`${folder}/${submissionFileName}_1.odt`);
-    });
+    validateSubmissionDownload(Cypress.env("testV2InternalGrant").schemeId);
   });
 
   it("V1 Internal - Download Due Diligence Data", () => {
@@ -444,6 +437,9 @@ describe("Create a Grant", () => {
       ],
     ]);
 
+    log(
+      "Admin V1 Internal - Download Submission Export - Initiating download of submission export",
+    );
     cy.get(
       '[data-cy="cy_Scheme-details-page-button-View submitted application"]',
     ).click();
@@ -452,25 +448,97 @@ describe("Create a Grant", () => {
 
     cy.contains("A list of applications is being created");
 
+    log(
+      "Admin V1 Internal - Download Submission Export - Waiting for submission export lambda to execute",
+    );
     cy.wait(10000);
-    cy.task(
-      "getExportedSubmissionUrlAndLocation",
-      Cypress.env("testV1InternalGrant").schemeId,
-    ).then((submission) => {
-      cy.visit(submission.url);
 
-      downloadFileFromLink(cy.contains("Download"), "submission_export.zip");
+    log(
+      "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
+    );
+    validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
+    cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
+  });
 
-      cy.unzip({ path: "cypress/downloads/", file: "submission_export.zip" });
+  it("V1 Internal - Download Submission Export", () => {
+    cy.task("publishGrantsToContentful");
+    // wait for grant to be published to contentful
+    cy.wait(5000);
 
-      const folder = "cypress/downloads/unzip/submission_export";
-      // Filename is limited to 50 characters before _1 is added
-      const submissionFileName = submission.location
-        .split(".zip")[0]
-        .substring(0, 50);
-      cy.readFile(`${folder}/${submissionFileName}_1.odt`);
+    // Sign in and complete application as applicant
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    log(
+      "Admin V1 Internal - Download Submission Export - Signing in as applicant",
+    );
+    signInAsApplyApplicant();
 
-      // cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
-    });
+    // Search & Start internal application
+    log(
+      "Admin V1 Internal - Download Submission Export - Searching for and starting application",
+    );
+    cy.get('[data-cy="cy-find-a-grant-link"]').click();
+    searchForGrant(Cypress.env("testV1InternalGrant").advertName);
+    cy.contains(Cypress.env("testV1InternalGrant").advertName).click();
+    cy.contains("Start new application").invoke("removeAttr", "target").click();
+
+    // Complete application
+    log(
+      "Admin V1 Internal - Download Submission Export - Filling out Eligibility",
+    );
+    fillOutEligibity();
+    log(
+      "Admin V1 Internal - Download Submission Export - Filling out Required Checks",
+    );
+    fillOutRequiredChecks();
+    log(
+      "Admin V1 Internal - Download Submission Export - Filling out Custom Section with Doc upload",
+    );
+    fillOutCustomSection();
+    log(
+      "Admin V1 Internal - Download Submission Export - Submitting application",
+    );
+    submitApplication();
+    log(
+      "Admin V1 Internal - Download Submission Export - Declining Equality Section",
+    );
+    equalitySectionDecline();
+
+    // Sign in as admin
+    log(
+      "Admin V1 Internal - Download Submission Export - Signing out as applicant",
+    );
+    signOut();
+
+    log("Admin V1 Internal - Download Submission Export - signing in as admin");
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+
+    // View V1 internal grant
+    log("Admin V1 Internal - Download Submission Export - viewing grant");
+    cy.get('[data-cy="cy_SchemeListButton"]').click();
+    cy.get(
+      '[data-cy="cy_linkToScheme_Cypress - Test Scheme V1 Internal"]',
+    ).click();
+    log(
+      "Admin V1 Internal - Download Submission Export - Initiating download of submission export",
+    );
+    cy.get(
+      '[data-cy="cy_Scheme-details-page-button-View submitted application"]',
+    ).click();
+
+    cy.get('[data-cy="cy-button-Download submitted applications"]').click();
+
+    cy.contains("A list of applications is being created");
+
+    log(
+      "Admin V1 Internal - Download Submission Export - Waiting for submission export lambda to execute",
+    );
+    cy.wait(10000);
+
+    log(
+      "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
+    );
+    validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
+    cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
   });
 });
