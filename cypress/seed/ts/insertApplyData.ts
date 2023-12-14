@@ -10,8 +10,7 @@ const insertUsers: string = `
 INSERT INTO public.gap_user (gap_user_id, user_sub)
     VALUES
     ($1, $2),
-    ($3, $4),
-    ($5, $6);
+    ($3, $4);
 `;
 
 const insertFundingOrgs: string = `
