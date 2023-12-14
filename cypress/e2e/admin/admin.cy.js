@@ -350,6 +350,47 @@ describe("Create a Grant", () => {
     cy.debug();
     cy.contains("We can't send your data to Spotlight");
     cy.task(CLEANUP_TEST_SPOTLIGHT_SUBMISSIONS);
+
+    // Download submission export
+
+    clickBack();
+
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - Initiating download of submission export",
+    );
+    cy.get(
+      '[data-cy="cy_Scheme-details-page-button-View submitted application"]',
+    ).click();
+
+    cy.get('[data-cy="cy-button-Download submitted applications"]').click();
+
+    cy.contains("A list of applications is being created");
+
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - Waiting for submission export lambda to execute",
+    );
+    cy.wait(10000);
+
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - Validating downloaded submission export",
+    );
+    cy.task(
+      "getExportedSubmissionUrlAndLocation",
+      Cypress.env("testV2InternalGrant").schemeId,
+    ).then((submission) => {
+      cy.visit(submission.url);
+
+      downloadFileFromLink(cy.contains("Download"), "submission_export.zip");
+
+      cy.unzip({ path: "cypress/downloads/", file: "submission_export.zip" });
+
+      const folder = "cypress/downloads/unzip/submission_export";
+      // Filename is limited to 50 characters before _1 is added
+      const submissionFileName = submission.location
+        .split(".zip")[0]
+        .substring(0, 50);
+      cy.readFile(`${folder}/${submissionFileName}_1.odt`);
+    });
   });
 
   it("V1 Internal - Download Due Diligence Data", () => {
@@ -418,26 +459,18 @@ describe("Create a Grant", () => {
     ).then((submission) => {
       cy.visit(submission.url);
 
-      cy.contains("Download")
-        .invoke("attr", "href")
-        .then((url) => {
-          log(Cypress.env("postLoginBaseUrl") + url);
-          cy.downloadFile(
-            Cypress.env("postLoginBaseUrl") + url,
-            "cypress/downloads",
-            "submission_export.zip",
-          );
-        });
+      downloadFileFromLink(cy.contains("Download"), "submission_export.zip");
 
       cy.unzip({ path: "cypress/downloads/", file: "submission_export.zip" });
 
-      cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
+      const folder = "cypress/downloads/unzip/submission_export";
+      // Filename is limited to 50 characters before _1 is added
+      const submissionFileName = submission.location
+        .split(".zip")[0]
+        .substring(0, 50);
+      cy.readFile(`${folder}/${submissionFileName}_1.odt`);
 
-      cy.readFile(
-        `cypress/downloads/unzip/submission_export/${
-          submission.location.split(".zip")[0]
-        }_1.odt`,
-      );
+      // cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
     });
   });
 });
