@@ -7,6 +7,11 @@ import {
   insertSchemes,
   insertApplications,
   insertAdverts,
+  addSpotlightBatchRow,
+  addSubmissionToMostRecentBatch,
+  insertMandatoryQuestions,
+  insertSpotlightSubmission,
+  insertSubmissions,
 } from "../ts/insertApplyData";
 import {
   deleteAdverts,
@@ -18,6 +23,8 @@ import {
   deleteUsers,
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
+  deleteSpotlightSubmissionRow,
+  deleteSpotlightBatchRow,
 } from "../ts/deleteApplyData";
 import {
   TEST_V1_INTERNAL_GRANT,
@@ -52,14 +59,34 @@ const SUPER_ADMIN_ID = getTestID();
 const ADMIN_ID = getTestID(1);
 const APPLICANT_ID = getTestID(2);
 const FUNDING_ID = getTestID();
-const SCHEME_ID = getTestID();
+
+const V1_INTERNAL_SCHEME_ID = getTestID();
+const V1_EXTERNAL_SCHEME_ID = getTestID(3);
+const V2_INTERNAL_SCHEME_ID = getTestID(1);
+const V2_EXTERNAL_SCHEME_ID = getTestID(2);
 
 const ADVERT_ID_V1_INTERNAL = getUUID();
 const ADVERT_ID_V1_EXTERNAL = getUUID(3);
 const ADVERT_ID_V2_INTERNAL = getUUID(1);
 const ADVERT_ID_V2_EXTERNAL = getUUID(2);
-const SPOTLIGHT_SUBMISSION_ID = getUUID(4);
 const SPOTLIGHT_BATCH_ID = getUUID(5);
+
+// The IDs of the submissions and MQs are not linked to the advert schemes themselves, they're just unique UUIDs.
+const V1_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID = ADVERT_ID_V1_INTERNAL;
+const V2_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID = ADVERT_ID_V2_INTERNAL;
+const V2_INTERNAL_NON_LIMITED_COMPANY_SUBMISSION_ID = ADVERT_ID_V2_EXTERNAL;
+const V2_INTERNAL_INDIVIDUAL_SUBMISSION_ID = ADVERT_ID_V1_EXTERNAL;
+
+const V2_EXTERNAL_LIMITED_COMPANY_MANDATORY_QUESTION_ID = ADVERT_ID_V1_INTERNAL;
+const V2_INTERNAL_LIMITED_COMPANY_MANDATORY_QUESTION_ID = ADVERT_ID_V2_INTERNAL;
+const V2_INTERNAL_NON_LIMITED_COMPANY_MANDATORY_QUESTION_ID =
+  ADVERT_ID_V2_EXTERNAL;
+const V2_INTERNAL_INDIVIDUAL_MANDATORY_QUESTION_ID = ADVERT_ID_V1_EXTERNAL;
+
+const V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID =
+  V2_INTERNAL_LIMITED_COMPANY_MANDATORY_QUESTION_ID;
+const V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID =
+  V2_INTERNAL_NON_LIMITED_COMPANY_MANDATORY_QUESTION_ID;
 
 const MQ_DETAILS = {
   name: "MyOrg",
@@ -84,7 +111,7 @@ const MQ_DETAILS = {
   ],
 };
 
-const applySubstitutions = {
+const applyInsertSubstitutions = {
   [insertApplicants]: [
     SUPER_ADMIN_ID,
     process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
@@ -117,35 +144,35 @@ const applySubstitutions = {
     APPLICANT_ID,
   ],
   [insertSchemes]: [
-    SCHEME_ID,
+    V1_INTERNAL_SCHEME_ID,
     FUNDING_ID,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
-    SCHEME_ID - 1,
+    V2_INTERNAL_SCHEME_ID,
     FUNDING_ID,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
-    SCHEME_ID - 2,
+    V2_EXTERNAL_SCHEME_ID,
     FUNDING_ID,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
-    SCHEME_ID - 3,
+    V1_EXTERNAL_SCHEME_ID,
     FUNDING_ID,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     ADMIN_ID,
   ],
   [insertApplications]: [
-    SCHEME_ID,
-    SCHEME_ID,
+    V1_INTERNAL_SCHEME_ID,
+    V1_INTERNAL_SCHEME_ID,
     ADMIN_ID,
     TEST_V1_INTERNAL_GRANT.applicationName,
     ADMIN_ID,
-    SCHEME_ID - 1,
-    SCHEME_ID - 1,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_SCHEME_ID,
     ADMIN_ID,
     TEST_V2_INTERNAL_GRANT.applicationName,
     ADMIN_ID,
@@ -158,7 +185,7 @@ const applySubstitutions = {
     v1InternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
-    SCHEME_ID,
+    V1_INTERNAL_SCHEME_ID,
     ADVERT_ID_V2_INTERNAL,
     TEST_V2_INTERNAL_GRANT.contentfulId,
     TEST_V2_INTERNAL_GRANT.contentfulSlug,
@@ -166,7 +193,7 @@ const applySubstitutions = {
     v2InternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
-    SCHEME_ID - 1,
+    V2_INTERNAL_SCHEME_ID,
     ADVERT_ID_V2_EXTERNAL,
     TEST_V2_EXTERNAL_GRANT.contentfulId,
     TEST_V2_EXTERNAL_GRANT.contentfulSlug,
@@ -174,7 +201,7 @@ const applySubstitutions = {
     v2ExternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
-    SCHEME_ID - 2,
+    V2_EXTERNAL_SCHEME_ID,
     ADVERT_ID_V1_EXTERNAL,
     TEST_V1_EXTERNAL_GRANT.contentfulId,
     TEST_V1_EXTERNAL_GRANT.contentfulSlug,
@@ -182,8 +209,11 @@ const applySubstitutions = {
     v1ExternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
-    SCHEME_ID - 3,
+    V1_EXTERNAL_SCHEME_ID,
   ],
+};
+
+const applyDeleteSubstitutions = {
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [
     SUPER_ADMIN_ID,
@@ -202,20 +232,113 @@ const applySubstitutions = {
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 
+const spotlightSubstitutions = {
+  [addSubmissionToMostRecentBatch]: [
+    V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+    SPOTLIGHT_BATCH_ID,
+    V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+    SPOTLIGHT_BATCH_ID,
+  ],
+  [deleteSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
+  [deleteSpotlightSubmissionRow]: [V2_INTERNAL_SCHEME_ID],
+  [addSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
+};
+
+const applyUpdateSubstitutions = {
+  [insertSubmissions]: [
+    // V1 Internal Limited company application
+    V1_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    APPLICANT_ID,
+    V1_INTERNAL_SCHEME_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V1_INTERNAL_SCHEME_ID,
+    V1_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    // V2 Internal Limited company application
+    V2_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    APPLICANT_ID,
+    V2_INTERNAL_SCHEME_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    // V2 Internal Non-limited company application
+    V2_INTERNAL_NON_LIMITED_COMPANY_SUBMISSION_ID,
+    ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    ADMIN_ID,
+    ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_NON_LIMITED_COMPANY_SUBMISSION_ID,
+    // V2 Internal Individual application
+    V2_INTERNAL_INDIVIDUAL_SUBMISSION_ID,
+    SUPER_ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    SUPER_ADMIN_ID,
+    SUPER_ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_INDIVIDUAL_SUBMISSION_ID,
+  ],
+  [insertMandatoryQuestions]: [
+    // Internal Limited company application
+    V2_INTERNAL_LIMITED_COMPANY_MANDATORY_QUESTION_ID,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V2_INTERNAL_LIMITED_COMPANY_MANDATORY_QUESTION_ID,
+    // External Limited company application
+    V2_EXTERNAL_LIMITED_COMPANY_MANDATORY_QUESTION_ID,
+    V2_EXTERNAL_SCHEME_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V2_EXTERNAL_LIMITED_COMPANY_MANDATORY_QUESTION_ID,
+    // Internal Non-limited company application
+    V2_INTERNAL_NON_LIMITED_COMPANY_MANDATORY_QUESTION_ID,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_NON_LIMITED_COMPANY_SUBMISSION_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V2_INTERNAL_NON_LIMITED_COMPANY_MANDATORY_QUESTION_ID,
+    // Internal Individual application
+    V2_INTERNAL_INDIVIDUAL_MANDATORY_QUESTION_ID,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_INDIVIDUAL_SUBMISSION_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V2_INTERNAL_INDIVIDUAL_MANDATORY_QUESTION_ID,
+  ],
+  [insertSpotlightSubmission]: [
+    V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+    V2_INTERNAL_LIMITED_COMPANY_MANDATORY_QUESTION_ID,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+    V2_INTERNAL_NON_LIMITED_COMPANY_MANDATORY_QUESTION_ID,
+    V2_INTERNAL_SCHEME_ID,
+  ],
+};
+
 export {
-  applySubstitutions,
+  applyInsertSubstitutions,
+  applyDeleteSubstitutions,
+  applyUpdateSubstitutions,
+  spotlightSubstitutions,
   applyServiceDbName,
   applyDatabaseUrl,
   SUPER_ADMIN_ID,
   ADMIN_ID,
   APPLICANT_ID,
   FUNDING_ID,
-  SCHEME_ID,
+  V1_INTERNAL_SCHEME_ID,
+  V1_EXTERNAL_SCHEME_ID,
+  V2_INTERNAL_SCHEME_ID,
+  V2_EXTERNAL_SCHEME_ID,
   ADVERT_ID_V1_INTERNAL,
   ADVERT_ID_V1_EXTERNAL,
   ADVERT_ID_V2_INTERNAL,
   ADVERT_ID_V2_EXTERNAL,
-  SPOTLIGHT_SUBMISSION_ID,
+  V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+  V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   SPOTLIGHT_BATCH_ID,
   MQ_DETAILS,
 };

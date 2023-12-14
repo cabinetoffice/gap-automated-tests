@@ -1,4 +1,5 @@
 import { defineConfig } from "cypress";
+import { downloadFile } from "cypress-downloadfile/lib/addPlugin";
 import {
   addFailedOauthAudit,
   createTestUsers,
@@ -14,6 +15,7 @@ import {
   cleanupTestSpotlightSubmissions,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
+  insertSubmissionsAndMQs,
 } from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
@@ -23,6 +25,9 @@ import {
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
 } from "./cypress/common/constants";
+const xlsx = require("node-xlsx").default;
+const fs = require("fs");
+const decompress = require("decompress");
 require("dotenv").config();
 
 export default defineConfig({
@@ -85,6 +90,26 @@ export default defineConfig({
 
           return null;
         },
+        async insertSubmissionsAndMQs() {
+          await insertSubmissionsAndMQs();
+
+          return null;
+        },
+        downloadFile,
+        async parseXlsx({ filePath }) {
+          try {
+            return xlsx.parse(fs.readFileSync(__dirname + filePath));
+          } catch (e) {
+            console.error(e);
+            return null;
+          }
+        },
+        unzip({ path, file }) {
+          return decompress(
+            path + file,
+            path + "unzip/" + file.replace(".zip", ""),
+          );
+        },
         log(message) {
           console.log(message);
 
@@ -143,5 +168,6 @@ export default defineConfig({
       json: false,
       overwrite: false,
     },
+    baseUrl: process.env.APPLICATION_BASE_URL,
   },
 });

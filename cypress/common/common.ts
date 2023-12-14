@@ -1,6 +1,8 @@
 export const BASE_URL = Cypress.env("applicationBaseUrl");
 export const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
 export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
+export const ADMIN_DASHBOARD_URL = `${BASE_URL}/apply/admin/dashboard`;
+export const SUPER_ADMIN_DASHBOARD_URL = `${BASE_URL}/apply/admin/super-admin-dashboard`;
 
 export const signInWithOneLoginApply = (email: string, password: string) => {
   cy.contains("Sign in with GOV.UK One Login").click();
@@ -150,6 +152,27 @@ export const assert404 = (url: string) => {
   cy.request({ url, failOnStatusCode: false })
     .its("status")
     .should("equal", 404);
+};
+
+export const downloadFileFromLink = (
+  element: Cypress.Chainable,
+  filename: string,
+  options = { prepend: true },
+) => {
+  element.invoke("attr", "href").then((url) => {
+    const urlToDownload = options.prepend
+      ? Cypress.env("postLoginBaseUrl") + url
+      : url;
+    cy.downloadFile(urlToDownload, "cypress/downloads", filename);
+  });
+};
+
+export const validateXlsx = (file: string, data: string[][]) => {
+  cy.parseXlsx(file).then((jsonData: Array<{ data: string | any[] }>) => {
+    const rows = jsonData[0].data.slice(1);
+    expect(rows).to.have.length(data.length);
+    expect(rows).to.have.deep.members(data);
+  });
 };
 
 export const log = (message: string) => {

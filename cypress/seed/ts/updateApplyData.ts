@@ -1,8 +1,7 @@
 const updateSpotlightSubmissionStatus: string = `
     UPDATE public.spotlight_submission
-    SET status = $1, last_send_attempt = NOW(),
-    id = $2
-    WHERE grant_scheme = $3;
+    SET status = $1, last_send_attempt = NOW()
+    WHERE grant_scheme = $2 AND id IN ($3, $4);
 `;
 
 const removeQueuedSpotlightSubmissions: string = `

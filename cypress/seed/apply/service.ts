@@ -23,6 +23,9 @@ import {
   insertSchemes,
   insertUsers,
   addSubmissionToMostRecentBatch,
+  insertMandatoryQuestions,
+  insertSpotlightSubmission,
+  insertSubmissions,
 } from "../ts/insertApplyData";
 import {
   readdQueuedSpotlightSubmissions,
@@ -30,16 +33,30 @@ import {
   updateSpotlightSubmissionStatus,
 } from "../ts/updateApplyData";
 import {
-  SCHEME_ID,
-  SPOTLIGHT_BATCH_ID,
-  SPOTLIGHT_SUBMISSION_ID,
+  V2_INTERNAL_SCHEME_ID,
   applyDatabaseUrl,
   applyServiceDbName,
-  applySubstitutions,
+  spotlightSubstitutions,
+  applyInsertSubstitutions,
+  applyDeleteSubstitutions,
+  applyUpdateSubstitutions,
+  V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+  V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
 } from "./constants";
 
-const createApplyData = async (): Promise<void> => {
+const runSqlForApply = async (
+  scripts: string[],
+  substitutions: Record<string, any[]>,
+) =>
   await runSQLFromJs(
+    scripts,
+    substitutions,
+    applyServiceDbName,
+    applyDatabaseUrl,
+  );
+
+const createApplyData = async (): Promise<void> => {
+  await runSqlForApply(
     [
       insertApplicants,
       insertUsers,
@@ -50,15 +67,13 @@ const createApplyData = async (): Promise<void> => {
       insertApplications,
       insertAdverts,
     ],
-    applySubstitutions,
-    applyServiceDbName,
-    applyDatabaseUrl,
+    applyInsertSubstitutions,
   );
   console.log("Successfully added data to Apply database");
 };
 
 const deleteApplyData = async (): Promise<void> => {
-  await runSQLFromJs(
+  await runSqlForApply(
     [
       deleteAdverts,
       deleteSubmissions,
@@ -70,102 +85,72 @@ const deleteApplyData = async (): Promise<void> => {
       deleteFundingOrgs,
       deleteApplicantOrgProfiles,
     ],
-    applySubstitutions,
-    applyServiceDbName,
-    applyDatabaseUrl,
+    applyDeleteSubstitutions,
   );
   console.log("Successfully removed data from Apply database");
 };
 
 const cleanupTestSpotlightSubmissions = async () => {
-  await runSQLFromJs(
-    [readdQueuedSpotlightSubmissions],
-    null,
-    applyServiceDbName,
-    applyDatabaseUrl,
-  );
+  await runSqlForApply([readdQueuedSpotlightSubmissions], null);
 };
 
 const updateSpotlightSubmission = async (status: string) => {
-  await runSQLFromJs(
-    [removeQueuedSpotlightSubmissions],
-    null,
-    applyServiceDbName,
-    applyDatabaseUrl,
-  );
+  await runSqlForApply([removeQueuedSpotlightSubmissions], null);
 
-  const row = await runSQLFromJs(
-    [updateSpotlightSubmissionStatus],
-    {
-      [updateSpotlightSubmissionStatus]: [
-        status,
-        SPOTLIGHT_SUBMISSION_ID,
-        SCHEME_ID - 1,
-      ],
-    },
-    applyServiceDbName,
-    applyDatabaseUrl,
-  );
+  const row = await runSqlForApply([updateSpotlightSubmissionStatus], {
+    [updateSpotlightSubmissionStatus]: [
+      status,
+      V2_INTERNAL_SCHEME_ID,
+      V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+      V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+    ],
+  });
 
   return row;
 };
 
 const addToRecentBatch = async () => {
-  const row = await runSQLFromJs(
+  const row = await runSqlForApply(
     [addSubmissionToMostRecentBatch],
-    {
-      [addSubmissionToMostRecentBatch]: [
-        SPOTLIGHT_SUBMISSION_ID,
-        SPOTLIGHT_BATCH_ID,
-      ],
-    },
-    applyServiceDbName,
-    applyDatabaseUrl,
+    spotlightSubstitutions,
   );
 
   return row;
 };
 
 const deleteSpotlightBatch = async () => {
-  const row = await runSQLFromJs(
+  const row = await runSqlForApply(
     [deleteSpotlightBatchRow],
-    {
-      [deleteSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
-    },
-    applyServiceDbName,
-    applyDatabaseUrl,
+    spotlightSubstitutions,
   );
 
   return row;
 };
 
 const deleteSpotlightSubmission = async () => {
-  await runSQLFromJs(
-    [deleteSpotlightSubmissionRow],
-    {
-      [deleteSpotlightSubmissionRow]: [SCHEME_ID - 1],
-    },
-    applyServiceDbName,
-    applyDatabaseUrl,
-  );
+  await runSqlForApply([deleteSpotlightSubmissionRow], spotlightSubstitutions);
 };
 
 const addSpotlightBatch = async () => {
-  const row = await runSQLFromJs(
+  const row = await runSqlForApply(
     [addSpotlightBatchRow],
-    {
-      [addSpotlightBatchRow]: [SPOTLIGHT_BATCH_ID],
-    },
-    applyServiceDbName,
-    applyDatabaseUrl,
+    spotlightSubstitutions,
   );
 
   return row;
 };
 
+const insertSubmissionsAndMQs = async () => {
+  await runSqlForApply(
+    [insertSubmissions, insertMandatoryQuestions, insertSpotlightSubmission],
+    applyUpdateSubstitutions,
+  );
+};
+
 export {
   createApplyData,
   deleteApplyData,
+  insertSubmissionsAndMQs,
   cleanupTestSpotlightSubmissions,
   updateSpotlightSubmission,
   addToRecentBatch,
