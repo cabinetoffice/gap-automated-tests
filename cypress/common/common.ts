@@ -166,7 +166,7 @@ export const downloadFileFromLink = (
 };
 
 export const validateXlsx = (file: string, data: string[][]) => {
-  cy.parseXlsx(file).then((jsonData) => {
+  cy.parseXlsx(file).then((jsonData: Array<{ data: string | any[] }>) => {
     const rows = jsonData[0].data.slice(1);
     expect(rows).to.have.length(data.length);
     expect(rows).to.have.deep.members(data);
