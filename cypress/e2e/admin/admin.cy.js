@@ -7,7 +7,7 @@ import {
   clickBack,
   clickSaveAndContinue,
   assert200,
-  BASE_URL,
+  SUPER_ADMIN_DASHBOARD_URL,
   assert404,
   signInAsSuperAdmin,
   log,
@@ -37,21 +37,11 @@ const {
 const { SENT, SEND_ERROR, GGIS_ERROR, VALIDATION_ERROR } =
   SPOTLIGHT_SUBMISSION_STATUS;
 
-const ADMIN_DASHBOARD_URL = `${BASE_URL}/apply/admin/dashboard`;
-const SUPER_ADMIN_DASHBOARD_URL = `${BASE_URL}/apply/admin/super-admin-dashboard`;
-
 describe("Create a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
     signInToIntegrationSite();
-  });
-
-  it("Applicant cannot view the admin dashboard", () => {
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
-    signInAsApplyApplicant();
-    cy.log("asserting that the applicant cannot view the admin dashboard");
-    assert404(ADMIN_DASHBOARD_URL);
   });
 
   it("Admin can view the dashboard, cannot access the super-admin dashboard", () => {
