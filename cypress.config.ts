@@ -98,16 +98,12 @@ export default defineConfig({
         },
         downloadFile,
         async parseXlsx({ filePath }) {
-          return await new Promise((resolve, reject) => {
-            try {
-              const jsonData = xlsx.parse(
-                fs.readFileSync(__dirname + filePath),
-              );
-              resolve(jsonData);
-            } catch (e) {
-              reject(e);
-            }
-          });
+          try {
+            return xlsx.parse(fs.readFileSync(__dirname + filePath));
+          } catch (e) {
+            console.error(e);
+            return null;
+          }
         },
         unzip({ path, file }) {
           return decompress(
@@ -176,5 +172,6 @@ export default defineConfig({
       json: false,
       overwrite: false,
     },
+    baseUrl: process.env.APPLICATION_BASE_URL,
   },
 });

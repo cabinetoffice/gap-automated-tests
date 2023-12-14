@@ -1,4 +1,4 @@
-import { getTestID } from "../seed/apply/helper";
+import { getUUID , getTestID } from "../seed/apply/helper";
 
 require("dotenv").config();
 
@@ -8,6 +8,7 @@ const secondGrantId = Math.abs(+process.env.FIRST_USER_ID) + 1;
 
 export const TEST_V1_INTERNAL_GRANT = {
   advertName: `Cypress - Automated E2E Test Grant V1 Internal ID:${firstUserId}`,
+  advertId: getUUID(),
   contentfulId: `cypress_test_advert_v1_internal_contentful_id_${firstUserId}`,
   contentfulSlug: `cypress_test_advert_v1_internal_contentful_slug_${firstUserId}`,
   applicationUrl: `${process.env.POST_LOGIN_BASE_URL}/apply/applicant/applications/-${firstGrantId}`,
@@ -18,6 +19,7 @@ export const TEST_V1_INTERNAL_GRANT = {
 
 export const TEST_V1_EXTERNAL_GRANT = {
   advertName: `Cypress - Automated E2E Test Grant V1 External ID:${firstUserId}`,
+  advertId: getUUID(3),
   contentfulId: `cypress_test_advert_v1_external_contentful_id_${firstUserId}`,
   contentfulSlug: `cypress_test_advert_v1_external_contentful_slug_${firstUserId}`,
   applicationUrl: "https://www.google.com",
@@ -28,6 +30,7 @@ export const TEST_V1_EXTERNAL_GRANT = {
 
 export const TEST_V2_INTERNAL_GRANT = {
   advertName: `Cypress - Automated E2E Test Grant V2 Internal ID:${firstUserId}`,
+  advertId: getUUID(1),
   contentfulId: `cypress_test_advert_v2_internal_contentful_id_${firstUserId}`,
   contentfulSlug: `cypress_test_advert_v2_internal_contentful_slug_${firstUserId}`,
   applicationUrl: `${process.env.POST_LOGIN_BASE_URL}/apply/applicant/applications/-${secondGrantId}`,
@@ -38,6 +41,7 @@ export const TEST_V2_INTERNAL_GRANT = {
 
 export const TEST_V2_EXTERNAL_GRANT = {
   advertName: `Cypress - Automated E2E Test Grant V2 External ID:${firstUserId}`,
+  advertId: getUUID(2),
   contentfulId: `cypress_test_advert_v2_external_contentful_id_${firstUserId}`,
   contentfulSlug: `cypress_test_advert_v2_external_contentful_slug_${firstUserId}`,
   applicationUrl: "https://www.google.com",

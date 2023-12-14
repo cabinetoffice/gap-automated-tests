@@ -22,30 +22,34 @@ import {
   insertGrantApplicantOrgProfiles,
   insertSchemes,
   insertUsers,
-} from "../ts/insertApplyData";
-import {
   addSubmissionToMostRecentBatch,
   insertMandatoryQuestions,
   insertSpotlightSubmission,
   insertSubmissions,
+} from "../ts/insertApplyData";
+import {
   readdQueuedSpotlightSubmissions,
   removeQueuedSpotlightSubmissions,
   updateSpotlightSubmissionStatus,
 } from "../ts/updateApplyData";
 import {
   V2_INTERNAL_SCHEME_ID,
-  SPOTLIGHT_SUBMISSION_ID,
   applyDatabaseUrl,
   applyServiceDbName,
   spotlightSubstitutions,
   applyInsertSubstitutions,
   applyDeleteSubstitutions,
   applyUpdateSubstitutions,
+  V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+  V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   postLoginBaseUrl,
 } from "./constants";
 import { getExportedSubmission } from "../ts/selectApplyData";
 
-const runSqlForApply = async (scripts: string[], substitutions: any) =>
+const runSqlForApply = async (
+  scripts: string[],
+  substitutions: Record<string, any[]>,
+) =>
   await runSQLFromJs(
     scripts,
     substitutions,
@@ -98,8 +102,9 @@ const updateSpotlightSubmission = async (status: string) => {
   const row = await runSqlForApply([updateSpotlightSubmissionStatus], {
     [updateSpotlightSubmissionStatus]: [
       status,
-      SPOTLIGHT_SUBMISSION_ID,
       V2_INTERNAL_SCHEME_ID,
+      V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+      V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
     ],
   });
 

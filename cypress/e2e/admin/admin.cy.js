@@ -1,11 +1,18 @@
 import {
   signInToIntegrationSite,
   signInAsAdmin,
+  signInAsApplyApplicant,
+  signOut,
   clickText,
   clickBack,
   clickSaveAndContinue,
   assert200,
+  SUPER_ADMIN_DASHBOARD_URL,
+  assert404,
+  signInAsSuperAdmin,
   log,
+  validateXlsx,
+  downloadFileFromLink,
 } from "../../common/common";
 import {
   publishAdvert,
@@ -37,31 +44,96 @@ describe("Create a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("can create a new Grant and create advert", () => {
+  it("Admin can view the dashboard, cannot access the super-admin dashboard", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
+
+    cy.log("Logged into admin account - asserting on dashboard content");
+    cy.contains("Your grants");
+    cy.contains(Cypress.env("testV1InternalGrant").schemeName);
+    cy.contains(Cypress.env("testV2InternalGrant").schemeName);
+    cy.contains("View all grants").click();
+    cy.contains("All grants");
+    cy.log("asserting on content within the 'all grants' page");
+    cy.contains(Cypress.env("testV2ExternalGrant").schemeName);
+    cy.contains(Cypress.env("testV1ExternalGrant").schemeName);
+    cy.contains(Cypress.env("testV2InternalGrant").schemeName);
+    cy.contains(Cypress.env("testV1InternalGrant").schemeName);
+    clickText("View");
+    cy.contains("Grant summary");
+    cy.log("asserting the admin cannot view the super admin dashboard");
+    assert404(SUPER_ADMIN_DASHBOARD_URL);
+  });
+
+  it("Applicant promoted to admin can view the dashboard", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsSuperAdmin();
+    cy.log("Promoting applicant account -> admin account");
+    cy.get("[name=searchTerm]").type(Cypress.env("oneLoginApplicantEmail"));
+    cy.get("[data-cy=cy-button-Search]").click();
+    cy.contains("Edit").first().click();
+    clickText("Change");
+    cy.get("[data-cy=cy-checkbox-value-3]").check();
+    cy.log("Changing user roles");
+    clickText("Change Roles");
+    cy.log("Adding a department");
+    cy.contains("Change").first().click();
+    clickText("Cypress - Test Department");
+    clickText("Change department");
+    signOut();
+    cy.log(
+      "Super admin signed out -> logging in with newly promoted admin account",
+    );
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsApplyApplicant();
+    cy.log("asserting on content within the admin dashboard");
+    cy.contains("Manage a grant");
+    cy.contains(
+      "Use this service to add your grant details and build an application form for applicants to use.",
+    );
+    cy.contains("Add grant details");
+    cy.contains("Start by adding the details of your grant.");
+  });
+
+  it("Admin can create a new Grant with Advert and Application Form", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    log("Admin grant creation journey - Signing in as admin");
+    signInAsAdmin();
+    log("Admin grant creation journey - creating Grant");
     createGrant(GRANT_NAME);
 
     // create advert
+    log("Admin grant creation journey - creating Advert Section 1");
     advertSection1(GRANT_NAME);
+    log("Admin grant creation journey - creating Advert Section 2");
     advertSection2();
+    log("Admin grant creation journey - creating Advert Section 3");
     advertSection3(true);
+    log("Admin grant creation journey - creating Advert Section 4");
     advertSection4();
+    log("Admin grant creation journey - creating Advert Section 5");
     advertSection5();
 
+    log("Admin grant creation journey - publishing advert");
     publishAdvert(true);
 
+    log("Admin grant creation journey - creating application form");
     applicationForm();
   });
 
   it("V2 External - Download due diligence data", () => {
     // Populate data instead of completing journey
+    log(
+      "Admin V2 External - Due Diligence download - inserting submissions, mq and spotlight submissions",
+    );
     cy.task("insertSubmissionsAndMQs");
 
+    log("Admin V2 External - Due Diligence download - signing in as admin");
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
 
     // View grant and get due diligence data
+    log("Admin V2 External - Due Diligence download - viewing grant");
     cy.get('[data-cy="cy_SchemeListButton"]').click();
     cy.get(
       '[data-cy="cy_linkToScheme_Cypress - Test Scheme V2 External"]',
@@ -71,42 +143,50 @@ describe("Create a Grant", () => {
     // Check download link works
     assert200(cy.get(":nth-child(4) > .govuk-link"));
 
-    cy.contains("Download due diligence information")
-      .invoke("attr", "href")
-      .then((url) => {
-        log(Cypress.env("postLoginBaseUrl") + url);
-        cy.downloadFile(
-          Cypress.env("postLoginBaseUrl") + url,
-          "cypress/downloads",
-          "required_checks.xlsx",
-        );
-      });
+    log(
+      "Admin V2 External - Due Diligence download - downloading due diligence",
+    );
+    downloadFileFromLink(
+      cy.contains("Download due diligence information"),
+      "required_checks.xlsx",
+    );
 
-    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
-      const data = [
-        "MyOrg",
+    log(
+      "Admin V2 External - Due Diligence download - validating due diligence",
+    );
+    validateXlsx("/cypress/downloads/required_checks.xlsx", [
+      [
+        Cypress.env("testV1InternalGrant").advertId,
+        "V2 External Limited company",
         "addressLine1, addressLine2",
         "city",
         "county",
-        "postcod",
+        "postcode",
         "100",
         "67890",
         "12345",
         "Limited company",
-      ];
-      expect(jsonData[0].data[1]).to.include.members(data);
-    });
+        "",
+      ],
+    ]);
   });
 
   it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
     // Populate data instead of completing journey
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - inserting submissions, mq and spotlight submissions",
+    );
     cy.task("insertSubmissionsAndMQs");
 
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SENT);
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - signing in as admin",
+    );
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
 
+    log("Admin V2 Internal - Manage Due Diligence & Spotlight - viewing grant");
     cy.get('[data-cy="cy_SchemeListButton"]').click();
     cy.get(
       "[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']",
@@ -118,72 +198,116 @@ describe("Create a Grant", () => {
     assert200(cy.get(":nth-child(4) > .govuk-link"));
     assert200(cy.get(":nth-child(6) > .govuk-link"));
 
-    // cy.contains("Log in to Spotlight")
-    //   .invoke("attr", "href")
-    //   .then(url => {
-    //     expect(url).to.equal('https://cabinetoffice-spotlight.force.com/s/login/');
-    //   });
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - downloading Spotlight checks",
+    );
+    downloadFileFromLink(
+      cy.contains("download the information you need to run checks"),
+      "spotlight_checks.zip",
+    );
 
-    cy.contains("download the information you need to run checks")
-      .invoke("attr", "href")
-      .then((url) => {
-        log(Cypress.env("postLoginBaseUrl") + url);
-        cy.downloadFile(
-          Cypress.env("postLoginBaseUrl") + url,
-          "cypress/downloads",
-          "spotlight_checks.zip",
-        );
-      });
-
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - unzipping Spotlight checks",
+    );
     cy.unzip({ path: "cypress/downloads/", file: "spotlight_checks.zip" });
 
-    cy.parseXlsx(
-      `/cypress/downloads/unzip/spotlight_checks/${convertDateToString(
-        Date.now(),
-      )}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`,
-    ).then((jsonData) => {
-      const data = [
-        "MyOrg",
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - validating Spotlight checks",
+    );
+    const timestamp = convertDateToString(Date.now());
+    const filePath = "/cypress/downloads/unzip/spotlight_checks";
+
+    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`;
+    validateXlsx(limitedCompanyFileName, [
+      [
+        Cypress.env("testV2InternalGrant").advertId,
+        "V2 Internal Limited company",
         "addressLine1, addressLine2",
         "city",
         "county",
-        "postcod",
+        "postcode",
         "100",
         "67890",
         "12345",
-      ];
-      expect(jsonData[0].data[1]).to.include.members(data);
-    });
+        "",
+      ],
+    ]);
 
-    cy.contains("Download checks from applications")
-      .invoke("attr", "href")
-      .then((url) => {
-        log(Cypress.env("postLoginBaseUrl") + url);
-        cy.downloadFile(
-          Cypress.env("postLoginBaseUrl") + url,
-          "cypress/downloads",
-          "required_checks.xlsx",
-        );
-      });
-
-    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
-      const data = [
-        "MyOrg",
+    const nonLimitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_non_limited_companies.xlsx`;
+    validateXlsx(nonLimitedCompanyFileName, [
+      [
+        Cypress.env("testV2ExternalGrant").advertId,
+        "V2 Internal Non-limited company",
         "addressLine1, addressLine2",
         "city",
         "county",
-        "postcod",
+        "postcode",
+        "100",
+        "",
+        "",
+        "",
+      ],
+    ]);
+
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - downloading due diligence",
+    );
+    downloadFileFromLink(
+      cy.contains("Download checks from applications"),
+      "required_checks.xlsx",
+    );
+
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - validating due diligence",
+    );
+    validateXlsx("/cypress/downloads/required_checks.xlsx", [
+      [
+        Cypress.env("testV2InternalGrant").advertId,
+        "V2 Internal Limited company",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcode",
         "100",
         "67890",
         "12345",
         "Limited company",
-      ];
-      expect(jsonData[0].data[1]).to.include.members(data);
-    });
+        "",
+      ],
+      [
+        Cypress.env("testV2ExternalGrant").advertId,
+        "V2 Internal Non-limited company",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcode",
+        "100",
+        "",
+        "",
+        "Non-limited company",
+        "",
+      ],
+      [
+        Cypress.env("testV1ExternalGrant").advertId,
+        "V2 Internal Individual",
+        "addressLine1, addressLine2",
+        "city",
+        "county",
+        "postcode",
+        "100",
+        "",
+        "",
+        "I am applying as an Individual",
+        "",
+      ],
+    ]);
 
-    cy.contains("You have 1 application in Spotlight.");
+    cy.contains("You have 2 applications in Spotlight.");
 
     // Check error message
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - validating spotlight error messages",
+    );
     clickBack();
 
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, GGIS_ERROR);
@@ -193,6 +317,9 @@ describe("Create a Grant", () => {
 
     clickText("Manage due diligence checks");
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - validating invalid GGIS# spotlight error messages",
+    );
     cy.contains(
       "Spotlight did not recognise the GGIS reference number for your grant.",
     );
@@ -209,10 +336,13 @@ describe("Create a Grant", () => {
       '[data-cy="cy_summaryListValue_GGIS Scheme Reference Number"]',
     ).contains("GGIS_ID_NEW");
 
+    log(
+      "Admin V2 Internal - Manage Due Diligence & Spotlight - validating spotlight service outage error messages",
+    );
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SEND_ERROR);
     clickText("Manage due diligence checks");
     cy.contains(
-      "Due to a service outage, we cannot automatically send data to Spotlight at the moment. This affects 1 of your records.",
+      "Due to a service outage, we cannot automatically send data to Spotlight at the moment. This affects 2 of your records.",
     );
     clickBack();
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, VALIDATION_ERROR);
@@ -224,12 +354,17 @@ describe("Create a Grant", () => {
 
   it("V1 Internal - Download Due Diligence Data", () => {
     // Populate data instead of completing journey
+    log(
+      "Admin V1 Internal - Download Due Diligence - inserting submissions, mq and spotlight submissions",
+    );
     cy.task("insertSubmissionsAndMQs");
 
+    log("Admin V1 Internal - Download Due Diligence - signing in as admin");
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
 
     // View V1 internal grant
+    log("Admin V1 Internal - Download Due Diligence - viewing grant");
     cy.get('[data-cy="cy_SchemeListButton"]').click();
     cy.get(
       '[data-cy="cy_linkToScheme_Cypress - Test Scheme V1 Internal"]',
@@ -242,28 +377,31 @@ describe("Create a Grant", () => {
       ),
     );
 
-    cy.contains("Download required checks")
-      .invoke("attr", "href")
-      .then((url) => {
-        log(Cypress.env("postLoginBaseUrl") + url);
-        cy.downloadFile(
-          Cypress.env("postLoginBaseUrl") + url,
-          "cypress/downloads",
-          "required_checks.xlsx",
-        );
-      });
+    log(
+      "Admin V1 Internal - Download Due Diligence - downloading required checks",
+    );
+    downloadFileFromLink(
+      cy.contains("Download required checks"),
+      "required_checks.xlsx",
+    );
 
-    cy.parseXlsx("/cypress/downloads/required_checks.xlsx").then((jsonData) => {
-      const data = [
-        "My First Org",
+    log(
+      "Admin V1 Internal - Download Due Diligence - validating required checks",
+    );
+    validateXlsx("/cypress/downloads/required_checks.xlsx", [
+      [
+        Cypress.env("testV1InternalGrant").advertId,
+        "V1 Internal Limited company",
         "Address line 1, Address line 2",
         "Town",
         "County",
         "Postcode",
         "100",
-      ];
-      expect(jsonData[0].data[1]).to.include.members(data);
-    });
+        "",
+        "",
+        "",
+      ],
+    ]);
 
     cy.get(
       '[data-cy="cy_Scheme-details-page-button-View submitted application"]',

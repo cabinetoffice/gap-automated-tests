@@ -7,8 +7,9 @@ import {
   signInAsApplyApplicant,
   signOut,
   clickBack,
-  POST_LOGIN_BASE_URL,
   log,
+  ADMIN_DASHBOARD_URL,
+  SUPER_ADMIN_DASHBOARD_URL,
 } from "../../common/common";
 import {
   fillOutDocUpload,
@@ -261,14 +262,12 @@ describe("Apply for a Grant", () => {
     log(
       "Apply Dashboard & Profile - Checking admin and super-admin dashboard returns 404",
     );
-    ["/apply/admin/dashboard", "/apply/admin/super-admin-dashboard"].forEach(
-      (page) => {
-        cy.visit(`${POST_LOGIN_BASE_URL}${page}`, { failOnStatusCode: false })
-          .contains("Page not found")
-          .should("exist");
-        cy.go("back");
-      },
-    );
+    [ADMIN_DASHBOARD_URL, SUPER_ADMIN_DASHBOARD_URL].forEach((page) => {
+      cy.visit(page, { failOnStatusCode: false })
+        .contains("Page not found")
+        .should("exist");
+      cy.go("back");
+    });
 
     log("Apply Dashboard & Profile - Editing One Login details");
     cy.contains("Your sign in details").click();
