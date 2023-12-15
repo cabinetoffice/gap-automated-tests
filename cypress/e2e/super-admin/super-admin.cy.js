@@ -359,13 +359,16 @@ describe("Manage departments", () => {
     cy.get(".govuk-link").contains("Manage departments").click();
 
     cy.log("Clicking edit on department");
+
+    let hits = 0;
     cy.get(".govuk-summary-list__key").each(($ele, index) => {
-      if ($ele.text() === "Cypress - Test Edit Department") {
+      if ($ele.text() === "Cypress - Test Edit Department" && hits === 0) {
         cy.get(
           `:nth-child(${
             index + 1
           }) > .govuk-summary-list__actions > .manage-departments_float-left-sm__8lYy9 > .govuk-link`,
         ).click();
+        hits++;
       }
     });
 
@@ -423,13 +426,15 @@ describe("Manage departments", () => {
     cy.get(".govuk-link").contains("Manage departments").click();
 
     cy.log("Clicking delete on department");
+    let hits = 0;
     cy.get(".govuk-summary-list__key").each(($ele, index) => {
-      if ($ele.text() === "Cypress - Test Delete Department") {
+      if ($ele.text() === "Cypress - Test Delete Department" && hits === 0) {
         cy.get(
           `:nth-child(${
             index + 1
           }) > .govuk-summary-list__actions > .manage-departments_float-left-sm__8lYy9 > .govuk-link`,
         ).click();
+        hits++;
       }
     });
 
