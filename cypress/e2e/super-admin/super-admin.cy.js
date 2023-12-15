@@ -177,10 +177,21 @@ describe("Manage Users", () => {
     );
   });
 
+  // This test can be uncommented once support user functionality has been added
   // it("Can view a tech support user", () => {
   //   cy.log("Signing in as super admin");
   //   signInAsSuperAdmin();
   //   navigateToSpecificUser(Cypress.env("oneLoginTechSupportEmail"));
+  //
+  //   cy.log("Veryfying that the user is a tech support user");
+  //   cy.get('[data-cy="cy_summaryListValue_Roles"]').contains(
+  //   "Technical support user",
+  // );
+  //
+  //  cy.log("Veryfying the user has a department");
+  //  cy.get('[data-cy="cy_summaryListValue_Department"]').contains(
+  //   "Cypress - Test Department",
+  // );
   // });
 
   it("Can update a user's department", () => {
