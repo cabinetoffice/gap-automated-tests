@@ -140,6 +140,7 @@ export default defineConfig({
       applicationBaseUrl: process.env.APPLICATION_BASE_URL,
       postLoginBaseUrl: process.env.POST_LOGIN_BASE_URL,
       firstUserId: process.env.FIRST_USER_ID,
+      addedDepartmentName: process.env.ADDED_DEPARTMENT_NAME,
       testV1InternalGrant: {
         ...TEST_V1_INTERNAL_GRANT,
       },

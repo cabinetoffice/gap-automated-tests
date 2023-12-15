@@ -1,6 +1,9 @@
 const insertDepartments: string = `
 INSERT INTO public.departments(id, ggis_id, name)
-    VALUES($1, 'GGIS_ID', 'Cypress - Test Department');
+    VALUES
+	($1, 'GGIS_ID', 'Cypress - Test Department'),
+	($2, 'GGIS_ID_EDIT', 'Cypress - Test Edit Department'),
+	($3, 'GGIS_ID_DELETE', 'Cypress - Test Delete Department');
 `;
 
 const insertUsers: string = `

@@ -66,6 +66,19 @@ export const signInAsSuperAdmin = () => {
   );
 };
 
+export const navigateToSpecificUser = (email: string) => {
+  cy.log("Entering email in search box");
+  cy.get("[name=searchTerm]").type(email);
+
+  cy.log("Clicking search button");
+  cy.get("[data-cy=cy-button-Search]").click();
+
+  cy.log("Clicking edit on searched user");
+  cy.get(
+    '[data-cy="cy_table_row-for-Actions-row-0-cell-3"] > .govuk-link',
+  ).click();
+};
+
 export const signOut = () => {
   cy.contains("Sign out").click();
   cy.contains("Find a grant");

@@ -3,9 +3,10 @@ import {
   signInToIntegrationSite,
   clickText,
   assert200,
+  navigateToSpecificUser,
 } from "../../common/common";
 import { TEST_V1_INTERNAL_GRANT } from "../../common/constants";
-import { TASKS } from "./constants";
+import { TASKS, ADDED_DEPARTMENT_NAME } from "./constants";
 
 const { ADD_TEST_OAUTH_AUDIT, DELETE_FAILED_OAUTH_AUDIT } = TASKS;
 
@@ -130,6 +131,122 @@ describe("Manage Users", () => {
     );
   });
 
+  it("Can view an applicant user", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginApplicantEmail"));
+
+    cy.log("Veryfying that the user is an applicant");
+    cy.get('[data-cy="cy_summaryListValue_Roles"]').contains("Applicant");
+
+    cy.log("Veryfying the user doesn't have a department");
+    cy.get('[data-cy="cy_summaryListValue_Department"]').should("not.exist");
+  });
+
+  it("Can view an admin user", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginAdminEmail"));
+
+    cy.log("Veryfying that the user is an admin");
+    cy.get('[data-cy="cy_summaryListValue_Roles"]').contains("Administrator");
+
+    cy.log("Veryfying the user has a department");
+    cy.get('[data-cy="cy_summaryListValue_Department"]').contains(
+      "Cypress - Test Department",
+    );
+  });
+
+  it("Can view a super admin user", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginSuperAdminEmail"));
+
+    cy.log("Veryfying that the user is an admin");
+    cy.get('[data-cy="cy_summaryListValue_Roles"]').contains(
+      "Super administrator",
+    );
+
+    cy.log("Veryfying the user has a department");
+    cy.get('[data-cy="cy_summaryListValue_Department"]').contains(
+      "Cypress - Test Department",
+    );
+  });
+
+  // it("Can view a tech support user", () => {
+  //   cy.log("Signing in as super admin");
+  //   signInAsSuperAdmin();
+  //   navigateToSpecificUser(Cypress.env("oneLoginTechSupportEmail"));
+  // });
+
+  it("Can update a user's department", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginAdminEmail"));
+
+    cy.log("Clicking change on user's department");
+    cy.get(
+      ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
+    ).click();
+
+    cy.log("Selecting a new department");
+    cy.get('[data-cy="cy-radioInput-option-CabinetOffice"]').click();
+
+    cy.log("Clicking change department");
+    cy.get(".govuk-button").click();
+
+    cy.log("Verifying that the user's department has changed");
+    cy.get('[data-cy="cy_summaryListValue_Department"]').contains(
+      "Cabinet Office",
+    );
+  });
+
+  it("Can block and unblock a user", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginApplicantEmail"));
+
+    cy.log("Clicking block user");
+    cy.get(".govuk-button--secondary").contains("Block user").click();
+
+    cy.log("Clicking block user confirmation");
+    cy.get(".govuk-button").contains("Block user").click();
+
+    cy.log("Verifying that the user is blocked");
+    cy.get('[data-cy="cy_summaryListValue_Roles"]').contains("Blocked");
+
+    cy.log("Clicking unblock user");
+    cy.get(".govuk-button--secondary").contains("Unblock user").click();
+
+    cy.log("Veryfying that the user is an applicant again");
+    cy.get('[data-cy="cy_summaryListValue_Roles"]').contains("Applicant");
+  });
+
+  it("Can delete a user", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginApplicantEmail"));
+    cy.log("Clicking delete user");
+    cy.get(".govuk-button--warning").contains("Delete user").click();
+
+    cy.log("Clicking delete user confirmation");
+    cy.get(".govuk-button").contains("Delete user").click();
+
+    cy.log("Verifying that the user is deleted");
+    navigateToSpecificUser(Cypress.env("oneLoginApplicantEmail"));
+    cy.get('[data-cy="cy_summaryListValue_Email"]').should(
+      "not.contain",
+      Cypress.env("oneLoginApplicantEmail"),
+    );
+    // More thorough check to be added
+  });
+
   it("can reconnect spotlight", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     cy.log("Signing in as super admin");
@@ -147,6 +264,184 @@ describe("Manage Users", () => {
     );
     // cleanup
     cy.task(DELETE_FAILED_OAUTH_AUDIT);
+  });
+});
+
+describe("Managing roles", () => {
+  beforeEach(() => {
+    cy.task("setUpUser");
+    cy.task("setUpApplyData");
+    signInToIntegrationSite();
+  });
+
+  it("Can remove a user's roles", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginAdminEmail"));
+
+    cy.log("Clicking remove on admin role");
+    cy.get(
+      ":nth-child(4) > .govuk-summary-list__actions > .govuk-link",
+    ).click();
+
+    cy.log("Unchecking admin role");
+    cy.get('[data-cy="cy-checkbox-value-3"]').click();
+
+    cy.log("Clicking change roles");
+    cy.get(".govuk-button").contains("Change Roles").click();
+
+    cy.log("Verifying that the user is now an applicant");
+    cy.get('[data-cy="cy_summaryListValue_Roles"]').contains("Applicant");
+  });
+});
+
+describe("Manage departments", () => {
+  beforeEach(() => {
+    cy.task("setUpUser");
+    cy.task("setUpApplyData");
+    signInToIntegrationSite();
+  });
+
+  it("Can add a department", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginAdminEmail"));
+
+    cy.log("Clicking change on user's department");
+    cy.get(
+      ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
+    ).click();
+    cy.get(".govuk-link").contains("Manage departments").click();
+
+    cy.log("Adding department");
+    cy.get(".govuk-button").contains("Add new department").click();
+
+    cy.log("Trying to submit empty form data");
+    cy.get(".govuk-button").contains("Add department").click();
+    cy.get('[data-cy="cyErrorBannerHeading"]').contains("There is a problem");
+    cy.get('[data-cy="cyError_ggisID"]').contains("Enter a GGIS ID");
+    cy.get('[data-cy="cyError_name"]').contains("Enter a Department name");
+
+    cy.log("Entering a name but no ID");
+    cy.get('[data-cy="cy-name-text-input"]').type(ADDED_DEPARTMENT_NAME);
+    cy.get(".govuk-button").contains("Add department").click();
+    cy.get('[data-cy="cyErrorBannerHeading"]').contains("There is a problem");
+    cy.get('[data-cy="cyError_ggisID"]').contains("Enter a GGIS ID");
+
+    cy.log("Entering an ID but no name");
+    cy.get('[data-cy="cy-name-text-input"]').clear();
+    cy.get('[data-cy="cy-ggisID-text-input"]').type("123456");
+    cy.get(".govuk-button").contains("Add department").click();
+    cy.get('[data-cy="cyErrorBannerHeading"]').contains("There is a problem");
+    cy.get('[data-cy="cyError_name"]').contains("Enter a Department name");
+
+    cy.log("Entering a valid ID and name");
+    cy.get('[data-cy="cy-name-text-input"]').type(ADDED_DEPARTMENT_NAME);
+    cy.get(".govuk-button").contains("Add department").click();
+
+    cy.log("Verifying that the department has been added");
+    cy.get(".govuk-summary-list__key").contains(ADDED_DEPARTMENT_NAME);
+  });
+
+  it("Can edit a department", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginAdminEmail"));
+
+    cy.log("Clicking change on user's department");
+    cy.get(
+      ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
+    ).click();
+    cy.get(".govuk-link").contains("Manage departments").click();
+
+    cy.log("Clicking edit on department");
+    cy.get(".govuk-summary-list__key").each(($ele, index) => {
+      if ($ele.text() === "Cypress - Test Edit Department") {
+        cy.get(
+          `:nth-child(${
+            index + 1
+          }) > .govuk-summary-list__actions > .manage-departments_float-left-sm__8lYy9 > .govuk-link`,
+        ).click();
+      }
+    });
+
+    cy.log("Trying to submit empty form data");
+    cy.get('[data-cy="cy-name-text-input"]').clear();
+    cy.get('[data-cy="cy-ggisID-text-input"]').clear();
+    cy.get(".govuk-button").contains("Save changes").click();
+    cy.get('[data-cy="cyErrorBannerHeading"]').contains("There is a problem");
+    cy.get('[data-cy="cyError_ggisID"]').contains("Enter a GGIS ID");
+    cy.get('[data-cy="cyError_name"]').contains("Enter a Department name");
+
+    cy.log("Entering a name but no ID");
+    cy.get('[data-cy="cy-name-text-input"]').clear();
+    cy.get('[data-cy="cy-ggisID-text-input"]').clear();
+    cy.get('[data-cy="cy-name-text-input"]').type(
+      "Cypress - Test Edit Department 2",
+    );
+    cy.get(".govuk-button").contains("Save changes").click();
+    cy.get('[data-cy="cyErrorBannerHeading"]').contains("There is a problem");
+    cy.get('[data-cy="cyError_ggisID"]').contains("Enter a GGIS ID");
+
+    cy.log("Entering an ID but no name");
+    cy.get('[data-cy="cy-name-text-input"]').clear();
+    cy.get('[data-cy="cy-ggisID-text-input"]').clear();
+    cy.get('[data-cy="cy-ggisID-text-input"]').type("123456");
+    cy.get(".govuk-button").contains("Save changes").click();
+    cy.get('[data-cy="cyErrorBannerHeading"]').contains("There is a problem");
+    cy.get('[data-cy="cyError_name"]').contains("Enter a Department name");
+
+    cy.log("Entering a valid ID and name");
+    cy.get('[data-cy="cy-name-text-input"]').clear();
+    cy.get('[data-cy="cy-ggisID-text-input"]').clear();
+    cy.get('[data-cy="cy-name-text-input"]').type(
+      "Cypress - Test Edit Department 2",
+    );
+    cy.get('[data-cy="cy-ggisID-text-input"]').type("123456");
+    cy.get(".govuk-button").contains("Save changes").click();
+
+    cy.log("Verifying that the department has been editted");
+    cy.get(".govuk-summary-list__key").contains(
+      "Cypress - Test Edit Department 2",
+    );
+  });
+
+  it("Can delete a department", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginAdminEmail"));
+
+    cy.log("Clicking change on user's department");
+    cy.get(
+      ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
+    ).click();
+    cy.get(".govuk-link").contains("Manage departments").click();
+
+    cy.log("Clicking delete on department");
+    cy.get(".govuk-summary-list__key").each(($ele, index) => {
+      if ($ele.text() === "Cypress - Test Delete Department") {
+        cy.get(
+          `:nth-child(${
+            index + 1
+          }) > .govuk-summary-list__actions > .manage-departments_float-left-sm__8lYy9 > .govuk-link`,
+        ).click();
+      }
+    });
+
+    cy.log("Clicking delete department");
+    cy.get(".govuk-button").contains("Delete department").click();
+
+    cy.log("Confirming delete department");
+    cy.get(".govuk-button").contains("Delete department").click();
+
+    cy.log("Verifying that the department has been deleted");
+    cy.get(".govuk-summary-list__key")
+      .contains("Cypress - Test Delete Department")
+      .should("not.exist");
   });
 });
 
