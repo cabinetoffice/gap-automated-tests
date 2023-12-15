@@ -22,7 +22,7 @@ const APPLICANT_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 2);
 const DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID);
 const EDIT_DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID) - 1;
 const DELETE_DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID) - 2;
-const ADDED_DEPARTMENT_NAME = process.env.ADDED_DEPARTMENT_NAME;
+const ADDED_DEPARTMENT_NAME = "Cypress Test Add Department";
 
 const userSubstitutions = {
   [insertDepartments]: [
