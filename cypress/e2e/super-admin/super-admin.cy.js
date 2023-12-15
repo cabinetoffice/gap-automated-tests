@@ -6,9 +6,10 @@ import {
   navigateToSpecificUser,
 } from "../../common/common";
 import { TEST_V1_INTERNAL_GRANT } from "../../common/constants";
-import { TASKS, ADDED_DEPARTMENT_NAME } from "./constants";
+import { TASKS } from "./constants";
 
 const { ADD_TEST_OAUTH_AUDIT, DELETE_FAILED_OAUTH_AUDIT } = TASKS;
+const ADDED_DEPARTMENT_NAME = "Cypress Test Add Department";
 
 describe("Manage Users", () => {
   beforeEach(() => {
