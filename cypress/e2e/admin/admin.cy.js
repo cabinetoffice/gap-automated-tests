@@ -459,9 +459,9 @@ describe("Create a Grant", () => {
     cy.contains(
       "An advert for this grant is live on Find a grant. The link for your advert is below:",
     );
-    cy.contains(
-      "https://dev-env.find-a-grant-support-dev.service.cabinetoffice.gov.uk/grants/cypress-admin-e2e-test-grant-id70-no-application-form",
-    );
+    cy.get('[data-cy="cy-link-to-advert-on-find"]')
+      .invoke("attr", "href")
+      .should("contain","/grants/cypress-admin-e2e-test-grant-id70-no-application-form");
     cy.contains("View or change your advert");
   });
 
@@ -497,9 +497,9 @@ describe("Create a Grant", () => {
     cy.contains(
       "An advert for this grant is live on Find a grant. The link for your advert is below:",
     );
-    cy.contains(
-      "https://dev-env.find-a-grant-support-dev.service.cabinetoffice.gov.uk/grants/cypress-admin-e2e-test-grant-id70",
-    );
+    cy.get('[data-cy="cy-link-to-advert-on-find"]')
+      .invoke("attr", "href")
+      .should("contain","/grants/cypress-admin-e2e-test-grant-id70");
     cy.contains("View or change your advert");
   });
 
@@ -593,9 +593,11 @@ describe("Create a Grant", () => {
     cy.contains(
       "An advert for this grant is live on Find a grant. The link for your advert is below:",
     );
-    cy.contains(
-      "https://dev-env.find-a-grant-support-dev.service.cabinetoffice.gov.uk/grants/cypress-admin-e2e-test-grant-id70",
-    );
+    
+    cy.get('[data-cy="cy-link-to-advert-on-find"]')
+      .invoke("attr", "href")
+      .should("contain","/grants/cypress-admin-e2e-test-grant-id70");
+   
     cy.contains("View or change your advert");
   });
 
