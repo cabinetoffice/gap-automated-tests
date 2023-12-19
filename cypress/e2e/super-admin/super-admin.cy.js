@@ -4,12 +4,135 @@ import {
   clickText,
   assert200,
   navigateToSpecificUser,
+  signInAsApplyApplicant,
 } from "../../common/common";
-import { TEST_V1_INTERNAL_GRANT } from "../../common/constants";
+import {
+  TEST_V1_INTERNAL_GRANT,
+  ADDED_DEPARTMENT_NAME,
+} from "../../common/constants";
 import { TASKS } from "./constants";
 
 const { ADD_TEST_OAUTH_AUDIT, DELETE_FAILED_OAUTH_AUDIT } = TASKS;
-const ADDED_DEPARTMENT_NAME = "Cypress Test Add Department";
+
+describe("Navigation", () => {
+  beforeEach(() => {
+    cy.task("setUpUser");
+    cy.task("setUpApplyData");
+    signInToIntegrationSite();
+  });
+
+  it("Can land on super admin dashboard", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+
+    signInAsSuperAdmin();
+
+    cy.contains("Manage users");
+  });
+
+  it("Can navigate home", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+
+    cy.log("Clicking Home");
+    cy.get('[data-cy="cyhomePageLink"] > .govuk-link').click();
+
+    cy.log("Verifying that the user is on the home page");
+    cy.contains("Find a grant");
+  });
+
+  it("Can navigate to admin dashboard", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+
+    cy.log("Clicking Admin dashboard");
+    cy.get('[data-cy="cyadminDashPageLink"] > .govuk-link').click();
+
+    cy.log("Verifying that the user is on the admin dashboard");
+    cy.contains("Manage a grant");
+  });
+
+  it("Can navigate to applicant dashboard", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+
+    cy.log("Clicking Applicant dashboard");
+    cy.get('[data-cy="cyapplicantDashPageLink"] > .govuk-link').click();
+
+    cy.log("Verifying that the user is on the applicant dashboard");
+    cy.contains("View your applications");
+  });
+
+  it("Can view all users with pagination", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+
+    cy.log("Clicking next page");
+    cy.get(".govuk-pagination__next > .govuk-link").click();
+
+    cy.log("clicking next page");
+    cy.get(".govuk-pagination__next > .govuk-link").click();
+
+    cy.log("clicking previous page");
+    cy.get(".govuk-pagination__prev > .govuk-link").click();
+
+    cy.log("clicking previous page");
+    cy.get(".govuk-pagination__prev > .govuk-link").click();
+
+    cy.log("Expecting previous page not to be visible");
+    cy.get(".govuk-pagination__prev > .govuk-link").should("not.exist");
+
+    cy.log("Expeting next page to be visible");
+    cy.get(".govuk-pagination__next > .govuk-link").should("exist");
+  });
+
+  it("Can filter on users", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+
+    cy.log("Filtering for super admins cypress");
+    cy.get('[data-cy="cy-checkbox-value-4"]').click();
+    cy.get(
+      `[data-cy="cy-checkbox-value--${Cypress.env("firstUserId")}"]`,
+    ).click();
+
+    cy.log("Clicking filter");
+    cy.get('[data-cy="cy-button-Apply filters"]').click();
+
+    cy.log("Verifying filter");
+    cy.get('[data-cy="cy_table_row-for-Email address-row-0-cell-0"]').contains(
+      Cypress.env("oneLoginSuperAdminEmail"),
+    );
+  });
+
+  it("Can view Manage API Keys", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+
+    cy.log("Clicking Manage API Keys");
+    cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
+
+    cy.log("Verifying that the user is on the Manage API Keys page");
+    cy.get('[data-cy="admin-dashboard-heading"]').contains("Manage API keys");
+  });
+
+  it("Can sign out", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+
+    cy.log("Signing out");
+    cy.get('[data-cy="cy_SignOutLink"]').click();
+
+    cy.log("Verifying that the user is on the homepage");
+    cy.contains("Find a grant");
+  });
+});
 
 describe("Manage Users", () => {
   beforeEach(() => {
@@ -18,15 +141,7 @@ describe("Manage Users", () => {
     signInToIntegrationSite();
   });
 
-  it("can land on super admin dashboard", () => {
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
-
-    signInAsSuperAdmin();
-
-    cy.contains("Manage users");
-  });
-
-  it("can change grant ownership", () => {
+  it("Can change grant ownership", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
     cy.log("Signing in as super admin");
@@ -177,23 +292,6 @@ describe("Manage Users", () => {
     );
   });
 
-  // This test can be uncommented once support user functionality has been added
-  // it("Can view a tech support user", () => {
-  //   cy.log("Signing in as super admin");
-  //   signInAsSuperAdmin();
-  //   navigateToSpecificUser(Cypress.env("oneLoginTechSupportEmail"));
-  //
-  //   cy.log("Veryfying that the user is a tech support user");
-  //   cy.get('[data-cy="cy_summaryListValue_Roles"]').contains(
-  //   "Technical support user",
-  // );
-  //
-  //  cy.log("Veryfying the user has a department");
-  //  cy.get('[data-cy="cy_summaryListValue_Department"]').contains(
-  //   "Cypress - Test Department",
-  // );
-  // });
-
   it("Can update a user's department", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     cy.log("Signing in as super admin");
@@ -259,7 +357,7 @@ describe("Manage Users", () => {
     // More thorough check to be added
   });
 
-  it("can reconnect spotlight", () => {
+  it("Can reconnect spotlight", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     cy.log("Signing in as super admin");
     signInAsSuperAdmin();
@@ -279,7 +377,7 @@ describe("Manage Users", () => {
   });
 });
 
-describe("Managing roles", () => {
+describe("Manage roles", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
@@ -305,6 +403,37 @@ describe("Managing roles", () => {
 
     cy.log("Verifying that the user is now an applicant");
     cy.get('[data-cy="cy_summaryListValue_Roles"]').contains("Applicant");
+  });
+
+  it("Can login as applicant who has just been promoted to Super admin", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    navigateToSpecificUser(Cypress.env("oneLoginApplicantEmail"));
+
+    cy.log("Adding super admin role");
+    cy.get(".govuk-summary-list__actions > .govuk-link").click();
+    cy.get('[data-cy="cy-checkbox-value-4"]').click();
+    cy.get(".govuk-button").contains("Change Roles").click();
+
+    cy.log("Giving a department");
+    cy.get(
+      ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
+    ).click();
+    cy.get(
+      ':nth-child(1) > [data-cy="cy-radioInput-option-CypressTestDepartment"]',
+    ).click();
+    cy.get(".govuk-button").contains("Change department").click();
+
+    cy.log("Signing out");
+    cy.get('[data-cy="cy_SignOutLink"]').click();
+
+    cy.log("Signing in as applicant");
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsApplyApplicant();
+
+    cy.log("Expecting to land on super admin dashbard");
+    cy.contains("Manage users");
   });
 });
 

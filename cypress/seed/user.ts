@@ -8,6 +8,7 @@ import {
 import { deleteUsers, deleteDepartments } from "./ts/deleteTestUsers";
 import { addFailedSpotlightOauthAudit } from "./ts/insertApplyData";
 import { deleteFailedSpotlightOauthAudit } from "./ts/deleteApplyData";
+import { ADDED_DEPARTMENT_NAME } from "../common/constants";
 
 const userServiceDbName: string =
   process.env.USERS_DATABASE_NAME || "gapuserlocaldb";
@@ -22,7 +23,6 @@ const APPLICANT_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 2);
 const DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID);
 const EDIT_DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID) - 1;
 const DELETE_DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID) - 2;
-const ADDED_DEPARTMENT_NAME = "Cypress Test Add Department";
 
 const userSubstitutions = {
   [insertDepartments]: [
