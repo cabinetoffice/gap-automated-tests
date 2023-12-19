@@ -7,7 +7,7 @@ DELETE FROM public.gap_users WHERE
 
 const deleteDepartments: string = `
 DELETE FROM public.departments
-    WHERE id in ($1);
+    WHERE id in ($1, $2, $3) OR name in ($4);
 `;
 
 export { deleteUsers, deleteDepartments };
