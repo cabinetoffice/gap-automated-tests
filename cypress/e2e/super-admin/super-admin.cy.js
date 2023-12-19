@@ -420,9 +420,19 @@ describe("Manage roles", () => {
     cy.get(
       ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
     ).click();
-    cy.get(
-      ':nth-child(1) > [data-cy="cy-radioInput-option-CypressTestDepartment"]',
-    ).click();
+    let hits = 0;
+    cy.get('[data-cy="cy-radioInput-label-CypressTestDepartment"]').each(
+      ($ele, index) => {
+        if ($ele.text() === "Cypress - Test Edit Department" && hits === 0) {
+          cy.get(
+            `:nth-child(${
+              index + 1
+            } > [data-cy="cy-radioInput-label-CypressTestDepartment"]`,
+          ).click();
+          hits++;
+        }
+      },
+    );
     cy.get(".govuk-button").contains("Change department").click();
 
     cy.log("Signing out");
