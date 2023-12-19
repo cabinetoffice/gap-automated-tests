@@ -8,6 +8,7 @@ import {
   clickBack,
   clickSaveAndContinue,
   assert200,
+  yesQuestionComplete,
 } from "../../common/common";
 import {
   publishAdvert,
@@ -71,9 +72,42 @@ describe("Create a Grant", () => {
 
     applicationForm();
 
+    cy.log("Add application form link to grant advert");
+    cy.log("Capturing application form link as alias");
+    cy.get(".break-all-words > .govuk-link")
+      .invoke("text")
+      .then(() => {})
+      .as("advertLink");
+
+    clickText("Manage this grant");
+
+    cy.log("Adding application form link to the grant advert");
+    cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+    cy.get('[data-cy="cy-unpublish-advert-button"]').click();
+    cy.get('[data-cy="cy-radioInput-option-YesUnpublishMyAdvert"]').click();
+
+    cy.log("Unpublishing application");
+    cy.get('[data-cy="cy_unpublishConfirmation-ConfirmButton"]').click();
+    cy.get(
+      '[data-cy="cy-4. How to apply-sublist-task-name-Link to application form"]',
+    ).click();
+    cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').clear();
+    cy.get("@advertLink").then((link) => {
+      console.log(link);
+      cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').click().type(link);
+    });
+    yesQuestionComplete();
+    clickText("Review and publish");
+
+    cy.log("Republishing unpublished application");
+    cy.get('[data-cy="cy-button-Confirm and publish"]').click();
+    clickText("Sign out");
+
     checkAdvertIsPublished(GRANT_NAME);
 
     // TODO : Unpublish advert
+    cy.get('[data-cy="cySignInAndApply-Link"]').click();
+    signInAsAdmin();
 
     // TODO : Sign out - Log in as an applicant, check that the grant is NOT there
   });

@@ -415,38 +415,18 @@ export function advertSection1(GRANT_NAME) {
 }
 
 export const checkAdvertIsPublished = (grantName) => {
-  // Get link as an alias
-  cy.get(".break-all-words > .govuk-link")
-    .invoke("text")
-    .then(() => {})
-    .as("advertLink");
+  const USER_ID = Cypress.env("firstUserId");
 
-  clickText("Manage this grant");
-
-  // Add application form link to the grant advert
-  cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
-  cy.get('[data-cy="cy-unpublish-advert-button"]').click();
-  cy.get('[data-cy="cy-radioInput-option-YesUnpublishMyAdvert"]').click();
-  cy.get('[data-cy="cy_unpublishConfirmation-ConfirmButton"]').click();
-  cy.get(
-    '[data-cy="cy-4. How to apply-sublist-task-name-Link to application form"]',
-  ).click();
-  cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').clear();
-  cy.get("@advertLink").then((link) => {
-    console.log(link);
-    cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').click().type(link);
-  });
-  yesQuestionComplete();
-  clickText("Review and publish");
-  cy.get('[data-cy="cy-button-Confirm and publish"]').click();
-
-  // TODO : Sign out - Log in as an applicant, check that the grant is there
-  clickText("Sign out");
+  cy.log(
+    "Logging in as applicant and checking that form & advert are published",
+  );
   cy.get('[data-cy="cySignInAndApply-Link"]').click();
   signInAsApplyApplicant();
   cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
   searchAgainForGrant(grantName);
-  // TODO : Loop through grants until Cypress Test Grant is found (involves pagination)
-
-  // TODO : Sign out, then log back in as admin
+  cy.get(`a[href="/grants/cypress-admin-e2e-test-grant-id` + USER_ID + `-1"]`)
+    .should("have.text", grantName)
+    .click();
+  clickText("Back");
+  clickText("Sign out");
 };
