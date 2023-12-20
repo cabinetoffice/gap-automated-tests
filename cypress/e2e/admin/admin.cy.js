@@ -226,7 +226,7 @@ describe("Create a Grant", () => {
     const timestamp = convertDateToString(Date.now());
     const filePath = "/cypress/downloads/unzip/spotlight_checks";
 
-    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`;
+    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_charities_and_companies.xlsx`;
     validateXlsx(limitedCompanyFileName, [
       [
         Cypress.env("testV2InternalGrant").advertId,
