@@ -73,7 +73,9 @@ describe("Create a Grant", () => {
     cy.log("Promoting applicant account -> admin account");
     cy.get("[name=searchTerm]").type(Cypress.env("oneLoginApplicantEmail"));
     cy.get("[data-cy=cy-button-Search]").click();
-    cy.contains("a", "Edit").first().click();
+    cy.get(
+      '[data-cy="cy_table_row-for-Actions-row-0-cell-3"] > .govuk-link',
+    ).click();
     clickText("Change");
     cy.get("[data-cy=cy-checkbox-value-3]").check();
     cy.log("Changing user roles");

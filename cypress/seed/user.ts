@@ -8,6 +8,7 @@ import {
 import { deleteUsers, deleteDepartments } from "./ts/deleteTestUsers";
 import { addFailedSpotlightOauthAudit } from "./ts/insertApplyData";
 import { deleteFailedSpotlightOauthAudit } from "./ts/deleteApplyData";
+import { ADDED_DEPARTMENT_NAME } from "../common/constants";
 
 const userServiceDbName: string =
   process.env.USERS_DATABASE_NAME || "gapuserlocaldb";
@@ -20,9 +21,15 @@ const SUPER_ADMIN_ID = -Math.abs(+process.env.FIRST_USER_ID);
 const ADMIN_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 1);
 const APPLICANT_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 2);
 const DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID);
+const EDIT_DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID) - 1;
+const DELETE_DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID) - 2;
 
 const userSubstitutions = {
-  [insertDepartments]: [DEPARTMENT_ID],
+  [insertDepartments]: [
+    DEPARTMENT_ID,
+    EDIT_DEPARTMENT_ID,
+    DELETE_DEPARTMENT_ID,
+  ],
   [insertUsers]: [
     SUPER_ADMIN_ID,
     process.env.ONE_LOGIN_SUPER_ADMIN_EMAIL,
@@ -58,7 +65,12 @@ const userSubstitutions = {
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     process.env.ONE_LOGIN_APPLICANT_EMAIL,
   ],
-  [deleteDepartments]: [DEPARTMENT_ID],
+  [deleteDepartments]: [
+    DEPARTMENT_ID,
+    EDIT_DEPARTMENT_ID,
+    DELETE_DEPARTMENT_ID,
+    ADDED_DEPARTMENT_NAME,
+  ],
 };
 
 export const createTestUsers = async (): Promise<void> => {
