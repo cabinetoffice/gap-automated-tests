@@ -1,31 +1,33 @@
 import {
-  signInToIntegrationSite,
-  signInAsAdmin,
-  signInAsApplyApplicant,
-  signOut,
-  clickText,
+  SUPER_ADMIN_DASHBOARD_URL,
+  assert200,
+  assert404,
   clickBack,
   clickSaveAndContinue,
-  assert200,
-  SUPER_ADMIN_DASHBOARD_URL,
-  assert404,
-  signInAsSuperAdmin,
-  log,
-  validateXlsx,
+  clickText,
   downloadFileFromLink,
+  log,
+  saveAndExit,
+  signInAsAdmin,
+  signInAsApplyApplicant,
+  signInAsSuperAdmin,
+  signInToIntegrationSite,
+  signOut,
+  validateXlsx,
 } from "../../common/common";
+import { GRANT_NAME, SPOTLIGHT_SUBMISSION_STATUS, TASKS } from "./constants";
 import {
-  publishAdvert,
-  applicationForm,
-  createGrant,
   advertSection1,
   advertSection2,
   advertSection3,
   advertSection4,
   advertSection5,
+  applicationForm,
   convertDateToString,
+  createGrant,
+  publishAdvert,
+  publishApplicationForm,
 } from "./helper";
-import { GRANT_NAME, TASKS, SPOTLIGHT_SUBMISSION_STATUS } from "./constants";
 
 const {
   UPDATE_SPOTLIGHT_SUBMISSION_STATUS,
@@ -404,5 +406,232 @@ describe("Create a Grant", () => {
         "",
       ],
     ]);
+  });
+
+  it("View scheme details of grant with application form and no advert", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+    log("View scheme details with no advert journey - creating grant");
+    createGrant(GRANT_NAME + " no advert");
+
+    // create application form
+    log(
+      "View scheme details with no advert journey - creating application form",
+    );
+    applicationForm();
+
+    // view scheme details
+    cy.get("[data-cy=cy_publishSuccess-manageThisGrant-button]").click();
+    cy.contains("Grant application form");
+    cy.contains("View submitted applications");
+    cy.contains(GRANT_NAME + " no advert");
+  });
+
+  it("View scheme details of grant with an advert and no application form", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+    log("View scheme details with no application journey - creating grant");
+    createGrant(GRANT_NAME + " no application form");
+
+    // create advert
+    log(
+      "View scheme details with no application journey - creating Advert Section 1",
+    );
+    advertSection1(GRANT_NAME);
+    log(
+      "View scheme details with no application journey - creating Advert Section 2",
+    );
+    advertSection2();
+    log(
+      "View scheme details with no application journey - creating Advert Section 3",
+    );
+    advertSection3(false);
+    log(
+      "View scheme details with no application journey - creating Advert Section 4",
+    );
+    advertSection4();
+    log(
+      "View scheme details with no application journey - creating Advert Section 5",
+    );
+    advertSection5();
+
+    log("View scheme details with no application journey - publishing advert");
+    publishAdvert(false);
+
+    cy.contains(
+      "An advert for this grant is live on Find a grant. The link for your advert is below:",
+    );
+    cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
+    cy.contains("View or change your advert");
+  });
+
+  it("View scheme details of grant with application form and advert", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+    log("View scheme details journey - creating Grant");
+    createGrant(GRANT_NAME);
+
+    // create advert
+    log("View scheme details journey - creating Advert Section 1");
+    advertSection1(GRANT_NAME);
+    log("View scheme details journey - creating Advert Section 2");
+    advertSection2();
+    log("View scheme details journey - creating Advert Section 3");
+    advertSection3(false);
+    log("View scheme details journey - creating Advert Section 4");
+    advertSection4();
+    log("View scheme details journey - creating Advert Section 5");
+    advertSection5();
+
+    log("View scheme details journey - publishing advert");
+    publishAdvert(false);
+
+    log("View scheme details journey - creating application form");
+    applicationForm();
+
+    // view scheme details
+    cy.get("[data-cy=cy_publishSuccess-manageThisGrant-button]").click();
+    cy.contains("Grant application form");
+    cy.contains("View submitted applications");
+    cy.contains(GRANT_NAME);
+    cy.contains(
+      "An advert for this grant is live on Find a grant. The link for your advert is below:",
+    );
+    cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
+    cy.contains("View or change your advert");
+  });
+
+  it("View scheme details with an in progress application", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+    log(
+      "View scheme details with application in progress journey - creating Grant",
+    );
+    createGrant(GRANT_NAME);
+
+    // start application form
+    cy.get('[data-cy="cyBuildApplicationForm"]').click();
+
+    cy.get('[data-cy="cy-applicationName-text-input"]').click();
+    cy.get('[data-cy="cy-applicationName-text-input"]').type(
+      "Cypress - Grant Application",
+      { force: true },
+    );
+    cy.get('[data-cy="cy-button-Continue"]').click();
+
+    cy.get('[data-cy="cy_Section-Eligibility Statement"]').click();
+
+    cy.get('[data-cy="cy-displayText-text-area"]').type("eligibility", {
+      force: true,
+    });
+
+    saveAndExit();
+
+    // exit build application form
+    clickText("Exit");
+
+    // view scheme details
+    cy.contains("Grant application form");
+    cy.contains(GRANT_NAME);
+
+    // Resume building application form
+    // cy.get('[data-cy="cy_table_row-for-Grant application form-row-0-cell-3"]').click();
+    clickText("View");
+    cy.get('[data-cy="cy_Section-due-diligence-checks"]').click();
+
+    cy.on("uncaught:exception", () => false);
+
+    cy.get(
+      '[data-cy="cy-checkbox-value-I understand that applicants will be asked for this information"]',
+    ).click();
+    saveAndExit();
+
+    // publish
+    publishApplicationForm();
+  });
+
+  it("View scheme details with an in progress advert", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+    createGrant(GRANT_NAME);
+
+    // create advert
+    log(
+      "Scheme details with an in progress advert journey - creating Advert Section 1",
+    );
+    advertSection1(GRANT_NAME);
+    log(
+      "Scheme details with an in progress advert journey - creating Advert Section 2",
+    );
+    advertSection2();
+
+    // exit advert creation
+    cy.get('[data-cy="cy-exit"]').click();
+
+    cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+
+    log(
+      "Scheme details with an in progress advert journey - creating Advert Section 3",
+    );
+    advertSection3(false);
+    log(
+      "Scheme details with an in progress advert journey - creating Advert Section 4",
+    );
+    advertSection4();
+    log(
+      "Scheme details with an in progress advert journey - creating Advert Section 5",
+    );
+    advertSection5();
+
+    log(
+      "Scheme details with an in progress advert journey - publishing advert",
+    );
+    publishAdvert(false);
+
+    cy.contains(
+      "An advert for this grant is live on Find a grant. The link for your advert is below:",
+    );
+
+    cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
+
+    cy.contains("View or change your advert");
+  });
+
+  it("View scheme details with a scheduled advert", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+    log("View scheme details with scheduled advert journey  - creating Grant");
+    createGrant(GRANT_NAME + " no application form");
+
+    // create advert
+    log(
+      "View scheme details with scheduled advert journey - creating Advert Section 1",
+    );
+    advertSection1(GRANT_NAME);
+    log(
+      "View scheme details with scheduled advert journey - creating Advert Section 2",
+    );
+    advertSection2();
+    log(
+      "View scheme details with scheduled advert journey - creating Advert Section 3",
+    );
+    advertSection3(true);
+    log(
+      "View scheme details with scheduled advert journey - creating Advert Section 4",
+    );
+    advertSection4();
+    log(
+      "View scheme details with scheduled advert journey - creating Advert Section 5",
+    );
+    advertSection5();
+
+    log(
+      "View scheme details with scheduled advert journey - publishing advert",
+    );
+    publishAdvert(true);
+
+    cy.contains("Grant advert");
+    cy.contains("Your advert is scheduled to be published on");
+    cy.contains("View or change your advert");
   });
 });
