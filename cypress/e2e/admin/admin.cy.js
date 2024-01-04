@@ -224,8 +224,7 @@ describe("Create a Grant", () => {
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
 
-    validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
-
+    validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId, 2);
 
     cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
   });
