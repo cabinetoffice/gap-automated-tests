@@ -128,8 +128,13 @@ describe("Create a Grant", () => {
     log(
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
+    cy.task("listDir", "/cypress/downloads").then((files) => {
+      log("DOWNLOADS LOG");
+      log(JSON.stringify(Object.entries(files)));
+    });
+
     cy.task("listDir", "/cypress/downloads/unzip").then((files) => {
-      log("WE ARE LOGGING");
+      log("UNZIP LOG");
       log(JSON.stringify(Object.entries(files)));
     });
 
@@ -217,8 +222,13 @@ describe("Create a Grant", () => {
     log(
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
+    cy.task("listDir", "/cypress/downloads").then((files) => {
+      log("DOWNLOADS LOG");
+      log(JSON.stringify(Object.entries(files)));
+    });
+
     cy.task("listDir", "/cypress/downloads/unzip").then((files) => {
-      log("WE ARE LOGGING");
+      log("UNZIP LOG");
       log(JSON.stringify(Object.entries(files)));
     });
     validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
