@@ -58,7 +58,7 @@ describe("Create a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it.only("V1 Internal - Download Due Diligence Data", () => {
+  it("V1 Internal - Download Due Diligence Data", () => {
     // Populate data instead of completing journey
     log(
       "Admin V1 Internal - Download Due Diligence - inserting submissions, mq and spotlight submissions",
@@ -128,17 +128,18 @@ describe("Create a Grant", () => {
     log(
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
-    cy.task("listDir", "/cypress/downloads").then((files) => {
-      log("DOWNLOADS LOG");
-      log(JSON.stringify(Object.entries(files)));
-    });
-
-    cy.task("listDir", "/cypress/downloads/unzip").then((files) => {
-      log("UNZIP LOG");
-      log(JSON.stringify(Object.entries(files)));
-    });
 
     validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
+
+    // cy.task("listDir", "/cypress/downloads").then((files) => {
+    //   log("DOWNLOADS LOG");
+    //   log(JSON.stringify(Object.entries(files)));
+    // });
+
+    // cy.task("listDir", "/cypress/downloads/unzip").then((files) => {
+    //   log("UNZIP LOG");
+    //   log(JSON.stringify(Object.entries(files)));
+    // });
     cy.readFile(
       "cypress/downloads/unzip/submission_export/V1_Internal_Limited_company_00000050_0000_0000_000_1.odt",
     );
@@ -222,6 +223,8 @@ describe("Create a Grant", () => {
     log(
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
+
+    validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
     cy.task("listDir", "/cypress/downloads").then((files) => {
       log("DOWNLOADS LOG");
       log(JSON.stringify(Object.entries(files)));
@@ -231,7 +234,6 @@ describe("Create a Grant", () => {
       log("UNZIP LOG");
       log(JSON.stringify(Object.entries(files)));
     });
-    validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
 
     cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
   });
