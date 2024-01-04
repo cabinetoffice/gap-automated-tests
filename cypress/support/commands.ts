@@ -36,8 +36,6 @@
 //   }
 // }
 
-require("cypress-downloadfile/lib/downloadFileCommand");
-
 type Command = keyof Cypress.Chainable;
 Cypress.Commands.add("parseXlsx" as Command, (inputFile) => {
   return cy.task("parseXlsx", { filePath: inputFile });
