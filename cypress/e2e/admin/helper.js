@@ -6,7 +6,7 @@ import {
   yesQuestionComplete,
 } from "../../common/common";
 
-function publishApplicationForm() {
+export function publishApplicationForm() {
   cy.get('[data-cy="cy_publishApplication-button"]').click();
 
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();

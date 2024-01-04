@@ -23,7 +23,7 @@ There are example tests contained at `cypress/_examples` to use as a guide when 
 - You will need to set up 3 users with One Login, and use these to run E2E tests locally. Steps:
   1. Go to Find a Grant for the environment you wish to run against
   2. Click `Sign in and Apply`
-  3. Create a new account for the intended role (you can use the + trick to generate a "new" email still linked to your inbox) until you reach the dashboard
+  3. Create a new account for the intended role (you can use the + trick to generate a "new" email still linked to your inbox) until you reach the dashboard **(passwords cannot contain #)**
   4. Repeat steps 2-3 for applicant, admin and super admin
   5. Put each of these 3 emails into the .env under ONE_LOGIN_APPLICANT_EMAIL, ONE_LOGIN_ADMIN_EMAIL and ONE_LOGIN_SUPER_ADMIN_EMAIL appropriately.
   6. Add yourself to the VPC if you haven't already (`npm run vpc:add`)
