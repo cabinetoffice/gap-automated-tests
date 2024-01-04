@@ -128,6 +128,13 @@ describe("Create a Grant", () => {
     log(
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
+    cy.task("listDir", "/cypress/downloads/unzip/submission_export").then(
+      (files) => {
+        cy.log("WE ARE LOGGING");
+        cy.log(JSON.stringify(Object.entries(files)));
+      },
+    );
+
     validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
     cy.readFile(
       "cypress/downloads/unzip/submission_export/V1_Internal_Limited_company_00000050_0000_0000_000_1.odt",
@@ -211,6 +218,12 @@ describe("Create a Grant", () => {
 
     log(
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
+    );
+    cy.task("listDir", "/cypress/downloads/unzip/submission_export").then(
+      (files) => {
+        cy.log("WE ARE LOGGING");
+        cy.log(JSON.stringify(Object.entries(files)));
+      },
     );
     validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
 

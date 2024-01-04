@@ -95,6 +95,10 @@ export default defineConfig({
 
           return null;
         },
+        async listDir(filePath) {
+          const list = fs.readdirSync(__dirname + filePath);
+          return list;
+        },
         async parseXlsx({ filePath }) {
           try {
             return xlsx.parse(fs.readFileSync(__dirname + filePath));
@@ -109,6 +113,7 @@ export default defineConfig({
             path + "unzip/" + file.replace(".zip", ""),
           );
         },
+
         async getExportedSubmissionUrlAndLocation(schemeId: string) {
           return await getExportedSubmissionUrlAndLocation(schemeId);
         },
