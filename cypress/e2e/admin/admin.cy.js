@@ -129,15 +129,6 @@ describe("Create a Grant", () => {
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
     validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
-
-    const fileList = fs.readFileSync(
-      "cypress/downloads/unzip/submission_export/",
-    );
-
-    fileList.forEach((file) => {
-      console.log("reading file -> ", { file });
-    });
-
     cy.readFile(
       "cypress/downloads/unzip/submission_export/V1_Internal_Limited_company_00000050_0000_0000_000_1.odt",
     );
@@ -223,13 +214,6 @@ describe("Create a Grant", () => {
     );
     validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
 
-    const fileList = fs.readFileSync(
-      "cypress/downloads/unzip/submission_export/",
-    );
-
-    fileList.forEach((file) => {
-      console.log("reading file -> ", { file });
-    });
     cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
   });
 });
