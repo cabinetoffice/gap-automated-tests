@@ -300,7 +300,7 @@ describe("Manage Users", () => {
 
     cy.log("Clicking change on user's department");
     cy.get(
-      ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
+      ":nth-child(4) > .govuk-summary-list__actions > .govuk-link",
     ).click();
 
     cy.log("Selecting a new department");
@@ -392,7 +392,7 @@ describe("Manage roles", () => {
 
     cy.log("Clicking remove on admin role");
     cy.get(
-      ":nth-child(4) > .govuk-summary-list__actions > .govuk-link",
+      ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
     ).click();
 
     cy.log("Unchecking admin role");
@@ -417,9 +417,6 @@ describe("Manage roles", () => {
     cy.get(".govuk-button").contains("Change Roles").click();
 
     cy.log("Giving a department");
-    cy.get(
-      ":nth-child(3) > .govuk-summary-list__actions > .govuk-link",
-    ).click();
     cy.get('[data-cy="cy-radioInput-label-CypressTestDepartment"]')
       .first()
       .click();
