@@ -1,5 +1,4 @@
 import { defineConfig } from "cypress";
-import { downloadFile } from "cypress-downloadfile/lib/addPlugin";
 import {
   addFailedOauthAudit,
   createTestUsers,
@@ -96,7 +95,6 @@ export default defineConfig({
 
           return null;
         },
-        downloadFile,
         async parseXlsx({ filePath }) {
           try {
             return xlsx.parse(fs.readFileSync(__dirname + filePath));

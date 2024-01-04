@@ -226,7 +226,7 @@ describe("Create a Grant", () => {
     const timestamp = convertDateToString(Date.now());
     const filePath = "/cypress/downloads/unzip/spotlight_checks";
 
-    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_charities_and_companies.xlsx`;
+    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`;
     validateXlsx(limitedCompanyFileName, [
       [
         Cypress.env("testV2InternalGrant").advertId,
@@ -457,7 +457,9 @@ describe("Create a Grant", () => {
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
     validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
-    cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
+    cy.readFile(
+      "cypress/downloads/unzip/submission_export/V1_Internal_Limited_company_00000050_0000_0000_000_1.odt",
+    );
   });
 
   it("V1 Internal - Download Submission Export", () => {
