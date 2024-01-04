@@ -225,15 +225,7 @@ describe("Create a Grant", () => {
     );
 
     validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
-    cy.task("listDir", "/cypress/downloads").then((files) => {
-      log("DOWNLOADS LOG");
-      log(JSON.stringify(Object.entries(files)));
-    });
 
-    cy.task("listDir", "/cypress/downloads/unzip").then((files) => {
-      log("UNZIP LOG");
-      log(JSON.stringify(Object.entries(files)));
-    });
 
     cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
   });

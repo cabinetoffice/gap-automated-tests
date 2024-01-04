@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import {
   clickSaveAndContinue,
   downloadFileFromLink,
+  log,
   saveAndExit,
   yesQuestionComplete,
 } from "../../common/common";
@@ -424,6 +425,23 @@ export const validateSubmissionDownload = (schemeId) => {
       cy.unzip({ path: "cypress/downloads/", file: "submission_export.zip" });
 
       const folder = "cypress/downloads/unzip/submission_export";
+
+      cy.task("listDir", "/cypress/downloads").then((files) => {
+        log("DOWNLOADS LOG");
+        log(JSON.stringify(Object.entries(files)));
+      });
+
+      cy.task("listDir", "/cypress/downloads/unzip").then((files) => {
+        log("UNZIP LOG");
+        log(JSON.stringify(Object.entries(files)));
+      });
+
+      cy.task("listDir", "/cypress/downloads/unzip/submission_export").then(
+        (files) => {
+          log("UNZIP LOG");
+          log(JSON.stringify(Object.entries(files)));
+        },
+      );
       // Filename is limited to 50 characters before _1 is added
       const submissionFileName = submission.location
         .split(".zip")[0]
