@@ -1,9 +1,11 @@
+export const DEPARTMENT_NAME = `Cypress - Test Department ${process.env.FIRST_USER_ID}`;
+
 const insertDepartments: string = `
 INSERT INTO public.departments(id, ggis_id, name)
     VALUES
-	($1, 'GGIS_ID', 'Cypress - Test Department'),
-	($2, 'GGIS_ID_EDIT', 'Cypress - Test Edit Department'),
-	($3, 'GGIS_ID_DELETE', 'Cypress - Test Delete Department');
+	($1, 'GGIS_ID', '${DEPARTMENT_NAME}'),
+	($2, 'GGIS_ID_EDIT', '${DEPARTMENT_NAME} Edit'),
+	($3, 'GGIS_ID_DELETE', '${DEPARTMENT_NAME} Delete');
 `;
 
 const insertUsers: string = `

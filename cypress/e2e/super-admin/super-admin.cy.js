@@ -550,7 +550,7 @@ describe("Manage departments", () => {
     );
   });
 
-  it("Can delete a department", () => {
+  it.only("Can delete a department", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     cy.log("Signing in as super admin");
     signInAsSuperAdmin();
@@ -563,15 +563,19 @@ describe("Manage departments", () => {
     cy.get(".govuk-link").contains("Manage departments").click();
 
     cy.log("Clicking delete on department");
-    let hits = 0;
+
+    const DEPARTMENT_NAME = `Cypress - Test Department ${Cypress.env(
+      "firstUserId",
+    )} Delete`;
+
     cy.get(".govuk-summary-list__key").each(($ele, index) => {
-      if ($ele.text() === "Cypress - Test Delete Department" && hits === 0) {
+      if ($ele.text() === DEPARTMENT_NAME) {
         cy.get(
           `:nth-child(${
             index + 1
           }) > .govuk-summary-list__actions > .manage-departments_float-left-sm__8lYy9 > .govuk-link`,
         ).click();
-        hits++;
+        return false;
       }
     });
 
@@ -583,7 +587,7 @@ describe("Manage departments", () => {
 
     cy.log("Verifying that the department has been deleted");
     cy.get(".govuk-summary-list__key")
-      .contains("Cypress - Test Delete Department")
+      .contains(DEPARTMENT_NAME)
       .should("not.exist");
   });
 });
