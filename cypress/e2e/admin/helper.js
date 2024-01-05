@@ -414,7 +414,7 @@ export function advertSection1(GRANT_NAME) {
 export const convertDateToString = (date, dateFormat = "YYYY-MM-DD") =>
   dayjs(date).format(dateFormat);
 
-export const validateSubmissionDownload = (schemeId) => {
+export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
   cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
     (submission) => {
       cy.visit(submission.url);
@@ -428,7 +428,7 @@ export const validateSubmissionDownload = (schemeId) => {
       const submissionFileName = submission.location
         .split(".zip")[0]
         .substring(0, 50);
-      cy.readFile(`${folder}/${submissionFileName}_1.odt`);
+      cy.readFile(`${folder}/${submissionFileName}_${filenameSuffix}.odt`);
     },
   );
 };

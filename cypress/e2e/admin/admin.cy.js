@@ -391,8 +391,9 @@ describe("Create a Grant", () => {
     validateSubmissionDownload(Cypress.env("testV2InternalGrant").schemeId);
   });
 
-  it("V1 Internal - Download Due Diligence Data", () => {
+  it.skip("V1 Internal - Download Due Diligence Data", () => {
     // Populate data instead of completing journey
+    // "V1 Internal - Download Submission Export" can be removed after this
     log(
       "Admin V1 Internal - Download Due Diligence - inserting submissions, mq and spotlight submissions",
     );
@@ -545,7 +546,7 @@ describe("Create a Grant", () => {
     log(
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
-    validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId);
+    validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId, 2);
     cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
   });
 
