@@ -1,4 +1,4 @@
-export const DEPARTMENT_NAME = `Cypress - Test Department ${process.env.FIRST_USER_ID}`;
+import { DEPARTMENT_NAME } from "../apply/constants";
 
 const insertDepartments: string = `
 INSERT INTO public.departments(id, ggis_id, name)
