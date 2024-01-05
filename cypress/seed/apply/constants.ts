@@ -55,6 +55,8 @@ const allSubs = [
   process.env.ONE_LOGIN_APPLICANT_SUB,
 ];
 
+const DEPARTMENT_NAME = `Cypress - Test Department ${process.env.FIRST_USER_ID}`;
+
 const SUPER_ADMIN_ID = getTestID();
 const ADMIN_ID = getTestID(1);
 const APPLICANT_ID = getTestID(2);
@@ -341,4 +343,5 @@ export {
   V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   SPOTLIGHT_BATCH_ID,
   MQ_DETAILS,
+  DEPARTMENT_NAME,
 };
