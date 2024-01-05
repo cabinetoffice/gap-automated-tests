@@ -6,13 +6,24 @@ import {
   navigateToSpecificUser,
   signInAsApplyApplicant,
 } from "../../common/common";
-import {
-  TEST_V1_INTERNAL_GRANT,
-  ADDED_DEPARTMENT_NAME,
-} from "../../common/constants";
 import { TASKS } from "./constants";
 
+import { TEST_V1_INTERNAL_GRANT } from "../../common/constants";
+
 const { ADD_TEST_OAUTH_AUDIT, DELETE_FAILED_OAUTH_AUDIT } = TASKS;
+
+const ADDED_DEPARTMENT_NAME = `Cypress - Test Add Department ${Cypress.env(
+  "firstUserId",
+)}`;
+const DEPARTMENT_NAME_DELETE = `Cypress - Test Department ${Cypress.env(
+  "firstUserId",
+)} Delete`;
+const DEPARTMENT_NAME = `Cypress - Test Department ${Cypress.env(
+  "firstUserId",
+)} Edit`;
+const EDITED_DEPARTMENT_NAME = `Cypress - Test Edited Department ${Cypress.env(
+  "firstUserId",
+)}`;
 
 describe("Navigation", () => {
   beforeEach(() => {
@@ -497,15 +508,14 @@ describe("Manage departments", () => {
 
     cy.log("Clicking edit on department");
 
-    let hits = 0;
     cy.get(".govuk-summary-list__key").each(($ele, index) => {
-      if ($ele.text() === "Cypress - Test Edit Department" && hits === 0) {
+      if ($ele.text() === DEPARTMENT_NAME) {
         cy.get(
           `:nth-child(${
             index + 1
           }) > .govuk-summary-list__actions > .manage-departments_float-left-sm__8lYy9 > .govuk-link`,
         ).click();
-        hits++;
+        return false;
       }
     });
 
@@ -520,9 +530,7 @@ describe("Manage departments", () => {
     cy.log("Entering a name but no ID");
     cy.get('[data-cy="cy-name-text-input"]').clear();
     cy.get('[data-cy="cy-ggisID-text-input"]').clear();
-    cy.get('[data-cy="cy-name-text-input"]').type(
-      "Cypress - Test Edit Department 2",
-    );
+    cy.get('[data-cy="cy-name-text-input"]').type(EDITED_DEPARTMENT_NAME);
     cy.get(".govuk-button").contains("Save changes").click();
     cy.get('[data-cy="cyErrorBannerHeading"]').contains("There is a problem");
     cy.get('[data-cy="cyError_ggisID"]').contains("Enter a GGIS ID");
@@ -538,19 +546,15 @@ describe("Manage departments", () => {
     cy.log("Entering a valid ID and name");
     cy.get('[data-cy="cy-name-text-input"]').clear();
     cy.get('[data-cy="cy-ggisID-text-input"]').clear();
-    cy.get('[data-cy="cy-name-text-input"]').type(
-      "Cypress - Test Edit Department 2",
-    );
+    cy.get('[data-cy="cy-name-text-input"]').type(EDITED_DEPARTMENT_NAME);
     cy.get('[data-cy="cy-ggisID-text-input"]').type("123456");
     cy.get(".govuk-button").contains("Save changes").click();
 
     cy.log("Verifying that the department has been editted");
-    cy.get(".govuk-summary-list__key").contains(
-      "Cypress - Test Edit Department 2",
-    );
+    cy.get(".govuk-summary-list__key").contains(EDITED_DEPARTMENT_NAME);
   });
 
-  it.only("Can delete a department", () => {
+  it("Can delete a department", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     cy.log("Signing in as super admin");
     signInAsSuperAdmin();
@@ -564,12 +568,8 @@ describe("Manage departments", () => {
 
     cy.log("Clicking delete on department");
 
-    const DEPARTMENT_NAME = `Cypress - Test Department ${Cypress.env(
-      "firstUserId",
-    )} Delete`;
-
     cy.get(".govuk-summary-list__key").each(($ele, index) => {
-      if ($ele.text() === DEPARTMENT_NAME) {
+      if ($ele.text() === DEPARTMENT_NAME_DELETE) {
         cy.get(
           `:nth-child(${
             index + 1
@@ -587,7 +587,7 @@ describe("Manage departments", () => {
 
     cy.log("Verifying that the department has been deleted");
     cy.get(".govuk-summary-list__key")
-      .contains(DEPARTMENT_NAME)
+      .contains(DEPARTMENT_NAME_DELETE)
       .should("not.exist");
   });
 });

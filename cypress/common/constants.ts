@@ -6,7 +6,7 @@ const firstUserId = Math.abs(+process.env.FIRST_USER_ID);
 const firstGrantId = Math.abs(+process.env.FIRST_USER_ID);
 const secondGrantId = Math.abs(+process.env.FIRST_USER_ID) + 1;
 
-export const ADDED_DEPARTMENT_NAME = "Cypress Test Add Department";
+export const ADDED_DEPARTMENT_NAME = `Cypress - Test Add Department ${firstUserId}`;
 
 export const TEST_V1_INTERNAL_GRANT = {
   advertName: `Cypress - Automated E2E Test Grant V1 Internal ID:${firstUserId}`,
