@@ -12,18 +12,12 @@ import { TEST_V1_INTERNAL_GRANT } from "../../common/constants";
 
 const { ADD_TEST_OAUTH_AUDIT, DELETE_FAILED_OAUTH_AUDIT } = TASKS;
 
-const ADDED_DEPARTMENT_NAME = `Cypress - Test Add Department ${Cypress.env(
-  "firstUserId",
-)}`;
-const DEPARTMENT_NAME_DELETE = `Cypress - Test Department ${Cypress.env(
-  "firstUserId",
-)} Delete`;
-const DEPARTMENT_NAME = `Cypress - Test Department ${Cypress.env(
-  "firstUserId",
-)} Edit`;
-const EDITED_DEPARTMENT_NAME = `Cypress - Test Edited Department ${Cypress.env(
-  "firstUserId",
-)}`;
+const firstUserId = Cypress.env("firstUserId");
+
+const ADDED_DEPARTMENT_NAME = `Cypress - Test Add Department ${firstUserId}`;
+const DEPARTMENT_NAME_DELETE = `Cypress - Test Department ${firstUserId} Delete`;
+const DEPARTMENT_NAME = `Cypress - Test Department ${firstUserId} Edit`;
+const EDITED_DEPARTMENT_NAME = `Cypress - Test Edited Department ${firstUserId}`;
 
 describe("Navigation", () => {
   beforeEach(() => {
