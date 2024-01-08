@@ -5,6 +5,7 @@ import {
   TEST_V1_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
+  ADMIN_TEST_GRANT_NAME,
 } from "../common/constants";
 
 const ADVERTS = [
@@ -375,10 +376,15 @@ const ADVERTS = [
 ];
 const SLUGS = ADVERTS.map((advert) => advert.fields.grantName["en-US"]);
 
+const shouldUnpublishAdvert = (entry) => {
+  const advertName = entry.fields?.grantName?.["en-US"];
+  return SLUGS.includes(advertName) || advertName === ADMIN_TEST_GRANT_NAME;
+};
+
 const unpublishAndDelete = async (entries) => {
   let deletionExecuted = false;
   for (const entry of entries.items) {
-    if (SLUGS.includes(entry.fields?.grantName?.["en-US"])) {
+    if (shouldUnpublishAdvert(entry)) {
       if (entry.isPublished())
         await entry.unpublish().then(() => {
           console.log(
