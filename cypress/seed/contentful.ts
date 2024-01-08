@@ -374,11 +374,14 @@ const ADVERTS = [
     },
   },
 ];
-const SLUGS = ADVERTS.map((advert) => advert.fields.grantName["en-US"]);
+const SLUGS = [
+  ...ADVERTS.map((advert) => advert.fields.grantName["en-US"]),
+  ADMIN_TEST_GRANT_NAME
+];
 
 const shouldUnpublishAdvert = (entry) => {
   const advertName = entry.fields?.grantName?.["en-US"];
-  return SLUGS.includes(advertName) || advertName === ADMIN_TEST_GRANT_NAME;
+  return SLUGS.includes(advertName);
 };
 
 const unpublishAndDelete = async (entries) => {
