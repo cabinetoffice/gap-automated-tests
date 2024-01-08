@@ -117,6 +117,10 @@ export default defineConfig({
 
           return null;
         },
+        async ls(filePath) {
+          const list = fs.readdirSync(__dirname + filePath);
+          return list;
+        },
         table(message) {
           console.table(message);
 
