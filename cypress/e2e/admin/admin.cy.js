@@ -26,7 +26,9 @@ import {
   convertDateToString,
   createGrant,
   publishAdvert,
+  publishApplication,
   publishApplicationForm,
+  searchForAGrant,
 } from "./helper";
 
 const {
@@ -123,6 +125,83 @@ describe("Create a Grant", () => {
 
     log("Admin grant creation journey - creating application form");
     applicationForm();
+  });
+
+  it("Can view application forms", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    log("Admin grant creation journey - Signing in as admin");
+    signInAsAdmin();
+    log("Admin grant creation journey - creating Grant");
+    createGrant(GRANT_NAME);
+    log("Admin grant creation journey - creating application form");
+    applicationForm();
+    cy.url().then((url) => {
+      const schemeUrl = url;
+      cy.get(".break-all-words > .govuk-link").then(($el) => {
+        const applicationUrl = $el.text();
+        cy.log("Visiting application while published");
+        cy.get(".break-all-words > .govuk-link").click();
+        cy.get(".govuk-heading-l").contains("Before you start");
+        cy.log("Heading back to scheme");
+        cy.visit(schemeUrl);
+        publishApplication(false);
+        cy.visit(applicationUrl, { failOnStatusCode: false });
+        cy.contains("Page not found");
+        // Currently not working as intended on sandbox.
+        cy.log("Heading back to scheme");
+        cy.visit(schemeUrl);
+        publishApplication(true);
+        cy.visit(applicationUrl);
+        cy.get(".govuk-heading-l").contains("Before you start");
+      });
+    });
+  });
+
+  it("Can naviagate to appropriate adverts", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    log("Admin grant creation journey - Signing in as admin");
+    signInAsAdmin();
+    log("Admin grant creation journey - creating Grant");
+    createGrant(GRANT_NAME);
+    advertSection1(GRANT_NAME);
+    advertSection2();
+    advertSection3(false);
+    advertSection4();
+    advertSection5();
+    publishAdvert(false);
+    cy.url().then((url) => {
+      const schemeUrl = url;
+      cy.get('[data-cy="cy-link-to-advert-on-find"]').then(($el) => {
+        const advertUrl = $el.text();
+        cy.visit(advertUrl);
+        cy.contains(GRANT_NAME);
+        searchForAGrant(GRANT_NAME);
+        // List contains the advert
+
+        cy.visit(schemeUrl);
+        cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+        cy.get('[data-cy="cy-unpublish-advert-button"]').click();
+        cy.get('[data-cy="cy-radioInput-option-YesUnpublishMyAdvert"]').click();
+        cy.get('[data-cy="cy_unpublishConfirmation-ConfirmButton"]').click();
+        cy.get('[data-cy="confirmation-message-title"]').contains(
+          "Your advert has been unpublished",
+        );
+        // Need to wait for Contentful to update.
+        cy.visit(advertUrl, { failOnStatusCode: false });
+        cy.contains("Page not found");
+        cy.visit(schemeUrl);
+        cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+        cy.get('[data-cy="cy-publish-advert-button"]').click();
+        cy.get('[data-cy="cy-button-Confirm and publish"]').click();
+        cy.get('[data-cy="cy-advert-published"]').contains(
+          "Grant advert published",
+        );
+        cy.visit(advertUrl);
+        cy.contains(GRANT_NAME);
+        searchForAGrant(GRANT_NAME);
+        // List contains the advert
+      });
+    });
   });
 
   it("V2 External - Download due diligence data", () => {
