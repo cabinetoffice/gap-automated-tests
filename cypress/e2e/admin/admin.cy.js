@@ -34,6 +34,7 @@ const {
   ADD_SPOTLIGHT_BATCH,
   ADD_SUBMISSION_TO_MOST_RECENT_BATCH,
   CLEANUP_TEST_SPOTLIGHT_SUBMISSIONS,
+  REMOVE_ADVERT_BY_NAME,
 } = TASKS;
 
 const { SENT, SEND_ERROR, GGIS_ERROR, VALIDATION_ERROR } =
@@ -100,6 +101,7 @@ describe("Create a Grant", () => {
   });
 
   it("Admin can create a new Grant with Advert and Application Form", () => {
+    cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     log("Admin grant creation journey - Signing in as admin");
     signInAsAdmin();
@@ -428,6 +430,7 @@ describe("Create a Grant", () => {
   });
 
   it("View scheme details of grant with an advert and no application form", () => {
+    cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME + " no application form");
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
     log("View scheme details with no application journey - creating grant");
@@ -502,6 +505,7 @@ describe("Create a Grant", () => {
   });
 
   it("View scheme details with an in progress application", () => {
+    cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
     log(
@@ -551,6 +555,7 @@ describe("Create a Grant", () => {
   });
 
   it("View scheme details with an in progress advert", () => {
+    cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
     createGrant(GRANT_NAME);
@@ -598,6 +603,7 @@ describe("Create a Grant", () => {
   });
 
   it("View scheme details with a scheduled advert", () => {
+    cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
     log("View scheme details with scheduled advert journey  - creating Grant");

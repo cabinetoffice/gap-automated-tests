@@ -18,7 +18,10 @@ import {
   insertSubmissionsAndMQs,
 } from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
-import { publishGrantAdverts } from "./cypress/seed/contentful";
+import {
+  publishGrantAdverts,
+  removeAdvertByName,
+} from "./cypress/seed/contentful";
 import {
   TEST_V1_INTERNAL_GRANT,
   TEST_V1_EXTERNAL_GRANT,
@@ -83,6 +86,10 @@ export default defineConfig({
         async setUpFindData() {
           await deleteFindData().then(async () => await createFindData());
 
+          return null;
+        },
+        async removeAdvertByName(name) {
+          await removeAdvertByName(name);
           return null;
         },
         async publishGrantsToContentful() {
