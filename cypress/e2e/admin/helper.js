@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {
   clickSaveAndContinue,
+  downloadFileFromLink,
   saveAndExit,
   yesQuestionComplete,
 } from "../../common/common";
@@ -412,3 +413,22 @@ export function advertSection1(GRANT_NAME) {
 
 export const convertDateToString = (date, dateFormat = "YYYY-MM-DD") =>
   dayjs(date).format(dateFormat);
+
+export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
+  cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
+    (submission) => {
+      cy.visit(submission.url);
+
+      downloadFileFromLink(cy.contains("Download"), "submission_export.zip");
+
+      cy.unzip({ path: "cypress/downloads/", file: "submission_export.zip" });
+
+      const folder = "cypress/downloads/unzip/submission_export";
+      // Filename is limited to 50 characters before _1 is added
+      const submissionFileName = submission.location
+        .split(".zip")[0]
+        .substring(0, 50);
+      cy.readFile(`${folder}/${submissionFileName}_${filenameSuffix}.odt`);
+    },
+  );
+};

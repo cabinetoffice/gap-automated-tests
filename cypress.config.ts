@@ -1,5 +1,4 @@
 import { defineConfig } from "cypress";
-import { downloadFile } from "cypress-downloadfile/lib/addPlugin";
 import {
   addFailedOauthAudit,
   createTestUsers,
@@ -16,6 +15,7 @@ import {
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   insertSubmissionsAndMQs,
+  getExportedSubmissionUrlAndLocation,
 } from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import { publishGrantAdverts } from "./cypress/seed/contentful";
@@ -95,7 +95,6 @@ export default defineConfig({
 
           return null;
         },
-        downloadFile,
         async parseXlsx({ filePath }) {
           try {
             return xlsx.parse(fs.readFileSync(__dirname + filePath));
@@ -110,10 +109,17 @@ export default defineConfig({
             path + "unzip/" + file.replace(".zip", ""),
           );
         },
+        async getExportedSubmissionUrlAndLocation(schemeId: string) {
+          return await getExportedSubmissionUrlAndLocation(schemeId);
+        },
         log(message) {
           console.log(message);
 
           return null;
+        },
+        async ls(filePath) {
+          const list = fs.readdirSync(__dirname + filePath);
+          return list;
         },
         table(message) {
           console.table(message);
