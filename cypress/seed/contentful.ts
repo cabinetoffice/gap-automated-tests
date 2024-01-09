@@ -383,7 +383,7 @@ const shouldUnpublishAdvert = (entry, advertName?) => {
   const contentfulAdvertName = entry.fields?.grantName?.["en-US"];
   if (advertName) return contentfulAdvertName === advertName;
 
-  return SLUGS.includes(advertName);
+  return SLUGS.includes(contentfulAdvertName);
 };
 
 const unpublishAndDelete = async (entries, advertName?) => {
