@@ -141,34 +141,12 @@ function addOptionalMultiChoiceQuestion(
   cy.get('[data-cy="cy-button-Save question"]').click();
 }
 
-const getIframeDocument = (iFrameSelector) => {
-  return (
-    cy
-      .get(iFrameSelector)
-      // Cypress yields jQuery element, which has the real
-      // DOM element under property "0".
-      // From the real DOM iframe element we can get
-      // the "document" element, it is stored in "contentDocument" property
-      // Cypress "its" command can access deep properties using dot notation
-      // https://on.cypress.io/its
-      .its("0.contentDocument")
-      .should("exist")
-  );
-};
-
-const getIframeBody = (iFrameSelector) => {
-  cy.wait(2000);
-  // get the document
-  return (
-    getIframeDocument(iFrameSelector)
-      // automatically retries until body is loaded
-      .its("body")
-      .should("not.be.undefined")
-      // wraps "body" DOM element to allow
-      // chaining more Cypress commands, like ".find(...)"
-      .then(cy.wrap)
-  );
-};
+const getIframeBody = (iFrameSelector) =>
+  cy
+    .get(iFrameSelector, { timeout: 8000 })
+    .its("0.contentDocument.body")
+    .should("not.be.empty")
+    .then(cy.wrap);
 
 export function publishAdvert(scheduled) {
   cy.get('[data-cy="cy-publish-advert-button"]').click();
