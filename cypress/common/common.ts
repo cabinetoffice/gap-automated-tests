@@ -192,7 +192,10 @@ export const downloadFileFromLink = (
     const urlToDownload = options.prepend
       ? Cypress.env("postLoginBaseUrl") + url
       : url;
-    cy.downloadFile(urlToDownload, "cypress/downloads", filename);
+    cy.request({ url: urlToDownload, encoding: "binary" }).then((response) => {
+      cy.writeFile(`cypress/downloads/${filename}`, response.body, "binary");
+    });
+    cy.log(`Downloaded file: ${filename}`);
   });
 };
 

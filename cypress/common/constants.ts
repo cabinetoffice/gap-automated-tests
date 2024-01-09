@@ -1,4 +1,4 @@
-import { getUUID } from "../seed/apply/helper";
+import { getUUID, getTestID } from "../seed/apply/helper";
 
 require("dotenv").config();
 
@@ -7,6 +7,7 @@ const firstGrantId = Math.abs(+process.env.FIRST_USER_ID);
 const secondGrantId = Math.abs(+process.env.FIRST_USER_ID) + 1;
 
 export const ADDED_DEPARTMENT_NAME = `Cypress - Test Add Department ${firstUserId}`;
+export const ADMIN_TEST_GRANT_NAME = `Cypress Admin E2E Test Grant ID:${firstUserId}`;
 
 export const TEST_V1_INTERNAL_GRANT = {
   advertName: `Cypress - Automated E2E Test Grant V1 Internal ID:${firstUserId}`,
@@ -16,6 +17,7 @@ export const TEST_V1_INTERNAL_GRANT = {
   applicationUrl: `${process.env.POST_LOGIN_BASE_URL}/apply/applicant/applications/-${firstGrantId}`,
   applicationName: "Cypress - Test Application V1 Internal",
   schemeName: "Cypress - Test Scheme V1 Internal",
+  schemeId: getTestID(),
 };
 
 export const TEST_V1_EXTERNAL_GRANT = {
@@ -26,6 +28,7 @@ export const TEST_V1_EXTERNAL_GRANT = {
   applicationUrl: "https://www.google.com",
   applicationName: "Cypress - Test Application V1 External",
   schemeName: "Cypress - Test Scheme V1 External",
+  schemeId: getTestID(3),
 };
 
 export const TEST_V2_INTERNAL_GRANT = {
@@ -36,6 +39,7 @@ export const TEST_V2_INTERNAL_GRANT = {
   applicationUrl: `${process.env.POST_LOGIN_BASE_URL}/apply/applicant/applications/-${secondGrantId}`,
   applicationName: "Cypress - Test Application V2 Internal",
   schemeName: "Cypress - Test Scheme V2 Internal",
+  schemeId: getTestID(1),
 };
 
 export const TEST_V2_EXTERNAL_GRANT = {
@@ -46,4 +50,5 @@ export const TEST_V2_EXTERNAL_GRANT = {
   applicationUrl: "https://www.google.com",
   applicationName: "Cypress - Test Application V2 External",
   schemeName: "Cypress - Test Scheme V2 External",
+  schemeId: getTestID(2),
 };

@@ -40,6 +40,7 @@ import {
 } from "../data/apply";
 
 import { getTestID, getUUID } from "./helper";
+import { getExportedSubmission } from "../ts/selectApplyData";
 
 require("dotenv").config();
 
@@ -48,6 +49,8 @@ const applyServiceDbName = process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
 const applyDatabaseUrl =
   process.env.APPLY_DATABASE_URL ||
   "postgres://postgres:postgres@localhost:5432";
+
+const postLoginBaseUrl = process.env.POST_LOGIN_BASE_URL;
 
 const allSubs = [
   process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
@@ -213,6 +216,14 @@ const applyInsertSubstitutions = {
     ADMIN_ID,
     V1_EXTERNAL_SCHEME_ID,
   ],
+  [getExportedSubmission]: [
+    SUPER_ADMIN_ID,
+    ADMIN_ID,
+    APPLICANT_ID,
+    SUPER_ADMIN_ID,
+    ADMIN_ID,
+    ...allSubs,
+  ],
 };
 
 const applyDeleteSubstitutions = {
@@ -327,6 +338,7 @@ export {
   spotlightSubstitutions,
   applyServiceDbName,
   applyDatabaseUrl,
+  postLoginBaseUrl,
   SUPER_ADMIN_ID,
   ADMIN_ID,
   APPLICANT_ID,

@@ -42,7 +42,9 @@ import {
   applyUpdateSubstitutions,
   V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+  postLoginBaseUrl,
 } from "./constants";
+import { getExportedSubmission } from "../ts/selectApplyData";
 
 const runSqlForApply = async (
   scripts: string[],
@@ -147,6 +149,18 @@ const insertSubmissionsAndMQs = async () => {
   );
 };
 
+const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
+  const row = await runSqlForApply(
+    [getExportedSubmission],
+    applyInsertSubstitutions,
+  );
+  console.log(schemeId, row[0][0]);
+  return {
+    url: `${postLoginBaseUrl}/apply/admin/scheme/${schemeId}/${row[0][0].export_batch_id}`,
+    location: row[0][0].location.split("/")[1],
+  };
+};
+
 export {
   createApplyData,
   deleteApplyData,
@@ -157,4 +171,5 @@ export {
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   addSpotlightBatch,
+  getExportedSubmissionUrlAndLocation,
 };

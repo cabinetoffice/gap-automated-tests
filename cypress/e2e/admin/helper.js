@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {
   clickSaveAndContinue,
+  downloadFileFromLink,
   saveAndExit,
   yesQuestionComplete,
 } from "../../common/common";
@@ -140,34 +141,12 @@ function addOptionalMultiChoiceQuestion(
   cy.get('[data-cy="cy-button-Save question"]').click();
 }
 
-const getIframeDocument = (iFrameSelector) => {
-  return (
-    cy
-      .get(iFrameSelector)
-      // Cypress yields jQuery element, which has the real
-      // DOM element under property "0".
-      // From the real DOM iframe element we can get
-      // the "document" element, it is stored in "contentDocument" property
-      // Cypress "its" command can access deep properties using dot notation
-      // https://on.cypress.io/its
-      .its("0.contentDocument")
-      .should("exist")
-  );
-};
-
-const getIframeBody = (iFrameSelector) => {
-  cy.wait(2000);
-  // get the document
-  return (
-    getIframeDocument(iFrameSelector)
-      // automatically retries until body is loaded
-      .its("body")
-      .should("not.be.undefined")
-      // wraps "body" DOM element to allow
-      // chaining more Cypress commands, like ".find(...)"
-      .then(cy.wrap)
-  );
-};
+const getIframeBody = (iFrameSelector) =>
+  cy
+    .get(iFrameSelector, { timeout: 8000 })
+    .its("0.contentDocument.body")
+    .should("not.be.empty")
+    .then(cy.wrap);
 
 export function publishAdvert(scheduled) {
   cy.get('[data-cy="cy-publish-advert-button"]').click();
@@ -431,4 +410,23 @@ export const searchForAGrant = (grantName) => {
   cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
   cy.get('[data-cy="cySearchAgainInput"]').type(grantName);
   cy.get('[data-cy="cySearchAgainButton"]').click();
+};
+
+export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
+  cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
+    (submission) => {
+      cy.visit(submission.url);
+
+      downloadFileFromLink(cy.contains("Download"), "submission_export.zip");
+
+      cy.unzip({ path: "cypress/downloads/", file: "submission_export.zip" });
+
+      const folder = "cypress/downloads/unzip/submission_export";
+      // Filename is limited to 50 characters before _1 is added
+      const submissionFileName = submission.location
+        .split(".zip")[0]
+        .substring(0, 50);
+      cy.readFile(`${folder}/${submissionFileName}_${filenameSuffix}.odt`);
+    },
+  );
 };
