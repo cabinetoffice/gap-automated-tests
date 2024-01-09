@@ -117,16 +117,17 @@ export default defineConfig({
           );
         },
         async getExportedSubmissionUrlAndLocation(schemeId: string) {
-          return await getExportedSubmissionUrlAndLocation(schemeId);
+          return getExportedSubmissionUrlAndLocation(schemeId);
         },
         log(message) {
           console.log(message);
 
           return null;
         },
-        async ls(filePath) {
+        async ls(filePath = "/cypress/downloads") { 
           const list = fs.readdirSync(__dirname + filePath);
-          return list;
+          console.log(list);
+          return `ls ${filePath}: ${JSON.stringify(list)}`;
         },
         table(message) {
           console.table(message);

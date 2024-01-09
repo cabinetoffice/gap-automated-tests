@@ -187,7 +187,7 @@ describe("Create a Grant", () => {
     ]);
   });
 
-  it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
+  it.only("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
     // Populate data instead of completing journey
     log(
       "Admin V2 Internal - Manage Due Diligence & Spotlight - inserting submissions, mq and spotlight submissions",
@@ -233,7 +233,11 @@ describe("Create a Grant", () => {
     const timestamp = convertDateToString(Date.now());
     const filePath = "/cypress/downloads/unzip/spotlight_checks";
 
-    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`;
+    cy.task("ls", "/cypress/downloads/unzip/spotlight_checks").then((list) =>
+      cy.log(list),
+    );
+
+    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_charities_and_companies_1.xlsx`;
     validateXlsx(limitedCompanyFileName, [
       [
         Cypress.env("testV2InternalGrant").advertId,
@@ -249,7 +253,7 @@ describe("Create a Grant", () => {
       ],
     ]);
 
-    const nonLimitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_non_limited_companies.xlsx`;
+    const nonLimitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_non_limited_companies_1.xlsx`;
     validateXlsx(nonLimitedCompanyFileName, [
       [
         Cypress.env("testV2ExternalGrant").advertId,
