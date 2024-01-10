@@ -157,7 +157,7 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
   console.log(schemeId, row[0][0]);
   return {
     url: `${postLoginBaseUrl}/apply/admin/scheme/${schemeId}/${row[0][0].export_batch_id}`,
-    location: row[0][0].location.split("/")[1],
+    location: row[0][0].location?.split?.("/")?.[1],
   };
 };
 

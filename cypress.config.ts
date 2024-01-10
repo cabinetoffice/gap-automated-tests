@@ -117,7 +117,7 @@ export default defineConfig({
           );
         },
         async getExportedSubmissionUrlAndLocation(schemeId: string) {
-          return getExportedSubmissionUrlAndLocation(schemeId);
+          return await getExportedSubmissionUrlAndLocation(schemeId);
         },
         log(message) {
           console.log(message);
