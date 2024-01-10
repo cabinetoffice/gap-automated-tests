@@ -1,4 +1,4 @@
-import { getUUID , getTestID } from "../seed/apply/helper";
+import { getUUID, getTestID } from "../seed/apply/helper";
 
 require("dotenv").config();
 
