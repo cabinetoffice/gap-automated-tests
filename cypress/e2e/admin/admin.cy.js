@@ -133,7 +133,7 @@ describe("Create a Grant", () => {
         cy.visit(schemeUrl);
         publishApplication(false);
         cy.visit(applicationUrl, { failOnStatusCode: false });
-        cy.contains("Page not found");
+        cy.contains("This grant is closed");
         cy.log("Heading back to scheme");
         cy.visit(schemeUrl);
         publishApplication(true);
