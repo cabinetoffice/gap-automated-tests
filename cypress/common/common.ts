@@ -196,6 +196,11 @@ export const log = (message: string) => {
 export const filterSelection = (fieldSet: string, label: string) => {
   cy.get("fieldset")
     .filter(`:contains("${fieldSet}")`)
-    .contains("label", label)
-    .click();
+    .find("label")
+    .each(($el) => {
+      if ($el.text() === label) {
+        cy.wrap($el).click();
+        return false;
+      }
+    });
 };
