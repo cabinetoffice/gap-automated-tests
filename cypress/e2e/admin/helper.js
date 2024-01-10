@@ -398,7 +398,7 @@ export const publishApplication = (choice) => {
   if (choice === true) {
     cy.get('[data-cy="cy_publishApplication-button"]').click();
     cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
-    cy.get('[data-cy="cy_publishConfirmation-ConfirmButton"]');
+    cy.get('[data-cy="cy_publishConfirmation-ConfirmButton"]').click();
   } else {
     cy.get('[data-cy="cy_unpublishApplication-button"]').click();
     cy.get('[data-cy="cy-radioInput-option-Yes"]').click();

@@ -100,7 +100,7 @@ describe("Create a Grant", () => {
           "Your advert has been unpublished",
         );
         // Need to wait for Contentful to update.
-        cy.wait(5000);
+        cy.wait(7500);
 
         cy.visit(advertUrl, { failOnStatusCode: false });
         cy.contains("Page not found");
