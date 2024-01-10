@@ -441,10 +441,6 @@ export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
 
       const folder = "cypress/downloads/unzip/submission_export";
 
-      cy.task("ls", "/cypress/downloads/unzip/submission_export").then((f) =>
-        cy.log(f),
-      );
-
       cy.readFile(`${folder}/${submissionFileName}_${filenameSuffix}.odt`);
     },
   );

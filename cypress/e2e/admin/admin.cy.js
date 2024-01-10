@@ -493,7 +493,7 @@ describe("Downloads and Due Diligence", () => {
     ]);
   });
 
-  it.only("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
+  it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
     // Populate data instead of completing journey
     log(
       "Admin V2 Internal - Manage Due Diligence & Spotlight - inserting submissions, mq and spotlight submissions",
@@ -538,10 +538,6 @@ describe("Downloads and Due Diligence", () => {
     );
     const timestamp = convertDateToString(Date.now());
     const filePath = "/cypress/downloads/unzip/spotlight_checks";
-
-    cy.task("ls", "/cypress/downloads/unzip/spotlight_checks").then((list) =>
-      cy.log(list),
-    );
 
     const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_charities_and_companies_1.xlsx`;
     validateXlsx(limitedCompanyFileName, [
