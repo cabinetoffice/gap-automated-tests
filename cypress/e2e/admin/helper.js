@@ -410,7 +410,7 @@ export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
       const submissionFileName = submission.location
         .split(".zip")[0]
         .substring(0, 50);
-
+      //
       cy.readFile(`${folder}/${submissionFileName}_${filenameSuffix}.odt`);
     },
   );
