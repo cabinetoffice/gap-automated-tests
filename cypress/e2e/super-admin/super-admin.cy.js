@@ -5,6 +5,7 @@ import {
   assert200,
   navigateToSpecificUser,
   signInAsApplyApplicant,
+  filterSelection,
 } from "../../common/common";
 import { TASKS } from "./constants";
 
@@ -14,6 +15,7 @@ const { ADD_TEST_OAUTH_AUDIT, DELETE_FAILED_OAUTH_AUDIT } = TASKS;
 
 const firstUserId = Cypress.env("firstUserId");
 
+const ORIGINAL_DEPARTMENT_NAME = `Cypress - Test Department ${firstUserId}`;
 const ADDED_DEPARTMENT_NAME = `Cypress - Test Add Department ${firstUserId}`;
 const DEPARTMENT_NAME_DELETE = `Cypress - Test Department ${firstUserId} Delete`;
 const DEPARTMENT_NAME = `Cypress - Test Department ${firstUserId} Edit`;
@@ -100,11 +102,8 @@ describe("Navigation", () => {
     signInAsSuperAdmin();
 
     cy.log("Filtering for super admins cypress");
-    cy.get('[data-cy="cy-checkbox-value-4"]').click();
-    cy.get(
-      `[data-cy="cy-checkbox-value--${Cypress.env("firstUserId")}"]`,
-    ).click();
-
+    filterSelection("Role", "Super administrator");
+    filterSelection("Department", ORIGINAL_DEPARTMENT_NAME);
     cy.log("Clicking filter");
     cy.get('[data-cy="cy-button-Apply filters"]').click();
 

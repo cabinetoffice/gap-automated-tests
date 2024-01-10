@@ -392,6 +392,26 @@ export function advertSection1(GRANT_NAME) {
 export const convertDateToString = (date, dateFormat = "YYYY-MM-DD") =>
   dayjs(date).format(dateFormat);
 
+export const publishApplication = (choice) => {
+  cy.get('[data-cy="cy_publishSuccess-manageThisGrant-button"]').click();
+  cy.get('[data-cy="cy_view-application-link"]').click();
+  if (choice === true) {
+    cy.get('[data-cy="cy_publishApplication-button"]').click();
+    cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+    cy.get('[data-cy="cy_publishConfirmation-ConfirmButton"]').click();
+  } else {
+    cy.get('[data-cy="cy_unpublishApplication-button"]').click();
+    cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+    cy.get('[data-cy="cy_unpublishConfirmation-ConfirmButton"]').click();
+  }
+};
+
+export const searchForAGrant = (grantName) => {
+  cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
+  cy.get('[data-cy="cySearchAgainInput"]').type(grantName);
+  cy.get('[data-cy="cySearchAgainButton"]').click();
+};
+
 const downloadSubmissionExportZip = (submissionFileName) => {
   const tableRowSelector =
     ".submissions-download-table tbody .govuk-table__row";
