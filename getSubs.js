@@ -17,7 +17,7 @@ FROM
   public.gap_users u 
 INNER JOIN public.roles_users ru ON ru.users_gap_user_id = u.gap_user_id 
 INNER JOIN public.roles r ON r.id = ru.roles_id 
-WHERE email IN ($1, $2, $3) 
+WHERE email IN ($1, $2, $3, $4) 
 group by u.email, u.sub, u.gap_user_id`;
 
 const emails = [
