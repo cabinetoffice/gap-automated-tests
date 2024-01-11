@@ -24,6 +24,7 @@ const emails = [
   process.env.ONE_LOGIN_APPLICANT_EMAIL,
   process.env.ONE_LOGIN_ADMIN_EMAIL,
   process.env.ONE_LOGIN_SUPER_ADMIN_EMAIL,
+  process.env.ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL,
 ];
 
 const runSQLFromJs = async (sqlScript, substitutions, dbName, dbUrl) => {

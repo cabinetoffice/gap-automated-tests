@@ -124,7 +124,7 @@ export default defineConfig({
 
           return null;
         },
-        async ls(filePath = "/cypress/downloads") { 
+        async ls(filePath = "/cypress/downloads") {
           const list = fs.readdirSync(__dirname + filePath);
           console.log(list);
           return `ls ${filePath}: ${JSON.stringify(list)}`;
@@ -147,6 +147,10 @@ export default defineConfig({
       oneLoginAdminPassword: process.env.ONE_LOGIN_ADMIN_PASSWORD,
       oneLoginSuperAdminEmail: process.env.ONE_LOGIN_SUPER_ADMIN_EMAIL,
       oneLoginSuperAdminPassword: process.env.ONE_LOGIN_SUPER_ADMIN_PASSWORD,
+      oneLoginTechnicalSupportEmail:
+        process.env.ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL,
+      oneLoginTechnicalSupportPassword:
+        process.env.ONE_LOGIN_TECHNICAL_SUPPORT_PASSWORD,
       userDbUrl: process.env.USERS_DATABASE_URL,
       userDbName: process.env.USERS_DATABASE_NAME,
       applyDbUrl: process.env.APPLY_DATABASE_URL,
