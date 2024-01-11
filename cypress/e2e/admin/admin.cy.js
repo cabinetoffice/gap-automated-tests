@@ -539,7 +539,7 @@ describe("Downloads and Due Diligence", () => {
     const timestamp = convertDateToString(Date.now());
     const filePath = "/cypress/downloads/unzip/spotlight_checks";
 
-    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ charities_and_companies.xlsx`;
+    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_charities_and_companies_1.xlsx`;
     validateXlsx(limitedCompanyFileName, [
       [
         Cypress.env("testV2InternalGrant").advertId,
@@ -555,7 +555,7 @@ describe("Downloads and Due Diligence", () => {
       ],
     ]);
 
-    const nonLimitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_non_limited_companies.xlsx`;
+    const nonLimitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_non_limited_companies_1.xlsx`;
     validateXlsx(nonLimitedCompanyFileName, [
       [
         Cypress.env("testV2ExternalGrant").advertId,

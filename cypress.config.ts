@@ -124,9 +124,10 @@ export default defineConfig({
 
           return null;
         },
-        async ls(filePath) {
+        async ls(filePath = "/cypress/downloads") { 
           const list = fs.readdirSync(__dirname + filePath);
-          return list;
+          console.log(list);
+          return `ls ${filePath}: ${JSON.stringify(list)}`;
         },
         table(message) {
           console.table(message);
