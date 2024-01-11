@@ -14,6 +14,7 @@ INSERT INTO public.gap_users(gap_user_id, email, sub, dept_id, login_journey_sta
 	($1, $2, $3, $4, 'USER_READY'),
 	($5, $6, $7, $8, 'USER_READY'),
 	($9, $10, $11, null, 'USER_READY');
+	($12, $13, $14, $15, 'USER_READY'),
 `;
 
 const insertRoles: string = `
@@ -28,6 +29,10 @@ INSERT INTO public.roles_users(roles_id, users_gap_user_id)
 	(3, $7),
 	(1, $8),
 	(2, $9);
+	(1, $10);
+	(2, $11)
+	(5, $12);
+	
 `;
 
 export { insertDepartments, insertUsers, insertRoles };
