@@ -20,6 +20,7 @@ const userDatabaseUrl: string =
 const SUPER_ADMIN_ID = -Math.abs(+process.env.FIRST_USER_ID);
 const ADMIN_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 1);
 const APPLICANT_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 2);
+const TECHNICAL_SUPPORT_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 3);
 const DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID);
 const EDIT_DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID) - 1;
 const DELETE_DEPARTMENT_ID = -Math.abs(+process.env.FIRST_USER_ID) - 2;
@@ -42,6 +43,10 @@ const userSubstitutions = {
     APPLICANT_ID,
     process.env.ONE_LOGIN_APPLICANT_EMAIL,
     process.env.ONE_LOGIN_APPLICANT_SUB,
+    TECHNICAL_SUPPORT_ID,
+    process.env.ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL,
+    process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
+    DEPARTMENT_ID,
   ],
   [insertRoles]: [
     SUPER_ADMIN_ID,
@@ -53,17 +58,23 @@ const userSubstitutions = {
     ADMIN_ID,
     APPLICANT_ID,
     APPLICANT_ID,
+    TECHNICAL_SUPPORT_ID,
+    TECHNICAL_SUPPORT_ID,
+    TECHNICAL_SUPPORT_ID,
   ],
   [deleteUsers]: [
     SUPER_ADMIN_ID,
     ADMIN_ID,
     APPLICANT_ID,
+    TECHNICAL_SUPPORT_ID,
     process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
     process.env.ONE_LOGIN_ADMIN_SUB,
     process.env.ONE_LOGIN_APPLICANT_SUB,
+    process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
     process.env.ONE_LOGIN_SUPER_ADMIN_EMAIL,
     process.env.ONE_LOGIN_ADMIN_EMAIL,
     process.env.ONE_LOGIN_APPLICANT_EMAIL,
+    process.env.ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL,
   ],
   [deleteDepartments]: [
     DEPARTMENT_ID,

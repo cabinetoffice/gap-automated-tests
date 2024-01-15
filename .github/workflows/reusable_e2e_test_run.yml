@@ -80,6 +80,9 @@ jobs:
           ONE_LOGIN_SUPER_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_SUPER_ADMIN_EMAIL }}
           ONE_LOGIN_SUPER_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_SUPER_ADMIN_PASSWORD }}
           ONE_LOGIN_SUPER_ADMIN_SUB=${{ secrets[format('{0}_ONE_LOGIN_SUPER_ADMIN_SUB', inputs.environment)] }}
+          ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL=${{ secrets.ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL }}
+          ONE_LOGIN_TECHNICAL_SUPPORT_PASSWORD=${{ secrets.ONE_LOGIN_TECHNICAL_SUPPORT_PASSWORD }}
+          ONE_LOGIN_TECHNICAL_SUPPORT_SUB=${{ secrets[format('{0}_ONE_LOGIN_TECHNICAL_SUPPORT_SUB', inputs.environment)] }}
           AWS_VPC_SG_ID=${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }}
           USERS_DATABASE_URL =${{ secrets[format('{0}_USERS_DATABASE_URL', inputs.environment)] }}
           USERS_DATABASE_NAME=${{ secrets[format('{0}_USERS_DATABASE_NAME', inputs.environment)] }}
