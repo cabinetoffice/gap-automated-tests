@@ -13,6 +13,7 @@ import {
   insertSpotlightSubmission,
   insertSubmissions,
   createApiKey,
+  createApiKeysFundingOrganisations,
 } from "../ts/insertApplyData";
 import {
   deleteAdverts,
@@ -254,8 +255,8 @@ const applyDeleteSubstitutions = {
 };
 
 const deleteApiKeysSubstitutions = {
-  [deleteApiKeys]: [SUPER_ADMIN_ID, SUPER_ADMIN_ID + 1],
-  [deleteApiKeysFundingOrganisations]: [SUPER_ADMIN_ID, SUPER_ADMIN_ID + 1],
+  [deleteApiKeys]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
+  [deleteApiKeysFundingOrganisations]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
 };
 
 const spotlightSubstitutions = {
@@ -344,13 +345,17 @@ const applyUpdateSubstitutions = {
   ],
 };
 
+const createApiKeyFundingOrganisationSubstitutions = {
+  [createApiKeysFundingOrganisations]: [SUPER_ADMIN_ID - 2, SUPER_ADMIN_ID - 1],
+};
+
 const createApiKeySubstitutions = (i: number, id: string, name: string) => {
   const fundingOrganisation = name.startsWith("Org1")
-    ? SUPER_ADMIN_ID
-    : SUPER_ADMIN_ID + 1;
+    ? SUPER_ADMIN_ID - 1
+    : SUPER_ADMIN_ID - 2;
   return {
     [createApiKey]: [
-      -i,
+      -(i + 1),
       fundingOrganisation,
       // the apiKey has to be at least 20 characters long
       hashApiKey(name + name),
@@ -392,4 +397,5 @@ export {
   DEPARTMENT_NAME,
   deleteApiKeysSubstitutions,
   createApiKeySubstitutions,
+  createApiKeyFundingOrganisationSubstitutions,
 };

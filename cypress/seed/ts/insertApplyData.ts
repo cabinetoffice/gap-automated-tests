@@ -133,9 +133,7 @@ INSERT INTO public.spotlight_submission (id, grant_mandatory_questions_id, grant
 `;
 
 const createApiKeysFundingOrganisations = `INSERT INTO public.grant_funding_organisation(funder_id, organisation_name)
-VALUES ($1, 'CypressApiKeysEvilOrg');
-`;
-const updateApiKeysFundingOrganisations = `UPDATE public.grant_funding_organisation SET organisation_name='CypressApiKeysTestOrg' WHERE funder_id=$1;`;
+VALUES ($1, 'CypressApiKeysEvilOrg'), ($2, 'CypressApiKeysTestOrg');`;
 
 const createApiKey = `INSERT INTO api_key (api_key_id, funder_id, api_key_value, api_key_name, api_key_description, created_date, is_revoked, revocation_date, revoked_by, api_gateway_id)
  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`;
@@ -157,5 +155,4 @@ export {
   insertMandatoryQuestions,
   createApiKeysFundingOrganisations,
   createApiKey,
-  updateApiKeysFundingOrganisations,
 };

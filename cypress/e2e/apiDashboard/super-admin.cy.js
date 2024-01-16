@@ -91,7 +91,8 @@ describe("With Api Keys", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData"); // TODO - doubt we gonna need this, maybe we just need to create funding organisation
-    cy.task("create110ApiKeys");
+    cy.task("create110ApiKeys", {}, { timeout: 200000 });
+
     signInToIntegrationSite();
 
     cy.log("Clicking Sign in as a superAdmin");

@@ -70,10 +70,10 @@ const deleteSpotlightSubmissionRow: string = `
     WHERE grant_scheme = $1;
 `;
 
-const deleteApiKeys = `DELETE FROM public.api_keys
-WHERE funder_id IN ($1, S2);`;
+const deleteApiKeys = `DELETE FROM public.api_key
+WHERE funder_id IN ($1, $2);`;
 
-const deleteApiKeysFundingOrganisations = `DELETE FROM public.grant_funding_organisation WHERE funder_id IN ($1, S2)`;
+const deleteApiKeysFundingOrganisations = `DELETE FROM public.grant_funding_organisation WHERE funder_id IN ($1, $2)`;
 
 export {
   deleteSpotlightSubmissionRow,
