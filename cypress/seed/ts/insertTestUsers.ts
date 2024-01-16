@@ -32,7 +32,6 @@ INSERT INTO public.roles_users(roles_id, users_gap_user_id)
 	(1, $10),
 	(2, $11),
 	(5, $12);
-	
 `;
 
 export { insertDepartments, insertUsers, insertRoles };
