@@ -12,6 +12,7 @@ import {
   insertMandatoryQuestions,
   insertSpotlightSubmission,
   insertSubmissions,
+  createApiKey,
 } from "../ts/insertApplyData";
 import {
   deleteAdverts,
@@ -25,6 +26,8 @@ import {
   deleteApplicantOrgProfiles,
   deleteSpotlightSubmissionRow,
   deleteSpotlightBatchRow,
+  deleteApiKeys,
+  deleteApiKeysFundingOrganisations,
 } from "../ts/deleteApplyData";
 import {
   TEST_V1_INTERNAL_GRANT,
@@ -39,7 +42,12 @@ import {
   v2InternalAdvert,
 } from "../data/apply";
 
-import { getTestID, getUUID } from "./helper";
+import {
+  generateNowInDbDateAndTimeFormat,
+  getTestID,
+  getUUID,
+  hashApiKey,
+} from "./helper";
 import { getExportedSubmission } from "../ts/selectApplyData";
 
 require("dotenv").config();
@@ -245,6 +253,11 @@ const applyDeleteSubstitutions = {
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 
+const deleteApiKeysSubstitutions = {
+  [deleteApiKeys]: [SUPER_ADMIN_ID, SUPER_ADMIN_ID + 1],
+  [deleteApiKeysFundingOrganisations]: [SUPER_ADMIN_ID, SUPER_ADMIN_ID + 1],
+};
+
 const spotlightSubstitutions = {
   [addSubmissionToMostRecentBatch]: [
     V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
@@ -331,6 +344,27 @@ const applyUpdateSubstitutions = {
   ],
 };
 
+const createApiKeySubstitutions = (i: number, id: string, name: string) => {
+  const fundingOrganisation = name.startsWith("Org1")
+    ? SUPER_ADMIN_ID
+    : SUPER_ADMIN_ID + 1;
+  return {
+    [createApiKey]: [
+      -i,
+      fundingOrganisation,
+      // the apiKey has to be at least 20 characters long
+      hashApiKey(name + name),
+      name,
+      null,
+      generateNowInDbDateAndTimeFormat(),
+      false,
+      null,
+      null,
+      id,
+    ],
+  };
+};
+
 export {
   applyInsertSubstitutions,
   applyDeleteSubstitutions,
@@ -356,4 +390,6 @@ export {
   SPOTLIGHT_BATCH_ID,
   MQ_DETAILS,
   DEPARTMENT_NAME,
+  deleteApiKeysSubstitutions,
+  createApiKeySubstitutions,
 };

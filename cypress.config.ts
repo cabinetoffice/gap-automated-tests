@@ -16,6 +16,8 @@ import {
   deleteSpotlightSubmission,
   insertSubmissionsAndMQs,
   getExportedSubmissionUrlAndLocation,
+  deleteApiKeysData,
+  createApiKeysData,
 } from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import {
@@ -85,6 +87,13 @@ export default defineConfig({
         },
         async setUpFindData() {
           await deleteFindData().then(async () => await createFindData());
+
+          return null;
+        },
+        async create110ApiKeys() {
+          await deleteApiKeysData().then(async () => {
+            await createApiKeysData();
+          });
 
           return null;
         },

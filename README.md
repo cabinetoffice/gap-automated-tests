@@ -73,6 +73,7 @@ Alternatively you can run them for a single suite:
 - `npm run cy:run:apply`
 - `npm run cy:run:admin`
 - `npm run cy:run:superadmin`
+- `npm run cy:run:apiDashboard`
 
 ## Reports
 
