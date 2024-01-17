@@ -173,6 +173,8 @@ export const fillOutRequiredChecks = () => {
 };
 
 export const submitApplication = () => {
+  cy.contains("Review and submit").click();
+
   cy.contains("Submit application").click();
 
   cy.contains("Are you sure you want to submit this application?");
