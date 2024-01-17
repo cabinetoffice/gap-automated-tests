@@ -28,6 +28,7 @@ import {
   deleteSpotlightSubmissionRow,
   deleteSpotlightBatchRow,
   deleteApiKeysFundingOrganisations,
+  deleteApiKeysByFunderId,
 } from "../ts/deleteApplyData";
 import {
   TEST_V1_INTERNAL_GRANT,
@@ -255,7 +256,7 @@ const applyDeleteSubstitutions = {
 };
 
 const deleteApiKeysSubstitutions = {
-  [deleteApiKeys]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
+  [deleteApiKeysByFunderId]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
   [deleteApiKeysFundingOrganisations]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
 };
 
