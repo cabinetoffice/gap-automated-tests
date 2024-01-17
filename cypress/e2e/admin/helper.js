@@ -392,20 +392,55 @@ export function advertSection1(GRANT_NAME) {
 export const convertDateToString = (date, dateFormat = "YYYY-MM-DD") =>
   dayjs(date).format(dateFormat);
 
+export const publishApplication = (choice) => {
+  cy.get('[data-cy="cy_publishSuccess-manageThisGrant-button"]').click();
+  cy.get('[data-cy="cy_view-application-link"]').click();
+  if (choice === true) {
+    cy.get('[data-cy="cy_publishApplication-button"]').click();
+    cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+    cy.get('[data-cy="cy_publishConfirmation-ConfirmButton"]').click();
+  } else {
+    cy.get('[data-cy="cy_unpublishApplication-button"]').click();
+    cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+    cy.get('[data-cy="cy_unpublishConfirmation-ConfirmButton"]').click();
+  }
+};
+
+export const searchForAGrant = (grantName) => {
+  cy.get('[data-cy="cySearch grantsPageLink"] > .govuk-link').click();
+  cy.get('[data-cy="cySearchAgainInput"]').type(grantName);
+  cy.get('[data-cy="cySearchAgainButton"]').click();
+};
+
+const downloadSubmissionExportZip = (submissionFileName) => {
+  const tableRowSelector =
+    ".submissions-download-table tbody .govuk-table__row";
+  cy.get(tableRowSelector).each((row, index) => {
+    if (row.text().includes(submissionFileName)) {
+      downloadFileFromLink(
+        cy.get(".submissions-download-table a").eq(index),
+        "submission_export.zip",
+      );
+      return false;
+    }
+  });
+};
+
 export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
   cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
     (submission) => {
       cy.visit(submission.url);
 
-      downloadFileFromLink(cy.contains("Download"), "submission_export.zip");
+      const submissionFileName = submission.location
+        .split(".zip")[0]
+        .substring(0, 50);
+
+      downloadSubmissionExportZip(submissionFileName);
 
       cy.unzip({ path: "cypress/downloads/", file: "submission_export.zip" });
 
       const folder = "cypress/downloads/unzip/submission_export";
-      // Filename is limited to 50 characters before _1 is added
-      const submissionFileName = submission.location
-        .split(".zip")[0]
-        .substring(0, 50);
+
       cy.readFile(`${folder}/${submissionFileName}_${filenameSuffix}.odt`);
     },
   );
