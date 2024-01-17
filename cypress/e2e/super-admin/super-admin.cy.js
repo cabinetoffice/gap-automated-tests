@@ -309,25 +309,6 @@ describe("Super Admin", () => {
     );
   });
 
-  it("Can reconnect to spotlight", () => {
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
-    cy.log("Signing in as super admin");
-    signInAsSuperAdmin();
-    cy.task(ADD_TEST_OAUTH_AUDIT);
-    clickText("Integrations");
-    reconnectSpotlight();
-    clickText("Integrations");
-    cy.get("[data-cy='cy_table_row-for-Integration-row-0-cell-0']").contains(
-      "Spotlight",
-    );
-    cy.get('[data-cy="cy_table_row-for-Status-row-0-cell-1"]');
-    cy.get("[data-cy='cy_table_row-for-Status-row-0-cell-1']").contains(
-      "Connected",
-    );
-    // cleanup
-    cy.task(DELETE_FAILED_OAUTH_AUDIT);
-  });
-
   it("Can manage roles", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     cy.log("Signing in as super admin");
@@ -505,6 +486,29 @@ describe("Super Admin", () => {
     cy.get(".govuk-summary-list__key")
       .contains(DEPARTMENT_NAME_DELETE)
       .should("not.exist");
+  });
+});
+
+describe("Spotlight", () => {
+  afterEach(() => {
+    cy.task(DELETE_FAILED_OAUTH_AUDIT);
+  });
+
+  it("Can reconnect to spotlight", () => {
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.log("Signing in as super admin");
+    signInAsSuperAdmin();
+    cy.task(ADD_TEST_OAUTH_AUDIT);
+    clickText("Integrations");
+    reconnectSpotlight();
+    clickText("Integrations");
+    cy.get("[data-cy='cy_table_row-for-Integration-row-0-cell-0']").contains(
+      "Spotlight",
+    );
+    cy.get('[data-cy="cy_table_row-for-Status-row-0-cell-1"]');
+    cy.get("[data-cy='cy_table_row-for-Status-row-0-cell-1']").contains(
+      "Connected",
+    );
   });
 });
 
