@@ -3,7 +3,8 @@ import { type UsagePlanKey } from "@aws-sdk/client-api-gateway";
 import {
   deleteAdmins,
   deleteAdverts,
-  deleteApiKeys,
+  deleteApiKeyById,
+  deleteApiKeysByFunderId,
   deleteApiKeysFundingOrganisations,
   deleteApplicantOrgProfiles,
   deleteApplicants,
@@ -52,8 +53,9 @@ import {
   deleteApiKeysSubstitutions,
   createApiKeySubstitutions,
   createApiKeyFundingOrganisationSubstitutions,
+  createApiKeySubstitutionsForRecreation,
 } from "./constants";
-import { getExportedSubmission } from "../ts/selectApplyData";
+import { getExportedSubmission, selectAllApiKeys } from "../ts/selectApplyData";
 import {
   createKeyInAwsApiGatewayUsagePlan,
   getKeysFromAwsApiGatewayUsagePlan,
@@ -136,7 +138,7 @@ const createApiKeysData = async (): Promise<void> => {
 
 const deleteApiKeysData = async (): Promise<void> => {
   await runSqlForApply(
-    [deleteApiKeys, deleteApiKeysFundingOrganisations],
+    [deleteApiKeysByFunderId, deleteApiKeysFundingOrganisations],
     deleteApiKeysSubstitutions, // the $1, etc in the sql script
   );
 
@@ -146,6 +148,32 @@ const deleteApiKeysData = async (): Promise<void> => {
 
   await removeKeysFromAwsApiGatewayUsagePlan();
   console.log("Successfully removed Keys Aws Api Gateway");
+};
+
+const grabAllApiKeys = async () => {
+  const rows = await runSqlForApply([selectAllApiKeys], null);
+  console.log("Successfully selected all Api Keys");
+  console.log(rows[0]);
+  return rows;
+};
+
+const deleteExistingApiKeys = async (originalData: ApiKeyDb[]) => {
+  const apiKeyIds = originalData.map((data) => data.api_key_id);
+
+  await Promise.all(
+    apiKeyIds.map(async (apiKeyId) => {
+      await runSqlForApply([deleteApiKeyById], {
+        [deleteApiKeyById]: [apiKeyId],
+      });
+    }),
+  );
+
+  console.log("Successfully deleted all existing Api Keys");
+};
+
+const refillDbWithAllPreExistingApiKeys = async (originalData: ApiKeyDb[]) => {
+  await recreateApiKeysInDatabase(originalData);
+  console.log("Successfully recreated all Api Keys");
 };
 
 const cleanupTestSpotlightSubmissions = async () => {
@@ -227,6 +255,15 @@ const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
   }
 };
 
+const recreateApiKeysInDatabase = async (apiKeys: ApiKeyDb[]) => {
+  for (let i = 0; i < apiKeys.length; i++) {
+    await runSqlForApply(
+      [createApiKey],
+      createApiKeySubstitutionsForRecreation(apiKeys[i]),
+    );
+  }
+};
+
 const createApiKeysInApiGatewayUsagePlan = async (
   fundingOrganisation: number,
   startingPoint: number,
@@ -240,6 +277,19 @@ const createApiKeysInApiGatewayUsagePlan = async (
     await createKeyInAwsApiGatewayUsagePlan(keyName);
   }
 };
+
+interface ApiKeyDb {
+  api_key_id: number;
+  funder_id: number;
+  api_key_value: string;
+  api_key_name: string;
+  api_key_description: string;
+  created_date: string;
+  is_revoked: boolean;
+  revocation_date: string;
+  revoked_by: number;
+  api_gateway_id: string;
+}
 export {
   createApplyData,
   deleteApplyData,
@@ -253,4 +303,9 @@ export {
   getExportedSubmissionUrlAndLocation,
   deleteApiKeysData,
   createApiKeysData,
+  grabAllApiKeys,
+  type ApiKeyDb,
+  deleteExistingApiKeys,
+  recreateApiKeysInDatabase,
+  refillDbWithAllPreExistingApiKeys,
 };

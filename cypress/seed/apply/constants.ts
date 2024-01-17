@@ -27,7 +27,6 @@ import {
   deleteApplicantOrgProfiles,
   deleteSpotlightSubmissionRow,
   deleteSpotlightBatchRow,
-  deleteApiKeys,
   deleteApiKeysFundingOrganisations,
 } from "../ts/deleteApplyData";
 import {
@@ -50,6 +49,7 @@ import {
   hashApiKey,
 } from "./helper";
 import { getExportedSubmission } from "../ts/selectApplyData";
+import { type ApiKeyDb } from "./service";
 
 require("dotenv").config();
 
@@ -370,6 +370,23 @@ const createApiKeySubstitutions = (i: number, id: string, name: string) => {
   };
 };
 
+const createApiKeySubstitutionsForRecreation = (apiKey: ApiKeyDb) => {
+  return {
+    [createApiKey]: [
+      apiKey.api_key_id,
+      apiKey.funder_id,
+      apiKey.api_key_value,
+      apiKey.api_key_name,
+      apiKey.api_key_description,
+      apiKey.created_date,
+      apiKey.is_revoked,
+      apiKey.revocation_date,
+      apiKey.revoked_by,
+      apiKey.api_gateway_id,
+    ],
+  };
+};
+
 export {
   applyInsertSubstitutions,
   applyDeleteSubstitutions,
@@ -398,4 +415,5 @@ export {
   deleteApiKeysSubstitutions,
   createApiKeySubstitutions,
   createApiKeyFundingOrganisationSubstitutions,
+  createApiKeySubstitutionsForRecreation,
 };

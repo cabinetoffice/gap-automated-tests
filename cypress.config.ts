@@ -18,6 +18,9 @@ import {
   getExportedSubmissionUrlAndLocation,
   deleteApiKeysData,
   createApiKeysData,
+  grabAllApiKeys,
+  deleteExistingApiKeys,
+  refillDbWithAllPreExistingApiKeys,
 } from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import {
@@ -97,6 +100,21 @@ export default defineConfig({
 
           return null;
         },
+        async grabExistingApiKeysFromDb() {
+          return await grabAllApiKeys();
+        },
+
+        async deleteExistingApiKeysFromDb(originalData) {
+          await deleteExistingApiKeys(originalData[0]);
+          return null;
+        },
+
+        async refillDbWithPreExistingApiKeys(originalData) {
+          console.log("originalData from cypressconfig: ", originalData[0]);
+          await refillDbWithAllPreExistingApiKeys(originalData[0]);
+          return null;
+        },
+
         async removeAdvertByName(name) {
           await removeAdvertByName(name);
           return null;

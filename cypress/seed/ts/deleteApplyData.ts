@@ -70,8 +70,11 @@ const deleteSpotlightSubmissionRow: string = `
     WHERE grant_scheme = $1;
 `;
 
-const deleteApiKeys = `DELETE FROM public.api_key
+const deleteApiKeysByFunderId = `DELETE FROM public.api_key
 WHERE funder_id IN ($1, $2);`;
+
+const deleteApiKeyById = `DELETE FROM public.api_key
+WHERE api_key_id = $1;`;
 
 const deleteApiKeysFundingOrganisations = `DELETE FROM public.grant_funding_organisation WHERE funder_id IN ($1, $2)`;
 
@@ -88,6 +91,7 @@ export {
   deleteUsers,
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
-  deleteApiKeys,
+  deleteApiKeysByFunderId,
   deleteApiKeysFundingOrganisations,
+  deleteApiKeyById,
 };

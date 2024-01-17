@@ -88,7 +88,9 @@ export async function createApiKey(apiKeyName: string) {
 
     return createApiKeyResponse.id;
   } catch (error) {
-    console.error("Error in createApiKey:", error.message);
+    console.error(
+      `Error for key ${apiKeyName}in createApiKey: ${error.message}`,
+    );
   }
 }
 

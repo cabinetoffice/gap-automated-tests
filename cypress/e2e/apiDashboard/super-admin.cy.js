@@ -22,9 +22,19 @@ const today = new Date().toLocaleDateString("en-GB", {
 const API_DASHBOARD_BASE_URL = BASE_URL + "/find/api/admin";
 
 describe("No API keys", () => {
-  beforeEach(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let originalData;
+  before(() => {
     cy.task("setUpUser");
-    cy.task("setUpApplyData"); // TODO - doubt we gonna need this, maybe we just need to create funding organisation
+    cy.task("setUpApplyData");
+    cy.task("grabExistingApiKeysFromDb").then((data) => {
+      originalData = data;
+
+      cy.task("deleteExistingApiKeysFromDb", originalData);
+    });
+  });
+
+  beforeEach(() => {
     signInToIntegrationSite();
 
     cy.log("Clicking Sign in as a superAdmin");
@@ -34,6 +44,11 @@ describe("No API keys", () => {
 
     cy.log("Clicking Manage API Keys");
     cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
+  });
+
+  after(() => {
+    console.log(originalData);
+    cy.task("refillDbWithPreExistingApiKeys", originalData);
   });
 
   it("should have correct navBar items for the superAdmin role, and check if link works", () => {
@@ -79,7 +94,7 @@ describe("No API keys", () => {
 
   it("Can sign out", () => {
     cy.log("Signing out");
-    cy.get('[data-cy="cy_SignOutLink"]').click();
+    cy.get('[data-cy="header-sign-out-link"]').click();
 
     cy.log("Verifying that the user is on the homepage");
     cy.contains("Find a grant");
@@ -90,7 +105,7 @@ describe("With Api Keys", () => {
   // TODO maybe use a beforeAll?
   beforeEach(() => {
     cy.task("setUpUser");
-    cy.task("setUpApplyData"); // TODO - doubt we gonna need this, maybe we just need to create funding organisation
+    cy.task("setUpApplyData");
     cy.task("create110ApiKeys", {}, { timeout: 200000 });
 
     signInToIntegrationSite();
