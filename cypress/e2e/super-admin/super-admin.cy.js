@@ -7,12 +7,15 @@ import {
   assert200,
   navigateToSpecificUser,
   filterSelection,
+  selectActionForItemInTable,
+  validateActionForItemInTable,
+  searchForUser,
 } from "../../common/common";
 import { TASKS } from "./constants";
 
 import { TEST_V1_INTERNAL_GRANT } from "../../common/constants";
 
-const { ADD_TEST_OAUTH_AUDIT, DELETE_FAILED_OAUTH_AUDIT } = TASKS;
+const { ADD_FAILED_OAUTH_AUDIT, ADD_SUCCESS_OAUTH_AUDIT } = TASKS;
 
 const firstUserId = Cypress.env("firstUserId");
 
@@ -125,9 +128,10 @@ describe("Super Admin", () => {
     ).click();
 
     cy.log("Clicking change on first grant");
-    cy.get(
-      `[data-cy="cy_summaryListValue_${TEST_V1_INTERNAL_GRANT.schemeName}"] > .govuk-link`,
-    ).click();
+    selectActionForItemInTable(
+      TEST_V1_INTERNAL_GRANT.schemeName,
+      "Change owner",
+    );
 
     cy.log("Entering an email address not registered in the system");
     cy.get('[data-cy="cy-emailAddress-text-input"]').type("blah@blah.com");
@@ -198,9 +202,10 @@ describe("Super Admin", () => {
     ).click();
 
     cy.log("Verifying that the grant appears in the list");
-    cy.get(
-      `[data-cy="cy_summaryListValue_${TEST_V1_INTERNAL_GRANT.schemeName}"] > .govuk-link`,
-    ).should("exist");
+    validateActionForItemInTable(
+      TEST_V1_INTERNAL_GRANT.schemeName,
+      "Change owner",
+    );
 
     cy.log("Navigate to admin dashboard");
     cy.get('[data-cy="cy-back-button"]').click();
@@ -257,9 +262,10 @@ describe("Super Admin", () => {
     navigateToSpecificUser(Cypress.env("oneLoginAdminEmail"));
 
     cy.log("Clicking change on user's department");
-    cy.get(
-      ":nth-child(4) > .govuk-summary-list__actions > .govuk-link",
-    ).click();
+    selectActionForItemInTable(ORIGINAL_DEPARTMENT_NAME, "Change", {
+      textCellElement: "dd",
+      actionCellElement: "dd",
+    });
 
     cy.log("Selecting a new department");
     cy.get('[data-cy="cy-radioInput-option-CabinetOffice"]').click();
@@ -302,10 +308,9 @@ describe("Super Admin", () => {
 
     cy.log("Verifying that the user is deleted");
 
-    navigateToSpecificUser(Cypress.env("oneLoginApplicantEmail"));
-    cy.get('[data-cy="cy_summaryListValue_Email"]').should(
-      "not.contain",
-      Cypress.env("oneLoginApplicantEmail"),
+    searchForUser(Cypress.env("oneLoginApplicantEmail"));
+    cy.contains("td", Cypress.env("oneLoginApplicantEmail")).should(
+      "not.exist",
     );
   });
 
@@ -313,9 +318,10 @@ describe("Super Admin", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     cy.log("Signing in as super admin");
     signInAsSuperAdmin();
-    cy.task(ADD_TEST_OAUTH_AUDIT);
+    cy.task(ADD_FAILED_OAUTH_AUDIT);
     clickText("Integrations");
     reconnectSpotlight();
+    cy.task(ADD_SUCCESS_OAUTH_AUDIT);
     clickText("Integrations");
     cy.get("[data-cy='cy_table_row-for-Integration-row-0-cell-0']").contains(
       "Spotlight",
@@ -324,8 +330,6 @@ describe("Super Admin", () => {
     cy.get("[data-cy='cy_table_row-for-Status-row-0-cell-1']").contains(
       "Connected",
     );
-    // cleanup
-    cy.task(DELETE_FAILED_OAUTH_AUDIT);
   });
 
   it("Can manage roles", () => {
@@ -381,9 +385,10 @@ describe("Super Admin", () => {
     navigateToSpecificUser(Cypress.env("oneLoginAdminEmail"));
 
     cy.log("Clicking change on user's department");
-    cy.get(
-      ":nth-child(4) > .govuk-summary-list__actions > .govuk-link",
-    ).click();
+    selectActionForItemInTable(ORIGINAL_DEPARTMENT_NAME, "Change", {
+      textCellElement: "dd",
+      actionCellElement: "dd",
+    });
     cy.get(".govuk-link").contains("Manage departments").click();
 
     cy.log("Adding department");
@@ -420,23 +425,15 @@ describe("Super Admin", () => {
     navigateToSpecificUser(Cypress.env("oneLoginAdminEmail"));
 
     cy.log("Clicking change on user's department");
-    cy.get(
-      ":nth-child(4) > .govuk-summary-list__actions > .govuk-link",
-    ).click();
+    selectActionForItemInTable(ORIGINAL_DEPARTMENT_NAME, "Change", {
+      textCellElement: "dd",
+      actionCellElement: "dd",
+    });
     cy.get(".govuk-link").contains("Manage departments").click();
 
     cy.log("Clicking edit on department");
 
-    cy.get(".govuk-summary-list__key").each(($ele, index) => {
-      if ($ele.text() === DEPARTMENT_NAME) {
-        cy.get(
-          `:nth-child(${
-            index + 1
-          }) > .govuk-summary-list__actions > .manage-departments_float-left-sm__8lYy9 > .govuk-link`,
-        ).click();
-        return false;
-      }
-    });
+    selectActionForItemInTable(DEPARTMENT_NAME, "Edit");
 
     cy.log("Trying to submit empty form data");
     cy.get('[data-cy="cy-name-text-input"]').clear();
@@ -477,23 +474,15 @@ describe("Super Admin", () => {
     navigateToSpecificUser(Cypress.env("oneLoginAdminEmail"));
 
     cy.log("Clicking change on user's department");
-    cy.get(
-      ":nth-child(4) > .govuk-summary-list__actions > .govuk-link",
-    ).click();
+    selectActionForItemInTable(ORIGINAL_DEPARTMENT_NAME, "Change", {
+      textCellElement: "dd",
+      actionCellElement: "dd",
+    });
     cy.get(".govuk-link").contains("Manage departments").click();
 
     cy.log("Clicking delete on department");
 
-    cy.get(".govuk-summary-list__key").each(($ele, index) => {
-      if ($ele.text() === DEPARTMENT_NAME_DELETE) {
-        cy.get(
-          `:nth-child(${
-            index + 1
-          }) > .govuk-summary-list__actions > .manage-departments_float-left-sm__8lYy9 > .govuk-link`,
-        ).click();
-        return false;
-      }
-    });
+    selectActionForItemInTable(DEPARTMENT_NAME_DELETE, "Edit");
 
     cy.log("Clicking delete department");
     cy.get(".govuk-button").contains("Delete department").click();

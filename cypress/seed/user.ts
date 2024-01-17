@@ -6,7 +6,10 @@ import {
   insertUsers,
 } from "./ts/insertTestUsers";
 import { deleteUsers, deleteDepartments } from "./ts/deleteTestUsers";
-import { addFailedSpotlightOauthAudit } from "./ts/insertApplyData";
+import {
+  addFailedSpotlightOauthAudit,
+  addSuccessSpotlightOauthAudit,
+} from "./ts/insertApplyData";
 import { deleteFailedSpotlightOauthAudit } from "./ts/deleteApplyData";
 import { ADDED_DEPARTMENT_NAME } from "../common/constants";
 
@@ -105,11 +108,11 @@ export const addFailedOauthAudit = async () => {
   );
 };
 
-export const deleteFailedOauthAudit = async () => {
+export const addSuccessOauthAudit = async () => {
   await runSQLFromJs(
-    [deleteFailedSpotlightOauthAudit],
+    [addSuccessSpotlightOauthAudit],
     {
-      [deleteFailedSpotlightOauthAudit]: [SUPER_ADMIN_ID],
+      [addSuccessSpotlightOauthAudit]: [SUPER_ADMIN_ID],
     },
     userServiceDbName,
     userDatabaseUrl,
