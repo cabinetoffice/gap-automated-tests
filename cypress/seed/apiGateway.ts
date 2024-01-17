@@ -65,7 +65,7 @@ export async function deleteApiKey(key: UsagePlanKey) {
     await apiGatewayClient.send(deleteApiKeyCommand);
     console.log(`API key with id ${key.id} deleted`);
 
-    await asyncSleep(100);
+    await asyncSleep(200);
   } catch (error) {
     console.error("Error in deleteApiKey:", error.message);
   }
@@ -84,7 +84,7 @@ export async function createApiKey(apiKeyName: string) {
 
     const createApiKeyResponse =
       await apiGatewayClient.send(createApiKeyCommand);
-    await asyncSleep(100);
+    await asyncSleep(200);
 
     return createApiKeyResponse.id;
   } catch (error) {
@@ -106,7 +106,7 @@ export async function associateApiKeyToUsagePlan(apiKeyId: string) {
 
     await apiGatewayClient.send(createUsagePlanKeyCommand);
 
-    await asyncSleep(100);
+    await asyncSleep(200);
   } catch (error) {
     console.error("Error in associateApiKeyToUsagePlan:", error.message);
   }

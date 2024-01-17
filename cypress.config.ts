@@ -114,7 +114,10 @@ export default defineConfig({
           await refillDbWithAllPreExistingApiKeys(originalData[0]);
           return null;
         },
-
+        async deleteApiKeys() {
+          await deleteApiKeysData();
+          return null;
+        },
         async removeAdvertByName(name) {
           await removeAdvertByName(name);
           return null;

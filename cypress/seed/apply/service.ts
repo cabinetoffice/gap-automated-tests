@@ -130,7 +130,7 @@ const createApiKeysData = async (): Promise<void> => {
   console.log(
     `Successfully retrieved ${apiKeys.length}  Keys from Aws Api Gateway`,
   );
-
+  console.log("sorted ", apiKeys);
   await createApiKeysInDatabase(apiKeys);
 
   console.log("Successfully added data to Apply database");
