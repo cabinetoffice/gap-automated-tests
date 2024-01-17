@@ -54,6 +54,7 @@ const userSubstitutions = {
     APPLICANT_ID,
     APPLICANT_ID,
   ],
+  [deleteFailedSpotlightOauthAudit]: [SUPER_ADMIN_ID],
   [deleteUsers]: [
     SUPER_ADMIN_ID,
     ADMIN_ID,
@@ -85,7 +86,7 @@ export const createTestUsers = async (): Promise<void> => {
 
 export const deleteTestUsers = async (): Promise<void> => {
   await runSQLFromJs(
-    [deleteUsers, deleteDepartments],
+    [deleteFailedSpotlightOauthAudit, deleteUsers, deleteDepartments],
     userSubstitutions,
     userServiceDbName,
     userDatabaseUrl,
