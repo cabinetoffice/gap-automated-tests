@@ -314,8 +314,6 @@ export function advertSection3(scheduled) {
     { force: true },
   );
 
-  cy.get('[data-cy="cy-grantApplicationOpenDate-time-select"]').select(1);
-
   cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]").type("31", {
     force: true,
   });
@@ -326,8 +324,6 @@ export function advertSection3(scheduled) {
     `${today.getFullYear() + 1}`,
     { force: true },
   );
-
-  cy.get('[data-cy="cy-grantApplicationCloseDate-time-select"]').select(1);
 
   yesQuestionComplete();
 }
