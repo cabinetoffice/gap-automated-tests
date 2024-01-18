@@ -68,6 +68,11 @@ INSERT INTO public.spotlight_oauth_audit(event, status, user_id, timestamp)
 VALUES ('AUTHORISE', 'FAILURE', $1, now());
 `;
 
+const addSuccessSpotlightOauthAudit = `
+INSERT INTO public.spotlight_oauth_audit(event, status, user_id, timestamp)
+VALUES ('AUTHORISE', 'SUCCESS', $1, now());
+`;
+
 const addSpotlightBatchRow = `
     INSERT INTO public.spotlight_batch(id, status, last_send_attempt, version, created, last_updated)
     VALUES ($1, 'FAILURE', NOW(), 1, NOW(), NOW());`;
@@ -136,6 +141,7 @@ export {
   addSubmissionToMostRecentBatch,
   addSpotlightBatchRow,
   addFailedSpotlightOauthAudit,
+  addSuccessSpotlightOauthAudit,
   insertApplicants,
   insertUsers,
   insertFundingOrgs,

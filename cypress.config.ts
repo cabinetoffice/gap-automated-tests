@@ -1,9 +1,9 @@
 import { defineConfig } from "cypress";
 import {
   addFailedOauthAudit,
+  addSuccessOauthAudit,
   createTestUsers,
   deleteTestUsers,
-  deleteFailedOauthAudit,
 } from "./cypress/seed/user";
 import {
   createApplyData,
@@ -38,17 +38,14 @@ export default defineConfig({
     setupNodeEvents(on) {
       // implement node event listeners here
       on("task", {
-        async addTestOauthAudit() {
-          await deleteFailedOauthAudit().then(async () => {
-            await addFailedOauthAudit();
-          });
+        async addFailedOauthAudit() {
+          await addFailedOauthAudit();
           return null;
         },
-        async deleteFailedOauthAudit() {
-          await deleteFailedOauthAudit();
+        async addSuccessOauthAudit() {
+          await addSuccessOauthAudit();
           return null;
         },
-
         async addSpotlightBatch() {
           await deleteSpotlightBatch().then(async () => {
             await addSpotlightBatch();
@@ -124,7 +121,7 @@ export default defineConfig({
 
           return null;
         },
-        async ls(filePath = "/cypress/downloads") { 
+        async ls(filePath = "/cypress/downloads") {
           const list = fs.readdirSync(__dirname + filePath);
           console.log(list);
           return `ls ${filePath}: ${JSON.stringify(list)}`;

@@ -6,7 +6,10 @@ import {
   insertUsers,
 } from "./ts/insertTestUsers";
 import { deleteUsers, deleteDepartments } from "./ts/deleteTestUsers";
-import { addFailedSpotlightOauthAudit } from "./ts/insertApplyData";
+import {
+  addFailedSpotlightOauthAudit,
+  addSuccessSpotlightOauthAudit,
+} from "./ts/insertApplyData";
 import { deleteFailedSpotlightOauthAudit } from "./ts/deleteApplyData";
 import { ADDED_DEPARTMENT_NAME } from "../common/constants";
 
@@ -54,6 +57,7 @@ const userSubstitutions = {
     APPLICANT_ID,
     APPLICANT_ID,
   ],
+  [deleteFailedSpotlightOauthAudit]: [SUPER_ADMIN_ID],
   [deleteUsers]: [
     SUPER_ADMIN_ID,
     ADMIN_ID,
@@ -85,7 +89,7 @@ export const createTestUsers = async (): Promise<void> => {
 
 export const deleteTestUsers = async (): Promise<void> => {
   await runSQLFromJs(
-    [deleteUsers, deleteDepartments],
+    [deleteFailedSpotlightOauthAudit, deleteUsers, deleteDepartments],
     userSubstitutions,
     userServiceDbName,
     userDatabaseUrl,
@@ -104,11 +108,11 @@ export const addFailedOauthAudit = async () => {
   );
 };
 
-export const deleteFailedOauthAudit = async () => {
+export const addSuccessOauthAudit = async () => {
   await runSQLFromJs(
-    [deleteFailedSpotlightOauthAudit],
+    [addSuccessSpotlightOauthAudit],
     {
-      [deleteFailedSpotlightOauthAudit]: [SUPER_ADMIN_ID],
+      [addSuccessSpotlightOauthAudit]: [SUPER_ADMIN_ID],
     },
     userServiceDbName,
     userDatabaseUrl,
