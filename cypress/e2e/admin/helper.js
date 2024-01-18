@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import {
   clickSaveAndContinue,
   downloadFileFromLink,
+  log,
   saveAndExit,
   yesQuestionComplete,
 } from "../../common/common";
@@ -313,6 +314,8 @@ export function advertSection3(scheduled) {
     { force: true },
   );
 
+  cy.get('[data-cy="cy-grantApplicationOpenDate-time-select"]').select(1);
+
   cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]").type("31", {
     force: true,
   });
@@ -323,6 +326,8 @@ export function advertSection3(scheduled) {
     `${today.getFullYear() + 1}`,
     { force: true },
   );
+
+  cy.get('[data-cy="cy-grantApplicationCloseDate-time-select"]').select(1);
 
   yesQuestionComplete();
 }
@@ -429,6 +434,8 @@ const downloadSubmissionExportZip = (submissionFileName) => {
 export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
   cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
     (submission) => {
+      log(JSON.stringify(submission));
+
       cy.visit(submission.url);
 
       const submissionFileName = submission.location
