@@ -221,5 +221,6 @@ export default defineConfig({
       overwrite: false,
     },
     baseUrl: process.env.APPLICATION_BASE_URL,
+    chromeWebSecurity: false,
   },
 });

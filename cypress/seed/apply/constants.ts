@@ -350,7 +350,12 @@ const createApiKeyFundingOrganisationSubstitutions = {
   [createApiKeysFundingOrganisations]: [SUPER_ADMIN_ID - 2, SUPER_ADMIN_ID - 1],
 };
 
-const createApiKeySubstitutions = (i: number, id: string, name: string) => {
+const createApiKeySubstitutions = (
+  i: number,
+  id: string,
+  name: string,
+  value: string,
+) => {
   const fundingOrganisation = name.startsWith("Org1")
     ? SUPER_ADMIN_ID - 1
     : SUPER_ADMIN_ID - 2;
@@ -358,8 +363,7 @@ const createApiKeySubstitutions = (i: number, id: string, name: string) => {
     [createApiKey]: [
       -(i + 1),
       fundingOrganisation,
-      // the apiKey has to be at least 20 characters long
-      hashApiKey(name + name),
+      hashApiKey(value),
       name,
       null,
       generateNowInDbDateAndTimeFormat(),

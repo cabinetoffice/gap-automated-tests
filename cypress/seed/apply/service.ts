@@ -62,6 +62,8 @@ import {
   removeKeysFromAwsApiGatewayUsagePlan,
 } from "../apiGateway";
 
+import { promisify } from "util";
+
 const runSqlForApply = async (
   scripts: string[],
   substitutions: Record<string, any[]>,
@@ -246,12 +248,16 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
 };
 
 const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
+  const asyncSleep = promisify(setTimeout);
+
   for (let i = 0; i < apiKeys.length; i++) {
-    const { id, name } = apiKeys[i];
+    const { id, name, value } = apiKeys[i];
+    console.log("apiKeys[i]", apiKeys[i]);
     await runSqlForApply(
       [createApiKey],
-      createApiKeySubstitutions(i, id, name),
+      createApiKeySubstitutions(i, id, name, value),
     );
+    asyncSleep(200);
   }
 };
 
