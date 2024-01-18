@@ -14,6 +14,7 @@ import {
   insertSubmissions,
   createApiKey,
   createApiKeysFundingOrganisations,
+  createApiKeyWithDefaultTimestamp,
 } from "../ts/insertApplyData";
 import {
   deleteAdverts,
@@ -43,12 +44,7 @@ import {
   v2InternalAdvert,
 } from "../data/apply";
 
-import {
-  generateNowInDbDateAndTimeFormat,
-  getTestID,
-  getUUID,
-  hashApiKey,
-} from "./helper";
+import { getTestID, getUUID, hashApiKey } from "./helper";
 import { getExportedSubmission } from "../ts/selectApplyData";
 import { type ApiKeyDb } from "./service";
 
@@ -360,13 +356,12 @@ const createApiKeySubstitutions = (
     ? SUPER_ADMIN_ID - 1
     : SUPER_ADMIN_ID - 2;
   return {
-    [createApiKey]: [
+    [createApiKeyWithDefaultTimestamp]: [
       -(i + 1),
       fundingOrganisation,
       hashApiKey(value),
       name,
       null,
-      generateNowInDbDateAndTimeFormat(),
       false,
       null,
       null,

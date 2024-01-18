@@ -1,5 +1,4 @@
 import * as crypto from "crypto";
-import * as dayjs from "dayjs";
 
 const getUUID = (index = 0) =>
   `${Math.abs(+process.env.FIRST_USER_ID + index)
@@ -17,8 +16,4 @@ const hashApiKey = (apiKey: string) => {
   return hashed;
 };
 
-const generateNowInDbDateAndTimeFormat = () => {
-  const now = dayjs();
-  return now.format("YYYY-MM-DD HH:mm:ss.SSS");
-};
-export { getUUID, getTestID, hashApiKey, generateNowInDbDateAndTimeFormat };
+export { getUUID, getTestID, hashApiKey };

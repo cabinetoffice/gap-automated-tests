@@ -32,6 +32,7 @@ import {
   insertSubmissions,
   createApiKeysFundingOrganisations,
   createApiKey,
+  createApiKeyWithDefaultTimestamp,
 } from "../ts/insertApplyData";
 import {
   readdQueuedSpotlightSubmissions,
@@ -254,18 +255,18 @@ const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
     const { id, name, value } = apiKeys[i];
     console.log("apiKeys[i]", apiKeys[i]);
     await runSqlForApply(
-      [createApiKey],
+      [createApiKeyWithDefaultTimestamp],
       createApiKeySubstitutions(i, id, name, value),
     );
-    asyncSleep(200);
+    await asyncSleep(200);
   }
 };
 
 const recreateApiKeysInDatabase = async (apiKeys: ApiKeyDb[]) => {
-  for (let i = 0; i < apiKeys.length; i++) {
+  for (const element of apiKeys) {
     await runSqlForApply(
       [createApiKey],
-      createApiKeySubstitutionsForRecreation(apiKeys[i]),
+      createApiKeySubstitutionsForRecreation(element),
     );
   }
 };

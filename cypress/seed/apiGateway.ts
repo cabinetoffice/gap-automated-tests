@@ -72,26 +72,39 @@ export async function deleteApiKey(key: UsagePlanKey) {
 }
 
 export async function createApiKey(apiKeyName: string) {
-  try {
-    const params = {
-      name: apiKeyName,
-      enabled: true,
-      value: apiKeyName + apiKeyName,
-    };
-    const asyncSleep = promisify(setTimeout);
+  const maxRetries = 3;
+  let retryCount = 0;
 
-    const createApiKeyCommand = new CreateApiKeyCommand(params);
+  while (retryCount < maxRetries) {
+    try {
+      const params = {
+        name: apiKeyName,
+        enabled: true,
+        value: apiKeyName + apiKeyName,
+      };
+      const asyncSleep = promisify(setTimeout);
 
-    const createApiKeyResponse =
-      await apiGatewayClient.send(createApiKeyCommand);
-    await asyncSleep(200);
+      const createApiKeyCommand = new CreateApiKeyCommand(params);
 
-    return createApiKeyResponse.id;
-  } catch (error) {
-    console.error(
-      `Error for key ${apiKeyName}in createApiKey: ${error.message}`,
-    );
+      const createApiKeyResponse =
+        await apiGatewayClient.send(createApiKeyCommand);
+
+      await asyncSleep(200);
+
+      return createApiKeyResponse.id;
+    } catch (error) {
+      retryCount++;
+      console.error(
+        `Error for key ${apiKeyName} in createApiKey (attempt ${
+          retryCount / maxRetries
+        }): ${error.message}`,
+      );
+    }
   }
+
+  throw new Error(
+    `Error for key ${apiKeyName} in createApiKey after ${maxRetries}`,
+  );
 }
 
 export async function associateApiKeyToUsagePlan(apiKeyId: string) {

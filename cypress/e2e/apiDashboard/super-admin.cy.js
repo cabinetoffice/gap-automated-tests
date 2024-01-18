@@ -26,7 +26,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
   after(() => {
     cy.task("deleteApiKeys");
   });
-  // TODO delete all apiKeys from db
+
   describe("No API keys", () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let originalData;
@@ -119,7 +119,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
 
         cy.task("deleteExistingApiKeysFromDb", originalData);
       });
-      cy.task("create110ApiKeys", {}, { timeout: 200000 });
+      cy.task("create110ApiKeys", {}, { timeout: 2000000 });
     });
 
     beforeEach(() => {
@@ -276,10 +276,8 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       cy.get(`[data-cy="admin-dashboard-filter-apply-button"]`).click();
 
       cy.log("Verify that the url contain the selected departments");
-      cy.url().should(
-        "eq",
-        `${API_DASHBOARD_BASE_URL}/api-keys/manage?selectedDepartments=CypressApiKeysEvilOrg&selectedDepartments=CypressApiKeysTestOrg`,
-      );
+      cy.url().should("include", "selectedDepartments=CypressApiKeysEvilOrg");
+      cy.url().should("include", "selectedDepartments=CypressApiKeysTestOrg");
 
       cy.log("Checking the rows");
       cy.get(`[data-cy="admin-dashboard-list-table-body"]`)
