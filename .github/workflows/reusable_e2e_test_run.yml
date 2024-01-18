@@ -29,19 +29,13 @@ jobs:
     environment: ${{ inputs.notify == 'true' && inputs.environment || '' }}
 
     steps:
-      - name: Get Github action IP
-        id: ip
-        uses: haythem/public-ip@v1.3
-
-      - name: Add Github Actions IP to Security group
-        run: |
-          echo "${{ steps.ip.outputs.ipv4 }}"
-          aws ec2 authorize-security-group-ingress --group-id ${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-
+      - uses: aws-actions/configure-aws-credentials@v3
+        name: Configure AWS credentials
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: github-gap-automated-tests
+          aws-region: ${{ env.AWS_REGION }}
+    
       - name: Install OpenVPN 3
         run: |
           sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://packages.openvpn.net/packages-repo.gpg | sudo tee /etc/apt/keyrings/openvpn.asc
@@ -100,15 +94,6 @@ jobs:
           browser: ${{ inputs.browser }}
           spec: ${{ inputs.suite == 'all' && 'cypress/**' || format('cypress/e2e/{0}/*.cy.js', inputs.suite == 'superadmin' && 'super-admin' || inputs.suite) }}
 
-      - name: Remove Github Actions IP from security group
-        run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-        if: always()
-
       - name: Disconnect from OPENVPN 3 Profile
         run: openvpn3 session-manage --config FINDVPN --disconnect
         if: always()
@@ -127,10 +112,6 @@ jobs:
           NEW_FAIL_FILENAME=${NEW_PASS_FILENAME/fail_/fail_${{ inputs.browser }}_}
           mv $OLD_FILENAME $NEW_FAIL_FILENAME
           aws s3 cp $FILE_PATH/ s3://gap-automated-tests/${{ inputs.environment }} --recursive --exclude "*" --include "*.html"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
         if: ${{ !cancelled() && inputs.report == 'true' }}
 
       - name: Presign S3 report for sharing
@@ -139,8 +120,4 @@ jobs:
           FULL_FILE_PATH=$(ls -a -d $FILE_PATH/*)
           FILENAME=${FULL_FILE_PATH/$FILE_PATH/}
           aws s3 presign s3://gap-automated-tests/${{ inputs.environment }}$FILENAME --expires-in 604800
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
         if: ${{ !cancelled() && inputs.report == 'true' }}
