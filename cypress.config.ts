@@ -103,23 +103,24 @@ export default defineConfig({
         async grabExistingApiKeysFromDb() {
           return await grabAllApiKeys();
         },
-
         async deleteExistingApiKeysFromDb(originalData) {
           await deleteExistingApiKeys(originalData[0]);
+
           return null;
         },
-
         async refillDbWithPreExistingApiKeys(originalData) {
-          console.log("originalData from cypressconfig: ", originalData[0]);
           await refillDbWithAllPreExistingApiKeys(originalData[0]);
+
           return null;
         },
         async deleteApiKeys() {
           await deleteApiKeysData();
+
           return null;
         },
         async removeAdvertByName(name) {
           await removeAdvertByName(name);
+
           return null;
         },
         async publishGrantsToContentful() {

@@ -133,10 +133,10 @@ const createApiKeysData = async (): Promise<void> => {
   console.log(
     `Successfully retrieved ${apiKeys.length}  Keys from Aws Api Gateway`,
   );
-  console.log("sorted ", apiKeys);
+
   await createApiKeysInDatabase(apiKeys);
 
-  console.log("Successfully added data to Apply database");
+  console.log("Successfully created apiKeys into the Apply database");
 };
 
 const deleteApiKeysData = async (): Promise<void> => {
@@ -156,7 +156,7 @@ const deleteApiKeysData = async (): Promise<void> => {
 const grabAllApiKeys = async () => {
   const rows = await runSqlForApply([selectAllApiKeys], null);
   console.log("Successfully selected all Api Keys");
-  console.log(rows[0]);
+
   return rows;
 };
 
@@ -176,6 +176,7 @@ const deleteExistingApiKeys = async (originalData: ApiKeyDb[]) => {
 
 const refillDbWithAllPreExistingApiKeys = async (originalData: ApiKeyDb[]) => {
   await recreateApiKeysInDatabase(originalData);
+
   console.log("Successfully recreated all Api Keys");
 };
 
@@ -253,7 +254,7 @@ const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
 
   for (let i = 0; i < apiKeys.length; i++) {
     const { id, name, value } = apiKeys[i];
-    console.log("apiKeys[i]", apiKeys[i]);
+
     await runSqlForApply(
       [createApiKeyWithDefaultTimestamp],
       createApiKeySubstitutions(i, id, name, value),

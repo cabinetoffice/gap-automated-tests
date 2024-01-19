@@ -27,6 +27,7 @@ export const runSQLFromJs = async (
       return response;
     } catch (error) {
       connectionRetries++;
+
       console.error(
         `Error executing SQL script : (Retry ${connectionRetries}/${maxConnectionRetries}): ${error}`,
       );
@@ -61,6 +62,7 @@ export const runSingleQuery = async (
       success = true;
     } catch (error) {
       retries++;
+
       console.error(
         `Error executing SQL script ${sqlScript}: (Retry ${retries}/${maxRetries}): ${error}`,
       );
