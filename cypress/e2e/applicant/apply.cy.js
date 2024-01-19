@@ -64,7 +64,7 @@ describe("Apply for a Grant", () => {
 
     log("Apply V1 Internal Grant - Returning to in progress application");
     cy.get('[data-cy="cy-your-applications-link"]').click();
-    cy.contains(Cypress.env("testV1InternalGrant").applicationName).click();
+    cy.contains("Edit").click();
 
     cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
 
@@ -80,7 +80,7 @@ describe("Apply for a Grant", () => {
 
     // test doc upload is required
     log("Apply V1 Internal Grant - Removing uploaded doc from submission");
-    cy.contains("Submit application").should("not.be.disabled");
+    cy.contains("Review and submit").should("not.be.disabled");
 
     cy.contains("Custom Section").click();
 
@@ -107,7 +107,7 @@ describe("Apply for a Grant", () => {
 
     cy.get('[data-cy="cy-status-tag-Custom Section-In Progress"]');
 
-    cy.contains("Submit application").should("be.disabled");
+    cy.contains("Review and submit").should("be.disabled");
 
     // re-add doc upload
     log("Apply V1 Internal Grant - Re-adding uploaded doc to submission");
@@ -125,7 +125,7 @@ describe("Apply for a Grant", () => {
     yesSectionComplete();
     cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
 
-    cy.contains("Submit application").should("not.be.disabled");
+    cy.contains("Review and submit").should("not.be.disabled");
 
     // submit
     log("Apply V1 Internal Grant - Submitting application");
@@ -139,8 +139,13 @@ describe("Apply for a Grant", () => {
 
     cy.contains("Your applications");
     cy.contains("All of your current and past applications are listed below.");
-    cy.contains("Name of grant");
-    cy.contains(Cypress.env("testV1InternalGrant").applicationName);
+    cy.contains(Cypress.env("testV1InternalGrant").applicationName).should(
+      "exist",
+    );
+    cy.get(
+      '[data-cy="cy-status-tag-Cypress - Test Application V1 Internal-Submitted"]',
+    ).should("exist");
+    cy.contains("View").should("exist");
 
     // checks that clicking on submitted application does nothing
     cy.get(
