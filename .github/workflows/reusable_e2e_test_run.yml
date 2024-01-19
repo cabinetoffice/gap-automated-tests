@@ -23,20 +23,17 @@ jobs:
   reusable_e2e_test_run:
     name: Run E2E Tests env:${{ inputs.environment }} suite:${{ inputs.suite }} browser:${{ inputs.browser }}
     runs-on: ubuntu-latest
-    permissions:
-        id-token: write
-        contents: read
     concurrency: e2e_test_run_${{ inputs.environment }}
     # GitHub Actions doesn't have ternaries for some reason, so this only sets the environment if we want reports
     # (so it doesn't ping every time someone pushes)
     environment: ${{ inputs.notify == 'true' && inputs.environment || '' }}
 
     steps:
-      - uses: aws-actions/configure-aws-credentials@v3
-        name: Configure AWS credentials
+      - name: Setup AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          role-session-name: github-gap-automated-tests
+          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
     
       - name: Install OpenVPN 3
@@ -117,14 +114,6 @@ jobs:
           aws s3 cp $FILE_PATH/ s3://gap-automated-tests/${{ inputs.environment }} --recursive --exclude "*" --include "*.html"
         if: ${{ !cancelled() && inputs.report == 'true' }}
 
-      - name: Setup AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
-          unset-current-credentials: true
-      
       - name: Presign S3 report for sharing
         run: |
           FILE_PATH="/home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report"
