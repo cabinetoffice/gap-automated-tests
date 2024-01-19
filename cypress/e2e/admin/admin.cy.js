@@ -59,7 +59,7 @@ describe("Create a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("View scheme details with an in progress advert", () => {
+  it("Admin can create a new Grant with Advert and Application Form", () => {
     cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
