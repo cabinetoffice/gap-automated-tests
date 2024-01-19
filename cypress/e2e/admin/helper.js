@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import {
   clickSaveAndContinue,
   downloadFileFromLink,
+  log,
   saveAndExit,
   yesQuestionComplete,
 } from "../../common/common";
@@ -429,6 +430,8 @@ const downloadSubmissionExportZip = (submissionFileName) => {
 export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
   cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
     (submission) => {
+      log(JSON.stringify(submission));
+
       cy.visit(submission.url);
 
       const submissionFileName = submission.location

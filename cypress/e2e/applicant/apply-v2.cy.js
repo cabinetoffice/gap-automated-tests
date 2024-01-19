@@ -362,9 +362,7 @@ describe("Apply for a Grant V2", () => {
 
     log("Apply V2 Internal MQ Partial - Navigate to application");
     cy.get('[data-cy="cy-your-applications-link"]').click();
-    cy.get(
-      '[data-cy="cy-application-link-Cypress - Test Application V2 Internal"]',
-    ).click();
+    cy.contains("Edit").click();
 
     // Complete & Submit application
     log("Apply V2 Internal MQ Partial - Fill out Eligibility");

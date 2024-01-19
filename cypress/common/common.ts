@@ -66,17 +66,22 @@ export const signInAsSuperAdmin = () => {
   );
 };
 
-export const navigateToSpecificUser = (email: string) => {
+export const searchForUser = (email: string) => {
   cy.log("Entering email in search box");
   cy.get("[name=searchTerm]").type(email);
 
   cy.log("Clicking search button");
   cy.get("[data-cy=cy-button-Search]").click();
+};
+
+export const navigateToSpecificUser = (email: string) => {
+  searchForUser(email);
 
   cy.log("Clicking edit on searched user");
-  cy.get(
-    '[data-cy="cy_table_row-for-Actions-row-0-cell-3"] > .govuk-link',
-  ).click();
+  selectActionForItemInTable(email, "Edit", {
+    textCellElement: "td",
+    actionCellElement: "td",
+  });
 };
 
 export const signOut = () => {
@@ -205,5 +210,37 @@ export const filterSelection = (fieldSet: string, label: string) => {
         cy.wrap($el).click();
         return false;
       }
+    });
+};
+
+export const selectActionForItemInTable = (
+  text: string,
+  action: string,
+  options = { textCellElement: "dt", actionCellElement: "dd" },
+) => {
+  cy.contains(options.textCellElement, text)
+    .parent()
+    .within(($tr) => {
+      cy.get(`${options.actionCellElement} a`).contains(action).click();
+    });
+};
+
+export const validateActionForItemInTable = (
+  text: string,
+  action: string,
+  options = { textCellElement: "dt", actionCellElement: "dd" },
+) => {
+  cy.contains(options.textCellElement, text)
+    .parent()
+    .within(($tr) => {
+      cy.get(`${options.actionCellElement} a`)
+        .contains(action)
+        .should("not.be.disabled")
+        .invoke("attr", "href")
+        .then((url) => {
+          cy.request(url).then((response) => {
+            expect(response.status).to.eq(200);
+          });
+        });
     });
 };
