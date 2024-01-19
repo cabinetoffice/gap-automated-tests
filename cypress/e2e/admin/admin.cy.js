@@ -62,7 +62,9 @@ describe("Create a Grant", () => {
   it("Admin can create a new Grant with Advert and Application Form", () => {
     cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
     cy.get("[data-cy=cySignInAndApply-Link]").click();
+    log("Admin grant creation journey - Signing in as admin");
     signInAsAdmin();
+    log("Admin grant creation journey - creating Grant");
     createGrant(GRANT_NAME);
 
     // create advert
