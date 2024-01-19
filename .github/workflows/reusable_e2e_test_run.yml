@@ -29,19 +29,6 @@ jobs:
     environment: ${{ inputs.notify == 'true' && inputs.environment || '' }}
 
     steps:
-      - name: Get Github action IP
-        id: ip
-        uses: haythem/public-ip@v1.3
-
-      - name: Add Github Actions IP to Security group
-        run: |
-          echo "${{ steps.ip.outputs.ipv4 }}"
-          aws ec2 authorize-security-group-ingress --group-id ${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-
       - name: Install OpenVPN 3
         run: |
           sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://packages.openvpn.net/packages-repo.gpg | sudo tee /etc/apt/keyrings/openvpn.asc
@@ -99,15 +86,6 @@ jobs:
         with:
           browser: ${{ inputs.browser }}
           spec: ${{ inputs.suite == 'all' && 'cypress/**' || format('cypress/e2e/{0}/*.cy.js', inputs.suite == 'superadmin' && 'super-admin' || inputs.suite) }}
-
-      - name: Remove Github Actions IP from security group
-        run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-        if: always()
 
       - name: Disconnect from OPENVPN 3 Profile
         run: openvpn3 session-manage --config FINDVPN --disconnect
