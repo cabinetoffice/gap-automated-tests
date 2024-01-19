@@ -32,7 +32,7 @@ jobs:
     environment: ${{ inputs.notify == 'true' && inputs.environment || '' }}
 
     steps:
-      - uses: aws-actions/configure-aws-credentials@v3
+      - uses: aws-actions/configure-aws-credentials@v4
         name: Configure AWS credentials
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
@@ -116,7 +116,7 @@ jobs:
           mv $OLD_FILENAME $NEW_FAIL_FILENAME
           aws s3 cp $FILE_PATH/ s3://gap-automated-tests/${{ inputs.environment }} --recursive --exclude "*" --include "*.html"
         if: ${{ !cancelled() && inputs.report == 'true' }}
-
+      
       - name: Presign S3 report for sharing
         run: |
           FILE_PATH="/home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report"
