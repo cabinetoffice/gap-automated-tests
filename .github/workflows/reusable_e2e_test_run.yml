@@ -116,6 +116,14 @@ jobs:
           mv $OLD_FILENAME $NEW_FAIL_FILENAME
           aws s3 cp $FILE_PATH/ s3://gap-automated-tests/${{ inputs.environment }} --recursive --exclude "*" --include "*.html"
         if: ${{ !cancelled() && inputs.report == 'true' }}
+
+      - name: Setup AWS credentials
+        uses: aws-actions/configure-aws-credentials@4
+        with:
+          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+          unset-current-credentials: true
       
       - name: Presign S3 report for sharing
         run: |
