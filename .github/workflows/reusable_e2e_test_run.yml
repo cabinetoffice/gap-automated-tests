@@ -35,7 +35,7 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v3
         name: Configure AWS credentials
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           role-session-name: github-gap-automated-tests
           aws-region: ${{ vars.AWS_REGION }}
     
