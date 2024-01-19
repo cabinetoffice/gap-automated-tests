@@ -123,4 +123,8 @@ jobs:
           FULL_FILE_PATH=$(ls -a -d $FILE_PATH/*)
           FILENAME=${FULL_FILE_PATH/$FILE_PATH/}
           aws s3 presign s3://gap-automated-tests/${{ inputs.environment }}$FILENAME --expires-in 604800
+        env:
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
         if: ${{ !cancelled() && inputs.report == 'true' }}
