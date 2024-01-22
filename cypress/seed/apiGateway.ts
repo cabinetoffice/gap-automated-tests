@@ -52,6 +52,7 @@ export async function createKeyInAwsApiGatewayUsagePlan(apiKeyName: string) {
   try {
     const apiKeyId = await createApiKey(apiKeyName);
     await associateApiKeyToUsagePlan(apiKeyId);
+    return apiKeyId;
   } catch (error) {
     console.error("Error:", error.message);
   }
