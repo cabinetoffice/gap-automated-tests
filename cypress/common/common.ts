@@ -66,6 +66,13 @@ export const signInAsSuperAdmin = () => {
   );
 };
 
+export const signInAsTechnicalSupport = () => {
+  signInWithOneLoginApply(
+    Cypress.env("oneLoginTechnicalSupportEmail"),
+    Cypress.env("oneLoginTechnicalSupportPassword"),
+  );
+};
+
 export const searchForUser = (email: string) => {
   cy.log("Entering email in search box");
   cy.get("[name=searchTerm]").type(email);
