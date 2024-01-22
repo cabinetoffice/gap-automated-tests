@@ -1,3 +1,5 @@
+import * as crypto from "crypto";
+
 const getUUID = (index = 0) =>
   `${Math.abs(+process.env.FIRST_USER_ID + index)
     .toString()
@@ -6,4 +8,12 @@ const getUUID = (index = 0) =>
 const getTestID = (index = 0) =>
   -(Math.abs(+process.env.FIRST_USER_ID) + index);
 
-export { getUUID, getTestID };
+const hashApiKey = (apiKey: string) => {
+  const hash = crypto.createHash("sha512");
+  hash.update(apiKey, "utf-8");
+  const hashed = hash.digest("hex");
+
+  return hashed;
+};
+
+export { getUUID, getTestID, hashApiKey };

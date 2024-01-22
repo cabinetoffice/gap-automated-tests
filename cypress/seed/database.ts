@@ -8,23 +8,30 @@ export const runSQLFromJs = async (
   dbUrl: string,
 ): Promise<unknown[]> => {
   const response = [];
-  try {
-    const connectionString: string = getConnectionStringByDbName(dbUrl, dbName);
+  const maxConnectionRetries = 5;
+  let connectionRetries = 0;
 
-    const client = new Client({ connectionString });
-    await client.connect();
-
-    for (const sqlScript of sqlScripts) {
-      const res = await client.query(
-        sqlScript,
-        substitutions?.[sqlScript] || [],
+  while (connectionRetries < maxConnectionRetries) {
+    try {
+      const connectionString: string = getConnectionStringByDbName(
+        dbUrl,
+        dbName,
       );
-      response.push(res.rows);
+
+      const client = new Client({ connectionString });
+      await client.connect();
+      for (const sqlScript of sqlScripts) {
+        await runSingleQuery(client, sqlScript, substitutions, response);
+      }
+      await client.end();
+      return response;
+    } catch (error) {
+      connectionRetries++;
+
+      console.error(
+        `Error executing SQL script : (Retry ${connectionRetries}/${maxConnectionRetries}): ${error}`,
+      );
     }
-    await client.end();
-    return response;
-  } catch (error) {
-    console.error("Error executing SQL script: ", error);
   }
 };
 
@@ -33,4 +40,38 @@ export const getConnectionStringByDbName = (
   dbName: string,
 ): string => {
   return dbUrl + "/" + dbName;
+};
+
+export const runSingleQuery = async (
+  client: any,
+  sqlScript: string,
+  substitutions: any,
+  response: any[],
+) => {
+  const maxRetries = 5;
+  let retries = 0;
+  let success = false;
+
+  while (!success && retries < maxRetries) {
+    try {
+      const res = await client.query(
+        sqlScript,
+        substitutions?.[sqlScript] || [],
+      );
+      response.push(res.rows);
+      success = true;
+    } catch (error) {
+      retries++;
+
+      console.error(
+        `Error executing SQL script ${sqlScript}: (Retry ${retries}/${maxRetries}): ${error}`,
+      );
+    }
+  }
+
+  if (!success) {
+    throw new Error(
+      `Failed to execute SQL script '${sqlScript}' after ${maxRetries} attempts`,
+    );
+  }
 };

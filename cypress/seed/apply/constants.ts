@@ -12,6 +12,9 @@ import {
   insertMandatoryQuestions,
   insertSpotlightSubmission,
   insertSubmissions,
+  createApiKey,
+  createApiKeysFundingOrganisations,
+  createApiKeyWithDefaultTimestamp,
 } from "../ts/insertApplyData";
 import {
   deleteAdverts,
@@ -25,6 +28,8 @@ import {
   deleteApplicantOrgProfiles,
   deleteSpotlightSubmissionRow,
   deleteSpotlightBatchRow,
+  deleteApiKeysFundingOrganisations,
+  deleteApiKeysByFunderId,
 } from "../ts/deleteApplyData";
 import {
   TEST_V1_INTERNAL_GRANT,
@@ -39,8 +44,9 @@ import {
   v2InternalAdvert,
 } from "../data/apply";
 
-import { getTestID, getUUID } from "./helper";
+import { getTestID, getUUID, hashApiKey } from "./helper";
 import { getExportedSubmission } from "../ts/selectApplyData";
+import { type ApiKeyDb } from "./service";
 
 require("dotenv").config();
 
@@ -245,6 +251,11 @@ const applyDeleteSubstitutions = {
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 
+const deleteApiKeysSubstitutions = {
+  [deleteApiKeysByFunderId]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
+  [deleteApiKeysFundingOrganisations]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
+};
+
 const spotlightSubstitutions = {
   [addSubmissionToMostRecentBatch]: [
     V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
@@ -331,6 +342,51 @@ const applyUpdateSubstitutions = {
   ],
 };
 
+const createApiKeyFundingOrganisationSubstitutions = {
+  [createApiKeysFundingOrganisations]: [SUPER_ADMIN_ID - 2, SUPER_ADMIN_ID - 1],
+};
+
+const createApiKeySubstitutions = (
+  i: number,
+  id: string,
+  name: string,
+  value: string,
+) => {
+  const fundingOrganisation = name.startsWith("Org1")
+    ? SUPER_ADMIN_ID - 1
+    : SUPER_ADMIN_ID - 2;
+  return {
+    [createApiKeyWithDefaultTimestamp]: [
+      -(i + 1),
+      fundingOrganisation,
+      hashApiKey(value),
+      name,
+      null,
+      false,
+      null,
+      null,
+      id,
+    ],
+  };
+};
+
+const createApiKeySubstitutionsForRecreation = (apiKey: ApiKeyDb) => {
+  return {
+    [createApiKey]: [
+      apiKey.api_key_id,
+      apiKey.funder_id,
+      apiKey.api_key_value,
+      apiKey.api_key_name,
+      apiKey.api_key_description,
+      apiKey.created_date,
+      apiKey.is_revoked,
+      apiKey.revocation_date,
+      apiKey.revoked_by,
+      apiKey.api_gateway_id,
+    ],
+  };
+};
+
 export {
   applyInsertSubstitutions,
   applyDeleteSubstitutions,
@@ -356,4 +412,8 @@ export {
   SPOTLIGHT_BATCH_ID,
   MQ_DETAILS,
   DEPARTMENT_NAME,
+  deleteApiKeysSubstitutions,
+  createApiKeySubstitutions,
+  createApiKeyFundingOrganisationSubstitutions,
+  createApiKeySubstitutionsForRecreation,
 };
