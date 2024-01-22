@@ -137,6 +137,15 @@ INSERT INTO public.spotlight_submission (id, grant_mandatory_questions_id, grant
     )
 `;
 
+const createApiKeysFundingOrganisations = `INSERT INTO public.grant_funding_organisation(funder_id, organisation_name)
+VALUES ($1, 'CypressApiKeysEvilOrg'), ($2, 'CypressApiKeysTestOrg');`;
+
+const createApiKeyWithDefaultTimestamp = `INSERT INTO api_key (api_key_id, funder_id, api_key_value, api_key_name, api_key_description, created_date, is_revoked, revocation_date, revoked_by, api_gateway_id)
+ VALUES($1, $2, $3, $4, $5, NOW(), $6, $7, $8, $9)`;
+
+const createApiKey = `INSERT INTO api_key (api_key_id, funder_id, api_key_value, api_key_name, api_key_description, created_date, is_revoked, revocation_date, revoked_by, api_gateway_id)
+ VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
+
 export {
   addSubmissionToMostRecentBatch,
   addSpotlightBatchRow,
@@ -153,4 +162,7 @@ export {
   insertSpotlightSubmission,
   insertSubmissions,
   insertMandatoryQuestions,
+  createApiKeysFundingOrganisations,
+  createApiKey,
+  createApiKeyWithDefaultTimestamp,
 };

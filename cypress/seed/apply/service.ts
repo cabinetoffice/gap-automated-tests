@@ -1,7 +1,11 @@
 import { runSQLFromJs } from "../database";
+import { type UsagePlanKey } from "@aws-sdk/client-api-gateway";
 import {
   deleteAdmins,
   deleteAdverts,
+  deleteApiKeyById,
+  deleteApiKeysByFunderId,
+  deleteApiKeysFundingOrganisations,
   deleteApplicantOrgProfiles,
   deleteApplicants,
   deleteApplications,
@@ -26,6 +30,9 @@ import {
   insertMandatoryQuestions,
   insertSpotlightSubmission,
   insertSubmissions,
+  createApiKeysFundingOrganisations,
+  createApiKey,
+  createApiKeyWithDefaultTimestamp,
 } from "../ts/insertApplyData";
 import {
   readdQueuedSpotlightSubmissions,
@@ -43,8 +50,20 @@ import {
   V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   postLoginBaseUrl,
+  SUPER_ADMIN_ID,
+  deleteApiKeysSubstitutions,
+  createApiKeySubstitutions,
+  createApiKeyFundingOrganisationSubstitutions,
+  createApiKeySubstitutionsForRecreation,
 } from "./constants";
-import { getExportedSubmission } from "../ts/selectApplyData";
+import { getExportedSubmission, selectAllApiKeys } from "../ts/selectApplyData";
+import {
+  createKeyInAwsApiGatewayUsagePlan,
+  getKeysFromAwsApiGatewayUsagePlan,
+  removeKeysFromAwsApiGatewayUsagePlan,
+} from "../apiGateway";
+
+import { promisify } from "util";
 
 const runSqlForApply = async (
   scripts: string[],
@@ -90,6 +109,75 @@ const deleteApplyData = async (): Promise<void> => {
     applyDeleteSubstitutions,
   );
   console.log("Successfully removed data from Apply database");
+};
+
+const createApiKeysData = async (): Promise<void> => {
+  await runSqlForApply(
+    [createApiKeysFundingOrganisations],
+    createApiKeyFundingOrganisationSubstitutions,
+  );
+  console.log("Successfully created and updated fundingOrganisation");
+
+  console.log("Creating Keys in usage plan for SUPER_ADMIN_ID - 1");
+  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 1, 1, 46);
+  console.log("Successfully created Keys in usage plan for SUPER_ADMIN_ID - 1");
+
+  console.log("Creating Keys in usage plan for SUPER_ADMIN_ID - 2");
+  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 2, 46, 111);
+  console.log("Successfully created Keys in usage plan for SUPER_ADMIN_ID - 2");
+
+  const apiKeys = (await getKeysFromAwsApiGatewayUsagePlan()).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+
+  console.log(
+    `Successfully retrieved ${apiKeys.length}  Keys from Aws Api Gateway`,
+  );
+
+  await createApiKeysInDatabase(apiKeys);
+
+  console.log("Successfully created apiKeys into the Apply database");
+};
+
+const deleteApiKeysData = async (): Promise<void> => {
+  await runSqlForApply(
+    [deleteApiKeysByFunderId, deleteApiKeysFundingOrganisations],
+    deleteApiKeysSubstitutions, // the $1, etc in the sql script
+  );
+
+  console.log(
+    "Successfully removed Keys from Apply database and the funding Organisation associated with it",
+  );
+
+  await removeKeysFromAwsApiGatewayUsagePlan();
+  console.log("Successfully removed Keys Aws Api Gateway");
+};
+
+const grabAllApiKeys = async () => {
+  const rows = await runSqlForApply([selectAllApiKeys], null);
+  console.log("Successfully selected all Api Keys");
+
+  return rows;
+};
+
+const deleteExistingApiKeys = async (originalData: ApiKeyDb[]) => {
+  const apiKeyIds = originalData.map((data) => data.api_key_id);
+
+  await Promise.all(
+    apiKeyIds.map(async (apiKeyId) => {
+      await runSqlForApply([deleteApiKeyById], {
+        [deleteApiKeyById]: [apiKeyId],
+      });
+    }),
+  );
+
+  console.log("Successfully deleted all existing Api Keys");
+};
+
+const refillDbWithAllPreExistingApiKeys = async (originalData: ApiKeyDb[]) => {
+  await recreateApiKeysInDatabase(originalData);
+
+  console.log("Successfully recreated all Api Keys");
 };
 
 const cleanupTestSpotlightSubmissions = async () => {
@@ -161,6 +249,55 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
   };
 };
 
+const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
+  const asyncSleep = promisify(setTimeout);
+
+  for (let i = 0; i < apiKeys.length; i++) {
+    const { id, name, value } = apiKeys[i];
+
+    await runSqlForApply(
+      [createApiKeyWithDefaultTimestamp],
+      createApiKeySubstitutions(i, id, name, value),
+    );
+    await asyncSleep(200);
+  }
+};
+
+const recreateApiKeysInDatabase = async (apiKeys: ApiKeyDb[]) => {
+  for (const element of apiKeys) {
+    await runSqlForApply(
+      [createApiKey],
+      createApiKeySubstitutionsForRecreation(element),
+    );
+  }
+};
+
+const createApiKeysInApiGatewayUsagePlan = async (
+  fundingOrganisation: number,
+  startingPoint: number,
+  endingPoint: number,
+) => {
+  for (let i = startingPoint; i < endingPoint; i++) {
+    const paddedNumber = i.toString().padStart(3, "0");
+    const orgName =
+      fundingOrganisation === SUPER_ADMIN_ID - 1 ? "Org1" : "Org2";
+    const keyName = `${orgName}Cypress${paddedNumber}`;
+    await createKeyInAwsApiGatewayUsagePlan(keyName);
+  }
+};
+
+interface ApiKeyDb {
+  api_key_id: number;
+  funder_id: number;
+  api_key_value: string;
+  api_key_name: string;
+  api_key_description: string;
+  created_date: string;
+  is_revoked: boolean;
+  revocation_date: string;
+  revoked_by: number;
+  api_gateway_id: string;
+}
 export {
   createApplyData,
   deleteApplyData,
@@ -172,4 +309,11 @@ export {
   deleteSpotlightSubmission,
   addSpotlightBatch,
   getExportedSubmissionUrlAndLocation,
+  deleteApiKeysData,
+  createApiKeysData,
+  grabAllApiKeys,
+  type ApiKeyDb,
+  deleteExistingApiKeys,
+  recreateApiKeysInDatabase,
+  refillDbWithAllPreExistingApiKeys,
 };
