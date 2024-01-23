@@ -23,6 +23,10 @@ const today = new Date().toLocaleDateString("en-GB", {
 const API_DASHBOARD_BASE_URL = BASE_URL + "/find/api/admin";
 
 describe("Api Dashboard SuperAdmin journeys", () => {
+  after(() => {
+    cy.task("deleteApiKeys"); // deletes the 110 apiKeys created, so there won't stay in the db till next run
+  });
+
   describe("No API keys", () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let originalData;
