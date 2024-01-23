@@ -86,7 +86,11 @@ When writing tests, there are a few things to keep in mind.
 
 ### Logging actions
 
-You should log every major action that you perform, particularly if this action takes a while. You don't need to log every assertion, but having periodic logs helps us check that the tests are running correctly during the run on GitHub Actions. There are examples in the apply journeys of the types of things that should be logged, e.g.
+You should log every major action that you perform, particularly if this action takes a while. You don't need to log every assertion, but having periodic logs helps us check that the tests are running correctly during the run on GitHub Actions.
+
+Ideally you will put both the title/summary of the test as well as the specific action you're performing.
+
+There are examples in the apply journeys of the types of things that should be logged, e.g.
 
 ```js
 it("Can apply for a V1 Grant", () => {
@@ -211,3 +215,7 @@ cy.get(
 ```
 
 - Here, an element is targeted, the text is invoked so that it can be chained.Then the possible dates (_subscriptionDates_) are mapped, checking that the date is contained in this array.
+
+### Firefox navigation
+
+There seems to be an issue with Firefox where you cannot use `cy.go("back")` - please try to avoid this where possible and use `cy.visit(YOUR_URL)` instead.

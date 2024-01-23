@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
       suite: all
-      browser: firefox
+      browser: chrome
       report: false
       notify: false
       environment: SANDBOX
