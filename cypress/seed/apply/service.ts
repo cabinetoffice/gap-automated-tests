@@ -184,12 +184,13 @@ const getAPIKeysByFunderId = async () => {
 const deleteAPIKeysForTechSupport = async () => {
   const rows = await getAPIKeysByFunderId();
   for (const row of rows[0] as ApiKeyDb[]) {
-    console.log(row);
     const key = {
       id: row.api_gateway_id,
       name: row.api_key_name,
     };
     await deleteApiKey(key);
+
+    console.log("Successfully deleted all existing Technical Support Api Keys");
   }
 };
 
