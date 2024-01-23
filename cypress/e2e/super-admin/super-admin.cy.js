@@ -25,6 +25,10 @@ const DEPARTMENT_NAME_DELETE = `Cypress - Test Department ${firstUserId} Delete`
 const DEPARTMENT_NAME = `Cypress - Test Department ${firstUserId} Edit`;
 const EDITED_DEPARTMENT_NAME = `Cypress - Test Edited Department ${firstUserId}`;
 
+const SUPER_ADMIN_DASHBOARD = `${Cypress.env(
+  "applicationBaseUrl",
+)}/apply/admin/super-admin-dashboard`;
+
 describe("Super Admin", () => {
   beforeEach(() => {
     cy.task("setUpUser");
@@ -47,7 +51,7 @@ describe("Super Admin", () => {
     cy.log("Verifying that the user is on the admin dashboard");
     cy.contains("Manage a grant");
 
-    cy.go("back");
+    cy.visit(SUPER_ADMIN_DASHBOARD);
 
     cy.log("Clicking Applicant dashboard");
     cy.get('[data-cy="cyapplicantDashPageLink"] > .govuk-link').click();
@@ -55,7 +59,7 @@ describe("Super Admin", () => {
     cy.log("Verifying that the user is on the applicant dashboard");
     cy.contains("View your applications");
 
-    cy.go("back");
+    cy.visit(SUPER_ADMIN_DASHBOARD);
 
     cy.log("Clicking Manage API Keys");
     cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
@@ -63,7 +67,7 @@ describe("Super Admin", () => {
     cy.log("Verifying that the user is on the Manage API Keys page");
     cy.get('[data-cy="admin-dashboard-heading"]').contains("Manage API keys");
 
-    cy.go("back");
+    cy.visit(SUPER_ADMIN_DASHBOARD);
 
     cy.log("Clicking Home");
     cy.get('[data-cy="cyhomePageLink"] > .govuk-link').click();
@@ -71,7 +75,7 @@ describe("Super Admin", () => {
     cy.log("Verifying that the user is on the home page");
     cy.contains("Find a grant");
 
-    cy.go("back");
+    cy.visit(SUPER_ADMIN_DASHBOARD);
 
     cy.log("Navigating user pagination");
     cy.log("Clicking next page");
