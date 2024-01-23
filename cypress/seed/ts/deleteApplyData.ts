@@ -33,8 +33,8 @@ DELETE FROM public.grant_scheme WHERE created_by IN (
 `;
 
 const deleteAdmins: string = `
-DELETE FROM public.grant_admin WHERE grant_admin_id IN ($1, $2) OR user_id IN (
-    SELECT gap_user_id FROM gap_user WHERE user_sub IN ($3, $4, $5)
+DELETE FROM public.grant_admin WHERE grant_admin_id IN ($1, $2, $3) OR user_id IN (
+    SELECT gap_user_id FROM gap_user WHERE user_sub IN ($4, $5, $6)
 );
 `;
 
@@ -46,8 +46,8 @@ DELETE FROM public.grant_applicant WHERE
 
 const deleteUsers: string = `
 DELETE FROM public.gap_user WHERE
-    gap_user_id IN ($1, $2, $3) OR
-    user_sub IN ($4, $5, $6);
+    gap_user_id IN ($1, $2, $3, $4) OR
+    user_sub IN ($5, $6, $7);
 `;
 
 const deleteFundingOrgs: string = `
@@ -68,6 +68,10 @@ const deleteSpotlightBatchRow = `
 const deleteSpotlightSubmissionRow: string = `
     DELETE FROM public.spotlight_submission
     WHERE grant_scheme = $1;
+`;
+
+const deleteApiKeys = `
+DELETE FROM public.api_key WHERE funder_id = $1;
 `;
 
 const deleteApiKeysByFunderId = `DELETE FROM public.api_key
@@ -91,6 +95,7 @@ export {
   deleteUsers,
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
+  deleteApiKeys,
   deleteApiKeysByFunderId,
   deleteApiKeysFundingOrganisations,
   deleteApiKeyById,

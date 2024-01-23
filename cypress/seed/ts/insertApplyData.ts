@@ -10,7 +10,8 @@ const insertUsers: string = `
 INSERT INTO public.gap_user (gap_user_id, user_sub)
     VALUES
     ($1, $2),
-    ($3, $4);
+    ($3, $4),
+    ($5, $6);
 `;
 
 const insertFundingOrgs: string = `
@@ -22,7 +23,8 @@ const insertAdmins: string = `
 INSERT INTO public.grant_admin(grant_admin_id, funder_id, user_id)
     VALUES
     ($1, $2, $3),
-    ($4, $5, $6);
+    ($4, $5, $6),
+    ($7, $8, $9);
 `;
 
 const insertGrantApplicantOrgProfiles: string = `

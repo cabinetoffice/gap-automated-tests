@@ -30,6 +30,7 @@ import {
   deleteSpotlightBatchRow,
   deleteApiKeysFundingOrganisations,
   deleteApiKeysByFunderId,
+  deleteApiKeys,
 } from "../ts/deleteApplyData";
 import {
   TEST_V1_INTERNAL_GRANT,
@@ -45,7 +46,10 @@ import {
 } from "../data/apply";
 
 import { getTestID, getUUID, hashApiKey } from "./helper";
-import { getExportedSubmission } from "../ts/selectApplyData";
+import {
+  getExportedSubmission,
+  selectApiKeysByFunderId,
+} from "../ts/selectApplyData";
 import { type ApiKeyDb } from "./service";
 
 require("dotenv").config();
@@ -69,6 +73,7 @@ const DEPARTMENT_NAME = `Cypress - Test Department ${process.env.FIRST_USER_ID}`
 const SUPER_ADMIN_ID = getTestID();
 const ADMIN_ID = getTestID(1);
 const APPLICANT_ID = getTestID(2);
+const TECHNICAL_SUPPORT_ID = getTestID(3);
 const FUNDING_ID = getTestID();
 
 const V1_INTERNAL_SCHEME_ID = getTestID();
@@ -136,6 +141,8 @@ const applyInsertSubstitutions = {
     process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_SUB,
+    TECHNICAL_SUPPORT_ID,
+    process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
   ],
   [insertFundingOrgs]: [FUNDING_ID],
   [insertAdmins]: [
@@ -145,6 +152,9 @@ const applyInsertSubstitutions = {
     ADMIN_ID,
     FUNDING_ID,
     ADMIN_ID,
+    TECHNICAL_SUPPORT_ID,
+    FUNDING_ID,
+    TECHNICAL_SUPPORT_ID,
   ],
   [insertGrantApplicantOrgProfiles]: [
     SUPER_ADMIN_ID,
@@ -233,6 +243,7 @@ const applyInsertSubstitutions = {
 };
 
 const applyDeleteSubstitutions = {
+  [deleteApiKeys]: [FUNDING_ID],
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [
     SUPER_ADMIN_ID,
@@ -244,16 +255,26 @@ const applyDeleteSubstitutions = {
   ],
   [deleteApplications]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSchemes]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
-  [deleteAdmins]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
+  [deleteAdmins]: [SUPER_ADMIN_ID, ADMIN_ID, TECHNICAL_SUPPORT_ID, ...allSubs],
   [deleteFundingOrgs]: [SUPER_ADMIN_ID],
   [deleteApplicants]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
-  [deleteUsers]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
+  [deleteUsers]: [
+    SUPER_ADMIN_ID,
+    ADMIN_ID,
+    APPLICANT_ID,
+    TECHNICAL_SUPPORT_ID,
+    ...allSubs,
+  ],
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 
 const deleteApiKeysSubstitutions = {
   [deleteApiKeysByFunderId]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
   [deleteApiKeysFundingOrganisations]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
+};
+
+const getAPIKeysByFunderIdSubstitutions = {
+  [selectApiKeysByFunderId]: [FUNDING_ID],
 };
 
 const spotlightSubstitutions = {
@@ -370,6 +391,27 @@ const createApiKeySubstitutions = (
   };
 };
 
+const createApiKeySubstitutionsForTechSupport = (
+  i: number,
+  id: string,
+  name: string,
+  value: string,
+) => {
+  return {
+    [createApiKeyWithDefaultTimestamp]: [
+      -(1000 + i + 1),
+      FUNDING_ID,
+      hashApiKey(value),
+      name,
+      null,
+      false,
+      null,
+      null,
+      id,
+    ],
+  };
+};
+
 const createApiKeySubstitutionsForRecreation = (apiKey: ApiKeyDb) => {
   return {
     [createApiKey]: [
@@ -398,6 +440,7 @@ export {
   SUPER_ADMIN_ID,
   ADMIN_ID,
   APPLICANT_ID,
+  TECHNICAL_SUPPORT_ID,
   FUNDING_ID,
   V1_INTERNAL_SCHEME_ID,
   V1_EXTERNAL_SCHEME_ID,
@@ -416,4 +459,6 @@ export {
   createApiKeySubstitutions,
   createApiKeyFundingOrganisationSubstitutions,
   createApiKeySubstitutionsForRecreation,
+  getAPIKeysByFunderIdSubstitutions,
+  createApiKeySubstitutionsForTechSupport,
 };

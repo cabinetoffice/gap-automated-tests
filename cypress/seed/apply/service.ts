@@ -4,6 +4,7 @@ import {
   deleteAdmins,
   deleteAdverts,
   deleteApiKeyById,
+  deleteApiKeys,
   deleteApiKeysByFunderId,
   deleteApiKeysFundingOrganisations,
   deleteApplicantOrgProfiles,
@@ -51,14 +52,22 @@ import {
   V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   postLoginBaseUrl,
   SUPER_ADMIN_ID,
+  FUNDING_ID,
   deleteApiKeysSubstitutions,
   createApiKeySubstitutions,
   createApiKeyFundingOrganisationSubstitutions,
   createApiKeySubstitutionsForRecreation,
+  getAPIKeysByFunderIdSubstitutions,
+  createApiKeySubstitutionsForTechSupport,
 } from "./constants";
-import { getExportedSubmission, selectAllApiKeys } from "../ts/selectApplyData";
+import {
+  getExportedSubmission,
+  selectAllApiKeys,
+  selectApiKeysByFunderId,
+} from "../ts/selectApplyData";
 import {
   createKeyInAwsApiGatewayUsagePlan,
+  deleteApiKey,
   getKeysFromAwsApiGatewayUsagePlan,
   removeKeysFromAwsApiGatewayUsagePlan,
 } from "../apiGateway";
@@ -94,8 +103,10 @@ const createApplyData = async (): Promise<void> => {
 };
 
 const deleteApplyData = async (): Promise<void> => {
+  await deleteAPIKeysForTechSupport();
   await runSqlForApply(
     [
+      deleteApiKeys,
       deleteAdverts,
       deleteSubmissions,
       deleteApplications,
@@ -158,6 +169,29 @@ const grabAllApiKeys = async () => {
   console.log("Successfully selected all Api Keys");
 
   return rows;
+};
+
+const getAPIKeysByFunderId = async () => {
+  const rows = await runSqlForApply(
+    [selectApiKeysByFunderId],
+    getAPIKeysByFunderIdSubstitutions,
+  );
+  console.log(`Successfully selected all Api Keys for Funder ID ${FUNDING_ID}`);
+
+  return rows;
+};
+
+const deleteAPIKeysForTechSupport = async () => {
+  const rows = await getAPIKeysByFunderId();
+  for (const row of rows[0] as ApiKeyDb[]) {
+    const key = {
+      id: row.api_gateway_id,
+      name: row.api_key_name,
+    };
+    await deleteApiKey(key);
+
+    console.log("Successfully deleted all existing Technical Support Api Keys");
+  }
 };
 
 const deleteExistingApiKeys = async (originalData: ApiKeyDb[]) => {
@@ -286,6 +320,25 @@ const createApiKeysInApiGatewayUsagePlan = async (
   }
 };
 
+const createApiKeysInApiGatewayForTechnicalSupport = async (
+  startingPoint: number,
+  endingPoint: number,
+) => {
+  const asyncSleep = promisify(setTimeout);
+  for (let i = startingPoint; i < endingPoint; i++) {
+    const paddedNumber = i.toString().padStart(3, "0");
+    const keyName = `CypressE2ETestTechSupport${paddedNumber}`;
+    const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
+    const keyValue = keyName + keyName;
+
+    await runSqlForApply(
+      [createApiKeyWithDefaultTimestamp],
+      createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
+    );
+    await asyncSleep(200);
+  }
+};
+
 interface ApiKeyDb {
   api_key_id: number;
   funder_id: number;
@@ -316,4 +369,7 @@ export {
   deleteExistingApiKeys,
   recreateApiKeysInDatabase,
   refillDbWithAllPreExistingApiKeys,
+  getAPIKeysByFunderId,
+  deleteAPIKeysForTechSupport,
+  createApiKeysInApiGatewayForTechnicalSupport,
 };

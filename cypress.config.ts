@@ -21,6 +21,9 @@ import {
   grabAllApiKeys,
   deleteExistingApiKeys,
   refillDbWithAllPreExistingApiKeys,
+  getAPIKeysByFunderId,
+  deleteAPIKeysForTechSupport,
+  createApiKeysInApiGatewayForTechnicalSupport,
 } from "./cypress/seed/apply/service";
 import { createFindData, deleteFindData } from "./cypress/seed/find";
 import {
@@ -112,6 +115,21 @@ export default defineConfig({
         },
         async deleteApiKeys() {
           await deleteApiKeysData();
+
+          return null;
+        },
+        async getAPIKeysByFunderId() {
+          await getAPIKeysByFunderId();
+
+          return null;
+        },
+        async deleteAPIKeysForTechSupport() {
+          await deleteAPIKeysForTechSupport();
+
+          return null;
+        },
+        async createApiKeysInApiGatewayForTechnicalSupport() {
+          await createApiKeysInApiGatewayForTechnicalSupport(1, 2);
 
           return null;
         },
