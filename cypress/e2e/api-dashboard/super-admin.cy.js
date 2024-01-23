@@ -23,10 +23,6 @@ const today = new Date().toLocaleDateString("en-GB", {
 const API_DASHBOARD_BASE_URL = BASE_URL + "/find/api/admin";
 
 describe("Api Dashboard SuperAdmin journeys", () => {
-  after(() => {
-    cy.task("deleteApiKeys");
-  });
-
   describe("No API keys", () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let originalData;
@@ -53,33 +49,40 @@ describe("Api Dashboard SuperAdmin journeys", () => {
     });
 
     after(() => {
-      console.log(originalData);
       cy.task("refillDbWithPreExistingApiKeys", originalData);
     });
 
-    it("should have correct navBar items for the superAdmin role, and check if link works", () => {
-      cy.log("Checking navBar items are correct for the superAdmin role");
+    it("Should have correct navBar items for the superAdmin role, and check if link works", () => {
+      cy.log(
+        "Should have correct navBar items for the superAdmin role, and check if link works - Checking navBar items are correct for the superAdmin role",
+      );
       cy.get('[data-cy="header-navbar-back-to-dashboard-link"]').contains(
         "Super admin dashboard",
       );
 
-      cy.log("Clicking on the link to the superAdmin dashboard");
+      cy.log(
+        "Should have correct navBar items for the superAdmin role, and check if link works - Clicking on the link to the superAdmin dashboard",
+      );
       cy.get('[data-cy="header-navbar-back-to-dashboard-link"]')
         .contains("Super admin dashboard")
         .click();
 
-      cy.log("Verifying link to the superAdmin dashboard is correct");
+      cy.log(
+        "Should have correct navBar items for the superAdmin role, and check if link works - Verifying link to the superAdmin dashboard is correct",
+      );
       cy.contains("Manage users");
     });
 
-    it("should show No keys message when no apiKeys are present", () => {
+    it("Should show No keys message when no apiKeys are present", () => {
       cy.log(
-        "Checking the page content is correct when no apiKeys are present",
+        "Should show No keys message when no apiKeys are present - Checking the page content is correct when no apiKeys are present",
       );
       cy.get('[data-cy="header"]').should("be.visible");
       cy.get(`[data-cy="beta-banner"]`).should("be.visible");
 
-      cy.log("Checking the filter side");
+      cy.log(
+        "Should show No keys message when no apiKeys are present - Checking the filter side",
+      );
       cy.get(`[data-cy="admin-dashboard-heading"]`)
         .should("be.visible")
         .should("have.text", "Manage API keys");
@@ -87,7 +90,9 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         .should("be.visible")
         .should("have.text", "0 active API keys");
 
-      cy.log("Checking the table side");
+      cy.log(
+        "Should show No keys message when no apiKeys are present - Checking the table side",
+      );
       cy.get(`[data-cy="admin-dashboard-no-api-key-paragraph"]`)
         .should("be.visible")
         .should(
@@ -96,7 +101,9 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         );
       cy.get(`[data-cy="admin-dashboard-pagination-bar"]`).should("not.exist");
 
-      cy.log("Checking the footer");
+      cy.log(
+        "Should show No keys message when no apiKeys are present - Checking the footer",
+      );
       cy.get(`[data-cy="footer"]`).should("be.visible");
     });
 
@@ -104,7 +111,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       cy.log("Signing out");
       cy.get('[data-cy="header-sign-out-link"]').click();
 
-      cy.log("Verifying that the user is on the homepage");
+      cy.log("Signing out - Verifying that the user is on the homepage");
       cy.contains("Find a grant");
     });
   });
@@ -119,7 +126,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
 
         cy.task("deleteExistingApiKeysFromDb", originalData);
       });
-      cy.task("create110ApiKeys", {}, { timeout: 2000000 });
+      cy.task("create110ApiKeys", {}, { timeout: 180000 });
     });
 
     beforeEach(() => {
@@ -135,12 +142,13 @@ describe("Api Dashboard SuperAdmin journeys", () => {
     });
 
     after(() => {
-      console.log(originalData);
       cy.task("refillDbWithPreExistingApiKeys", originalData);
     });
 
-    it("should show 110 keys, 2 organisation in the filters and the pagination bar", () => {
-      cy.log("Checking the filter side");
+    it("Should show 110 keys, 2 organisation in the filters and the pagination bar", () => {
+      cy.log(
+        "Should show 110 keys, 2 organisation in the filters and the pagination bar - Checking the filter side",
+      );
       cy.get(`[data-cy="admin-dashboard-heading"]`)
         .should("be.visible")
         .should("have.text", "Manage API keys");
@@ -170,9 +178,13 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "be.visible",
       );
 
-      cy.log("Checking the table side");
+      cy.log(
+        "Should show 110 keys, 2 organisation in the filters and the pagination bar - Checking the table side",
+      );
 
-      cy.log("Checking the table headers");
+      cy.log(
+        "Should show 110 keys, 2 organisation in the filters and the pagination bar - Checking the table headers",
+      );
       cy.get('[data-cy="admin-dashboard-list-table-headers"]')
         .should("be.visible")
         .find("th")
@@ -194,7 +206,9 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Revoke",
       );
 
-      cy.log("Checking the rows content");
+      cy.log(
+        "Should show 110 keys, 2 organisation in the filters and the pagination bar - Checking the rows content",
+      );
       cy.get(`[data-cy="admin-dashboard-list-table-body"]`)
         .should("be.visible")
         .find("tr")
@@ -203,7 +217,9 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       // first 10 single rows content
       checkFirst10RowsContent(today);
 
-      cy.log("Checking the pagination bar");
+      cy.log(
+        "Should show 110 keys, 2 organisation in the filters and the pagination bar - Checking the pagination bar",
+      );
       cy.get('[data-cy="admin-dashboard-pagination-bar"]').should("exist");
       cy.get(`[data-cy="admin-dashboard-show-keys-count-paragraph"]`).should(
         "have.text",
@@ -211,38 +227,52 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       );
     });
 
-    it("should show only the filtered keys when department filters are set, and clear all filters should reset those filter", () => {
-      cy.log("Selecting CypressApiKeysTestOrg in the filter");
+    it("Should show only the filtered keys when department filters are set, and clear all filters should reset those filter", () => {
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Selecting CypressApiKeysTestOrg in the filter",
+      );
       cy.get(
         `[data-cy="admin-dashboard-filter-CypressApiKeysTestOrg-checkbox"]`,
       ).click();
 
-      cy.log("verifying that the checkbox is checked");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - verifying that the checkbox is checked",
+      );
       cy.get(
         `[data-cy="admin-dashboard-filter-CypressApiKeysTestOrg-checkbox"]`,
       ).should("be.checked");
 
-      cy.log("Clicking Apply filters");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Clicking Apply filters",
+      );
       cy.get(`[data-cy="admin-dashboard-filter-apply-button"]`).click();
 
-      cy.log("Verify that the url contain the selected department");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Verify that the url contain the selected department",
+      );
       cy.url().should(
         "eq",
         `${API_DASHBOARD_BASE_URL}/api-keys/manage?selectedDepartments=CypressApiKeysTestOrg`,
       );
 
-      cy.log("verifying that the checkbox is checked");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - verifying that the checkbox is checked",
+      );
       cy.get(
         `[data-cy="admin-dashboard-filter-CypressApiKeysTestOrg-checkbox"]`,
       ).should("be.checked");
 
-      cy.log("Checking the rows");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Checking the rows",
+      );
       cy.get(`[data-cy="admin-dashboard-list-table-body"]`)
         .should("be.visible")
         .find("tr")
         .should("have.length", 10);
 
-      cy.log("Checking the pagination bar");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Checking the pagination bar",
+      );
       // pagination(when less than 5 pages, no ellipses and all the pages showing in the pagination bar)
       cy.get(`[data-cy="admin-dashboard-pagination-ellipses"]`).should(
         "not.exist",
@@ -258,7 +288,9 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Showing 1 to 10 of 45 keys",
       );
 
-      cy.log("Selecting also CypressApiKeysEvilOrg in the filter");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Selecting also CypressApiKeysEvilOrg in the filter",
+      );
       cy.get(
         `[data-cy="admin-dashboard-filter-CypressApiKeysEvilOrg-checkbox"]`,
       ).click();
@@ -266,32 +298,46 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         `[data-cy="admin-dashboard-filter-CypressApiKeysEvilOrg-checkbox"]`,
       ).should("be.checked");
 
-      cy.log("Clicking Apply filters");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Clicking Apply filters",
+      );
       cy.get(`[data-cy="admin-dashboard-filter-apply-button"]`).click();
 
-      cy.log("Verify that the url contain the selected departments");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Verify that the url contain the selected departments",
+      );
       cy.url().should("include", "selectedDepartments=CypressApiKeysEvilOrg");
       cy.url().should("include", "selectedDepartments=CypressApiKeysTestOrg");
 
-      cy.log("Checking the rows");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Checking the rows",
+      );
       cy.get(`[data-cy="admin-dashboard-list-table-body"]`)
         .should("be.visible")
         .find("tr")
         .should("have.length", 10);
 
-      cy.log("Checking the pagination bar");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Checking the pagination bar",
+      );
       cy.get(`[data-cy="admin-dashboard-show-keys-count-paragraph"]`).should(
         "have.text",
         "Showing 1 to 10 of 110 keys",
       );
 
-      cy.log("Clicking Clear all filters");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Clicking Clear all filters",
+      );
       cy.get(`[data-cy="admin-dashboard-filter-clear-button"]`).click();
 
-      cy.log("Verify that the url contain no departments");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Verify that the url contain no departments",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage`);
 
-      cy.log("verifying that the checkboxes are not checked");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - verifying that the checkboxes are not checked",
+      );
       cy.get(
         `[data-cy="admin-dashboard-filter-CypressApiKeysTestOrg-checkbox"]`,
       ).should("not.be.checked");
@@ -299,13 +345,17 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         `[data-cy="admin-dashboard-filter-CypressApiKeysEvilOrg-checkbox"]`,
       ).should("not.be.checked");
 
-      cy.log("Checking the rows");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Checking the rows",
+      );
       cy.get(`[data-cy="admin-dashboard-list-table-body"]`)
         .should("be.visible")
         .find("tr")
         .should("have.length", 10);
 
-      cy.log("Checking the pagination bar");
+      cy.log(
+        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Checking the pagination bar",
+      );
       cy.get(`[data-cy="admin-dashboard-show-keys-count-paragraph"]`).should(
         "have.text",
         "Showing 1 to 10 of 110 keys",
@@ -313,9 +363,11 @@ describe("Api Dashboard SuperAdmin journeys", () => {
     });
 
     // pagination tests
-    it("should show the correct pagination when going to next pages ", () => {
+    it("Should show the correct pagination when going to next pages ", () => {
       // page 1
-      cy.log("Checking the pagination bar on page 1");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 1",
+      );
       paginationItemHasCurrentAsCssClass(1);
       paginationLinkHasTheRightHref(1);
       paginationLinkHasTheRightHref(2);
@@ -326,14 +378,20 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       paginationNextItemHasTheRightHref(2);
       paginationItemsDoesNotExist([3, 4, 5, 6, 7, 8, 9, 10]);
 
-      cy.log("Clicking on link for page 2");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Clicking on link for page 2",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-2-link"]`).click();
 
       // page 2
-      cy.log("Verify that the url contain the right page number");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Verify that the url contain the right page number",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=2`);
 
-      cy.log("Checking the pagination bar on page 2");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 2",
+      );
       paginationPreviousItemHasTheRightHref(1);
       paginationLinkHasTheRightHref(1);
       paginationItemHasNotCurrentAsCssClass(1);
@@ -351,14 +409,20 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Showing 11 to 20 of 110 keys",
       );
 
-      cy.log("Clicking on link for page 3");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Clicking on link for page 3",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-3-link"]`).click();
 
       // page 3
-      cy.log("Verify that the url contain the right page number");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Verify that the url contain the right page number",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=3`);
 
-      cy.log("Checking the pagination bar on page 3");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 3",
+      );
       paginationPreviousItemHasTheRightHref(2);
       paginationLinkHasTheRightHref(1);
       paginationItemHasNotCurrentAsCssClass(1);
@@ -378,14 +442,20 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Showing 21 to 30 of 110 keys",
       );
 
-      cy.log("Clicking on link for page 4");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Clicking on link for page 4",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-4-link"]`).click();
 
       // page 4
-      cy.log("Verify that the url contain the right page number");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Verify that the url contain the right page number",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=4`);
 
-      cy.log("Checking the pagination bar on page 4");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 4",
+      );
       paginationPreviousItemHasTheRightHref(3);
       paginationLinkHasTheRightHref(1);
       paginationItemHasNotCurrentAsCssClass(1);
@@ -407,14 +477,20 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Showing 31 to 40 of 110 keys",
       );
 
-      cy.log("Clicking on link for page 5");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Clicking on link for page 5",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-5-link"]`).click();
 
       // page 5
-      cy.log("Verify that the url contain the right page number");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Verify that the url contain the right page number",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=5`);
 
-      cy.log("Checking the pagination bar on page 5");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 5",
+      );
       paginationPreviousItemHasTheRightHref(4);
       paginationLinkHasTheRightHref(1);
       paginationItemHasNotCurrentAsCssClass(1);
@@ -434,14 +510,20 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Showing 41 to 50 of 110 keys",
       );
 
-      cy.log("Clicking on link for page 6");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Clicking on link for page 6",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-6-link"]`).click();
 
       // page 6
-      cy.log("Verify that the url contain the right page number");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Verify that the url contain the right page number",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=6`);
 
-      cy.log("Checking the pagination bar on page 6");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 6",
+      );
       paginationPreviousItemHasTheRightHref(5);
       paginationLinkHasTheRightHref(1);
       paginationItemHasNotCurrentAsCssClass(1);
@@ -461,14 +543,20 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Showing 51 to 60 of 110 keys",
       );
 
-      cy.log("Clicking on link for page 7");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Clicking on link for page 7",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-7-link"]`).click();
 
       // page 7
-      cy.log("Verify that the url contain the right page number");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Verify that the url contain the right page number",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=7`);
 
-      cy.log("Checking the pagination bar on page 7");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 7",
+      );
       paginationPreviousItemHasTheRightHref(6);
       paginationLinkHasTheRightHref(1);
       paginationItemHasNotCurrentAsCssClass(1);
@@ -488,14 +576,20 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Showing 61 to 70 of 110 keys",
       );
 
-      cy.log("Clicking on link for page 8");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Clicking on link for page 8",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-8-link"]`).click();
 
       // page 8
-      cy.log("Verify that the url contain the right page number");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Verify that the url contain the right page number",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=8`);
 
-      cy.log("Checking the pagination bar on page 8");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 8",
+      );
       paginationPreviousItemHasTheRightHref(7);
       paginationLinkHasTheRightHref(1);
       paginationItemHasNotCurrentAsCssClass(1);
@@ -515,14 +609,20 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Showing 71 to 80 of 110 keys",
       );
 
-      cy.log("Clicking on link for page 9");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Clicking on link for page 9",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-9-link"]`).click();
 
       // page 9
-      cy.log("Verify that the url contain the right page number");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Verify that the url contain the right page number",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=9`);
 
-      cy.log("Checking the pagination bar on page 9");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 9",
+      );
       paginationPreviousItemHasTheRightHref(8);
       paginationLinkHasTheRightHref(1);
       paginationItemHasNotCurrentAsCssClass(1);
@@ -542,17 +642,23 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Showing 81 to 90 of 110 keys",
       );
 
-      cy.log("Clicking on link for page 10");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Clicking on link for page 10",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-10-link"]`).click();
 
       // page 10
-      cy.log("Verify that the url contain the right page number");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Verify that the url contain the right page number",
+      );
       cy.url().should(
         "eq",
         `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=10`,
       );
 
-      cy.log("Checking the pagination bar on page 10");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 10",
+      );
       paginationPreviousItemHasTheRightHref(9);
       paginationLinkHasTheRightHref(1);
       paginationItemHasNotCurrentAsCssClass(1);
@@ -570,17 +676,23 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Showing 91 to 100 of 110 keys",
       );
 
-      cy.log("Clicking on link for page 11");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Clicking on link for page 11",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-11-link"]`).click();
 
       // page 11
-      cy.log("Verify that the url contain the right page number");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Verify that the url contain the right page number",
+      );
       cy.url().should(
         "eq",
         `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=11`,
       );
 
-      cy.log("Checking the pagination bar on page 11");
+      cy.log(
+        "Should show the correct pagination when going to next pages - Checking the pagination bar on page 11",
+      );
       paginationPreviousItemHasTheRightHref(10);
       paginationLinkHasTheRightHref(1);
       paginationItemHasNotCurrentAsCssClass(1);
@@ -599,43 +711,63 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       );
     });
 
-    it("should be able to revoke any key from any department", () => {
-      cy.log("Clicking revoke key link");
+    it("Should be able to revoke any key from any department", () => {
+      cy.log(
+        "Should be able to revoke any key from any department - Clicking revoke key link",
+      );
       cy.get(
         `[data-cy="admin-dashboard-list-table-row-Revoked-Org1Cypress005-link"]`,
       ).click();
 
-      cy.log("Verify that the url contain the right path");
+      cy.log(
+        "Should be able to revoke any key from any department - Verify that the url contain the right path",
+      );
       cy.url().should("include", `/api-keys/revoke/`);
 
-      cy.log("Click on cancel button");
+      cy.log(
+        "Should be able to revoke any key from any department - Click on cancel button",
+      );
       cy.get(`[data-cy="revoke-cancel-button"]`).click();
 
-      cy.log("Verify that the url contain the right path");
+      cy.log(
+        "Should be able to revoke any key from any department - Verify that the url contain the right path",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage`);
 
-      cy.log("Clicking revoke key link for key Org1Cypress009");
+      cy.log(
+        "Should be able to revoke any key from any department - Clicking revoke key link for key Org1Cypress009",
+      );
       cy.get(
         `[data-cy="admin-dashboard-list-table-row-Revoked-Org1Cypress009-link"]`,
       ).click();
 
-      cy.log("Verify that the url contain the right path");
+      cy.log(
+        "Should be able to revoke any key from any department - Verify that the url contain the right path",
+      );
       cy.url().should("include", `${API_DASHBOARD_BASE_URL}/api-keys/revoke/`);
 
       // test revoke button
-      cy.log("clicking revoke button in revoke page");
+      cy.log(
+        "Should be able to revoke any key from any department - clicking revoke button in revoke page",
+      );
       cy.get("form").within(() => {
         cy.get(`[data-cy="revoke-revoke-button"]`).click();
       });
 
-      cy.log("Verify that the url contain the right path");
+      cy.log(
+        "Should be able to revoke any key from any department - Verify that the url contain the right path",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage`);
 
       // once revoked the revoked key will be at the last page
-      cy.log("Clicking on link for page 11(last page)");
+      cy.log(
+        "Should be able to revoke any key from any department - Clicking on link for page 11(last page)",
+      );
       cy.get(`[data-cy="admin-dashboard-pagination-page-11-link"]`).click();
 
-      cy.log("Verify that the key Org1Cypress009 is revoked");
+      cy.log(
+        "Should be able to revoke any key from any department - Verify that the key Org1Cypress009 is revoked",
+      );
       cy.get(
         `[data-cy="admin-dashboard-list-table-row-Revoked-Org1Cypress009-link"]`,
       ).should("not.exist");
@@ -656,7 +788,9 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         .should("have.text", "109 active API keys");
 
       // filter on second department
-      cy.log("Selecting CypressApiKeysEvilOrg in the filter");
+      cy.log(
+        "Should be able to revoke any key from any department - Selecting CypressApiKeysEvilOrg in the filter",
+      );
       cy.get(
         `[data-cy="admin-dashboard-filter-CypressApiKeysEvilOrg-checkbox"]`,
       ).click();
@@ -664,34 +798,48 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         `[data-cy="admin-dashboard-filter-CypressApiKeysEvilOrg-checkbox"]`,
       ).should("be.checked");
 
-      cy.log("Clicking Apply filters");
+      cy.log(
+        "Should be able to revoke any key from any department - Clicking Apply filters",
+      );
       cy.get(`[data-cy="admin-dashboard-filter-apply-button"]`).click();
 
-      cy.log("Verify that the url contain the selected department");
+      cy.log(
+        "Should be able to revoke any key from any department - Verify that the url contain the selected department",
+      );
       cy.url().should(
         "eq",
         `${API_DASHBOARD_BASE_URL}/api-keys/manage?selectedDepartments=CypressApiKeysEvilOrg`,
       );
 
-      cy.log("Verify the checkbox is checked");
+      cy.log(
+        "Should be able to revoke any key from any department - Verify the checkbox is checked",
+      );
       cy.get(
         `[data-cy="admin-dashboard-filter-CypressApiKeysEvilOrg-checkbox"]`,
       ).should("be.checked");
 
       // revoke key from second department
-      cy.log("Clicking revoke key link for key Org2Cypress046");
+      cy.log(
+        "Should be able to revoke any key from any department - Clicking revoke key link for key Org2Cypress046",
+      );
       cy.get(
         `[data-cy="admin-dashboard-list-table-row-Revoked-Org2Cypress046-link"]`,
       ).click();
 
-      cy.log("Verify that the url contain the right path");
+      cy.log(
+        "Should be able to revoke any key from any department - Verify that the url contain the right path",
+      );
       cy.url().should("include", `${API_DASHBOARD_BASE_URL}/api-keys/revoke/`);
 
       // test revoke button
-      cy.log("clicking revoke button in revoke page");
+      cy.log(
+        "Should be able to revoke any key from any department - clicking revoke button in revoke page",
+      );
       cy.get(`[data-cy="revoke-revoke-button"]`).click();
 
-      cy.log("Verify that the url contain the right path");
+      cy.log(
+        "Should be able to revoke any key from any department - Verify that the url contain the right path",
+      );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage`);
 
       cy.get(`[data-cy="admin-dashboard-active-key-count"]`)
@@ -700,6 +848,9 @@ describe("Api Dashboard SuperAdmin journeys", () => {
     });
 
     it("Show error page when trying to access Technical support create api key page", () => {
+      cy.log(
+        "Should show error page when trying to access Technical support create api key page - Trying access Create API key page",
+      );
       cy.visit(`${API_DASHBOARD_BASE_URL}/api-keys/create`);
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/error`);
       cy.get(`[data-cy='error-heading']`).should(
@@ -718,6 +869,10 @@ describe("Api Dashboard SuperAdmin journeys", () => {
     });
 
     it("Show error page when trying to access Technical support dashboard page", () => {
+      cy.log(
+        "Show error page when trying to access Technical support dashboard page - Trying access Technical support dashboard page",
+      );
+
       cy.visit(`${API_DASHBOARD_BASE_URL}/api-keys`);
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/error`);
       cy.get(`[data-cy='error-heading']`).should(
