@@ -126,7 +126,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
 
         cy.task("deleteExistingApiKeysFromDb", originalData);
       });
-      cy.task("create110ApiKeys", {}, { timeout: 180000 });
+      cy.task("create110ApiKeys", {}, { timeout: 300000 });
     });
 
     beforeEach(() => {
