@@ -14,7 +14,7 @@ const today = new Date().toLocaleDateString("en-GB", {
 const apiKeyName = "CypressE2ETestTechSupportCreateAPIKey";
 const existingApiKeyName = "CypressE2ETestTechSupport001";
 
-describe("API Admin", () => {
+describe("API Admin - No existing keys", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
@@ -25,7 +25,8 @@ describe("API Admin", () => {
     signInAsTechnicalSupport();
   });
 
-  it("Technical Support can view API Key dashboard without API Keys", () => {
+  it("Technical Support can view API Key dashboard without API Keys and create a key", () => {
+    // API Key dashboard without API Keys
     cy.get('[data-cy="header"]').should("be.visible").contains("Find a Grant");
 
     cy.get('[data-cy="beta-banner"]').should("be.visible").contains("BETA");
@@ -67,9 +68,8 @@ describe("API Admin", () => {
     cy.get('[data-cy="api-keys-create-button"]')
       .should("be.visible")
       .contains("Create an API key");
-  });
 
-  it("Technical Support can navigate and view the create API Key page", () => {
+    // Go to create API key page
     cy.get('[data-cy="api-keys-create-button"]')
       .should("be.visible")
       .contains("Create an API key")
@@ -110,14 +110,8 @@ describe("API Admin", () => {
       .click();
 
     cy.url().should("include", "/admin/api-keys/create");
-  });
 
-  it("Should display validation errors for blank name", () => {
-    cy.get('[data-cy="api-keys-create-button"]')
-      .should("be.visible")
-      .contains("Create an API key")
-      .click();
-
+    // Should display validation errors for blank name
     cy.get('[data-cy="create-key-continue"]')
       .should("be.visible")
       .contains("Continue")
@@ -134,15 +128,9 @@ describe("API Admin", () => {
     cy.get('[data-cy="create-key-input-validation-error-details"]')
       .should("be.visible")
       .should("have.text", "Enter a key name");
-  });
 
-  it("Should display validation errors for blank spaces", () => {
-    cy.get('[data-cy="api-keys-create-button"]')
-      .should("be.visible")
-      .contains("Create an API key")
-      .click();
-
-    cy.get('[data-cy="create-key-input"]').type("api key name");
+    // Should display validation errors for blank spaces
+    cy.get('[data-cy="create-key-input"]').clear().type("api key name");
 
     cy.get('[data-cy="create-key-continue"]')
       .should("be.visible")
@@ -160,15 +148,9 @@ describe("API Admin", () => {
     cy.get('[data-cy="create-key-input-validation-error-details"]')
       .should("be.visible")
       .should("have.text", "Key name must be alphanumeric");
-  });
 
-  it("Should successfully create key and display value", () => {
-    cy.get('[data-cy="api-keys-create-button"]')
-      .should("be.visible")
-      .contains("Create an API key")
-      .click();
-
-    cy.get('[data-cy="create-key-input"]').type(apiKeyName);
+    // Should successfully create key and display value
+    cy.get('[data-cy="create-key-input"]').clear().type(apiKeyName);
 
     cy.get('[data-cy="create-key-continue"]')
       .should("be.visible")
@@ -257,7 +239,7 @@ describe("API Admin", () => {
       .should("have.text", "Manage API keys");
   });
 });
-describe("API Admin", () => {
+describe("API Admin - Existing API Keys", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
@@ -269,38 +251,8 @@ describe("API Admin", () => {
     signInAsTechnicalSupport();
   });
 
-  it("Should display validation errors for existing API key name", () => {
-    cy.get('[data-cy="api-keys-create-button"]')
-      .should("be.visible")
-      .contains("Create an API key")
-      .click();
-
-    cy.get('[data-cy="create-key-input"]').type(existingApiKeyName);
-
-    cy.get('[data-cy="create-key-continue"]')
-      .should("be.visible")
-      .contains("Continue")
-      .click();
-
-    cy.get('[data-cy="create-key-error-banner-heading"]')
-      .should("be.visible")
-      .contains("There is a problem");
-
-    cy.get('[data-cy="create-key-error-summary-list"]')
-      .should("have.length", 1)
-      .contains("An API key with this name already exists");
-
-    cy.get('[data-cy="create-key-input-validation-error-details"]')
-      .should("be.visible")
-      .should("have.text", "An API key with this name already exists");
-
-    cy.get('[data-cy="create-key-back-button"]')
-      .should("be.visible")
-      .should("have.text", "Back")
-      .click();
-  });
-
-  it("Should render API key dashboard with list of API keys", () => {
+  it("Should render API key dashboard with list of API keys and prevent creation of a key with duplicate name", () => {
+    // View existing API Keys
     cy.get('[data-cy="api-keys-heading"]')
       .should("be.visible")
       .should("have.text", "Manage API keys");
@@ -332,6 +284,36 @@ describe("API Admin", () => {
     cy.get('[data-cy="api-keys-create-button"]')
       .should("be.visible")
       .contains("Create an API key");
+
+    // Should display validation errors for existing API key name
+    cy.get('[data-cy="api-keys-create-button"]')
+      .should("be.visible")
+      .contains("Create an API key")
+      .click();
+
+    cy.get('[data-cy="create-key-input"]').type(existingApiKeyName);
+
+    cy.get('[data-cy="create-key-continue"]')
+      .should("be.visible")
+      .contains("Continue")
+      .click();
+
+    cy.get('[data-cy="create-key-error-banner-heading"]')
+      .should("be.visible")
+      .contains("There is a problem");
+
+    cy.get('[data-cy="create-key-error-summary-list"]')
+      .should("have.length", 1)
+      .contains("An API key with this name already exists");
+
+    cy.get('[data-cy="create-key-input-validation-error-details"]')
+      .should("be.visible")
+      .should("have.text", "An API key with this name already exists");
+
+    cy.get('[data-cy="create-key-back-button"]')
+      .should("be.visible")
+      .should("have.text", "Back")
+      .click();
   });
 
   it("Should render API key confirmation page and revoke API key", () => {
