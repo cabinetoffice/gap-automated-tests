@@ -1,4 +1,4 @@
-import * as crypto from "crypto";
+import { createHash } from "crypto";
 
 const getUUID = (index = 0) =>
   `${Math.abs(+process.env.FIRST_USER_ID + index)
@@ -9,7 +9,7 @@ const getTestID = (index = 0) =>
   -(Math.abs(+process.env.FIRST_USER_ID) + index);
 
 const hashApiKey = (apiKey: string) => {
-  const hash = crypto.createHash("sha512");
+  const hash = createHash("sha512");
   hash.update(apiKey, "utf-8");
   const hashed = hash.digest("hex");
 
