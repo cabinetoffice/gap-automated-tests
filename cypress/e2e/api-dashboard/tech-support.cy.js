@@ -1,9 +1,12 @@
 import {
+  BASE_URL,
+  log,
   signInAsTechnicalSupport,
   signInToIntegrationSite,
-  log,
-  BASE_URL,
+  signOut,
 } from "../../common/common";
+
+import { ERROR_PAGE_BODY_TECHNICAL_SUPPORT } from "../../utils/errorPageString";
 
 const today = new Date().toLocaleDateString("en-GB", {
   day: "numeric",
@@ -13,6 +16,7 @@ const today = new Date().toLocaleDateString("en-GB", {
 
 const apiKeyName = "CypressE2ETestTechSupportCreateAPIKey";
 const existingApiKeyName = "CypressE2ETestTechSupport001";
+const API_DASHBOARD_BASE_URL = BASE_URL + "/find/api/admin";
 
 describe("API Admin - No existing keys", () => {
   beforeEach(() => {
@@ -372,5 +376,40 @@ describe("API Admin - Existing API Keys", () => {
     cy.get(`[data-cy="api-key-revoked-${existingApiKeyName}"]`)
       .should("be.visible")
       .should("have.text", "Revoked " + today);
+  });
+});
+
+describe("API Dashboard", () => {
+  beforeEach(() => {
+    signInToIntegrationSite();
+
+    cy.log("Clicking Sign in as a Technical Support user");
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+
+    signInAsTechnicalSupport();
+  });
+
+  it("Technical Support users should not have access to any Super Admin API Dashboard endpoints", () => {
+    cy.getCookie("user-service-token").then((cookie) => {
+      cy.request(
+        {
+          method: "GET",
+          url: `${API_DASHBOARD_BASE_URL}/api-keys/manage`,
+          headers: {
+            Cookie: cookie.value,
+          },
+        },
+        {
+          keyName: "Cypress",
+        },
+      ).then((r) => {
+        expect(r.status).to.eq(200);
+        expect(r.redirects[0]).to.contain(`/api-keys/error`);
+        expect(r.body).to.eq(ERROR_PAGE_BODY_TECHNICAL_SUPPORT);
+      });
+    });
+
+    cy.log("signing out");
+    signOut();
   });
 });

@@ -3,6 +3,7 @@ import {
   BASE_URL,
   signInAsSuperAdmin,
   signInToIntegrationSite,
+  signOut,
 } from "../../common/common";
 import {
   checkFirst10RowsContent,
@@ -13,6 +14,8 @@ import {
   paginationNextItemHasTheRightHref,
   paginationPreviousItemHasTheRightHref,
 } from "./helper";
+
+import { ERROR_PAGE_BODY_SUPER_ADMIN } from "../../utils/errorPageString";
 
 const today = new Date().toLocaleDateString("en-GB", {
   day: "numeric",
@@ -910,6 +913,81 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "href",
         "/find/api/admin/api-keys/manage",
       );
+    });
+  });
+
+  describe("API Dashboard", () => {
+    beforeEach(() => {
+      signInToIntegrationSite();
+
+      cy.log("Clicking Sign in as a superAdmin");
+      cy.get("[data-cy=cySignInAndApply-Link]").click();
+
+      signInAsSuperAdmin();
+
+      cy.log("Clicking Manage API Keys");
+      cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
+    });
+
+    it("Super Admin users should not have access to any Technical Support user API Dashboard endpoints", () => {
+      cy.getCookie("user-service-token").then((cookie) => {
+        cy.log("sending a post request to /api-keys/create");
+        cy.request(
+          {
+            method: "POST",
+            url: `${API_DASHBOARD_BASE_URL}/api-keys/create`,
+            headers: {
+              Cookie: cookie.value,
+            },
+          },
+          {
+            keyName: "Cypress",
+          },
+        ).then((r) => {
+          expect(r.status).to.eq(200);
+          expect(r.redirects[0]).to.contain(`/api-keys/error`);
+          expect(r.body).to.eq(ERROR_PAGE_BODY_SUPER_ADMIN);
+        });
+
+        cy.log("sending a GET request to /api-keys/create");
+        cy.request(
+          {
+            method: "GET",
+            url: `${API_DASHBOARD_BASE_URL}/api-keys/create`,
+            headers: {
+              Cookie: cookie.value,
+            },
+          },
+          {
+            keyName: "Cypress",
+          },
+        ).then((r) => {
+          expect(r.status).to.eq(200);
+          expect(r.redirects[0]).to.contain(`/api-keys/error`);
+          expect(r.body).to.eq(ERROR_PAGE_BODY_SUPER_ADMIN);
+        });
+
+        cy.log("sending a GET request to /api-keys");
+        cy.request(
+          {
+            method: "GET",
+            url: `${API_DASHBOARD_BASE_URL}/api-keys`,
+            headers: {
+              Cookie: cookie.value,
+            },
+          },
+          {
+            keyName: "Cypress",
+          },
+        ).then((r) => {
+          expect(r.status).to.eq(200);
+          expect(r.redirects[0]).to.contain(`/api-keys/error`);
+          expect(r.body).to.eq(ERROR_PAGE_BODY_SUPER_ADMIN);
+        });
+      });
+
+      cy.log("signing out");
+      signOut();
     });
   });
 });
