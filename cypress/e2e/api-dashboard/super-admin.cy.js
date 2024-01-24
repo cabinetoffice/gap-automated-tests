@@ -27,8 +27,55 @@ describe("Api Dashboard SuperAdmin journeys", () => {
     cy.task("deleteApiKeys"); // deletes the 110 apiKeys created, so there won't stay in the db till next run
   });
 
+  describe("Navigation test", () => {
+    before(() => {
+      cy.task("setUpUser");
+      cy.task("setUpApplyData");
+    });
+
+    beforeEach(() => {
+      signInToIntegrationSite();
+
+      cy.log("Clicking Sign in as a superAdmin");
+      cy.get("[data-cy=cySignInAndApply-Link]").click();
+
+      signInAsSuperAdmin();
+
+      cy.log("Clicking Manage API Keys");
+      cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
+    });
+
+    it("Should have correct navBar items for the superAdmin role, and check if link works", () => {
+      cy.log(
+        "Should have correct navBar items for the superAdmin role, and check if link works - Checking navBar items are correct for the superAdmin role",
+      );
+      cy.get('[data-cy="header-navbar-back-to-dashboard-link"]').contains(
+        "Super admin dashboard",
+      );
+
+      cy.log(
+        "Should have correct navBar items for the superAdmin role, and check if link works - Clicking on the link to the superAdmin dashboard",
+      );
+      cy.get('[data-cy="header-navbar-back-to-dashboard-link"]')
+        .contains("Super admin dashboard")
+        .click();
+
+      cy.log(
+        "Should have correct navBar items for the superAdmin role, and check if link works - Verifying link to the superAdmin dashboard is correct",
+      );
+      cy.contains("Manage users");
+    });
+
+    it("Can sign out", () => {
+      cy.log("Signing out");
+      cy.get('[data-cy="header-sign-out-link"]').click();
+
+      cy.log("Signing out - Verifying that the user is on the homepage");
+      cy.contains("Find a grant");
+    });
+  });
+
   describe("No API keys", () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let originalData;
     before(() => {
       cy.task("setUpUser");
@@ -54,27 +101,6 @@ describe("Api Dashboard SuperAdmin journeys", () => {
 
     after(() => {
       cy.task("refillDbWithPreExistingApiKeys", originalData);
-    });
-
-    it("Should have correct navBar items for the superAdmin role, and check if link works", () => {
-      cy.log(
-        "Should have correct navBar items for the superAdmin role, and check if link works - Checking navBar items are correct for the superAdmin role",
-      );
-      cy.get('[data-cy="header-navbar-back-to-dashboard-link"]').contains(
-        "Super admin dashboard",
-      );
-
-      cy.log(
-        "Should have correct navBar items for the superAdmin role, and check if link works - Clicking on the link to the superAdmin dashboard",
-      );
-      cy.get('[data-cy="header-navbar-back-to-dashboard-link"]')
-        .contains("Super admin dashboard")
-        .click();
-
-      cy.log(
-        "Should have correct navBar items for the superAdmin role, and check if link works - Verifying link to the superAdmin dashboard is correct",
-      );
-      cy.contains("Manage users");
     });
 
     it("Should show No keys message when no apiKeys are present", () => {
@@ -109,14 +135,6 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Should show No keys message when no apiKeys are present - Checking the footer",
       );
       cy.get(`[data-cy="footer"]`).should("be.visible");
-    });
-
-    it("Can sign out", () => {
-      cy.log("Signing out");
-      cy.get('[data-cy="header-sign-out-link"]').click();
-
-      cy.log("Signing out - Verifying that the user is on the homepage");
-      cy.contains("Find a grant");
     });
   });
 
