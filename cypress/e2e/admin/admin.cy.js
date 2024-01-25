@@ -102,6 +102,9 @@ describe("Create a Grant", () => {
       "Scheme details with an in progress advert journey - publishing advert",
     );
     publishAdvert(false);
+    cy.contains("Very satisfied").click();
+    cy.contains("Send feedback").click();
+    cy.wait(1000);
     cy.url().then((url) => {
       const schemeUrl = url;
       cy.get('[data-cy="cy-link-to-advert-on-find"]').then(($el) => {
@@ -121,6 +124,7 @@ describe("Create a Grant", () => {
           "Your advert has been unpublished",
         );
         // Need to wait for Contentful to update.
+        log("Waiting for Contentful to unpublish advert");
         cy.wait(10000);
 
         cy.visit(advertUrl, { failOnStatusCode: false });
@@ -193,7 +197,7 @@ describe("Create a Grant", () => {
     saveAndExit();
 
     log(
-      "Scheme details with an in progress application journey - publishing application form",
+      "Scheme details with a completed journey - publishing application form",
     );
     // publish
     publishApplicationForm();
@@ -202,7 +206,7 @@ describe("Create a Grant", () => {
       cy.get(".break-all-words > .govuk-link").then(($el) => {
         const applicationUrl = $el.text();
         cy.log("Visiting application while published");
-        cy.get(".break-all-words > .govuk-link").click();
+        cy.visit(applicationUrl, { failOnStatusCode: false });
         cy.get(".govuk-heading-l").contains("Before you start");
         cy.log("Heading back to scheme");
         cy.visit(schemeUrl);
@@ -251,6 +255,9 @@ describe("Create a Grant", () => {
 
     // view scheme details
     cy.get("[data-cy=cy_publishSuccess-manageThisGrant-button]").click();
+
+    cy.contains("Send feedback").click();
+
     cy.contains("Grant application form");
     cy.contains("View submitted applications");
     cy.contains(GRANT_NAME + " no advert");
