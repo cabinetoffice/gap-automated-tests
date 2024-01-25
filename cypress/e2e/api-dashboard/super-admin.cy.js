@@ -435,9 +435,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
 
         if (pageNumber < lastPage) {
           const nextPage = pageNumber + 1;
-          cy.log(
-            `assertPaginationNextItemHasTheCorrectHref Clicking on link for page ${nextPage}`,
-          );
+          cy.log(`${testLogPrefix} Clicking on link for page ${nextPage}`);
           cy.get(
             `[data-cy="admin-dashboard-pagination-page-${nextPage}-link"]`,
           ).click();
