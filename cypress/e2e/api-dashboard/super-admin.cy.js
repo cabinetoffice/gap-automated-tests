@@ -398,7 +398,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
           partitionPaginationItems(pageNumber);
 
         cy.log(
-          `${testLogPrefix}  Verify that the current url contains the right page number`,
+          `${testLogPrefix} Verify that the current url contains the right page number`,
         );
         const expectedCurrentHref = `${API_DASHBOARD_BASE_URL}/api-keys/manage?page=${pageNumber}`;
         cy.url().should("eq", expectedCurrentHref);
@@ -407,7 +407,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
           `${testLogPrefix} Checking the pagination bar on page ${pageNumber}`,
         );
         if (pageNumber > firstPage) {
-          // page 1 won't have a Previous button
+          // first won't have a Previous button
           assertPaginationPreviousItemHasTheCorrectHref(pageNumber - 1);
         }
 
@@ -421,16 +421,19 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         );
 
         if (pageNumber < lastPage) {
-          // page 11 won't have a Next button
+          // last won't have a Next button
           assertPaginationNextItemHasTheCorrectHref(pageNumber + 1);
         }
 
         assertPaginationItemsDoNotExist(nonExistingPaginationItems);
+        const itemCountStart = (pageNumber - 1) * 10 + 1;
+        const maxKeys = 110;
+        let itemCountEnd = pageNumber * 10;
+        if (itemCountEnd > maxKeys) itemCountEnd = maxKeys;
+        const itemCountText = `Showing ${itemCountStart} to ${itemCountEnd} of ${maxKeys} keys`;
         cy.get(`[data-cy="admin-dashboard-show-keys-count-paragraph"]`).should(
           "have.text",
-          `Showing ${(pageNumber - 1) * 10 + 1} to ${
-            pageNumber * 10
-          } of 110 keys`,
+          itemCountText,
         );
 
         if (pageNumber < lastPage) {
