@@ -19,7 +19,14 @@ export function checkFirst10RowsContent(today) {
   }
 }
 
-export function paginationLinkHasTheRightHref(
+const manageApiKeyPageHref = (pageNumber, filteredDepartmentName) =>
+  `/find/api/admin/api-keys/manage?page=${pageNumber}${
+    filteredDepartmentName
+      ? "&selectedDepartments=" + filteredDepartmentName.replace(" ", "%20")
+      : ""
+  }`;
+
+export function assertPaginationLinkHasTheCorrectHref(
   pageNumber,
   filteredDepartmentName,
 ) {
@@ -29,15 +36,11 @@ export function paginationLinkHasTheRightHref(
   ).should(
     "have.attr",
     "href",
-    `/find/api/admin/api-keys/manage?page=${pageNumber}${
-      filteredDepartmentName
-        ? "&selectedDepartments=" + filteredDepartmentName.replace(" ", "%20")
-        : ""
-    }`,
+    manageApiKeyPageHref(pageNumber, filteredDepartmentName),
   );
 }
 
-export function paginationNextItemHasTheRightHref(
+export function assertPaginationNextItemHasTheCorrectHref(
   expectedPageNumber,
   filteredDepartmentName,
 ) {
@@ -45,29 +48,22 @@ export function paginationNextItemHasTheRightHref(
   cy.get(`[data-cy="admin-dashboard-pagination-next-page-link"]`).should(
     "have.attr",
     "href",
-    `/find/api/admin/api-keys/manage?page=${expectedPageNumber}${
-      filteredDepartmentName
-        ? "&selectedDepartments=" + filteredDepartmentName.replace(" ", "%20")
-        : ""
-    }`,
+    manageApiKeyPageHref(expectedPageNumber, filteredDepartmentName),
   );
 }
 
-export function paginationItemHasCurrentAsCssClass(pageNumber) {
+export function assertPaginationItemHasCorrectCssClass(
+  pageNumber,
+  currentPage,
+) {
+  const assertion = (currentPage === pageNumber ? "" : "not.") + "have.class";
   cy.log(`Checking css pagination item for page ${pageNumber} is current`);
   cy.get(
     `[data-cy="admin-dashboard-pagination-page-${pageNumber}-item"]`,
-  ).should("have.class", "govuk-pagination__item--current");
+  ).should(assertion, "govuk-pagination__item--current");
 }
 
-export function paginationItemHasNotCurrentAsCssClass(pageNumber) {
-  cy.log(`Checking css pagination item for page ${pageNumber} is not current`);
-  cy.get(
-    `[data-cy="admin-dashboard-pagination-page-${pageNumber}-item"]`,
-  ).should("not.have.class", "govuk-pagination__item--current");
-}
-
-export function paginationItemsDoesNotExist(pageNumbers) {
+export function assertPaginationItemsDoNotExist(pageNumbers) {
   pageNumbers.forEach((pageNumber) => {
     cy.log(`Checking pagination item for page ${pageNumber} does not exist`);
     cy.get(
@@ -76,11 +72,27 @@ export function paginationItemsDoesNotExist(pageNumbers) {
   });
 }
 
-export function paginationPreviousItemHasTheRightHref(expectedPageNumber) {
+export function assertPaginationPreviousItemHasTheCorrectHref(
+  expectedPageNumber,
+) {
   cy.log(`Checking pagination previous link is for page ${expectedPageNumber}`);
   cy.get(`[data-cy="admin-dashboard-pagination-previous-page-link"]`).should(
     "have.attr",
     "href",
-    `/find/api/admin/api-keys/manage?page=${expectedPageNumber}`,
+    manageApiKeyPageHref(expectedPageNumber, ""),
   );
 }
+
+// This is a bit complex:
+// All pages will have the first and last pagination items (1 and 11)
+// Then, each page will have pagination items for just the previous (pageNumber - 1) and next (pageNumber + 2) pages
+// EXCEPT for page 4, which has a pagination item for page 2 as well (pageNumber - 2) hence `- (pageNumber === 4 ? 2 : 1)`
+export const filterNonExistentPaginationItems = (item, pageNumber) =>
+  item === 1 ||
+  !(pageNumber - (pageNumber === 4 ? 2 : 1) > item || item > pageNumber + 1) ||
+  item === 11;
+
+export const partitionPaginationItems = (pageNumber) =>
+  Cypress._.partition([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], (item) =>
+    filterNonExistentPaginationItems(item, pageNumber),
+  );
