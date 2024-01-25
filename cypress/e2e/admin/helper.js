@@ -399,7 +399,9 @@ export const publishApplication = (choice) => {
   log(
     "Scheme details with a completed application journey - submitting feedback",
   );
-  cy.contains("Very satisfied").click();
+  if (choice === true) {
+    cy.contains("Very satisfied").click();
+  }
   cy.get('[data-cy="cy-comment-text-area"]').type(
     "<INITIATING_DEMONSTRATION_OF_SATISFACTION>\n" +
       "Cypress-bot would be satisifed with this service, were it capable of experience emotion.\n" +
