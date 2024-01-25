@@ -394,7 +394,20 @@ export const convertDateToString = (date, dateFormat = "YYYY-MM-DD") =>
   dayjs(date).format(dateFormat);
 
 export const publishApplication = (choice) => {
-  cy.get('[data-cy="cy_publishSuccess-manageThisGrant-button"]').click();
+  cy.contains("Manage this grant").click();
+  // feedback form
+  log(
+    "Scheme details with a completed application journey - submitting feedback",
+  );
+  cy.contains("Very satisfied").click();
+  cy.get('[data-cy="cy-comment-text-area"]').type(
+    "<INITIATING_DEMONSTRATION_OF_SATISFACTION>\n" +
+      "Cypress-bot would be satisifed with this service, were it capable of experience emotion.\n" +
+      "<CEASING_DEMONSTRATION_OF_SATISFACTION/>",
+  );
+  cy.contains("Send feedback").click();
+  cy.wait(1000);
+
   cy.get('[data-cy="cy_view-application-link"]').click();
   if (choice === true) {
     cy.get('[data-cy="cy_publishApplication-button"]').click();
