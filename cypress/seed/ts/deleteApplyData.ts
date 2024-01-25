@@ -77,26 +77,26 @@ DELETE FROM public.api_key WHERE funder_id = $1;
 const deleteApiKeysByFunderId = `DELETE FROM public.api_key
 WHERE funder_id IN ($1, $2);`;
 
-const deleteApiKeyById = `DELETE FROM public.api_key
-WHERE api_key_id = $1;`;
+const deleteApiKeysById = `DELETE FROM public.api_key
+WHERE api_key_id = ANY($1::int[]);`;
 
 const deleteApiKeysFundingOrganisations = `DELETE FROM public.grant_funding_organisation WHERE funder_id IN ($1, $2)`;
 
 export {
-  deleteSpotlightSubmissionRow,
-  deleteSpotlightBatchRow,
-  deleteFailedSpotlightOauthAudit,
-  deleteAdverts,
-  deleteSubmissions,
-  deleteApplications,
-  deleteSchemes,
   deleteAdmins,
-  deleteApplicants,
-  deleteUsers,
-  deleteFundingOrgs,
-  deleteApplicantOrgProfiles,
+  deleteAdverts,
   deleteApiKeys,
   deleteApiKeysByFunderId,
+  deleteApiKeysById,
   deleteApiKeysFundingOrganisations,
-  deleteApiKeyById,
+  deleteApplicantOrgProfiles,
+  deleteApplicants,
+  deleteApplications,
+  deleteFailedSpotlightOauthAudit,
+  deleteFundingOrgs,
+  deleteSchemes,
+  deleteSpotlightBatchRow,
+  deleteSpotlightSubmissionRow,
+  deleteSubmissions,
+  deleteUsers,
 };

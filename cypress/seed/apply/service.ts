@@ -1,11 +1,17 @@
-import { runSQLFromJs } from "../database";
 import { type UsagePlanKey } from "@aws-sdk/client-api-gateway";
+import {
+  createKeyInAwsApiGatewayUsagePlan,
+  deleteApiKey,
+  getKeysFromAwsApiGatewayUsagePlan,
+  removeKeysFromAwsApiGatewayUsagePlan,
+} from "../apiGateway";
+import { runSQLFromJs } from "../database";
 import {
   deleteAdmins,
   deleteAdverts,
-  deleteApiKeyById,
   deleteApiKeys,
   deleteApiKeysByFunderId,
+  deleteApiKeysById,
   deleteApiKeysFundingOrganisations,
   deleteApplicantOrgProfiles,
   deleteApplicants,
@@ -19,58 +25,52 @@ import {
 } from "../ts/deleteApplyData";
 import {
   addSpotlightBatchRow,
+  addSubmissionToMostRecentBatch,
+  createApiKey,
+  createApiKeyWithDefaultTimestamp,
+  createApiKeysFundingOrganisations,
   insertAdmins,
   insertAdverts,
   insertApplicants,
   insertApplications,
   insertFundingOrgs,
   insertGrantApplicantOrgProfiles,
-  insertSchemes,
-  insertUsers,
-  addSubmissionToMostRecentBatch,
   insertMandatoryQuestions,
+  insertSchemes,
   insertSpotlightSubmission,
   insertSubmissions,
-  createApiKeysFundingOrganisations,
-  createApiKey,
-  createApiKeyWithDefaultTimestamp,
+  insertUsers,
 } from "../ts/insertApplyData";
-import {
-  readdQueuedSpotlightSubmissions,
-  removeQueuedSpotlightSubmissions,
-  updateSpotlightSubmissionStatus,
-} from "../ts/updateApplyData";
-import {
-  V2_INTERNAL_SCHEME_ID,
-  applyDatabaseUrl,
-  applyServiceDbName,
-  spotlightSubstitutions,
-  applyInsertSubstitutions,
-  applyDeleteSubstitutions,
-  applyUpdateSubstitutions,
-  V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
-  V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
-  postLoginBaseUrl,
-  SUPER_ADMIN_ID,
-  FUNDING_ID,
-  deleteApiKeysSubstitutions,
-  createApiKeySubstitutions,
-  createApiKeyFundingOrganisationSubstitutions,
-  createApiKeySubstitutionsForRecreation,
-  getAPIKeysByFunderIdSubstitutions,
-  createApiKeySubstitutionsForTechSupport,
-} from "./constants";
 import {
   getExportedSubmission,
   selectAllApiKeys,
   selectApiKeysByFunderId,
 } from "../ts/selectApplyData";
 import {
-  createKeyInAwsApiGatewayUsagePlan,
-  deleteApiKey,
-  getKeysFromAwsApiGatewayUsagePlan,
-  removeKeysFromAwsApiGatewayUsagePlan,
-} from "../apiGateway";
+  readdQueuedSpotlightSubmissions,
+  removeQueuedSpotlightSubmissions,
+  updateSpotlightSubmissionStatus,
+} from "../ts/updateApplyData";
+import {
+  FUNDING_ID,
+  SUPER_ADMIN_ID,
+  V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+  V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+  V2_INTERNAL_SCHEME_ID,
+  applyDatabaseUrl,
+  applyDeleteSubstitutions,
+  applyInsertSubstitutions,
+  applyServiceDbName,
+  applyUpdateSubstitutions,
+  createApiKeyFundingOrganisationSubstitutions,
+  createApiKeySubstitutions,
+  createApiKeySubstitutionsForRecreation,
+  createApiKeySubstitutionsForTechSupport,
+  deleteApiKeysSubstitutions,
+  getAPIKeysByFunderIdSubstitutions,
+  postLoginBaseUrl,
+  spotlightSubstitutions,
+} from "./constants";
 
 import { promisify } from "util";
 
@@ -103,7 +103,7 @@ const createApplyData = async (): Promise<void> => {
 };
 
 const deleteApplyData = async (): Promise<void> => {
-  await deleteAPIKeysForTechSupport();
+  await deleteAPIKeysFromAwsForTechSupport();
   await runSqlForApply(
     [
       deleteApiKeys,
@@ -181,7 +181,7 @@ const getAPIKeysByFunderId = async () => {
   return rows;
 };
 
-const deleteAPIKeysForTechSupport = async () => {
+const deleteAPIKeysFromAwsForTechSupport = async () => {
   const rows = await getAPIKeysByFunderId();
   for (const row of rows[0] as ApiKeyDb[]) {
     const key = {
@@ -197,13 +197,9 @@ const deleteAPIKeysForTechSupport = async () => {
 const deleteExistingApiKeys = async (originalData: ApiKeyDb[]) => {
   const apiKeyIds = originalData.map((data) => data.api_key_id);
 
-  await Promise.all(
-    apiKeyIds.map(async (apiKeyId) => {
-      await runSqlForApply([deleteApiKeyById], {
-        [deleteApiKeyById]: [apiKeyId],
-      });
-    }),
-  );
+  await runSqlForApply([deleteApiKeysById], {
+    [deleteApiKeysById]: [apiKeyIds],
+  });
 
   console.log("Successfully deleted all existing Api Keys");
 };
@@ -352,24 +348,24 @@ interface ApiKeyDb {
   api_gateway_id: string;
 }
 export {
-  createApplyData,
-  deleteApplyData,
-  insertSubmissionsAndMQs,
-  cleanupTestSpotlightSubmissions,
-  updateSpotlightSubmission,
+  addSpotlightBatch,
   addToRecentBatch,
+  cleanupTestSpotlightSubmissions,
+  createApiKeysData,
+  createApiKeysInApiGatewayForTechnicalSupport,
+  createApplyData,
+  deleteAPIKeysFromAwsForTechSupport,
+  deleteApiKeysData,
+  deleteApplyData,
+  deleteExistingApiKeys,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
-  addSpotlightBatch,
+  getAPIKeysByFunderId,
   getExportedSubmissionUrlAndLocation,
-  deleteApiKeysData,
-  createApiKeysData,
   grabAllApiKeys,
-  type ApiKeyDb,
-  deleteExistingApiKeys,
+  insertSubmissionsAndMQs,
   recreateApiKeysInDatabase,
   refillDbWithAllPreExistingApiKeys,
-  getAPIKeysByFunderId,
-  deleteAPIKeysForTechSupport,
-  createApiKeysInApiGatewayForTechnicalSupport,
+  updateSpotlightSubmission,
+  type ApiKeyDb,
 };
