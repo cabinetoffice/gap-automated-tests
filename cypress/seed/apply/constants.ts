@@ -1,55 +1,54 @@
 import {
-  insertApplicants,
-  insertUsers,
-  insertFundingOrgs,
-  insertAdmins,
-  insertGrantApplicantOrgProfiles,
-  insertSchemes,
-  insertApplications,
-  insertAdverts,
-  addSpotlightBatchRow,
-  addSubmissionToMostRecentBatch,
-  insertMandatoryQuestions,
-  insertSpotlightSubmission,
-  insertSubmissions,
-  createApiKey,
-  createApiKeysFundingOrganisations,
-  createApiKeyWithDefaultTimestamp,
-} from "../ts/insertApplyData";
-import {
-  deleteAdverts,
-  deleteSubmissions,
-  deleteApplications,
-  deleteSchemes,
-  deleteAdmins,
-  deleteApplicants,
-  deleteUsers,
-  deleteFundingOrgs,
-  deleteApplicantOrgProfiles,
-  deleteSpotlightSubmissionRow,
-  deleteSpotlightBatchRow,
-  deleteApiKeysFundingOrganisations,
-  deleteApiKeysByFunderId,
-  deleteApiKeys,
-} from "../ts/deleteApplyData";
-import {
-  TEST_V1_INTERNAL_GRANT,
   TEST_V1_EXTERNAL_GRANT,
+  TEST_V1_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
 } from "../../common/constants";
 import {
-  v1InternalAdvert,
   v1ExternalAdvert,
+  v1InternalAdvert,
   v2ExternalAdvert,
   v2InternalAdvert,
 } from "../data/apply";
+import {
+  deleteAdmins,
+  deleteAdverts,
+  deleteApiKeys,
+  deleteApiKeysByFunderId,
+  deleteApiKeysFundingOrganisations,
+  deleteApplicantOrgProfiles,
+  deleteApplicants,
+  deleteApplications,
+  deleteFundingOrgs,
+  deleteSchemes,
+  deleteSpotlightBatchRow,
+  deleteSpotlightSubmissionRow,
+  deleteSubmissions,
+  deleteUsers,
+} from "../ts/deleteApplyData";
+import {
+  addSpotlightBatchRow,
+  addSubmissionToMostRecentBatch,
+  createApiKeyWithDefaultTimestamp,
+  createApiKeysFundingOrganisations,
+  insertAdmins,
+  insertAdverts,
+  insertApplicants,
+  insertApplications,
+  insertFundingOrgs,
+  insertGrantApplicantOrgProfiles,
+  insertMandatoryQuestions,
+  insertSchemes,
+  insertSpotlightSubmission,
+  insertSubmissions,
+  insertUsers,
+} from "../ts/insertApplyData";
 
-import { getTestID, getUUID, hashApiKey } from "./helper";
 import {
   getExportedSubmission,
   selectApiKeysByFunderId,
 } from "../ts/selectApplyData";
+import { getTestID, getUUID, hashApiKey } from "./helper";
 import { type ApiKeyDb } from "./service";
 
 require("dotenv").config();
@@ -367,6 +366,12 @@ const createApiKeyFundingOrganisationSubstitutions = {
   [createApiKeysFundingOrganisations]: [SUPER_ADMIN_ID - 2, SUPER_ADMIN_ID - 1],
 };
 
+const today = new Date().toLocaleDateString("en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
 const createApiKeySubstitutions = (
   i: number,
   id: string,
@@ -397,68 +402,67 @@ const createApiKeySubstitutionsForTechSupport = (
   name: string,
   value: string,
 ) => {
-  return {
-    [createApiKeyWithDefaultTimestamp]: [
-      -(1000 + i + 1),
-      FUNDING_ID,
-      hashApiKey(value),
-      name,
-      null,
-      false,
-      null,
-      null,
-      id,
-    ],
-  };
+  return [
+    -(1000 + i + 1),
+    FUNDING_ID,
+    hashApiKey(value),
+    name,
+    null,
+    today,
+    false,
+    null,
+    null,
+    id,
+  ];
 };
 
-const createApiKeySubstitutionsForRecreation = (apiKey: ApiKeyDb) => {
+const createApiKeySubstitutionsForRecreation = (
+  query: string,
+  apiKeys: ApiKeyDb[],
+) => {
+  const params = [];
+  for (let i = 0; i < apiKeys.length; i++) {
+    const apiKey = apiKeys[i];
+    for (const key of Object.keys(apiKey)) {
+      params.push(apiKey[key]);
+    }
+  }
+
   return {
-    [createApiKey]: [
-      apiKey.api_key_id,
-      apiKey.funder_id,
-      apiKey.api_key_value,
-      apiKey.api_key_name,
-      apiKey.api_key_description,
-      apiKey.created_date,
-      apiKey.is_revoked,
-      apiKey.revocation_date,
-      apiKey.revoked_by,
-      apiKey.api_gateway_id,
-    ],
+    [query]: params,
   };
 };
 
 export {
-  applyInsertSubstitutions,
-  applyDeleteSubstitutions,
-  applyUpdateSubstitutions,
-  spotlightSubstitutions,
-  applyServiceDbName,
-  applyDatabaseUrl,
-  postLoginBaseUrl,
-  SUPER_ADMIN_ID,
   ADMIN_ID,
-  APPLICANT_ID,
-  TECHNICAL_SUPPORT_ID,
-  FUNDING_ID,
-  V1_INTERNAL_SCHEME_ID,
-  V1_EXTERNAL_SCHEME_ID,
-  V2_INTERNAL_SCHEME_ID,
-  V2_EXTERNAL_SCHEME_ID,
-  ADVERT_ID_V1_INTERNAL,
   ADVERT_ID_V1_EXTERNAL,
-  ADVERT_ID_V2_INTERNAL,
+  ADVERT_ID_V1_INTERNAL,
   ADVERT_ID_V2_EXTERNAL,
+  ADVERT_ID_V2_INTERNAL,
+  APPLICANT_ID,
+  DEPARTMENT_NAME,
+  FUNDING_ID,
+  MQ_DETAILS,
+  SPOTLIGHT_BATCH_ID,
+  SUPER_ADMIN_ID,
+  TECHNICAL_SUPPORT_ID,
+  V1_EXTERNAL_SCHEME_ID,
+  V1_INTERNAL_SCHEME_ID,
+  V2_EXTERNAL_SCHEME_ID,
   V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
-  SPOTLIGHT_BATCH_ID,
-  MQ_DETAILS,
-  DEPARTMENT_NAME,
-  deleteApiKeysSubstitutions,
-  createApiKeySubstitutions,
+  V2_INTERNAL_SCHEME_ID,
+  applyDatabaseUrl,
+  applyDeleteSubstitutions,
+  applyInsertSubstitutions,
+  applyServiceDbName,
+  applyUpdateSubstitutions,
   createApiKeyFundingOrganisationSubstitutions,
+  createApiKeySubstitutions,
   createApiKeySubstitutionsForRecreation,
-  getAPIKeysByFunderIdSubstitutions,
   createApiKeySubstitutionsForTechSupport,
+  deleteApiKeysSubstitutions,
+  getAPIKeysByFunderIdSubstitutions,
+  postLoginBaseUrl,
+  spotlightSubstitutions,
 };

@@ -26,7 +26,7 @@ import {
 import {
   addSpotlightBatchRow,
   addSubmissionToMostRecentBatch,
-  createApiKey,
+  createApiKeyBaseQuery,
   createApiKeyWithDefaultTimestamp,
   createApiKeysFundingOrganisations,
   insertAdmins,
@@ -293,11 +293,37 @@ const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
   }
 };
 
+const buildDynamicQuerySubstitutions = (
+  items: any[],
+  numberOfParamsPerItem: number,
+) => {
+  const substitutionParameters = [];
+
+  for (let i = 0; i < items.length; i++) {
+    const subs = [];
+    for (let j = 1; j <= numberOfParamsPerItem; j++) {
+      subs.push("$" + (numberOfParamsPerItem * i + j));
+    }
+    substitutionParameters.push("(" + subs.join(", ") + ")");
+  }
+
+  return substitutionParameters;
+};
+
 const recreateApiKeysInDatabase = async (apiKeys: ApiKeyDb[]) => {
-  for (const element of apiKeys) {
+  if (apiKeys !== null && apiKeys.length > 0) {
+    const numberOfColumns = 10;
+    const substitutionParameters = buildDynamicQuerySubstitutions(
+      apiKeys,
+      numberOfColumns,
+    );
+    const queryString = `${createApiKeyBaseQuery}${substitutionParameters.join(
+      ", ",
+    )}`;
+
     await runSqlForApply(
-      [createApiKey],
-      createApiKeySubstitutionsForRecreation(element),
+      [queryString],
+      createApiKeySubstitutionsForRecreation(queryString, apiKeys),
     );
   }
 };
@@ -320,19 +346,35 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
   startingPoint: number,
   endingPoint: number,
 ) => {
+  // TODO do we need the async  sleep here? Someone who knows JS pls advise
   const asyncSleep = promisify(setTimeout);
+
+  const params = [];
   for (let i = startingPoint; i < endingPoint; i++) {
     const paddedNumber = i.toString().padStart(3, "0");
     const keyName = `CypressE2ETestTechSupport${paddedNumber}`;
     const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
     const keyValue = keyName + keyName;
 
-    await runSqlForApply(
-      [createApiKeyWithDefaultTimestamp],
+    params.push(
       createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
     );
-    await asyncSleep(200);
   }
+
+  const numberOfColumns = 10;
+  const substitutionParameters = buildDynamicQuerySubstitutions(
+    params,
+    numberOfColumns,
+  );
+  const queryString = `${createApiKeyBaseQuery}${substitutionParameters.join(
+    ", ",
+  )}`;
+
+  await runSqlForApply([queryString], {
+    [queryString]: params.flatMap((item) => item),
+  });
+
+  await asyncSleep(200);
 };
 
 interface ApiKeyDb {

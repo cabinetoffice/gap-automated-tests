@@ -148,23 +148,27 @@ const createApiKeyWithDefaultTimestamp = `INSERT INTO api_key (api_key_id, funde
 const createApiKey = `INSERT INTO api_key (api_key_id, funder_id, api_key_value, api_key_name, api_key_description, created_date, is_revoked, revocation_date, revoked_by, api_gateway_id)
  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
 
+const createApiKeyBaseQuery = `INSERT INTO api_key (api_key_id, funder_id, api_key_value, api_key_name, api_key_description, created_date, is_revoked, revocation_date, revoked_by, api_gateway_id)
+ VALUES `;
+
 export {
-  addSubmissionToMostRecentBatch,
-  addSpotlightBatchRow,
   addFailedSpotlightOauthAudit,
+  addSpotlightBatchRow,
+  addSubmissionToMostRecentBatch,
   addSuccessSpotlightOauthAudit,
-  insertApplicants,
-  insertUsers,
-  insertFundingOrgs,
+  createApiKey,
+  createApiKeyBaseQuery,
+  createApiKeyWithDefaultTimestamp,
+  createApiKeysFundingOrganisations,
   insertAdmins,
-  insertGrantApplicantOrgProfiles,
-  insertSchemes,
-  insertApplications,
   insertAdverts,
+  insertApplicants,
+  insertApplications,
+  insertFundingOrgs,
+  insertGrantApplicantOrgProfiles,
+  insertMandatoryQuestions,
+  insertSchemes,
   insertSpotlightSubmission,
   insertSubmissions,
-  insertMandatoryQuestions,
-  createApiKeysFundingOrganisations,
-  createApiKey,
-  createApiKeyWithDefaultTimestamp,
+  insertUsers,
 };

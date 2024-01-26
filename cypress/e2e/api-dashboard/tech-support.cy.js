@@ -1,11 +1,11 @@
 import {
+  ADMIN_DASHBOARD_URL,
   BASE_URL,
+  SUPER_ADMIN_DASHBOARD_URL,
   log,
   signInAsTechnicalSupport,
   signInToIntegrationSite,
   signOut,
-  ADMIN_DASHBOARD_URL,
-  SUPER_ADMIN_DASHBOARD_URL,
 } from "../../common/common";
 
 import { ERROR_PAGE_BODY_TECHNICAL_SUPPORT } from "../../utils/errorPageString";
@@ -261,16 +261,16 @@ describe("API Admin - No existing keys", () => {
     cy.get('[data-cy="api-keys-heading"]')
       .should("be.visible")
       .should("have.text", "Manage API keys");
-  });
 
-  log(
-    "Tech Support Navigation - Checking applicant, admin and super-admin dashboard returns 404",
-  );
-  [ADMIN_DASHBOARD_URL, SUPER_ADMIN_DASHBOARD_URL].forEach((page) => {
-    cy.visit(page, { failOnStatusCode: false })
-      .contains("Page not found")
-      .should("exist");
-    cy.go("back");
+    log(
+      "Tech Support Navigation - Checking applicant, admin and super-admin dashboard returns 404",
+    );
+    [ADMIN_DASHBOARD_URL, SUPER_ADMIN_DASHBOARD_URL].forEach((page) => {
+      cy.visit(page, { failOnStatusCode: false })
+        .contains("Page not found")
+        .should("exist");
+      cy.go("back");
+    });
   });
 });
 describe("API Admin - Existing API Keys", () => {
