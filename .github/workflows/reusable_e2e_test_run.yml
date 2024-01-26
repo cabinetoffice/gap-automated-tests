@@ -60,7 +60,7 @@ jobs:
         uses: actions/checkout@master
         with:
           # This allows us to use both manual runs and to set the branch in scheduled runs.
-          ref: ${{ inputs.branch === 'HEAD' && steps.extract_branch.outputs.branch || inputs.branch }}
+          ref: ${{ inputs.branch == 'HEAD' && steps.extract_branch.outputs.branch || inputs.branch }}
 
       - name: Generate .env
         run: |
