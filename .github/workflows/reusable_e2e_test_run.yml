@@ -25,11 +25,7 @@ on:
 
 jobs:
   reusable_e2e_test_run:
-    # Format:
-    # Run E2E Tests env:SANDBOX suite:admin browser:chrome branch:develop
-    # Run E2E Tests env:SANDBOX suite:all browser:chrome branch:feature/ABC-123-example
-    # Run E2E Tests env:QA suite:all browser:firefox branch:main
-    name: Run E2E Tests env:${{ inputs.environment }} suite:${{ inputs.suite }} browser:${{ inputs.browser }} branch:${{ inputs.branch == './' && ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}} || inputs.branch }}
+    name: Run E2E Tests env:${{ inputs.environment }} suite:${{ inputs.suite }} browser:${{ inputs.browser }}
     runs-on: ubuntu-latest
     concurrency: e2e_test_run_${{ inputs.environment }}
     # GitHub Actions doesn't have ternaries for some reason, so this only sets the environment if we want reports
