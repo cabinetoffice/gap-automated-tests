@@ -35,3 +35,12 @@
 //     }
 //   }
 // }
+
+type Command = keyof Cypress.Chainable;
+Cypress.Commands.add("parseXlsx" as Command, (inputFile) => {
+  return cy.task("parseXlsx", { filePath: inputFile });
+});
+
+Cypress.Commands.add("unzip" as Command, (input) => {
+  return cy.task("unzip", input);
+});

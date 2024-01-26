@@ -1,9 +1,14 @@
 node_modules/
 
 .env
+.env.sandbox
+.env.qa
+.env.backup
 
 .idea/
 .DS_Store
+
+cypress/downloads
 
 cypress/screenshots
 cypress/report.txt
