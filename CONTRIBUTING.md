@@ -47,7 +47,7 @@ Please use these where possible, and add to them as appropriate if they can be s
 
 ### Adding data setup
 
-If you are adding data setup, please be aware that once this runs on the GHA runner, your setup could impact all tests across the environment.
+If you are adding data setup, please be aware that once this runs on the GitHub Actions runner (i.e. by creating a Pull Request to `develop`), your setup could impact all tests across the environment.
 
 This occurs if you add data setup that is not set up for cascade deletion, causing `develop` to be unable to tear down this data and stalling all E2E tests apart from those running on your branch.
 
