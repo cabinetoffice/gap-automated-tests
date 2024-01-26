@@ -103,7 +103,7 @@ describe("Create a Grant", () => {
     );
     publishAdvert(true);
 
-    log("Changign from scheduled to published");
+    log("Changing from scheduled to published");
     cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
     cy.get('[data-cy="cy-unschedule-advert-button"]').click();
     cy.get('[data-cy="cy-radioInput-option-YesUnscheduleMyAdvert"]').click();
