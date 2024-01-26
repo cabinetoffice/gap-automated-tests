@@ -15,6 +15,9 @@ on:
       environment:
         default: SANDBOX
         type: string
+      branch:
+        default: HEAD
+        type: string
 
 jobs:
   call-chrome-reusable-e2e-test-run-workflow:
@@ -26,6 +29,7 @@ jobs:
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
+      branch: ${{ inputs.branch }}
     secrets: inherit
 
   call-firefox-reusable-e2e-test-run-workflow:
@@ -37,6 +41,7 @@ jobs:
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
+      branch: ${{ inputs.branch }}
     secrets: inherit
     needs: call-chrome-reusable-e2e-test-run-workflow
     if: always()

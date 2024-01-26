@@ -13,6 +13,7 @@ jobs:
       report: true
       notify: true
       environment: SANDBOX
+      branch: develop
     secrets: inherit
 
   call-qa-reusable-e2e-test-run-workflow:
@@ -23,6 +24,7 @@ jobs:
       report: true
       notify: true
       environment: QA
+      branch: main
     secrets: inherit
 
   # =============================
