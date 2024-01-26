@@ -88,7 +88,7 @@ describe("Create a Grant", () => {
     log(
       "Scheme details with an in progress advert journey - creating Advert Section 3",
     );
-    advertSection3(false);
+    advertSection3(true);
     log(
       "Scheme details with an in progress advert journey - creating Advert Section 4",
     );
@@ -101,6 +101,14 @@ describe("Create a Grant", () => {
     log(
       "Scheme details with an in progress advert journey - publishing advert",
     );
+    publishAdvert(true);
+
+    log("Changing from scheduled to published");
+    cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+    cy.get('[data-cy="cy-unschedule-advert-button"]').click();
+    cy.get('[data-cy="cy-radioInput-option-YesUnscheduleMyAdvert"]').click();
+    cy.get('[data-cy="cy_unscheduleConfirmation-ConfirmButton"]').click();
+    advertSection3(false);
     publishAdvert(false);
     cy.contains("Very satisfied").click();
     cy.contains("Send feedback").click();
