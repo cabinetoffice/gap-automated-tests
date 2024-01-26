@@ -16,7 +16,7 @@ on:
         default: SANDBOX
         type: string
       branch:
-        default: HEAD
+        default: ./
         type: string
 
 jobs:
