@@ -302,28 +302,32 @@ export function advertSection3(scheduled) {
   ).click();
 
   const today = new Date();
-  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").click();
+  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").click().clear();
   cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").type("1", {
     force: true,
   });
-  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateMonth]").type("1", {
-    force: true,
-  });
-  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateYear]").type(
-    `${today.getFullYear() + (scheduled ? 1 : 0)}`,
-    { force: true },
-  );
+  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateMonth]")
+    .clear()
+    .type("1", {
+      force: true,
+    });
+  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateYear]")
+    .clear()
+    .type(`${today.getFullYear() + (scheduled ? 1 : 0)}`, { force: true });
 
-  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]").type("31", {
-    force: true,
-  });
-  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateMonth]").type("1", {
-    force: true,
-  });
-  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateYear]").type(
-    `${today.getFullYear() + 1}`,
-    { force: true },
-  );
+  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]")
+    .clear()
+    .type("31", {
+      force: true,
+    });
+  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateMonth]")
+    .clear()
+    .type("1", {
+      force: true,
+    });
+  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateYear]")
+    .clear()
+    .type(`${today.getFullYear() + 1}`, { force: true });
 
   yesQuestionComplete();
 }
