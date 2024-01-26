@@ -5,13 +5,13 @@ on:
     branches:
       - develop
     paths-ignore:
-      - "*.md"
+      - "**.md"
   push:
     branches:
       - develop
       - main
     paths-ignore:
-      - "*.md"
+      - "**.md"
 
 jobs:
   call-sandbox-chrome-reusable-e2e-test-run-workflow:
