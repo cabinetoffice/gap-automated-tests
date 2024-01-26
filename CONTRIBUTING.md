@@ -155,7 +155,8 @@ Step 2) Use the alias along with the "convertDateToString()" function to store t
 
 ```js
 cy.get("@subscribedDate").then((subscribedDateTimestamp) => {
-      const subscriptionDates = convertDateToString(subscribedDateTimestamp);
+  const subscriptionDates = convertDateToString(subscribedDateTimestamp);
+});
 ```
 
 Step 3) Assert using this date variable, which is already formatted in the way that Find a Grant requires. The **text** of the element you are trying to target is **invoked** and mapped against all possible dates.

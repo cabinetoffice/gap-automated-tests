@@ -18,7 +18,7 @@ Please read this before writing tests!
 
 When running via GitHub actions, there are several ways to do so. Most of these are automatic as detailed below.
 
-If a job is running on both Sandbox and QA, these will occur simulataneously. However, browser jobs run sequentially.
+If a job is running on both Sandbox and QA, these will occur simultaneously. However, browser jobs run sequentially.
 
 I.E. If a multi-browser, multi-env run is kicked off, the Chrome tests will occur on Sandbox and QA at the same time, and when each test run has finished on the respective environment, the Firefox tests will kick off on that environment.
 
