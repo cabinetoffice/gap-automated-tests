@@ -64,6 +64,7 @@ const allSubs = [
   process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
   process.env.ONE_LOGIN_ADMIN_SUB,
   process.env.ONE_LOGIN_APPLICANT_SUB,
+  process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
 ];
 
 const DEPARTMENT_NAME = `Cypress - Test Department ${process.env.FIRST_USER_ID}`;

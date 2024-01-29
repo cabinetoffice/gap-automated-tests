@@ -302,28 +302,32 @@ export function advertSection3(scheduled) {
   ).click();
 
   const today = new Date();
-  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").click();
+  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").click().clear();
   cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateDay]").type("1", {
     force: true,
   });
-  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateMonth]").type("1", {
-    force: true,
-  });
-  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateYear]").type(
-    `${today.getFullYear() + (scheduled ? 1 : 0)}`,
-    { force: true },
-  );
+  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateMonth]")
+    .clear()
+    .type("1", {
+      force: true,
+    });
+  cy.get("[data-cy=cyDateFilter-grantApplicationOpenDateYear]")
+    .clear()
+    .type(`${today.getFullYear() + (scheduled ? 1 : 0)}`, { force: true });
 
-  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]").type("31", {
-    force: true,
-  });
-  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateMonth]").type("1", {
-    force: true,
-  });
-  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateYear]").type(
-    `${today.getFullYear() + 1}`,
-    { force: true },
-  );
+  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateDay]")
+    .clear()
+    .type("31", {
+      force: true,
+    });
+  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateMonth]")
+    .clear()
+    .type("1", {
+      force: true,
+    });
+  cy.get("[data-cy=cyDateFilter-grantApplicationCloseDateYear]")
+    .clear()
+    .type(`${today.getFullYear() + 1}`, { force: true });
 
   yesQuestionComplete();
 }
@@ -394,7 +398,22 @@ export const convertDateToString = (date, dateFormat = "YYYY-MM-DD") =>
   dayjs(date).format(dateFormat);
 
 export const publishApplication = (choice) => {
-  cy.get('[data-cy="cy_publishSuccess-manageThisGrant-button"]').click();
+  cy.contains("Manage this grant").click();
+  // feedback form
+  log(
+    "Scheme details with a completed application journey - submitting feedback",
+  );
+  if (choice === true) {
+    cy.contains("Very satisfied").click();
+  }
+  cy.get('[data-cy="cy-comment-text-area"]').type(
+    "<INITIATING_DEMONSTRATION_OF_SATISFACTION>\n" +
+      "Cypress-bot would be satisifed with this service, were it capable of experience emotion.\n" +
+      "<CEASING_DEMONSTRATION_OF_SATISFACTION/>",
+  );
+  cy.contains("Send feedback").click();
+  cy.wait(1000);
+
   cy.get('[data-cy="cy_view-application-link"]').click();
   if (choice === true) {
     cy.get('[data-cy="cy_publishApplication-button"]').click();

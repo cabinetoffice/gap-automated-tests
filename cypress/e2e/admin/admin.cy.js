@@ -71,19 +71,51 @@ describe("Create a Grant", () => {
     createGrant(GRANT_NAME);
 
     // create advert
-    log("Admin grant creation journey - creating Advert Section 1");
+    log(
+      "Scheme details with an in progress advert journey - creating Advert Section 1",
+    );
     advertSection1(GRANT_NAME);
-    log("Admin grant creation journey - creating Advert Section 2");
+    log(
+      "Scheme details with an in progress advert journey - creating Advert Section 2",
+    );
     advertSection2();
-    log("Admin grant creation journey - creating Advert Section 3");
-    advertSection3(false);
-    log("Admin grant creation journey - creating Advert Section 4");
+
+    log(
+      "Scheme details with an in progress advert journey - exiting advert creation",
+    );
+    // exit advert creation
+    cy.get('[data-cy="cy-exit"]').click();
+
+    cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+
+    log(
+      "Scheme details with an in progress advert journey - creating Advert Section 3",
+    );
+    advertSection3(true);
+    log(
+      "Scheme details with an in progress advert journey - creating Advert Section 4",
+    );
     advertSection4();
-    log("Admin grant creation journey - creating Advert Section 5");
+    log(
+      "Scheme details with an in progress advert journey - creating Advert Section 5",
+    );
     advertSection5();
 
-    log("Admin grant creation journey - publishing advert");
+    log(
+      "Scheme details with an in progress advert journey - publishing advert",
+    );
+    publishAdvert(true);
+
+    log("Changing from scheduled to published");
+    cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+    cy.get('[data-cy="cy-unschedule-advert-button"]').click();
+    cy.get('[data-cy="cy-radioInput-option-YesUnscheduleMyAdvert"]').click();
+    cy.get('[data-cy="cy_unscheduleConfirmation-ConfirmButton"]').click();
+    advertSection3(false);
     publishAdvert(false);
+    cy.contains("Very satisfied").click();
+    cy.contains("Send feedback").click();
+    cy.wait(1000);
     cy.url().then((url) => {
       const schemeUrl = url;
       cy.get('[data-cy="cy-link-to-advert-on-find"]').then(($el) => {
@@ -103,7 +135,8 @@ describe("Create a Grant", () => {
           "Your advert has been unpublished",
         );
         // Need to wait for Contentful to update.
-        cy.wait(7500);
+        log("Waiting for Contentful to unpublish advert");
+        cy.wait(10000);
 
         cy.visit(advertUrl, { failOnStatusCode: false });
         cy.contains("Page not found");
@@ -123,14 +156,68 @@ describe("Create a Grant", () => {
       });
     });
 
-    log("Admin grant creation journey - creating application form");
-    applicationForm();
+    cy.contains(
+      "An advert for this grant is live on Find a grant. The link for your advert is below:",
+    );
+
+    cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
+
+    cy.contains("View or change your advert");
+
+    log(
+      "View scheme details with application in progress journey - creating application form",
+    );
+    cy.get('[data-cy="cyBuildApplicationForm"]').click();
+
+    cy.get('[data-cy="cy-applicationName-text-input"]').click();
+    cy.get('[data-cy="cy-applicationName-text-input"]').type(
+      "Cypress - Grant Application",
+      { force: true },
+    );
+    cy.get('[data-cy="cy-button-Continue"]').click();
+
+    cy.get('[data-cy="cy_Section-Eligibility Statement"]').click();
+
+    cy.get('[data-cy="cy-displayText-text-area"]').type("eligibility", {
+      force: true,
+    });
+
+    log(
+      "Scheme details with an in progress application journey - exiting application form",
+    );
+    saveAndExit();
+
+    // exit build application form
+    clickText("Exit");
+
+    // view scheme details
+    cy.contains("Grant application form");
+    cy.contains(GRANT_NAME);
+
+    log(
+      "Scheme details with an in progress application journey - resuming application form",
+    );
+    cy.get('[data-cy="cy_view-application-link"]').click();
+    cy.get('[data-cy="cy_Section-due-diligence-checks"]').click();
+
+    cy.on("uncaught:exception", () => false);
+
+    cy.get(
+      '[data-cy="cy-checkbox-value-I understand that applicants will be asked for this information"]',
+    ).click();
+    saveAndExit();
+
+    log(
+      "Scheme details with a completed journey - publishing application form",
+    );
+    // publish
+    publishApplicationForm();
     cy.url().then((url) => {
       const schemeUrl = url;
       cy.get(".break-all-words > .govuk-link").then(($el) => {
         const applicationUrl = $el.text();
         cy.log("Visiting application while published");
-        cy.get(".break-all-words > .govuk-link").click();
+        cy.visit(applicationUrl, { failOnStatusCode: false });
         cy.get(".govuk-heading-l").contains("Before you start");
         cy.log("Heading back to scheme");
         cy.visit(schemeUrl);
@@ -144,6 +231,25 @@ describe("Create a Grant", () => {
         cy.get(".govuk-heading-l").contains("Before you start");
       });
     });
+
+    log(
+      "Scheme details with an in progress application journey - validating application form and advert",
+    );
+    cy.get(".govuk-header__content > .govuk-header__link")
+      .contains("Find a grant")
+      .click();
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    cy.get('[data-cy="cy-apply-register-button"]').click();
+    cy.get('[data-cy="cy_SchemeListButton"]').click();
+    cy.get(`[data-cy="cy_linkToScheme_${GRANT_NAME}"]`).click();
+    cy.contains("Grant application form");
+    cy.contains("View submitted applications");
+    cy.contains(GRANT_NAME);
+    cy.contains(
+      "An advert for this grant is live on Find a grant. The link for your advert is below:",
+    );
+    cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
+    cy.contains("View or change your advert");
   });
 
   it("View scheme details of grant with application form and no advert", () => {
@@ -160,182 +266,12 @@ describe("Create a Grant", () => {
 
     // view scheme details
     cy.get("[data-cy=cy_publishSuccess-manageThisGrant-button]").click();
+
+    cy.contains("Send feedback").click();
+
     cy.contains("Grant application form");
     cy.contains("View submitted applications");
     cy.contains(GRANT_NAME + " no advert");
-  });
-
-  it("View scheme details of grant with an advert and no application form", () => {
-    cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME + " no application form");
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
-    signInAsAdmin();
-    log("View scheme details with no application journey - creating grant");
-    createGrant(GRANT_NAME + " no application form");
-
-    // create advert
-    log(
-      "View scheme details with no application journey - creating Advert Section 1",
-    );
-    advertSection1(GRANT_NAME);
-    log(
-      "View scheme details with no application journey - creating Advert Section 2",
-    );
-    advertSection2();
-    log(
-      "View scheme details with no application journey - creating Advert Section 3",
-    );
-    advertSection3(false);
-    log(
-      "View scheme details with no application journey - creating Advert Section 4",
-    );
-    advertSection4();
-    log(
-      "View scheme details with no application journey - creating Advert Section 5",
-    );
-    advertSection5();
-
-    log("View scheme details with no application journey - publishing advert");
-    publishAdvert(false);
-
-    cy.contains(
-      "An advert for this grant is live on Find a grant. The link for your advert is below:",
-    );
-    cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
-    cy.contains("View or change your advert");
-  });
-
-  it("View scheme details of grant with application form and advert", () => {
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
-    signInAsAdmin();
-    log("View scheme details journey - creating Grant");
-    createGrant(GRANT_NAME);
-
-    // create advert
-    log("View scheme details journey - creating Advert Section 1");
-    advertSection1(GRANT_NAME);
-    log("View scheme details journey - creating Advert Section 2");
-    advertSection2();
-    log("View scheme details journey - creating Advert Section 3");
-    advertSection3(false);
-    log("View scheme details journey - creating Advert Section 4");
-    advertSection4();
-    log("View scheme details journey - creating Advert Section 5");
-    advertSection5();
-
-    log("View scheme details journey - publishing advert");
-    publishAdvert(false);
-
-    log("View scheme details journey - creating application form");
-    applicationForm();
-
-    // view scheme details
-    cy.get("[data-cy=cy_publishSuccess-manageThisGrant-button]").click();
-    cy.contains("Grant application form");
-    cy.contains("View submitted applications");
-    cy.contains(GRANT_NAME);
-    cy.contains(
-      "An advert for this grant is live on Find a grant. The link for your advert is below:",
-    );
-    cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
-    cy.contains("View or change your advert");
-  });
-
-  it("View scheme details with an in progress application", () => {
-    cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
-    signInAsAdmin();
-    log(
-      "View scheme details with application in progress journey - creating Grant",
-    );
-    createGrant(GRANT_NAME);
-
-    // start application form
-    cy.get('[data-cy="cyBuildApplicationForm"]').click();
-
-    cy.get('[data-cy="cy-applicationName-text-input"]').click();
-    cy.get('[data-cy="cy-applicationName-text-input"]').type(
-      "Cypress - Grant Application",
-      { force: true },
-    );
-    cy.get('[data-cy="cy-button-Continue"]').click();
-
-    cy.get('[data-cy="cy_Section-Eligibility Statement"]').click();
-
-    cy.get('[data-cy="cy-displayText-text-area"]').type("eligibility", {
-      force: true,
-    });
-
-    saveAndExit();
-
-    // exit build application form
-    clickText("Exit");
-
-    // view scheme details
-    cy.contains("Grant application form");
-    cy.contains(GRANT_NAME);
-
-    // Resume building application form
-    // cy.get('[data-cy="cy_table_row-for-Grant application form-row-0-cell-3"]').click();
-    clickText("View");
-    cy.get('[data-cy="cy_Section-due-diligence-checks"]').click();
-
-    cy.on("uncaught:exception", () => false);
-
-    cy.get(
-      '[data-cy="cy-checkbox-value-I understand that applicants will be asked for this information"]',
-    ).click();
-    saveAndExit();
-
-    // publish
-    publishApplicationForm();
-  });
-
-  it("View scheme details with an in progress advert", () => {
-    cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
-    signInAsAdmin();
-    createGrant(GRANT_NAME);
-
-    // create advert
-    log(
-      "Scheme details with an in progress advert journey - creating Advert Section 1",
-    );
-    advertSection1(GRANT_NAME);
-    log(
-      "Scheme details with an in progress advert journey - creating Advert Section 2",
-    );
-    advertSection2();
-
-    // exit advert creation
-    cy.get('[data-cy="cy-exit"]').click();
-
-    cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
-
-    log(
-      "Scheme details with an in progress advert journey - creating Advert Section 3",
-    );
-    advertSection3(false);
-    log(
-      "Scheme details with an in progress advert journey - creating Advert Section 4",
-    );
-    advertSection4();
-    log(
-      "Scheme details with an in progress advert journey - creating Advert Section 5",
-    );
-    advertSection5();
-
-    log(
-      "Scheme details with an in progress advert journey - publishing advert",
-    );
-    publishAdvert(false);
-
-    cy.contains(
-      "An advert for this grant is live on Find a grant. The link for your advert is below:",
-    );
-
-    cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
-
-    cy.contains("View or change your advert");
   });
 
   it("View scheme details with a scheduled advert", () => {
