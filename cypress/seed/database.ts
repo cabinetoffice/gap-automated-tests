@@ -1,5 +1,5 @@
-import { Client } from "pg";
 import "dotenv/config";
+import { Client } from "pg";
 
 export const runSQLFromJs = async (
   sqlScripts: string[],
@@ -7,7 +7,7 @@ export const runSQLFromJs = async (
   dbName: string,
   dbUrl: string,
 ): Promise<unknown[]> => {
-  const response = [];
+  let response = [];
   const maxConnectionRetries = 5;
   let connectionRetries = 0;
 
@@ -20,9 +20,12 @@ export const runSQLFromJs = async (
 
       const client = new Client({ connectionString });
       await client.connect();
-      for (const sqlScript of sqlScripts) {
-        await runSingleQuery(client, sqlScript, substitutions, response);
-      }
+      response = await Promise.all(
+        sqlScripts.map(
+          async (sqlScript) =>
+            await runSingleQuery(client, sqlScript, substitutions),
+        ),
+      );
       await client.end();
       return response;
     } catch (error) {
@@ -46,11 +49,11 @@ export const runSingleQuery = async (
   client: any,
   sqlScript: string,
   substitutions: any,
-  response: any[],
 ) => {
   const maxRetries = 5;
   let retries = 0;
   let success = false;
+  let response;
 
   while (!success && retries < maxRetries) {
     try {
@@ -58,7 +61,7 @@ export const runSingleQuery = async (
         sqlScript,
         substitutions?.[sqlScript] || [],
       );
-      response.push(res.rows);
+      response = res.rows;
       success = true;
     } catch (error) {
       retries++;
@@ -74,4 +77,6 @@ export const runSingleQuery = async (
       `Failed to execute SQL script '${sqlScript}' after ${maxRetries} attempts`,
     );
   }
+
+  return response;
 };
