@@ -27,7 +27,6 @@ import {
   addSpotlightBatchRow,
   addSubmissionToMostRecentBatch,
   createApiKeyBaseQuery,
-  createApiKeyWithDefaultTimestamp,
   createApiKeysFundingOrganisations,
   insertAdmins,
   insertAdverts,
@@ -282,32 +281,55 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
 const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
   const asyncSleep = promisify(setTimeout);
 
-  for (let i = 0; i < apiKeys.length; i++) {
-    const { id, name, value } = apiKeys[i];
+  // for (let i = 0; i < apiKeys.length; i++) {
+  //   const { id, name, value } = apiKeys[i];
 
-    await runSqlForApply(
-      [createApiKeyWithDefaultTimestamp],
-      createApiKeySubstitutions(i, id, name, value),
+  //   await runSqlForApply(
+  //     [createApiKeyWithDefaultTimestamp],
+  //     createApiKeySubstitutions(i, id, name, value),
+  //   );
+  //   await asyncSleep(200);
+  // }
+
+  const params = [];
+  for (let i = 0; i < apiKeys.length; i++) {
+    const apiKey = apiKeys[i];
+    params.push(
+      createApiKeySubstitutions(i, apiKey.id, apiKey.name, apiKey.value),
     );
-    await asyncSleep(200);
   }
+
+  const numberOfColumns = 10;
+  const substitutionParameters = buildDynamicQuerySubstitutions(
+    params,
+    numberOfColumns,
+  );
+  const queryString = `${createApiKeyBaseQuery}${substitutionParameters.join(
+    ", ",
+  )}`;
+
+  await runSqlForApply([queryString], {
+    [queryString]: params.flatMap((item) => item),
+  });
+
+  await asyncSleep(200);
 };
 
 const buildDynamicQuerySubstitutions = (
   items: any[],
   numberOfParamsPerItem: number,
 ) => {
-  const substitutionParameters = [];
+  const substitutionGroups = [];
 
   for (let i = 0; i < items.length; i++) {
-    const subs = [];
+    const substitutions = [];
     for (let j = 1; j <= numberOfParamsPerItem; j++) {
-      subs.push("$" + (numberOfParamsPerItem * i + j));
+      substitutions.push("$" + (numberOfParamsPerItem * i + j));
     }
-    substitutionParameters.push("(" + subs.join(", ") + ")");
+    substitutionGroups.push("(" + substitutions.join(", ") + ")");
   }
 
-  return substitutionParameters;
+  return substitutionGroups;
 };
 
 const recreateApiKeysInDatabase = async (apiKeys: ApiKeyDb[]) => {
@@ -346,7 +368,7 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
   startingPoint: number,
   endingPoint: number,
 ) => {
-  // TODO do we need the async  sleep here? Someone who knows JS pls advise
+  // TODO do we need the async sleep here? Someone who knows JS pls advise
   const asyncSleep = promisify(setTimeout);
 
   const params = [];

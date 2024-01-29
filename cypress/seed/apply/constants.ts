@@ -29,7 +29,6 @@ import {
 import {
   addSpotlightBatchRow,
   addSubmissionToMostRecentBatch,
-  createApiKeyWithDefaultTimestamp,
   createApiKeysFundingOrganisations,
   insertAdmins,
   insertAdverts,
@@ -381,19 +380,18 @@ const createApiKeySubstitutions = (
   const fundingOrganisation = name.startsWith("Org1")
     ? SUPER_ADMIN_ID - 1
     : SUPER_ADMIN_ID - 2;
-  return {
-    [createApiKeyWithDefaultTimestamp]: [
-      -(i + 1),
-      fundingOrganisation,
-      hashApiKey(value),
-      name,
-      null,
-      false,
-      null,
-      null,
-      id,
-    ],
-  };
+  return [
+    -(i + 1),
+    fundingOrganisation,
+    hashApiKey(value),
+    name,
+    null,
+    today,
+    false,
+    null,
+    null,
+    id,
+  ];
 };
 
 const createApiKeySubstitutionsForTechSupport = (
