@@ -56,6 +56,7 @@ const allSubs = [
   process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
   process.env.ONE_LOGIN_ADMIN_SUB,
   process.env.ONE_LOGIN_APPLICANT_SUB,
+  process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
 ];
 
 const DEPARTMENT_NAME = `Cypress - Test Department ${process.env.FIRST_USER_ID}`;
@@ -63,6 +64,7 @@ const DEPARTMENT_NAME = `Cypress - Test Department ${process.env.FIRST_USER_ID}`
 const SUPER_ADMIN_ID = getTestID();
 const ADMIN_ID = getTestID(1);
 const APPLICANT_ID = getTestID(2);
+const TECHNICAL_SUPPORT_ID = getTestID(3);
 const FUNDING_ID = getTestID();
 
 const V1_INTERNAL_SCHEME_ID = getTestID();
@@ -238,10 +240,16 @@ const applyDeleteSubstitutions = {
   ],
   [deleteApplications]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSchemes]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
-  [deleteAdmins]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
+  [deleteAdmins]: [SUPER_ADMIN_ID, ADMIN_ID, TECHNICAL_SUPPORT_ID, ...allSubs],
   [deleteFundingOrgs]: [SUPER_ADMIN_ID],
   [deleteApplicants]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
-  [deleteUsers]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
+  [deleteUsers]: [
+    SUPER_ADMIN_ID,
+    ADMIN_ID,
+    APPLICANT_ID,
+    TECHNICAL_SUPPORT_ID,
+    ...allSubs,
+  ],
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 

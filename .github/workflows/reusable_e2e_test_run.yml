@@ -18,6 +18,10 @@ on:
       environment:
         default: SANDBOX
         type: string
+      branch:
+        # this is set to ./ as it's not a valid name for a branch, but it could be any value
+        default: ./
+        type: string
 
 jobs:
   reusable_e2e_test_run:
@@ -29,19 +33,6 @@ jobs:
     environment: ${{ inputs.notify == 'true' && inputs.environment || '' }}
 
     steps:
-      - name: Get Github action IP
-        id: ip
-        uses: haythem/public-ip@v1.3
-
-      - name: Add Github Actions IP to Security group
-        run: |
-          echo "${{ steps.ip.outputs.ipv4 }}"
-          aws ec2 authorize-security-group-ingress --group-id ${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-
       - name: Install OpenVPN 3
         run: |
           sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://packages.openvpn.net/packages-repo.gpg | sudo tee /etc/apt/keyrings/openvpn.asc
@@ -60,8 +51,18 @@ jobs:
           openvpn3 sessions-list
           openvpn3 session-stats --config FINDVPN
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
       - name: Checkout repo
         uses: actions/checkout@master
+        with:
+          # This allows us to use both manual runs (where the branch is implicit)
+          # and to set the branch in scheduled runs (where the branch can be explicit)
+          # This enables manual runs to work as expected, and to run scheduled jobs for different envs against specific branches.
+          ref: ${{ inputs.branch == './' && steps.extract_branch.outputs.branch || inputs.branch }}
 
       - name: Generate .env
         run: |
@@ -80,6 +81,9 @@ jobs:
           ONE_LOGIN_SUPER_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_SUPER_ADMIN_EMAIL }}
           ONE_LOGIN_SUPER_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_SUPER_ADMIN_PASSWORD }}
           ONE_LOGIN_SUPER_ADMIN_SUB=${{ secrets[format('{0}_ONE_LOGIN_SUPER_ADMIN_SUB', inputs.environment)] }}
+          ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL=${{ secrets.ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL }}
+          ONE_LOGIN_TECHNICAL_SUPPORT_PASSWORD=${{ secrets.ONE_LOGIN_TECHNICAL_SUPPORT_PASSWORD }}
+          ONE_LOGIN_TECHNICAL_SUPPORT_SUB=${{ secrets[format('{0}_ONE_LOGIN_TECHNICAL_SUPPORT_SUB', inputs.environment)] }}
           AWS_VPC_SG_ID=${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }}
           USERS_DATABASE_URL =${{ secrets[format('{0}_USERS_DATABASE_URL', inputs.environment)] }}
           USERS_DATABASE_NAME=${{ secrets[format('{0}_USERS_DATABASE_NAME', inputs.environment)] }}
@@ -99,15 +103,6 @@ jobs:
         with:
           browser: ${{ inputs.browser }}
           spec: ${{ inputs.suite == 'all' && 'cypress/**' || format('cypress/e2e/{0}/*.cy.js', inputs.suite == 'superadmin' && 'super-admin' || inputs.suite) }}
-
-      - name: Remove Github Actions IP from security group
-        run: |
-          aws ec2 revoke-security-group-ingress --group-id ${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-        if: always()
 
       - name: Disconnect from OPENVPN 3 Profile
         run: openvpn3 session-manage --config FINDVPN --disconnect
