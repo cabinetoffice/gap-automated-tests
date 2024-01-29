@@ -38,6 +38,16 @@ export default defineConfig({
     setupNodeEvents(on) {
       // implement node event listeners here
       on("task", {
+        testTimings(attributes) {
+          console.log(
+            'Test "%s" has finished in %dms',
+            attributes.title,
+            attributes.duration,
+          );
+          console.table(attributes.commands);
+
+          return null;
+        },
         async addFailedOauthAudit() {
           await addFailedOauthAudit();
           return null;
