@@ -18,6 +18,10 @@ on:
       environment:
         default: SANDBOX
         type: string
+      branch:
+        # this is set to ./ as it's not a valid name for a branch, but it could be any value
+        default: ./
+        type: string
 
 jobs:
   reusable_e2e_test_run:
@@ -47,8 +51,18 @@ jobs:
           openvpn3 sessions-list
           openvpn3 session-stats --config FINDVPN
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
       - name: Checkout repo
         uses: actions/checkout@master
+        with:
+          # This allows us to use both manual runs (where the branch is implicit)
+          # and to set the branch in scheduled runs (where the branch can be explicit)
+          # This enables manual runs to work as expected, and to run scheduled jobs for different envs against specific branches.
+          ref: ${{ inputs.branch == './' && steps.extract_branch.outputs.branch || inputs.branch }}
 
       - name: Generate .env
         run: |
