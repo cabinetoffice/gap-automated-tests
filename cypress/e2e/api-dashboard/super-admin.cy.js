@@ -68,9 +68,8 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "Should have correct navBar items for the superAdmin role, and check if link works - Verifying link to the superAdmin dashboard is correct",
       );
       cy.contains("Manage users");
-    });
 
-    it("Can sign out", () => {
+      cy.go("back");
       cy.log("Signing out");
       cy.get('[data-cy="header-sign-out-link"]').click();
 
