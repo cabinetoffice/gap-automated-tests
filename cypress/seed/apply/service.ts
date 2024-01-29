@@ -71,8 +71,6 @@ import {
   spotlightSubstitutions,
 } from "./constants";
 
-import { promisify } from "util";
-
 const runSqlForApply = async (
   scripts: string[],
   substitutions: Record<string, any[]>,
@@ -279,40 +277,38 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
 };
 
 const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
-  const asyncSleep = promisify(setTimeout);
+  const numberOfColumns = 10; // number of columns to be substituted in the database
 
-  // for (let i = 0; i < apiKeys.length; i++) {
-  //   const { id, name, value } = apiKeys[i];
-
-  //   await runSqlForApply(
-  //     [createApiKeyWithDefaultTimestamp],
-  //     createApiKeySubstitutions(i, id, name, value),
-  //   );
-  //   await asyncSleep(200);
-  // }
-
-  const params = [];
+  const substitutions = [];
   for (let i = 0; i < apiKeys.length; i++) {
     const apiKey = apiKeys[i];
-    params.push(
+    substitutions.push(
       createApiKeySubstitutions(i, apiKey.id, apiKey.name, apiKey.value),
     );
   }
 
-  const numberOfColumns = 10;
+  const queryString = buildQueryStringForSubstitutions(
+    createApiKeyBaseQuery,
+    substitutions,
+    numberOfColumns,
+  );
+
+  await runSqlForApply([queryString], {
+    [queryString]: substitutions.flatMap((item) => item),
+  });
+};
+
+const buildQueryStringForSubstitutions = (
+  query: string,
+  params: any[],
+  numberOfColumns: number,
+) => {
   const substitutionParameters = buildDynamicQuerySubstitutions(
     params,
     numberOfColumns,
   );
-  const queryString = `${createApiKeyBaseQuery}${substitutionParameters.join(
-    ", ",
-  )}`;
 
-  await runSqlForApply([queryString], {
-    [queryString]: params.flatMap((item) => item),
-  });
-
-  await asyncSleep(200);
+  return `${query}${substitutionParameters.join(", ")}`;
 };
 
 const buildDynamicQuerySubstitutions = (
@@ -334,14 +330,12 @@ const buildDynamicQuerySubstitutions = (
 
 const recreateApiKeysInDatabase = async (apiKeys: ApiKeyDb[]) => {
   if (apiKeys !== null && apiKeys.length > 0) {
-    const numberOfColumns = 10;
-    const substitutionParameters = buildDynamicQuerySubstitutions(
+    const numberOfColumns = 10; // number of columns to be substituted in the database
+    const queryString = buildQueryStringForSubstitutions(
+      createApiKeyBaseQuery,
       apiKeys,
       numberOfColumns,
     );
-    const queryString = `${createApiKeyBaseQuery}${substitutionParameters.join(
-      ", ",
-    )}`;
 
     await runSqlForApply(
       [queryString],
@@ -368,35 +362,29 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
   startingPoint: number,
   endingPoint: number,
 ) => {
-  // TODO do we need the async sleep here? Someone who knows JS pls advise
-  const asyncSleep = promisify(setTimeout);
+  const numberOfColumns = 10; // number of columns to be substituted in the database
 
   const params = [];
   for (let i = startingPoint; i < endingPoint; i++) {
     const paddedNumber = i.toString().padStart(3, "0");
     const keyName = `CypressE2ETestTechSupport${paddedNumber}`;
     const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
-    const keyValue = keyName + keyName;
+    const keyValue = keyName + keyName; // TODO this is weird, do we need to do it?
 
     params.push(
       createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
     );
   }
 
-  const numberOfColumns = 10;
-  const substitutionParameters = buildDynamicQuerySubstitutions(
+  const queryString = buildQueryStringForSubstitutions(
+    createApiKeyBaseQuery,
     params,
     numberOfColumns,
   );
-  const queryString = `${createApiKeyBaseQuery}${substitutionParameters.join(
-    ", ",
-  )}`;
 
   await runSqlForApply([queryString], {
     [queryString]: params.flatMap((item) => item),
   });
-
-  await asyncSleep(200);
 };
 
 interface ApiKeyDb {
