@@ -1,6 +1,7 @@
 import { after, describe } from "mocha";
 import {
   BASE_URL,
+  log,
   signInAsSuperAdmin,
   signInToIntegrationSite,
   signOut,
@@ -102,10 +103,6 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
     });
 
-    after(() => {
-      cy.task("refillDbWithPreExistingApiKeys", originalData);
-    });
-
     it("Should show No keys message when no apiKeys are present", () => {
       cy.log(
         "Should show No keys message when no apiKeys are present - Checking the page content is correct when no apiKeys are present",
@@ -139,6 +136,15 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       );
       cy.get(`[data-cy="footer"]`).should("be.visible");
     });
+
+    /*
+      If tests inside the scope fail then the `after` blocks won't run and that will prevent us from re-populating the API keys table. 
+      This "test" will run every time regardless of previous failures. 
+    */
+    it("Should re-populate the database with existing API keys", () => {
+      log("re-populating API keys table");
+      cy.task("refillDbWithPreExistingApiKeys", originalData);
+    });
   });
 
   describe("With Api Keys", () => {
@@ -164,10 +170,6 @@ describe("Api Dashboard SuperAdmin journeys", () => {
 
       cy.log("Clicking Manage API Keys");
       cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
-    });
-
-    after(() => {
-      cy.task("refillDbWithPreExistingApiKeys", originalData);
     });
 
     it("Should show 110 keys, 2 organisation in the filters and the pagination bar", () => {
@@ -913,6 +915,15 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         "href",
         "/find/api/admin/api-keys/manage",
       );
+    });
+
+    /*
+      If tests inside the scope fail then the `after` blocks won't run and that will prevent us from re-populating the API keys table. 
+      This "test" will run every time regardless of previous failures. 
+    */
+    it("Should re-populate the database with existing API keys", () => {
+      log("re-populating API keys table");
+      cy.task("refillDbWithPreExistingApiKeys", originalData);
     });
   });
 
