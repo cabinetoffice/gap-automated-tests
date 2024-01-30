@@ -12,15 +12,16 @@ import {
   SUPER_ADMIN_DASHBOARD_URL,
 } from "../../common/common";
 import {
-  fillOutDocUpload,
-  fillOutCustomSection,
-  fillOutEligibity,
-  fillOutRequiredChecks,
-  submitApplication,
   equalitySectionAccept,
   validateSubmissionSummarySection,
   triggerChangeFromSummary,
 } from "./helper";
+import {
+  fillOutCustomSection,
+  fillOutEligibity,
+  fillOutRequiredChecks,
+  submitApplication,
+} from "../../common/apply-helper";
 
 describe("Apply for a Grant", () => {
   beforeEach(() => {

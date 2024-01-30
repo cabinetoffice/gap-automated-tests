@@ -42,7 +42,7 @@ import {
   fillOutEligibity,
   fillOutRequiredChecks,
   submitApplication,
-} from "../applicant/helper";
+} from "../../common/apply-helper";
 import { MQ_DETAILS } from "../../common/constants";
 
 const {

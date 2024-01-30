@@ -8,17 +8,12 @@ import {
   yesSectionComplete,
 } from "../../common/common";
 import {
-  fillOutEligibity,
-  submitApplication,
   equalitySectionAccept,
-  equalitySectionDecline,
   fillOrgProfile,
   partialFillOrgProfile,
   editDetailsOnSummaryScreen,
   confirmDetailsOnSummaryScreen,
   confirmOrgAndFundingDetails,
-  fillMqOrgQuestionsAsLimitedCompany,
-  fillMqFunding,
   validateMqNonLimitedJourney,
   validateMqIndividualJourney,
   validateMqIndividualSummaryScreen,
@@ -34,6 +29,13 @@ import {
   validateSubmissionSummarySection,
   triggerChangeFromSummary,
 } from "./helper";
+import {
+  equalitySectionDecline,
+  fillMqFunding,
+  fillMqOrgQuestionsAsLimitedCompany,
+  fillOutEligibity,
+  submitApplication,
+} from "../../common/apply-helper";
 import { MQ_DETAILS } from "../../common/constants";
 
 describe("Apply for a Grant V2", () => {
