@@ -26,8 +26,8 @@ jobs:
         uses: jitterbit/get-changed-files@v1
         id: changed_files
 
-      - name: Set changed suites array
-        id: changed_suites_array
+      - name: Determine changed suites
+        id: changed_suites
         run: |
           CHANGED_SUITES_ARRAY=()
           if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/admin/') }} == true ]]; then
@@ -42,25 +42,25 @@ jobs:
           if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/find/') }} == true ]]; then
             CHANGED_SUITES_ARRAY+=("find")
           fi
-          for i in ${CHANGED_SUITES_ARRAY[@]}; do
-            echo $i
-          done
-          echo "changed_suites_array=$CHANGED_SUITES_ARRAY" >> "$GITHUB_OUTPUT"
+          CHANGED_SUITES=$(printf ",%s" "${CHANGED_SUITES_ARRAY[@]}")
+          CHANGED_SUITES=${CHANGED_SUITES:1}
+
+          echo $CHANGED_SUITES
+          echo "changed_suites=$CHANGED_SUITES" >> "$GITHUB_OUTPUT"
 
       - name: Set force_run_all_suites
         id: force_run_all_suites
         run: |
-          VALUE=${{ steps.changed_suites_array.outputs.changed_suites_array == null || contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') }}
+          VALUE=${{ steps.changed_suites.outputs.changed_suites == null || contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') }}
           echo "force_run_all_suites=$VALUE" >> "$GITHUB_OUTPUT"
 
-      - name: Determine suite
+      - name: Determine suites to run
         id: determine_suite
         run: |
           if [[ ${{ steps.force_run_all_suites.outputs.force_run_all_suites }} == true ]]; then
             echo "suite=all" >> "$GITHUB_OUTPUT"
           else
-            echo ${{ join(steps.changed_suites_array.outputs.changed_suites_array, ',') }}
-            echo "suite=${{ join(steps.changed_suites_array.outputs.changed_suites_array, ',') }}" >> "$GITHUB_OUTPUT"
+            echo "suite=${{ steps.changed_suites.outputs.changed_suites }}" >> "$GITHUB_OUTPUT"
           fi
 
   call-sandbox-chrome-reusable-e2e-test-run-workflow:
