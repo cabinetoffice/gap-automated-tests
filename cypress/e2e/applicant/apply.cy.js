@@ -104,9 +104,7 @@ describe("Apply for a Grant", () => {
     clickBack();
 
     cy.contains("Your Application");
-
     cy.get('[data-cy="cy-status-tag-Custom Section-In Progress"]');
-
     cy.contains("Review and submit").should("be.disabled");
 
     // re-add doc upload
