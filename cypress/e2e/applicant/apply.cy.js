@@ -118,6 +118,7 @@ describe("Apply for a Grant", () => {
     clickSaveAndContinue();
     clickSaveAndContinue();
     clickSaveAndContinue();
+
     fillOutDocUpload();
 
     clickSaveAndContinue();

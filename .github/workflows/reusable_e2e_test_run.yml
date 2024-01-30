@@ -33,23 +33,23 @@ jobs:
     environment: ${{ inputs.notify == 'true' && inputs.environment || '' }}
 
     steps:
-      # - name: Install OpenVPN 3
-      #   run: |
-      #     sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://packages.openvpn.net/packages-repo.gpg | sudo tee /etc/apt/keyrings/openvpn.asc
-      #     DISTRO=$(lsb_release -c | awk '{print $2}')
-      #     echo "deb [signed-by=/etc/apt/keyrings/openvpn.asc] https://packages.openvpn.net/openvpn3/debian $DISTRO main" | sudo tee /etc/apt/sources.list.d/openvpn-packages.list
-      #     sudo apt update
-      #     sudo apt install openvpn3
-      #     openvpn3 version
+      - name: Install OpenVPN 3
+        run: |
+          sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://packages.openvpn.net/packages-repo.gpg | sudo tee /etc/apt/keyrings/openvpn.asc
+          DISTRO=$(lsb_release -c | awk '{print $2}')
+          echo "deb [signed-by=/etc/apt/keyrings/openvpn.asc] https://packages.openvpn.net/openvpn3/debian $DISTRO main" | sudo tee /etc/apt/sources.list.d/openvpn-packages.list
+          sudo apt update
+          sudo apt install openvpn3
+          openvpn3 version
 
-      # - name: Connect to OpenVPN 3 Profile
-      #   run: |
-      #     echo "${{ secrets[format('{0}_FIND_OVPN_PROFILE', inputs.environment)] }}" > find.ovpn
-      #     openvpn3 config-import --config find.ovpn --name FINDVPN --persistent
-      #     openvpn3 config-acl --show --lock-down true --transfer-owner-session true --grant root --config FINDVPN
-      #     openvpn3 session-start --config FINDVPN
-      #     openvpn3 sessions-list
-      #     openvpn3 session-stats --config FINDVPN
+      - name: Connect to OpenVPN 3 Profile
+        run: |
+          echo "${{ secrets[format('{0}_FIND_OVPN_PROFILE', inputs.environment)] }}" > find.ovpn
+          openvpn3 config-import --config find.ovpn --name FINDVPN --persistent
+          openvpn3 config-acl --show --lock-down true --transfer-owner-session true --grant root --config FINDVPN
+          openvpn3 session-start --config FINDVPN
+          openvpn3 sessions-list
+          openvpn3 session-stats --config FINDVPN
 
       - name: Extract branch name
         shell: bash
@@ -64,38 +64,38 @@ jobs:
           # This enables manual runs to work as expected, and to run scheduled jobs for different envs against specific branches.
           ref: ${{ inputs.branch == './' && steps.extract_branch.outputs.branch || inputs.branch }}
 
-      # - name: Generate .env
-      #   run: |
-      #     cat << EOF > .env
-      #     ONE_LOGIN_BASE_URL=${{ secrets[format('{0}_ONE_LOGIN_BASE_URL', inputs.environment)] }}
-      #     ONE_LOGIN_USERNAME=${{ secrets[format('{0}_ONE_LOGIN_USERNAME', inputs.environment)] }}
-      #     ONE_LOGIN_PASSWORD=${{ secrets[format('{0}_ONE_LOGIN_PASSWORD', inputs.environment)] }}
-      #     APPLICATION_BASE_URL=${{ secrets[format('{0}_APPLICATION_BASE_URL', inputs.environment)] }}
-      #     POST_LOGIN_BASE_URL=${{ secrets[format('{0}_POST_LOGIN_BASE_URL', inputs.environment)] }}
-      #     ONE_LOGIN_APPLICANT_EMAIL=${{ secrets.ONE_LOGIN_APPLICANT_EMAIL }}
-      #     ONE_LOGIN_APPLICANT_PASSWORD=${{ secrets.ONE_LOGIN_APPLICANT_PASSWORD }}
-      #     ONE_LOGIN_APPLICANT_SUB=${{ secrets[format('{0}_ONE_LOGIN_APPLICANT_SUB', inputs.environment)] }}
-      #     ONE_LOGIN_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_ADMIN_EMAIL }}
-      #     ONE_LOGIN_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_ADMIN_PASSWORD }}
-      #     ONE_LOGIN_ADMIN_SUB=${{ secrets[format('{0}_ONE_LOGIN_ADMIN_SUB', inputs.environment)] }}
-      #     ONE_LOGIN_SUPER_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_SUPER_ADMIN_EMAIL }}
-      #     ONE_LOGIN_SUPER_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_SUPER_ADMIN_PASSWORD }}
-      #     ONE_LOGIN_SUPER_ADMIN_SUB=${{ secrets[format('{0}_ONE_LOGIN_SUPER_ADMIN_SUB', inputs.environment)] }}
-      #     ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL=${{ secrets.ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL }}
-      #     ONE_LOGIN_TECHNICAL_SUPPORT_PASSWORD=${{ secrets.ONE_LOGIN_TECHNICAL_SUPPORT_PASSWORD }}
-      #     ONE_LOGIN_TECHNICAL_SUPPORT_SUB=${{ secrets[format('{0}_ONE_LOGIN_TECHNICAL_SUPPORT_SUB', inputs.environment)] }}
-      #     AWS_VPC_SG_ID=${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }}
-      #     USERS_DATABASE_URL =${{ secrets[format('{0}_USERS_DATABASE_URL', inputs.environment)] }}
-      #     USERS_DATABASE_NAME=${{ secrets[format('{0}_USERS_DATABASE_NAME', inputs.environment)] }}
-      #     APPLY_DATABASE_URL =${{ secrets[format('{0}_APPLY_DATABASE_URL', inputs.environment)] }}
-      #     APPLY_DATABASE_NAME=${{ secrets[format('{0}_APPLY_DATABASE_NAME', inputs.environment)] }}
-      #     FIND_DATABASE_URL =${{ secrets[format('{0}_FIND_DATABASE_URL', inputs.environment)] }}
-      #     FIND_DATABASE_NAME=${{ secrets[format('{0}_FIND_DATABASE_NAME', inputs.environment)] }}
-      #     CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
-      #     CONTENTFUL_ACCESS_TOKEN=${{ secrets[format('{0}_CONTENTFUL_ACCESS_TOKEN', inputs.environment)] }}
-      #     CONTENTFUL_ENVIRONMENT_ID=${{ vars[format('{0}_CONTENTFUL_ENVIRONMENT_ID', inputs.environment)] }}
-      #     FIRST_USER_ID=1
-      #     EOF
+      - name: Generate .env
+        run: |
+          cat << EOF > .env
+          ONE_LOGIN_BASE_URL=${{ secrets[format('{0}_ONE_LOGIN_BASE_URL', inputs.environment)] }}
+          ONE_LOGIN_USERNAME=${{ secrets[format('{0}_ONE_LOGIN_USERNAME', inputs.environment)] }}
+          ONE_LOGIN_PASSWORD=${{ secrets[format('{0}_ONE_LOGIN_PASSWORD', inputs.environment)] }}
+          APPLICATION_BASE_URL=${{ secrets[format('{0}_APPLICATION_BASE_URL', inputs.environment)] }}
+          POST_LOGIN_BASE_URL=${{ secrets[format('{0}_POST_LOGIN_BASE_URL', inputs.environment)] }}
+          ONE_LOGIN_APPLICANT_EMAIL=${{ secrets.ONE_LOGIN_APPLICANT_EMAIL }}
+          ONE_LOGIN_APPLICANT_PASSWORD=${{ secrets.ONE_LOGIN_APPLICANT_PASSWORD }}
+          ONE_LOGIN_APPLICANT_SUB=${{ secrets[format('{0}_ONE_LOGIN_APPLICANT_SUB', inputs.environment)] }}
+          ONE_LOGIN_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_ADMIN_EMAIL }}
+          ONE_LOGIN_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_ADMIN_PASSWORD }}
+          ONE_LOGIN_ADMIN_SUB=${{ secrets[format('{0}_ONE_LOGIN_ADMIN_SUB', inputs.environment)] }}
+          ONE_LOGIN_SUPER_ADMIN_EMAIL=${{ secrets.ONE_LOGIN_SUPER_ADMIN_EMAIL }}
+          ONE_LOGIN_SUPER_ADMIN_PASSWORD=${{ secrets.ONE_LOGIN_SUPER_ADMIN_PASSWORD }}
+          ONE_LOGIN_SUPER_ADMIN_SUB=${{ secrets[format('{0}_ONE_LOGIN_SUPER_ADMIN_SUB', inputs.environment)] }}
+          ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL=${{ secrets.ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL }}
+          ONE_LOGIN_TECHNICAL_SUPPORT_PASSWORD=${{ secrets.ONE_LOGIN_TECHNICAL_SUPPORT_PASSWORD }}
+          ONE_LOGIN_TECHNICAL_SUPPORT_SUB=${{ secrets[format('{0}_ONE_LOGIN_TECHNICAL_SUPPORT_SUB', inputs.environment)] }}
+          AWS_VPC_SG_ID=${{ secrets[format('{0}_AWS_VPC_SG_ID', inputs.environment)] }}
+          USERS_DATABASE_URL =${{ secrets[format('{0}_USERS_DATABASE_URL', inputs.environment)] }}
+          USERS_DATABASE_NAME=${{ secrets[format('{0}_USERS_DATABASE_NAME', inputs.environment)] }}
+          APPLY_DATABASE_URL =${{ secrets[format('{0}_APPLY_DATABASE_URL', inputs.environment)] }}
+          APPLY_DATABASE_NAME=${{ secrets[format('{0}_APPLY_DATABASE_NAME', inputs.environment)] }}
+          FIND_DATABASE_URL =${{ secrets[format('{0}_FIND_DATABASE_URL', inputs.environment)] }}
+          FIND_DATABASE_NAME=${{ secrets[format('{0}_FIND_DATABASE_NAME', inputs.environment)] }}
+          CONTENTFUL_SPACE_ID=${{ secrets.CONTENTFUL_SPACE_ID }}
+          CONTENTFUL_ACCESS_TOKEN=${{ secrets[format('{0}_CONTENTFUL_ACCESS_TOKEN', inputs.environment)] }}
+          CONTENTFUL_ENVIRONMENT_ID=${{ vars[format('{0}_CONTENTFUL_ENVIRONMENT_ID', inputs.environment)] }}
+          FIRST_USER_ID=1
+          EOF
 
       - name: Convert suites to spec format
         id: convert_suites
@@ -115,45 +115,45 @@ jobs:
           echo $SPECS
           echo "spec=$SPECS" >> $GITHUB_OUTPUT
 
-      # - name: Cypress run
-      #   uses: cypress-io/github-action@v6
-      #   timeout-minutes: 60
-      #   with:
-      #     browser: ${{ inputs.browser }}
-      #     spec: ${{ join(steps.convert_suites.outputs.spec, ',') }}
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        timeout-minutes: 60
+        with:
+          browser: ${{ inputs.browser }}
+          spec: ${{ join(steps.convert_suites.outputs.spec, ',') }}
 
-      # - name: Disconnect from OPENVPN 3 Profile
-      #   run: openvpn3 session-manage --config FINDVPN --disconnect
-      #   if: always()
+      - name: Disconnect from OPENVPN 3 Profile
+        run: openvpn3 session-manage --config FINDVPN --disconnect
+        if: always()
 
-      # - name: Upload Report to S3
-      #   # there should be only one report generated from the run, so grab it for manipulation
-      #   # the filename will either start with pass_ or fail_ and we want to put the browser info between this status and the timestamp
-      #   # so replace any instance of pass_ with pass_{browser}_
-      #   # then replace any instance of fail_ with fail_{browser}_
-      #   # then rename the file to this new name so that the browser info is attached to the report
-      #   # then upload to s3 as normal
-      #   run: |
-      #     FILE_PATH="/home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report"
-      #     OLD_FILENAME=$(ls -a -d $FILE_PATH/*)
-      #     NEW_PASS_FILENAME=${OLD_FILENAME/pass_/pass_${{ inputs.browser }}_}
-      #     NEW_FAIL_FILENAME=${NEW_PASS_FILENAME/fail_/fail_${{ inputs.browser }}_}
-      #     mv $OLD_FILENAME $NEW_FAIL_FILENAME
-      #     aws s3 cp $FILE_PATH/ s3://gap-automated-tests/${{ inputs.environment }} --recursive --exclude "*" --include "*.html"
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-      #   if: ${{ !cancelled() && inputs.report == 'true' }}
+      - name: Upload Report to S3
+        # there should be only one report generated from the run, so grab it for manipulation
+        # the filename will either start with pass_ or fail_ and we want to put the browser info between this status and the timestamp
+        # so replace any instance of pass_ with pass_{browser}_
+        # then replace any instance of fail_ with fail_{browser}_
+        # then rename the file to this new name so that the browser info is attached to the report
+        # then upload to s3 as normal
+        run: |
+          FILE_PATH="/home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report"
+          OLD_FILENAME=$(ls -a -d $FILE_PATH/*)
+          NEW_PASS_FILENAME=${OLD_FILENAME/pass_/pass_${{ inputs.browser }}_}
+          NEW_FAIL_FILENAME=${NEW_PASS_FILENAME/fail_/fail_${{ inputs.browser }}_}
+          mv $OLD_FILENAME $NEW_FAIL_FILENAME
+          aws s3 cp $FILE_PATH/ s3://gap-automated-tests/${{ inputs.environment }} --recursive --exclude "*" --include "*.html"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+        if: ${{ !cancelled() && inputs.report == 'true' }}
 
-      # - name: Presign S3 report for sharing
-      #   run: |
-      #     FILE_PATH="/home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report"
-      #     FULL_FILE_PATH=$(ls -a -d $FILE_PATH/*)
-      #     FILENAME=${FULL_FILE_PATH/$FILE_PATH/}
-      #     aws s3 presign s3://gap-automated-tests/${{ inputs.environment }}$FILENAME --expires-in 604800
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
-      #   if: ${{ !cancelled() && inputs.report == 'true' }}
+      - name: Presign S3 report for sharing
+        run: |
+          FILE_PATH="/home/runner/work/gap-automated-tests/gap-automated-tests/mochawesome-report"
+          FULL_FILE_PATH=$(ls -a -d $FILE_PATH/*)
+          FILENAME=${FULL_FILE_PATH/$FILE_PATH/}
+          aws s3 presign s3://gap-automated-tests/${{ inputs.environment }}$FILENAME --expires-in 604800
+        env:
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+        if: ${{ !cancelled() && inputs.report == 'true' }}
