@@ -25,21 +25,18 @@ function sectionsAndQuestions() {
 
   // add question to new section
   addOptionalQuestion(
-    ".govuk-button--secondary",
     "Custom Question 1",
     "Short description",
     '[data-cy="cy-radioInput-option-YesNo"]',
   );
 
   addOptionalQuestion(
-    ".govuk-button--secondary",
     "Custom Question 2",
     "Short description",
     '[data-cy="cy-radioInput-option-ShortAnswer"]',
   );
 
   addOptionalQuestion(
-    ".govuk-button--secondary",
     "Custom Question 3",
     "Short description",
     '[data-cy="cy-radioInput-option-LongAnswer"]',
@@ -60,14 +57,12 @@ function sectionsAndQuestions() {
   );
 
   addOptionalQuestion(
-    ".govuk-button--secondary",
     "Custom Question 6",
     "Short description",
     '[data-cy="cy-radioInput-option-DocumentUpload"]',
   );
 
   addOptionalQuestion(
-    ".govuk-button--secondary",
     "Custom Question 7",
     "Short description",
     '[data-cy="cy-radioInput-option-Date"]',
@@ -99,8 +94,8 @@ function sectionsAndQuestions() {
   );
 }
 
-function addOptionalQuestion(section, questionText, description, type) {
-  cy.get(section).click();
+function addOptionalQuestion(questionText, description, type) {
+  cy.contains(".govuk-button", "Add a new question").click();
   cy.get('[data-cy="cy-fieldTitle-text-input"]').click();
   cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText, {
     force: true,
