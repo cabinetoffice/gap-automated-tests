@@ -119,7 +119,7 @@ jobs:
           fi
 
       - name: log spec
-        run: echo "spec=${{ steps.convert_suites.outputs.spec }}" >> $GITHUB_OUTPUT
+        run: echo "spec=${{ steps.convert_suites.outputs.spec }}"
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
