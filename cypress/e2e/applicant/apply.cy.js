@@ -18,6 +18,8 @@ import {
   fillOutRequiredChecks,
   submitApplication,
   equalitySectionAccept,
+  validateSubmissionSummarySection,
+  triggerChangeFromSummary,
 } from "./helper";
 
 describe("Apply for a Grant", () => {
@@ -126,6 +128,78 @@ describe("Apply for a Grant", () => {
     cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
 
     cy.contains("Review and submit").should("not.be.disabled");
+
+    log("Apply V1 Internal Grant - Reviewing submission");
+    cy.contains("Review and submit").click();
+
+    validateSubmissionSummarySection("Eligibility", [
+      { key: "Eligibility Statement", value: "Yes" },
+    ]);
+    validateSubmissionSummarySection("Required checks", [
+      { key: "Enter the name of your organisation", value: "My First Org" },
+      { key: "Choose your organisation type", value: "Limited company" },
+      {
+        key: "Enter your organisation's address",
+        value: "Address line 1,Address line 2,Town,County,Postcode",
+      },
+      {
+        key: "Enter your Charity Commission number (if you have one)",
+        value: "-",
+      },
+      {
+        key: "Enter your Companies House number (if you have one)",
+        value: "-",
+      },
+      {
+        key: "How much does your organisation require as a grant?",
+        value: "100",
+      },
+      {
+        key: "Where will this funding be spent?",
+        value:
+          "North East England,North West England,South East England," +
+          "South West England,Midlands,Scotland,Wales,Northern Ireland",
+      },
+    ]);
+    validateSubmissionSummarySection("Custom Section", [
+      { key: "Custom Question 1", value: "Yes" },
+      { key: "Custom Question 2", value: "input 1" },
+      { key: "Custom Question 3", value: "input 2" },
+      { key: "Custom Question 4", value: "Choice 1" },
+      { key: "Custom Question 5", value: "Choice 1,Choice 2" },
+      { key: "Custom Question 6", value: "example.doc" },
+      { key: "Custom Question 7", value: "01-01-2000" },
+    ]);
+
+    log(
+      "Apply V2 Internal Grant - validating that can change answers from summary page",
+    );
+    triggerChangeFromSummary(
+      "Required checks",
+      "Enter the name of your organisation",
+    );
+    cy.get('[data-cy="cy-APPLICANT_ORG_NAME-text-input"]').type(
+      "{selectall}{backspace}My Second Org",
+    );
+    clickSaveAndContinue();
+    validateSubmissionSummarySection("Required checks", [
+      { key: "Enter the name of your organisation", value: "My Second Org" },
+    ]);
+
+    triggerChangeFromSummary("Custom Section", "Custom Question 1");
+    cy.get('[data-cy="cy-radioInput-option-No"]').click();
+    clickSaveAndContinue();
+    validateSubmissionSummarySection("Custom Section", [
+      { key: "Custom Question 1", value: "No" },
+    ]);
+
+    triggerChangeFromSummary("Custom Section", "Custom Question 5");
+    cy.get('[data-cy="cy-checkbox-value-Choice 1"]').click();
+    cy.get('[data-cy="cy-checkbox-value-Choice 2"]').click();
+    clickSaveAndContinue();
+    validateSubmissionSummarySection("Custom Section", [
+      { key: "Custom Question 5", value: "-" },
+    ]);
 
     // submit
     log("Apply V1 Internal Grant - Submitting application");

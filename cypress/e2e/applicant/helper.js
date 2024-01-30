@@ -5,6 +5,7 @@ import {
   clickContinue,
   clickSave,
   clickBack,
+  validateValueForKeyInTable,
 } from "../../common/common";
 
 export const fillOutDocUpload = () => {
@@ -173,8 +174,6 @@ export const fillOutRequiredChecks = () => {
 };
 
 export const submitApplication = () => {
-  cy.contains("Review and submit").click();
-
   cy.contains("Submit application").click();
 
   cy.contains("Are you sure you want to submit this application?");
@@ -1079,4 +1078,26 @@ export const confirmOrgAndFundingDetails = (
   cy.get('[data-cy="cy-radioInput-option-YesIveCompletedThisSection"]').click();
   clickSaveAndContinue();
   cy.get('[data-cy="cy-status-tag-Funding-Completed"]').should("exist");
+};
+
+export const validateSubmissionSummarySection = (sectionTitle, questions) => {
+  cy.contains("div", sectionTitle)
+    .parent()
+    .within(() => {
+      questions.forEach(({ key, value }) => {
+        validateValueForKeyInTable(key, value);
+      });
+    });
+};
+
+export const triggerChangeFromSummary = (sectionTitle, questionTitle) => {
+  cy.contains("div", sectionTitle)
+    .parent()
+    .within(() => {
+      cy.contains(questionTitle)
+        .parent()
+        .within(() => {
+          cy.contains("Change").click();
+        });
+    });
 };
