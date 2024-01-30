@@ -100,23 +100,24 @@ jobs:
       - name: Convert suites to spec format
         id: convert_suites
         run: |
+          SPECS=()
           if [[ ${{ inputs.suite }} == all ]]; then
-            echo "spec=(cypress/**)" >> $GITHUB_OUTPUT
-          elif [[ ${{ inputs.suite }}  == admin ]]; then
-            echo "spec=(cypress/e2e/admin/*.cy.js)" >> $GITHUB_OUTPUT
+            SPECS+=("cypress/**")
+          elif [[ ${{ inputs.suite }} == admin ]]; then
+            SPECS+=("cypress/e2e/admin/*.cy.js")
           elif [[ ${{ inputs.suite }} == applicant || ${{ inputs.suite }} == apply }} ]]; then
-            echo "spec=(cypress/e2e/applicant/*.cy.js)" >> $GITHUB_OUTPUT
+            SPECS+=("cypress/e2e/applicant/*.cy.js")
           elif [[ ${{ inputs.suite }} == find }} ]]; then
-            echo "spec=(cypress/e2e/find/*.cy.js)" >> $GITHUB_OUTPUT
+            SPECS+=("cypress/e2e/find/*.cy.js")
           elif [[ ${{ inputs.suite }} == superadmin }} ]]; then
-            echo "spec=(cypress/e2e/superadmin/*.cy.js)" >> $GITHUB_OUTPUT
+            SPECS+=("cypress/e2e/superadmin/*.cy.js")
           else
-            SPECS=()
             for SUITE in ${{ inputs.suite }}; do
               SPECS+=("cypress/e2e/${SUITE}/*.cy.js")
             done
-            echo "spec=$SPECS" >> $GITHUB_OUTPUT
           fi
+          echo "$SPECS"
+          echo "spec=$SPECS" >> $GITHUB_OUTPUT
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
