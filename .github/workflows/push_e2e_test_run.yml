@@ -53,7 +53,7 @@ jobs:
       - name: Determine suite
         id: determine_suite
         run: |
-          if [[ ${{ steps.force_run_all_suites.outputs.force_run_all_suites }} ]]; then
+          if [[ ${{ steps.force_run_all_suites.outputs.force_run_all_suites }} == true ]]; then
             echo "suite=all" >> "$GITHUB_OUTPUT"
           else
             echo "suite=${{ join(steps.changed_suites_array.outputs.changed_suites_array, ',') }}" >> "$GITHUB_OUTPUT"
