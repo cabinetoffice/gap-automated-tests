@@ -25,49 +25,49 @@ function sectionsAndQuestions() {
 
   // add question to new section
   addOptionalQuestion(
-    '[data-cy="cy_addAQuestion-Custom Section"]',
+    ".govuk-button--secondary",
     "Custom Question 1",
     "Short description",
     '[data-cy="cy-radioInput-option-YesNo"]',
   );
 
   addOptionalQuestion(
-    '[data-cy="cy_addAQuestion-Custom Section"]',
+    ".govuk-button--secondary",
     "Custom Question 2",
     "Short description",
     '[data-cy="cy-radioInput-option-ShortAnswer"]',
   );
 
   addOptionalQuestion(
-    '[data-cy="cy_addAQuestion-Custom Section"]',
+    ".govuk-button--secondary",
     "Custom Question 3",
     "Short description",
     '[data-cy="cy-radioInput-option-LongAnswer"]',
   );
 
   addOptionalMultiChoiceQuestion(
-    '[data-cy="cy_addAQuestion-Custom Section"]',
+    ".govuk-button--secondary",
     "Custom Question 4",
     "Short description",
     '[data-cy="cy-radioInput-option-MultipleChoice"]',
   );
 
   addOptionalMultiChoiceQuestion(
-    '[data-cy="cy_addAQuestion-Custom Section"]',
+    ".govuk-button--secondary",
     "Custom Question 5",
     "Short description",
     '[data-cy="cy-radioInput-option-MultipleSelect"]',
   );
 
   addOptionalQuestion(
-    '[data-cy="cy_addAQuestion-Custom Section"]',
+    ".govuk-button--secondary",
     "Custom Question 6",
     "Short description",
     '[data-cy="cy-radioInput-option-DocumentUpload"]',
   );
 
   addOptionalQuestion(
-    '[data-cy="cy_addAQuestion-Custom Section"]',
+    ".govuk-button--secondary",
     "Custom Question 7",
     "Short description",
     '[data-cy="cy-radioInput-option-Date"]',
@@ -77,8 +77,10 @@ function sectionsAndQuestions() {
     String(index + 1),
   );
   questionIndexes.forEach((idx) => {
-    cy.get(`[data-cy="cy_Section-Custom Question ${idx}"]`).should("exist");
+    cy.get("table").contains("td", `Custom Question ${idx}`);
   });
+
+  cy.get(".govuk-button").contains("Save and go back").click();
 
   // add section
   cy.get('[data-cy="cy-button-addNewSection"]').click();
@@ -88,7 +90,7 @@ function sectionsAndQuestions() {
   });
   clickSaveAndContinue();
   // delete section
-  cy.get('[data-cy="cy_sections_deleteSectionBtn-Deletable Section"]').click();
+  cy.get(".govuk-button").contains("Delete section").click();
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
   cy.get('[data-cy="cy-button-Confirm"]').click();
 
