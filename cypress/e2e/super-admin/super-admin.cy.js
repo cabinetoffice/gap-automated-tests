@@ -40,7 +40,6 @@ describe("Super Admin", () => {
     cy.get("[data-cy=cySignInAndApply-Link]").click();
 
     signInAsSuperAdmin();
-
     cy.contains("Manage users");
 
     cy.get('[data-cy="cy-button-Search"]').click();
