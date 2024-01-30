@@ -108,6 +108,9 @@ jobs:
               SPECS+=("cypress/e2e/$SUITE/*.cy.js")
             done
           fi
+          for i in ${SPECS[@]}; do
+            echo $i
+          done
           echo "spec=$SPECS" >> $GITHUB_OUTPUT
 
       # - name: Cypress run
