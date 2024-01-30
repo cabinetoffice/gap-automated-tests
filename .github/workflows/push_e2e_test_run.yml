@@ -49,7 +49,7 @@ jobs:
       - name: Set force_run_all_suites
         id: force_run_all_suites
         run: |
-          VALUE=${{ steps.changed_suites.outputs.changed_suites == null || contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') }}
+          VALUE=${{ steps.changed_suites.outputs.changed_suites == null || contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') || contains(steps.changed_files.outputs.all, 'package.json') || contains(steps.changed_files.outputs.all, '.github/workflows/push_e2e_test_run.yml') || contains(steps.changed_files.outputs.all, '.github/workflows/reusable_e2e_test_run.yml') }}
           echo "force_run_all_suites=$VALUE" >> "$GITHUB_OUTPUT"
 
       - name: Determine suites to run
