@@ -104,7 +104,10 @@ jobs:
           if [[ ${{ inputs.suite }} == all ]]; then
             SPECS+=("cypress/**")
           else
-            for SUITE in ${${{ inputs.suite }}[@]}; do
+            SUITES=${{inputs.suite}}
+            SUITES=(${SUITES//,/ })
+            echo $SUITES
+            for SUITE in ${SUITES[@]}; do
               SPECS+=("cypress/e2e/$SUITE/*.cy.js")
             done
           fi
