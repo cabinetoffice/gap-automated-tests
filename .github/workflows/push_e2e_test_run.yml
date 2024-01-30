@@ -42,12 +42,13 @@ jobs:
           if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/find/') }} ]]; then
             CHANGED_SUITES_ARRAY+=("find")
           fi
+          echo $CHANGED_SUITES_ARRAY
           echo "changed_suites_array=$CHANGED_SUITES_ARRAY" >> "$GITHUB_OUTPUT"
 
       - name: Set force_run_all_suites
         id: force_run_all_suites
         run: |
-          VALUE=${#${{ steps.changed_suites_array.outputs.changed_suites_array }}[@]} == 0 || ${{ contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') }}
+          VALUE=${{ fromJson(steps.changed_suites_array.outputs.changed_suites_array)[0] == null || contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') }}
           echo "force_run_all_suites=$VALUE" >> "$GITHUB_OUTPUT"
 
       - name: Determine suite
