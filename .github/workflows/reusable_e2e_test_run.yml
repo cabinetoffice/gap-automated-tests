@@ -97,6 +97,9 @@ jobs:
           FIRST_USER_ID=1
           EOF
 
+      - name: log suite
+        run: echo "spec=${{ inputs.suite }}"
+
       - name: Convert suites to spec format
         id: convert_suites
         run: |
