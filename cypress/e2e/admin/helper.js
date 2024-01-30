@@ -80,7 +80,7 @@ function sectionsAndQuestions() {
     cy.get("table").contains("td", `Custom Question ${idx}`);
   });
 
-  cy.get(".govuk-button").contains("Save and go back").click();
+  cy.contains(".govuk-button", "Save and go back").click();
 
   // add section
   cy.get('[data-cy="cy-button-addNewSection"]').click();
