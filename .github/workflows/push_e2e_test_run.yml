@@ -30,16 +30,16 @@ jobs:
         id: changed_suites_array
         run: |
           CHANGED_SUITES_ARRAY=()
-          if [[ "${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/admin/') }}" ]]; then
+          if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/admin/') }} ]]; then
             CHANGED_SUITES_ARRAY+=("admin")
           fi
-          if [[ "${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/applicant/' ) }}" ]]; then
+          if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/applicant/' ) }} ]]; then
             CHANGED_SUITES_ARRAY+=("applicant")
           fi
-          if [[ "${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/superadmin/') }}" ]]; then
+          if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/superadmin/') }} ]]; then
             CHANGED_SUITES_ARRAY+=("superadmin")
           fi
-          if [[ "${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/find/') }}" ]]; then
+          if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/find/') }} ]]; then
             CHANGED_SUITES_ARRAY+=("find")
           fi
           echo "changed_suites_array=$CHANGED_SUITES_ARRAY" >> "$GITHUB_OUTPUT"
@@ -53,7 +53,7 @@ jobs:
       - name: Determine suite
         id: determine_suite
         run: |
-          if [[ "${{ steps.force_run_all_suites.outputs.force_run_all_suites }}" == "true" ]]; then
+          if [[ ${{ steps.force_run_all_suites.outputs.force_run_all_suites }} ]]; then
             echo "suite=all" >> "$GITHUB_OUTPUT"
           else
             echo "suite=${{ join(steps.changed_suites_array.outputs.changed_suites_array, ',') }}" >> "$GITHUB_OUTPUT"
