@@ -10,10 +10,10 @@ on:
         default: chrome
         type: string
       report:
-        default: "false"
+        default: false
         type: string
       notify:
-        default: "false"
+        default: false
         type: string
       environment:
         default: SANDBOX
@@ -113,10 +113,9 @@ jobs:
             SPECS+=("cypress/e2e/superadmin/*.cy.js")
           else
             for SUITE in ${{ inputs.suite }}; do
-              SPECS+=("cypress/e2e/${SUITE}/*.cy.js")
+              SPECS+=("cypress/e2e/$SUITE/*.cy.js")
             done
           fi
-          echo "$SPECS"
           echo "spec=$SPECS" >> $GITHUB_OUTPUT
 
       - name: Cypress run
