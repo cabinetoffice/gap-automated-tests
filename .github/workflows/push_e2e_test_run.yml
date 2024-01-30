@@ -44,8 +44,6 @@ jobs:
           fi
           CHANGED_SUITES=$(printf ",%s" "${CHANGED_SUITES_ARRAY[@]}")
           CHANGED_SUITES=${CHANGED_SUITES:1}
-
-          echo $CHANGED_SUITES
           echo "changed_suites=$CHANGED_SUITES" >> "$GITHUB_OUTPUT"
 
       - name: Set force_run_all_suites

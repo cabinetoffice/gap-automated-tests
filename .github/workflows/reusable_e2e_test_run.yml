@@ -100,20 +100,19 @@ jobs:
       - name: Convert suites to spec format
         id: convert_suites
         run: |
-          SPECS=()
+          SPECS_ARRAY=()
           if [[ ${{ inputs.suite }} == all ]]; then
-            SPECS+=("cypress/**")
+            SPECS_ARRAY+=("cypress/**")
           else
-            SUITES=${{inputs.suite}}
-            SUITES=(${SUITES//,/ })
-            echo $SUITES
-            for SUITE in ${SUITES[@]}; do
-              SPECS+=("cypress/e2e/$SUITE/*.cy.js")
+            SUITES_ARRAY=${{inputs.suite}}
+            SUITES_ARRAY=(${SUITES_ARRAY//,/ })
+            for SUITE in ${SUITES_ARRAY[@]}; do
+              SPECS_ARRAY+=("cypress/e2e/$SUITE/*.cy.js")
             done
           fi
-          for i in ${SPECS[@]}; do
-            echo $i
-          done
+          SPECS=$(printf ",%s" "${SPECS_ARRAY[@]}")
+          SPECS=${SPECS:1}
+          echo $SPECS
           echo "spec=$SPECS" >> $GITHUB_OUTPUT
 
       # - name: Cypress run
