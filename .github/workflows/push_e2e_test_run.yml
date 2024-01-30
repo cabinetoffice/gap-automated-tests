@@ -48,7 +48,8 @@ jobs:
       - name: Set force_run_all_suites
         id: force_run_all_suites
         run: |
-          VALUE=${{ fromJson(steps.changed_suites_array.outputs.changed_suites_array)[0] == null || contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') }}
+          echo ${{ steps.changed_suites_array.outputs.changed_suites_array }}
+          VALUE=${{ steps.changed_suites_array.outputs.changed_suites_array[0] == null || contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') }}
           echo "force_run_all_suites=$VALUE" >> "$GITHUB_OUTPUT"
 
       - name: Determine suite
