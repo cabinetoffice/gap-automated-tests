@@ -10,10 +10,10 @@ on:
         default: chrome
         type: string
       report:
-        default: false
+        default: "false"
         type: string
       notify:
-        default: false
+        default: "false"
         type: string
       environment:
         default: SANDBOX
@@ -97,12 +97,36 @@ jobs:
           FIRST_USER_ID=1
           EOF
 
+      - name: Convert suites to spec format
+        id: convert_suites
+        run: |
+          if [[ ${{ inputs.suite == 'all' }} ]]; then
+            echo "spec=(cypress/**)" >> $GITHUB_OUTPUT
+          elif [[ ${{ inputs.suite == 'admin' }} ]]; then
+            echo "spec=(cypress/e2e/admin/*.cy.js)" >> $GITHUB_OUTPUT
+          elif [[ ${{ inputs.suite == 'applicant' || inputs.suite == 'apply' }} ]]; then
+            echo "spec=(cypress/e2e/applicant/*.cy.js)" >> $GITHUB_OUTPUT
+          elif [[ ${{ inputs.suite == 'find' }} ]]; then
+            echo "spec=(cypress/e2e/find/*.cy.js)" >> $GITHUB_OUTPUT
+          elif [[ ${{ inputs.suite == 'superadmin' }} ]]; then
+            echo "spec=(cypress/e2e/superadmin/*.cy.js)" >> $GITHUB_OUTPUT
+          else
+            SPECS=()
+            for SUITE in ${{ inputs.suite }}; do
+              SPECS+=("cypress/e2e/${SUITE}/*.cy.js")
+            done
+            echo "spec=$SPECS" >> $GITHUB_OUTPUT
+          fi
+
+      - name: log spec
+        run: echo "spec=${{ steps.convert_suites.outputs.spec }}" >> $GITHUB_OUTPUT
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         timeout-minutes: 60
         with:
           browser: ${{ inputs.browser }}
-          spec: ${{ inputs.suite == 'all' && 'cypress/**' || format('cypress/e2e/{0}/*.cy.js', inputs.suite == 'superadmin' && 'super-admin' || inputs.suite) }}
+          spec: ${{ steps.convert_suites.outputs.spec }}
 
       - name: Disconnect from OPENVPN 3 Profile
         run: openvpn3 session-manage --config FINDVPN --disconnect
