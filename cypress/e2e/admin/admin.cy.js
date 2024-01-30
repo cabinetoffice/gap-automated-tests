@@ -15,6 +15,7 @@ import {
   signInToIntegrationSite,
   signOut,
   validateXlsx,
+  clickContinue,
 } from "../../common/common";
 import { GRANT_NAME, SPOTLIGHT_SUBMISSION_STATUS, TASKS } from "./constants";
 import {
@@ -35,11 +36,14 @@ import {
 
 import {
   equalitySectionDecline,
+  fillMqFunding,
+  fillMqOrgQuestionsAsLimitedCompany,
   fillOutCustomSection,
   fillOutEligibity,
   fillOutRequiredChecks,
   submitApplication,
 } from "../applicant/helper";
+import { MQ_DETAILS } from "../../common/constants";
 
 const {
   UPDATE_SPOTLIGHT_SUBMISSION_STATUS,
@@ -216,16 +220,40 @@ describe("Create a Grant", () => {
         cy.log("Visiting application while published");
         cy.visit(applicationUrl, { failOnStatusCode: false });
         cy.get(".govuk-heading-l").contains("Before you start");
+        clickContinue();
+        fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
+        fillMqFunding(MQ_DETAILS);
+        clickText("Confirm and submit");
+        cy.contains("Cypress - Grant Application");
+        cy.contains("Your Application");
+        cy.get('[data-cy="cy-status-tag-Eligibility-Not Started"]');
+        clickBack();
+        cy.contains("p", "Cypress - Grant Application")
+          .parent()
+          .parent()
+          .within(() => {
+            cy.contains("strong", "In Progress");
+          });
         cy.log("Heading back to scheme");
         cy.visit(schemeUrl);
         publishApplication(false);
         cy.visit(applicationUrl, { failOnStatusCode: false });
-        cy.contains("This grant is closed");
+        cy.contains("p", "Cypress - Grant Application")
+          .parent()
+          .parent()
+          .within(() => {
+            cy.contains("strong", "Grant Closed");
+          });
         cy.log("Heading back to scheme");
         cy.visit(schemeUrl);
         publishApplication(true);
         cy.visit(applicationUrl);
-        cy.get(".govuk-heading-l").contains("Before you start");
+        cy.contains("p", "Cypress - Grant Application")
+          .parent()
+          .parent()
+          .within(() => {
+            cy.contains("strong", "In Progress");
+          });
       });
     });
 
@@ -672,6 +700,7 @@ describe("Downloads and Due Diligence", () => {
     log(
       "Admin V1 Internal - Download Submission Export - Submitting application",
     );
+    cy.contains("Review and submit").click();
     submitApplication();
     log(
       "Admin V1 Internal - Download Submission Export - Declining Equality Section",
