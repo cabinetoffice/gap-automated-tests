@@ -66,7 +66,6 @@ describe("Create a Grant", () => {
     signInAsAdmin();
     log("Admin grant creation journey - creating Grant");
     createGrant(GRANT_NAME);
-
     // create advert
     log(
       "Scheme details with an in progress advert journey - creating Advert Section 1",

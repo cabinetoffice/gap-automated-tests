@@ -28,7 +28,6 @@ describe("Find a Grant", () => {
 
   it("Can navigate to information pages", () => {
     cy.contains("Find a grant");
-
     // navigates to about us menu
     cy.get('[data-cy="cyaboutGrantsPageLink"]').click();
 
