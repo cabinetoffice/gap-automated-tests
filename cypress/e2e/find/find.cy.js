@@ -19,7 +19,6 @@ describe("Find a Grant", () => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
     cy.task("setUpFindData");
-
     signInToIntegrationSite();
   });
 
