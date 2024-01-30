@@ -100,15 +100,15 @@ jobs:
       - name: Convert suites to spec format
         id: convert_suites
         run: |
-          if [[ ${{ inputs.suite }} == 'all' ]]; then
+          if [[ ${{ inputs.suite }} == all ]]; then
             echo "spec=(cypress/**)" >> $GITHUB_OUTPUT
-          elif [[ ${{ inputs.suite }}  == 'admin' ]]; then
+          elif [[ ${{ inputs.suite }}  == admin ]]; then
             echo "spec=(cypress/e2e/admin/*.cy.js)" >> $GITHUB_OUTPUT
-          elif [[ ${{ inputs.suite }} == 'applicant' || ${{ inputs.suite }} == 'apply' }} ]]; then
+          elif [[ ${{ inputs.suite }} == applicant || ${{ inputs.suite }} == apply }} ]]; then
             echo "spec=(cypress/e2e/applicant/*.cy.js)" >> $GITHUB_OUTPUT
-          elif [[ ${{ inputs.suite }} == 'find' }} ]]; then
+          elif [[ ${{ inputs.suite }} == find }} ]]; then
             echo "spec=(cypress/e2e/find/*.cy.js)" >> $GITHUB_OUTPUT
-          elif [[ ${{ inputs.suite }} == 'superadmin' }} ]]; then
+          elif [[ ${{ inputs.suite }} == superadmin }} ]]; then
             echo "spec=(cypress/e2e/superadmin/*.cy.js)" >> $GITHUB_OUTPUT
           else
             SPECS=()
