@@ -97,33 +97,12 @@ jobs:
           FIRST_USER_ID=1
           EOF
 
-      - name: Convert suites to spec format
-        id: convert_suites
-        run: |
-          SPECS=()
-          if [[ ${{ inputs.suite }} == all ]]; then
-            SPECS+=("cypress/**")
-          elif [[ ${{ inputs.suite }} == admin ]]; then
-            SPECS+=("cypress/e2e/admin/*.cy.js")
-          elif [[ ${{ inputs.suite }} == applicant || ${{ inputs.suite }} == apply ]]; then
-            SPECS+=("cypress/e2e/applicant/*.cy.js")
-          elif [[ ${{ inputs.suite }} == find ]]; then
-            SPECS+=("cypress/e2e/find/*.cy.js")
-          elif [[ ${{ inputs.suite }} == superadmin ]]; then
-            SPECS+=("cypress/e2e/superadmin/*.cy.js")
-          else
-            for SUITE in ${${{ inputs.suite }}[@]}; do
-              SPECS+=("cypress/e2e/$SUITE/*.cy.js")
-            done
-          fi
-          echo "spec=$SPECS" >> $GITHUB_OUTPUT
-
       - name: Cypress run
         uses: cypress-io/github-action@v6
         timeout-minutes: 60
         with:
           browser: ${{ inputs.browser }}
-          spec: ${{ join(steps.convert_suites.outputs.spec, ',') }}
+          spec: ${{ inputs.suite == 'all' && 'cypress/**' || format('cypress/e2e/{0}/*.cy.js', inputs.suite == 'superadmin' && 'super-admin' || inputs.suite) }}
 
       - name: Disconnect from OPENVPN 3 Profile
         run: openvpn3 session-manage --config FINDVPN --disconnect
