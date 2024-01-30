@@ -1,5 +1,3 @@
-import * as dayjs from "dayjs";
-
 export const BASE_URL = Cypress.env("applicationBaseUrl");
 export const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
 export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
@@ -199,7 +197,6 @@ export const validateXlsx = (file: string, data: string[][]) => {
 };
 
 export const log = (message: string) => {
-  message = dayjs().format() + message;
   cy.log(message);
   cy.task("log", message);
 };
