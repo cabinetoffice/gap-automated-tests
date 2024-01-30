@@ -42,7 +42,9 @@ jobs:
           if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/find/') }} == true ]]; then
             CHANGED_SUITES_ARRAY+=("find")
           fi
-          echo $CHANGED_SUITES_ARRAY
+          for i in ${CHANGED_SUITES_ARRAY[@]}; do
+            echo $i
+          done
           echo "changed_suites_array=$CHANGED_SUITES_ARRAY" >> "$GITHUB_OUTPUT"
 
       - name: Set force_run_all_suites
