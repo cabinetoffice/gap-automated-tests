@@ -105,7 +105,7 @@ jobs:
             SPECS+=("cypress/**")
           elif [[ ${{ inputs.suite }} == admin ]]; then
             SPECS+=("cypress/e2e/admin/*.cy.js")
-          elif [[ ${{ inputs.suite }} == applicant || ${{ inputs.suite }} == apply }} ]]; then
+          elif [[ ${{ inputs.suite }} == applicant || ${{ inputs.suite }} == apply ]]; then
             SPECS+=("cypress/e2e/applicant/*.cy.js")
           elif [[ ${{ inputs.suite }} == find }} ]]; then
             SPECS+=("cypress/e2e/find/*.cy.js")
