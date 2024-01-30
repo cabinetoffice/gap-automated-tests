@@ -112,7 +112,7 @@ jobs:
           elif [[ ${{ inputs.suite }} == superadmin ]]; then
             SPECS+=("cypress/e2e/superadmin/*.cy.js")
           else
-            for SUITE in ${{ inputs.suite }}; do
+            for SUITE in ${${{ inputs.suite }}[@]}; do
               SPECS+=("cypress/e2e/$SUITE/*.cy.js")
             done
           fi
