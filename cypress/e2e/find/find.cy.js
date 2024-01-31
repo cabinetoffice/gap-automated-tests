@@ -97,6 +97,50 @@ describe("Find a Grant", () => {
       });
     });
 
+    it("can apply and clear filters", () => {
+      cy.task("publishGrantsToContentful");
+      // wait for grant to be published to contentful
+      cy.wait(5000);
+
+      cy.get('[data-cy="cySearchGrantsBtn"]').click();
+
+      cy.get('[data-cy="cyPersonal / individualCheckbox"]').click();
+      cy.get('[data-cy="cyNationalCheckbox"]').click();
+
+      const filters = {
+        whoCanApply: [
+          ["Personal / individual", "Personal / Individual"],
+          ["Public sector", "Public Sector"],
+          ["Private sector", "Private Sector"],
+          ["Non profit", "Non Profit"],
+          ["Local authority", "Local Authority"],
+        ],
+      };
+
+      filters.whoCanApply.forEach((filterOption) => {
+        cy.get(`[data-cy="cy${filterOption[0]}Checkbox"]`).click();
+        cy.get('[data-cy="cyApplyFilter"]').click();
+        cy.get(".grants_list > :nth-child(1) > :nth-child(5)").contains(
+          filterOption[1],
+        );
+      });
+
+      // cy.get('[data-cy="cy£10,001 to £50,000Checkbox"]').click();
+      // cy.get('[data-cy="cy£250,001 to £1,000,000Checkbox"]').click();
+      // cy.get('[data-cy="cyDateFilter-fromDay"]').type("01");
+      // cy.get('[data-cy="cyDateFilter-fromMonth"]').type("01");
+      // cy.get('[data-cy="cyDateFilter-fromYear"]').type("2024");
+      // cy.get('[data-cy="cyDateFilter-toDay"]').type("31");
+      // cy.get('[data-cy="cyDateFilter-toMonth"]').type("12");
+      // cy.get('[data-cy="cyDateFilter-toYear"]').type("2040");
+      // cy.get('[data-cy="cyApplyFilter"]').click();
+      // cy.get('[data-cy="cySearchDescription"]').contains("Showing grants added between 1 January 2024 to 31 December 2040");
+      // cy.get('.grants_list > :nth-child(2) > :nth-child(3)').contains("National");
+      // cy.get('.grants_list > :nth-child(1) > :nth-child(5)').contains("Personal / Individual");
+      // cy.get('.grants_list > :nth-child(1) > :nth-child(6)').contains("£10,000 to £50,000");
+      cy.wait(9999999999);
+    });
+
     it("can navigate through pagination and limit search term to < 100 characters", () => {
       cy.contains("Find a grant");
 
