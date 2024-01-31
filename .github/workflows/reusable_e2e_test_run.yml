@@ -102,7 +102,7 @@ jobs:
         run: |
           SPECS_ARRAY=()
           if [[ ${{ inputs.suite }} == all ]]; then
-            SPECS_ARRAY+=("cypress/**")
+            SPECS_ARRAY+=("cypress/**/*.cy.js")
           else
             SUITES_ARRAY=${{inputs.suite}}
             SUITES_ARRAY=(${SUITES_ARRAY//,/ })
