@@ -104,26 +104,88 @@ describe("Find a Grant", () => {
 
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
 
-      cy.get('[data-cy="cyPersonal / individualCheckbox"]').click();
-      cy.get('[data-cy="cyNationalCheckbox"]').click();
-
       const filters = {
         whoCanApply: [
           ["Personal / individual", "Personal / Individual"],
           ["Public sector", "Public Sector"],
           ["Private sector", "Private Sector"],
-          ["Non profit", "Non Profit"],
-          ["Local authority", "Local Authority"],
+          ["Non profit", "Non-profit"],
+          ["Local authority", "Local authority"],
+        ],
+        location: [
+          "National",
+          "England",
+          "North East England",
+          "North West England",
+          "South East England",
+          "South West England",
+          "Midlands",
+          "Scotland",
+          "Wales",
+          "Northern Ireland",
+        ],
+        howMuchCanYouGet: [
+          // cy.get('[data-cy="cy£0 to £10,000Checkbox"]')
+          ["£0 to £10,000", 10000],
+          ["£10,001 to £50,000", 50000],
+          ["£50,001 to £250,000", 250000],
+          ["£250,001 to £1,000,000", 1000000],
+          ["£1,000,001 to £5,000,000", 5000000],
+          ["£5,000,000 plus", 5000000],
         ],
       };
 
-      filters.whoCanApply.forEach((filterOption) => {
-        cy.get(`[data-cy="cy${filterOption[0]}Checkbox"]`).click();
+      // filters.whoCanApply.forEach((filterOption) => {
+      //   cy.get(`[data-cy="cy${filterOption[0]}Checkbox"]`).click();
+      //   cy.get('[data-cy="cyApplyFilter"]').click();
+      //   cy.get(".grants_list > :nth-child(1) > :nth-child(5)").contains(
+      //     filterOption[1],
+      //   );
+      //   cy.get('[data-cy="cyCancelFilterTop"]').click();
+      // });
+      //
+      // filters.location.forEach((filterOption) => {
+      //   cy.get(`[data-cy="cy${filterOption}Checkbox"]`).click();
+      //   cy.get('[data-cy="cyApplyFilter"]').click();
+      //   cy.get('.grants_list > :nth-child(1) > :nth-child(3)').contains(filterOption);
+      //   cy.get('[data-cy="cyCancelFilterTop"]').click();
+      // });
+
+      filters.howMuchCanYouGet.forEach((filterRange, filtersIndex, filters) => {
+        cy.get(`[data-cy="cy${filterRange[0]}Checkbox"]`).click();
         cy.get('[data-cy="cyApplyFilter"]').click();
-        cy.get(".grants_list > :nth-child(1) > :nth-child(5)").contains(
-          filterOption[1],
-        );
+        cy.get(".grants_list > :nth-child(1) > :nth-child(6)")
+          .invoke("text")
+          .then((text) => {
+            // TODO: Fix if statement only doing up to 5mill +
+            if (filtersIndex !== filters.length - 2) {
+              // Extract values from advert listing
+              const p1Index = text.indexOf("£");
+              const s1Index = text.indexOf(" ", p1Index);
+              const p2Index = text.indexOf("£", s1Index);
+              // 1 million
+              // 11.1 million
+              const maxPriceText = text.slice(p2Index + 1).replace(",", "");
+
+              const maxPrice = maxPriceText.includes("million")
+                ? parseInt(parseFloat(maxPriceText) * 1000000)
+                : parseInt(maxPriceText);
+
+              console.log(maxPrice);
+              cy.pause();
+              // TODO : Add logic for 5 mill +
+              // Check if values are in range
+              cy.wrap(maxPrice).should("be.lte", filterRange[1]);
+            }
+            // if more than 5mil do this...
+          });
+        cy.get('[data-cy="cyCancelFilterTop"]').click();
       });
+
+      // get value
+      // check if value is in range
+      // do something else
+      cy.pause();
 
       // cy.get('[data-cy="cy£10,001 to £50,000Checkbox"]').click();
       // cy.get('[data-cy="cy£250,001 to £1,000,000Checkbox"]').click();
