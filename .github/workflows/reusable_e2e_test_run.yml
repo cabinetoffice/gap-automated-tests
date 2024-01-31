@@ -110,7 +110,7 @@ jobs:
               SPECS_ARRAY+=("cypress/e2e/$SUITE/*.cy.js")
             done
           fi
-          SPECS=$(printf "," "${SPECS_ARRAY[@]}")
+          SPECS=$(printf ",%s" "${SPECS_ARRAY[@]}")
           SPECS=${SPECS:1}
           echo $SPECS
           echo "spec=$SPECS" >> $GITHUB_OUTPUT
