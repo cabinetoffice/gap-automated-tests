@@ -120,7 +120,7 @@ jobs:
         timeout-minutes: 60
         with:
           browser: ${{ inputs.browser }}
-          spec: ${{ join(steps.convert_suites.outputs.spec, ',') }}
+          spec: ${{ steps.convert_suites.outputs.spec }}
 
       - name: Disconnect from OPENVPN 3 Profile
         run: openvpn3 session-manage --config FINDVPN --disconnect
