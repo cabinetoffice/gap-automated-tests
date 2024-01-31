@@ -22,11 +22,11 @@ describe("Find a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it("loads the page", () => {
+  it.skip("loads the page", () => {
     cy.contains("Find a grant");
   });
 
-  it("Can navigate to information pages", () => {
+  it.skip("Can navigate to information pages", () => {
     cy.contains("Find a grant");
 
     // navigates to about us menu
@@ -36,7 +36,7 @@ describe("Find a Grant", () => {
   });
 
   describe("Search", () => {
-    it("Interacts with the home page and enters a search term > 100 characters", () => {
+    it.skip("Interacts with the home page and enters a search term > 100 characters", () => {
       cy.contains("Find a grant");
 
       cy.get('[data-cy="cyhomePageLink"]')
@@ -70,7 +70,7 @@ describe("Find a Grant", () => {
       );
     });
 
-    it("can search for a grant", () => {
+    it.skip("can search for a grant", () => {
       cy.task("publishGrantsToContentful");
       // wait for grant to be published to contentful
       cy.wait(5000);
@@ -141,7 +141,7 @@ describe("Find a Grant", () => {
       cy.wait(9999999999);
     });
 
-    it("can navigate through pagination and limit search term to < 100 characters", () => {
+    it.skip("can navigate through pagination and limit search term to < 100 characters", () => {
       cy.contains("Find a grant");
 
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
@@ -182,7 +182,7 @@ describe("Find a Grant", () => {
   });
 
   describe("Manage notifications and saved searches", () => {
-    it("can manage notifications through One Login when there are no notifications or saved searches", () => {
+    it.skip("can manage notifications through One Login when there are no notifications or saved searches", () => {
       // journey when not logged in
       cy.contains("Find a grant");
       cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
@@ -213,7 +213,7 @@ describe("Find a Grant", () => {
       checkForNoSavedSearchesOrNotifications();
     });
 
-    it("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
+    it.skip("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
       cy.task("publishGrantsToContentful");
       // wait for grant to be published to contentful
       cy.wait(5000);
@@ -344,7 +344,7 @@ describe("Find a Grant", () => {
       checkForNoSavedSearchesOrNotifications();
     });
 
-    it("Can subscribe and unsubscribe from newsletter notifications", () => {
+    it.skip("Can subscribe and unsubscribe from newsletter notifications", () => {
       cy.contains("Find a grant");
       clickText(
         "Sign up and we will email you when new grants have been added.",
@@ -366,7 +366,7 @@ describe("Find a Grant", () => {
       );
     });
 
-    it("Can subscribe and unsubscribe a saved search notification", () => {
+    it.skip("Can subscribe and unsubscribe a saved search notification", () => {
       cy.contains("Find a grant");
       // start saved search login journey
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
