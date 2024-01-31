@@ -17,8 +17,11 @@ import {
 describe("Find a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
+
     cy.task("setUpApplyData");
+
     cy.task("setUpFindData");
+
     signInToIntegrationSite();
   });
 

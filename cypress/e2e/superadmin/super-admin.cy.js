@@ -33,7 +33,9 @@ const SUPER_ADMIN_DASHBOARD = `${Cypress.env(
 describe("Super Admin", () => {
   beforeEach(() => {
     cy.task("setUpUser");
+
     cy.task("setUpApplyData");
+
     signInToIntegrationSite();
   });
 
