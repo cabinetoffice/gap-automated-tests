@@ -110,7 +110,7 @@ jobs:
               SPECS_ARRAY+=("cypress/e2e/$SUITE/*.cy.js")
             done
           fi
-          SPECS=$(printf ",%s" "${SPECS_ARRAY[@]}")
+          SPECS=$(printf "," "${SPECS_ARRAY[@]}")
           SPECS=${SPECS:1}
           echo $SPECS
           echo "spec=$SPECS" >> $GITHUB_OUTPUT
@@ -120,7 +120,7 @@ jobs:
         timeout-minutes: 60
         with:
           browser: ${{ inputs.browser }}
-          spec: ${{ steps.convert_suites.outputs.spec }}
+          spec: "${{ steps.convert_suites.outputs.spec }}"
 
       - name: Disconnect from OPENVPN 3 Profile
         run: openvpn3 session-manage --config FINDVPN --disconnect
