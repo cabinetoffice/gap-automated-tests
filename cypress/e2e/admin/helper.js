@@ -43,14 +43,12 @@ function sectionsAndQuestions() {
   );
 
   addOptionalMultiChoiceQuestion(
-    ".govuk-button--secondary",
     "Custom Question 4",
     "Short description",
     '[data-cy="cy-radioInput-option-MultipleChoice"]',
   );
 
   addOptionalMultiChoiceQuestion(
-    ".govuk-button--secondary",
     "Custom Question 5",
     "Short description",
     '[data-cy="cy-radioInput-option-MultipleSelect"]',
@@ -109,13 +107,8 @@ function addOptionalQuestion(questionText, description, type) {
   clickSaveAndContinue();
 }
 
-function addOptionalMultiChoiceQuestion(
-  section,
-  questionText,
-  description,
-  type,
-) {
-  cy.get(section).click();
+function addOptionalMultiChoiceQuestion(questionText, description, type) {
+  cy.contains(".govuk-button", "Add a new question").click();
   cy.get('[data-cy="cy-fieldTitle-text-input"]').click();
   cy.get('[data-cy="cy-fieldTitle-text-input"]').type(questionText, {
     force: true,
