@@ -18,6 +18,7 @@ import {
 } from "./helper";
 import {
   fillOutCustomSection,
+  fillOutDocUpload,
   fillOutEligibity,
   fillOutRequiredChecks,
   submitApplication,
