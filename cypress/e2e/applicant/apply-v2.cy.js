@@ -59,9 +59,7 @@ const MQ_DETAILS = {
 describe("Apply for a Grant V2", () => {
   beforeEach(() => {
     cy.task("setUpUser");
-
     cy.task("setUpApplyData");
-
     signInToIntegrationSite();
   });
 

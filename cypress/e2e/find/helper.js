@@ -23,7 +23,6 @@ export const createSavedSearch = (searchTerm) => {
   cy.get('[data-cy="cyNameThisSearchInput"]').type(searchTerm);
   cy.get('[data-cy="cySaveAndContinueButton"]').click();
   cy.get('[data-cy="cy-radio-yes"]').click();
-
   cy.get('[data-cy="cySubmitNotificationsChoice"]').click();
 };
 
