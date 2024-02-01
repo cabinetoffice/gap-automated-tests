@@ -34,7 +34,7 @@ jobs:
 
           CHANGED_SUITES_ARRAY=()
           for i in ${CHANGED_FILES_ARRAY[@]}; do
-            dir=$(dirname $i)
+            dir=${i%/*}
             cypressdir="cypress/e2e/"
             if [[ $i == *.cy.js ]]; then
                 CHANGED_SUITES_ARRAY+=($i)
