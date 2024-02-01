@@ -10,7 +10,7 @@ on:
         options:
           - all
           - find
-          - apply
+          - applicant
           - admin
           - superadmin
       browser:
