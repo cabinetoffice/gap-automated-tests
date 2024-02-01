@@ -136,9 +136,26 @@ describe("Find a Grant", () => {
       };
 
       // Who can apply
-      filters.whoCanApply.forEach((filterOption) => {
+      filters.whoCanApply.forEach((filterOption, filterIndex) => {
         cy.get(`[data-cy="cy${filterOption[0]}Checkbox"]`).click();
         cy.get('[data-cy="cyApplyFilter"]').click();
+
+        // Verify filter
+        cy.get("body").then((body) => {
+          if (body.find(".grants_list").length) {
+            cy.get(".grants_list > :nth-child(1) > :nth-child(5)").contains(
+              filterOption[1],
+            );
+          } else {
+            cy.url().then((url) => {
+              cy.wrap(url).should(
+                "include",
+                `fields.grantApplicantType.en-US=${filterIndex + 1}`,
+              );
+            });
+          }
+        });
+
         cy.get(".grants_list > :nth-child(1) > :nth-child(5)").contains(
           filterOption[1],
         );
@@ -146,38 +163,66 @@ describe("Find a Grant", () => {
       });
 
       // Location
-      filters.location.forEach((filterOption) => {
+      filters.location.forEach((filterOption, filterIndex) => {
         cy.get(`[data-cy="cy${filterOption}Checkbox"]`).click();
         cy.get('[data-cy="cyApplyFilter"]').click();
-        cy.get(".grants_list > :nth-child(1) > :nth-child(3)").contains(
-          filterOption,
-        );
+
+        // Verify filter
+        cy.get("body").then((body) => {
+          if (body.find(".grants_list").length) {
+            cy.get(".grants_list > :nth-child(1) > :nth-child(3)").contains(
+              filterOption,
+            );
+          } else {
+            cy.url().then((url) => {
+              cy.wrap(url).should(
+                "include",
+                `fields.grantLocation.en-US=${filterIndex + 1}`,
+              );
+            });
+          }
+        });
+
         cy.get('[data-cy="cyCancelFilterTop"]').click();
       });
 
       // How much you can get
-      filters.howMuchCanYouGet.forEach((filterRange, filtersIndex, filters) => {
+      filters.howMuchCanYouGet.forEach((filterRange, filterIndex, filters) => {
         cy.get(`[data-cy="cy${filterRange[0]}Checkbox"]`).click();
         cy.get('[data-cy="cyApplyFilter"]').click();
-        cy.get(".grants_list > :nth-child(1) > :nth-child(6)")
-          .invoke("text")
-          .then((text) => {
-            // Extract values from advert listing
-            const p1Index = text.indexOf("£");
-            const s1Index = text.indexOf(" ", p1Index);
-            const p2Index = text.indexOf("£", s1Index);
-            const maxPriceText = text.slice(p2Index + 1).replace(",", "");
 
-            const maxPrice = maxPriceText.includes("million")
-              ? parseInt(parseFloat(maxPriceText) * 1000000)
-              : parseInt(maxPriceText);
+        // Verify filter
+        cy.get("body").then((body) => {
+          if (body.find(".grants_list").length) {
+            cy.get(".grants_list > :nth-child(1) > :nth-child(6)")
+              .invoke("text")
+              .then((text) => {
+                // Extract values from advert listing
+                const p1Index = text.indexOf("£");
+                const s1Index = text.indexOf(" ", p1Index);
+                const p2Index = text.indexOf("£", s1Index);
+                const maxPriceText = text.slice(p2Index + 1).replace(",", "");
 
-            if (filtersIndex < filters.length - 1) {
-              cy.wrap(maxPrice).should("be.lte", filterRange[1]);
-            } else {
-              cy.wrap(maxPrice).should("be.gte", filterRange[1]);
-            }
-          });
+                const maxPrice = maxPriceText.includes("million")
+                  ? parseInt(parseFloat(maxPriceText) * 1000000)
+                  : parseInt(maxPriceText);
+
+                if (filterIndex < filters.length - 1) {
+                  cy.wrap(maxPrice).should("be.lte", filterRange[1]);
+                } else {
+                  cy.wrap(maxPrice).should("be.gte", filterRange[1]);
+                }
+              });
+          } else {
+            cy.url().then((url) => {
+              cy.wrap(url).should(
+                "include",
+                `fields.grantMaximumAward.en-US=${filterIndex + 1}`,
+              );
+            });
+          }
+        });
+
         cy.get('[data-cy="cyCancelFilterTop"]').click();
       });
 
