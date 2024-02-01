@@ -29,7 +29,11 @@ jobs:
       - name: Determine changed specs
         id: changed_specs
         run: |
-          CHANGED_FILES=${{ steps.changed_files.outputs.all }}
+          CHANGED_SUITES_ARRAY=()
+          if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/admin/') }} == true ]]; then
+            CHANGED_SUITES_ARRAY+=("admin")
+          fi
+          echo ${CHANGED_SUITES_ARRAY[@]}
 
       - name: Set force_run_all_suites
         id: force_run_all_suites
