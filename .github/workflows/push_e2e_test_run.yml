@@ -28,7 +28,8 @@ jobs:
 
       - name: Determine changed specs
         id: changed_specs
-        run: echo "Hi"
+        run: |
+          CHANGED_FILES=${{ steps.changed_files.outputs.all }}
 
       - name: Set force_run_all_suites
         id: force_run_all_suites
