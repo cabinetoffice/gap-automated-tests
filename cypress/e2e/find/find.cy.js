@@ -71,6 +71,10 @@ describe("Find a Grant", () => {
     });
 
     it("can search for a grant", () => {
+      cy.task("publishGrantsToContentful");
+      // wait for grant to be published to contentful
+      cy.wait(5000);
+
       searchForGrant(Cypress.env("testV1InternalGrant").advertName);
 
       cy.contains(Cypress.env("testV1InternalGrant").advertName);
@@ -94,10 +98,6 @@ describe("Find a Grant", () => {
     });
 
     it("can apply and clear filters", () => {
-      cy.task("publishGrantsToContentful");
-      // wait for grant to be published to contentful
-      cy.wait(5000);
-
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
 
       const filters = {
