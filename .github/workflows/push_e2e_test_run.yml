@@ -46,10 +46,31 @@ jobs:
             fi
           done
 
-          CHANGED_SPECS=$(printf ",%s" "${CHANGED_SUITES_ARRAY[@]}")
+          # clean up subpaths
+          CLEAN_CHANGED_FILES=()
+          wildcard='**/*'
+          for i in ${CHANGED_SUITES_ARRAY[@]}; do
+            should_add='true'
+            for j in ${CHANGED_SUITES_ARRAY[@]}; do
+              j_len=${#j}-${#wildcard}
+              if [[ ${j: -${#wildcard}} == $wildcard ]]; then
+                if [[ ${i:0:$j_len} == ${j:0:$j_len} ]]; then
+                  should_add='false'
+                  if [[ ! " ${CLEAN_CHANGED_FILES[*]} " =~ ${j} ]]; then
+                    CLEAN_CHANGED_FILES+=(${j})
+                  fi
+                fi
+              fi
+            done
+            if [[ $should_add == 'true' && ! " ${CLEAN_CHANGED_FILES[*]} " =~ ${i} ]]; then
+              CLEAN_CHANGED_FILES+=(${i})
+            fi
+          done
+
+          CHANGED_SPECS=$(printf ",%s" "${CLEAN_CHANGED_FILES[@]}")
           CHANGED_SPECS=${CHANGED_SPECS:1}
 
-          echo ${CHANGED_SUITES_ARRAY[@]}
+          echo ${CLEAN_CHANGED_FILES[@]}
           echo $CHANGED_SPECS
 
           echo "changed_specs=$CHANGED_SPECS" >> "$GITHUB_OUTPUT"
