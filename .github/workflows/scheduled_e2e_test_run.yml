@@ -9,7 +9,6 @@ jobs:
     name: Sandbox E2E Test Run
     uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
-      suite: all
       report: true
       notify: true
       environment: SANDBOX
@@ -20,7 +19,6 @@ jobs:
     name: QA E2E Test Run
     uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
-      suite: all
       report: true
       notify: true
       environment: QA

@@ -3,17 +3,17 @@ name: Reusable E2E Test Run
 on:
   workflow_call:
     inputs:
-      suite:
-        default: all
+      specs:
+        default: cypress/e2e/**/*
         type: string
       browser:
         default: chrome
         type: string
       report:
-        default: false
+        default: "false"
         type: string
       notify:
-        default: false
+        default: "false"
         type: string
       environment:
         default: SANDBOX
@@ -25,7 +25,7 @@ on:
 
 jobs:
   reusable_e2e_test_run:
-    name: Run E2E Tests env:${{ inputs.environment }} suite:${{ inputs.suite }} browser:${{ inputs.browser }}
+    name: Run E2E Tests env:${{ inputs.environment }} browser:${{ inputs.browser }} specs:${{ inputs.specs }}
     runs-on: ubuntu-latest
     concurrency: e2e_test_run_${{ inputs.environment }}
     # GitHub Actions doesn't have ternaries for some reason, so this only sets the environment if we want reports
@@ -97,30 +97,12 @@ jobs:
           FIRST_USER_ID=1
           EOF
 
-      - name: Convert suites to spec format
-        id: convert_suites
-        run: |
-          SPECS_ARRAY=()
-          if [[ ${{ inputs.suite }} == all ]]; then
-            SPECS_ARRAY+=("cypress/**/*.cy.js")
-          else
-            SUITES_ARRAY=${{inputs.suite}}
-            SUITES_ARRAY=(${SUITES_ARRAY//,/ })
-            for SUITE in ${SUITES_ARRAY[@]}; do
-              SPECS_ARRAY+=("cypress/e2e/$SUITE/*.cy.js")
-            done
-          fi
-          SPECS=$(printf ",%s" "${SPECS_ARRAY[@]}")
-          SPECS=${SPECS:1}
-          echo $SPECS
-          echo "spec=$SPECS" >> $GITHUB_OUTPUT
-
       - name: Cypress run
         uses: cypress-io/github-action@v6
         timeout-minutes: 60
         with:
           browser: ${{ inputs.browser }}
-          spec: "${{ steps.convert_suites.outputs.spec }}"
+          spec: ${{ inputs.specs }}
 
       - name: Disconnect from OPENVPN 3 Profile
         run: openvpn3 session-manage --config FINDVPN --disconnect
