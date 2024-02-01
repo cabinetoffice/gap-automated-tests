@@ -56,6 +56,7 @@ describe("Create a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
+
     signInToIntegrationSite();
   });
 

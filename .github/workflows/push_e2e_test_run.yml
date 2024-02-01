@@ -85,7 +85,7 @@ jobs:
         id: determine_specs
         run: |
           if [[ ${{ steps.force_run_all_suites.outputs.force_run_all_suites }} == true ]]; then
-            echo "specs=all" >> "$GITHUB_OUTPUT"
+            echo "specs=cypress/e2e/**/*" >> "$GITHUB_OUTPUT"
           else
             echo "specs=${{ steps.changed_specs.outputs.changed_specs }}" >> "$GITHUB_OUTPUT"
           fi

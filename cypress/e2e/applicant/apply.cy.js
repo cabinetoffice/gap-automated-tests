@@ -23,7 +23,9 @@ import {
 describe("Apply for a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
+
     cy.task("setUpApplyData");
+
     signInToIntegrationSite();
   });
 

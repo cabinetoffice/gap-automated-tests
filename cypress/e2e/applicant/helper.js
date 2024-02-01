@@ -21,6 +21,7 @@ export const fillOutDocUpload = () => {
 
 export const fillOutCustomSection = () => {
   cy.get('[data-cy="cy-status-tag-Custom Section-Not Started"]');
+
   cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
 
   // Error when trying to skip mandatory question
