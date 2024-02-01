@@ -22,11 +22,11 @@ describe("Find a Grant", () => {
     signInToIntegrationSite();
   });
 
-  it.skip("loads the page", () => {
+  it("loads the page", () => {
     cy.contains("Find a grant");
   });
 
-  it.skip("Can navigate to information pages", () => {
+  it("Can navigate to information pages", () => {
     cy.contains("Find a grant");
 
     // navigates to about us menu
@@ -36,7 +36,7 @@ describe("Find a Grant", () => {
   });
 
   describe("Search", () => {
-    it.skip("Interacts with the home page and enters a search term > 100 characters", () => {
+    it("Interacts with the home page and enters a search term > 100 characters", () => {
       cy.contains("Find a grant");
 
       cy.get('[data-cy="cyhomePageLink"]')
@@ -70,7 +70,7 @@ describe("Find a Grant", () => {
       );
     });
 
-    it.skip("can search for a grant", () => {
+    it("can search for a grant", () => {
       cy.task("publishGrantsToContentful");
       // wait for grant to be published to contentful
       cy.wait(5000);
@@ -133,77 +133,103 @@ describe("Find a Grant", () => {
           ["£1,000,001 to £5,000,000", 5000000],
           ["£5,000,000 plus", 5000000],
         ],
+        dateAdded: [
+          ["from", "2023"],
+          ["to", "2030"],
+        ],
       };
 
-      // filters.whoCanApply.forEach((filterOption) => {
-      //   cy.get(`[data-cy="cy${filterOption[0]}Checkbox"]`).click();
-      //   cy.get('[data-cy="cyApplyFilter"]').click();
-      //   cy.get(".grants_list > :nth-child(1) > :nth-child(5)").contains(
-      //     filterOption[1],
-      //   );
-      //   cy.get('[data-cy="cyCancelFilterTop"]').click();
-      // });
-      //
-      // filters.location.forEach((filterOption) => {
-      //   cy.get(`[data-cy="cy${filterOption}Checkbox"]`).click();
-      //   cy.get('[data-cy="cyApplyFilter"]').click();
-      //   cy.get('.grants_list > :nth-child(1) > :nth-child(3)').contains(filterOption);
-      //   cy.get('[data-cy="cyCancelFilterTop"]').click();
-      // });
+      // Who can apply
+      filters.whoCanApply.forEach((filterOption) => {
+        cy.get(`[data-cy="cy${filterOption[0]}Checkbox"]`).click();
+        cy.get('[data-cy="cyApplyFilter"]').click();
+        cy.get(".grants_list > :nth-child(1) > :nth-child(5)").contains(
+          filterOption[1],
+        );
+        cy.get('[data-cy="cyCancelFilterTop"]').click();
+      });
 
+      // Location
+      filters.location.forEach((filterOption) => {
+        cy.get(`[data-cy="cy${filterOption}Checkbox"]`).click();
+        cy.get('[data-cy="cyApplyFilter"]').click();
+        cy.get(".grants_list > :nth-child(1) > :nth-child(3)").contains(
+          filterOption,
+        );
+        cy.get('[data-cy="cyCancelFilterTop"]').click();
+      });
+
+      // How much you can get
       filters.howMuchCanYouGet.forEach((filterRange, filtersIndex, filters) => {
         cy.get(`[data-cy="cy${filterRange[0]}Checkbox"]`).click();
         cy.get('[data-cy="cyApplyFilter"]').click();
         cy.get(".grants_list > :nth-child(1) > :nth-child(6)")
           .invoke("text")
           .then((text) => {
-            // TODO: Fix if statement only doing up to 5mill +
-            if (filtersIndex !== filters.length - 2) {
-              // Extract values from advert listing
-              const p1Index = text.indexOf("£");
-              const s1Index = text.indexOf(" ", p1Index);
-              const p2Index = text.indexOf("£", s1Index);
-              // 1 million
-              // 11.1 million
-              const maxPriceText = text.slice(p2Index + 1).replace(",", "");
+            // Extract values from advert listing
+            const p1Index = text.indexOf("£");
+            const s1Index = text.indexOf(" ", p1Index);
+            const p2Index = text.indexOf("£", s1Index);
+            const maxPriceText = text.slice(p2Index + 1).replace(",", "");
 
-              const maxPrice = maxPriceText.includes("million")
-                ? parseInt(parseFloat(maxPriceText) * 1000000)
-                : parseInt(maxPriceText);
+            const maxPrice = maxPriceText.includes("million")
+              ? parseInt(parseFloat(maxPriceText) * 1000000)
+              : parseInt(maxPriceText);
 
-              console.log(maxPrice);
-              cy.pause();
-              // TODO : Add logic for 5 mill +
-              // Check if values are in range
+            if (filtersIndex < filters.length - 1) {
               cy.wrap(maxPrice).should("be.lte", filterRange[1]);
+            } else {
+              cy.wrap(maxPrice).should("be.gte", filterRange[1]);
             }
-            // if more than 5mil do this...
           });
         cy.get('[data-cy="cyCancelFilterTop"]').click();
       });
 
-      // get value
-      // check if value is in range
-      // do something else
-      cy.pause();
+      // Date - manual entry
+      filters.dateAdded.forEach((date) => {
+        cy.get(`[data-cy="cyDateFilter-${date[0]}Day"]`).type("01");
+        cy.get(`[data-cy="cyDateFilter-${date[0]}Month"]`).type("01");
+        cy.get(`[data-cy="cyDateFilter-${date[0]}Year"]`).type(date[1]);
+      });
+      cy.get('[data-cy="cyApplyFilter"]').click();
+      cy.get('[data-cy="cySearchDescription"]').contains(
+        "Showing grants added between 1 January 2023 to 1 January 2030",
+      );
+      cy.get('.govuk-\\!-display-block > [data-module="govuk-button"]').click();
+      cy.get('[data-cy="cySearchDescription"]').contains("Search grants");
 
-      // cy.get('[data-cy="cy£10,001 to £50,000Checkbox"]').click();
-      // cy.get('[data-cy="cy£250,001 to £1,000,000Checkbox"]').click();
-      // cy.get('[data-cy="cyDateFilter-fromDay"]').type("01");
-      // cy.get('[data-cy="cyDateFilter-fromMonth"]').type("01");
-      // cy.get('[data-cy="cyDateFilter-fromYear"]').type("2024");
-      // cy.get('[data-cy="cyDateFilter-toDay"]').type("31");
-      // cy.get('[data-cy="cyDateFilter-toMonth"]').type("12");
-      // cy.get('[data-cy="cyDateFilter-toYear"]').type("2040");
-      // cy.get('[data-cy="cyApplyFilter"]').click();
-      // cy.get('[data-cy="cySearchDescription"]').contains("Showing grants added between 1 January 2024 to 31 December 2040");
-      // cy.get('.grants_list > :nth-child(2) > :nth-child(3)').contains("National");
-      // cy.get('.grants_list > :nth-child(1) > :nth-child(5)').contains("Personal / Individual");
-      // cy.get('.grants_list > :nth-child(1) > :nth-child(6)').contains("£10,000 to £50,000");
-      cy.wait(9999999999);
+      // Date - date picker
+      cy.get('[data-cy="cyDatePicker-from"]').click();
+      cy.get("#from-grid-label")
+        .invoke("text")
+        .then((monthYear) => {
+          cy.get(
+            '[data-cy="cyDatePicker-fromModal"] > .dates > tbody > :nth-child(1) > [tabindex="0"]',
+          )
+            .invoke("text")
+            .then((day) => {
+              const date = day + " " + monthYear;
+
+              cy.get(
+                '[data-cy="cyDatePicker-fromModal"] > .dates > tbody > :nth-child(1) > [tabindex="0"]',
+              ).click();
+
+              cy.get('[data-cy="cyDatePicker-to"]').click();
+              cy.get(
+                '[data-cy="cyDatePicker-toModal"] > .dates > tbody > :nth-child(1) > [tabindex="0"]',
+              ).click();
+
+              cy.get('[data-cy="cyApplyFilter"]').click();
+              cy.get('[data-cy="cySearchDescription"]').contains(
+                `Showing grants added between ${date} to ${date}`,
+              );
+            });
+        });
+      cy.get('[data-cy="cyCancelFilterBottom"]').click();
+      cy.get('[data-cy="cySearchDescription"]').contains("Search grants");
     });
 
-    it.skip("can navigate through pagination and limit search term to < 100 characters", () => {
+    it("can navigate through pagination and limit search term to < 100 characters", () => {
       cy.contains("Find a grant");
 
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
@@ -244,7 +270,7 @@ describe("Find a Grant", () => {
   });
 
   describe("Manage notifications and saved searches", () => {
-    it.skip("can manage notifications through One Login when there are no notifications or saved searches", () => {
+    it("can manage notifications through One Login when there are no notifications or saved searches", () => {
       // journey when not logged in
       cy.contains("Find a grant");
       cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();
@@ -275,7 +301,7 @@ describe("Find a Grant", () => {
       checkForNoSavedSearchesOrNotifications();
     });
 
-    it.skip("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
+    it("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
       cy.task("publishGrantsToContentful");
       // wait for grant to be published to contentful
       cy.wait(5000);
@@ -406,7 +432,7 @@ describe("Find a Grant", () => {
       checkForNoSavedSearchesOrNotifications();
     });
 
-    it.skip("Can subscribe and unsubscribe from newsletter notifications", () => {
+    it("Can subscribe and unsubscribe from newsletter notifications", () => {
       cy.contains("Find a grant");
       clickText(
         "Sign up and we will email you when new grants have been added.",
@@ -428,7 +454,7 @@ describe("Find a Grant", () => {
       );
     });
 
-    it.skip("Can subscribe and unsubscribe a saved search notification", () => {
+    it("Can subscribe and unsubscribe a saved search notification", () => {
       cy.contains("Find a grant");
       // start saved search login journey
       cy.get('[data-cy="cySearchGrantsBtn"]').click();
