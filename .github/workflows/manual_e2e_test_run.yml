@@ -25,14 +25,14 @@ on:
       report:
         type: choice
         description: Upload report?
-        default: false
+        default: "false"
         options:
           - false
           - true
       notify:
         type: choice
         description: Notify on Slack?
-        default: false
+        default: "false"
         options:
           - false
           - true
@@ -48,7 +48,7 @@ jobs:
   call-reusable-e2e-test-run-workflow:
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
-      suite: ${{ inputs.suite }}
+      specs: ${{ inputs.suite == 'all' && 'cypress/e2e/**/*' || format('cypress/e2e/{0}/**/*', inputs.suite) }}
       browser: ${{ inputs.browser }}
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
@@ -59,7 +59,7 @@ jobs:
   call-reusable-multi-browser-e2e-test-run-workflow:
     uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
-      suite: ${{ inputs.suite }}
+      specs: ${{ inputs.suite == 'all' && 'cypress/e2e/**/*' || format('cypress/e2e/{0}/**/*', inputs.suite) }}
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}

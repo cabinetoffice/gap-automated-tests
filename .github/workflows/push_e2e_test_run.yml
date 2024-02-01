@@ -14,10 +14,10 @@ on:
       - "**.md"
 
 jobs:
-  detect-suites:
+  detect-specs:
     runs-on: ubuntu-latest
     outputs:
-      suite: ${{ steps.determine_suite.outputs.suite }}
+      specs: ${{ steps.determine_specs.outputs.specs }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@master
@@ -26,46 +26,53 @@ jobs:
         uses: jitterbit/get-changed-files@v1
         id: changed_files
 
-      - name: Determine changed suites
-        id: changed_suites
+      - name: Determine changed specs
+        id: changed_specs
         run: |
+          CHANGED_FILES=${{ steps.changed_files.outputs.all }}
+          CHANGED_FILES_ARRAY=(${CHANGED_FILES// / })
+
           CHANGED_SUITES_ARRAY=()
-          if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/admin/') }} == true ]]; then
-            CHANGED_SUITES_ARRAY+=("admin")
-          fi
-          if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/applicant/' ) }} == true ]]; then
-            CHANGED_SUITES_ARRAY+=("applicant")
-          fi
-          if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/superadmin/') }} == true ]]; then
-            CHANGED_SUITES_ARRAY+=("superadmin")
-          fi
-          if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/find/') }} == true ]]; then
-            CHANGED_SUITES_ARRAY+=("find")
-          fi
-          CHANGED_SUITES=$(printf ",%s" "${CHANGED_SUITES_ARRAY[@]}")
-          CHANGED_SUITES=${CHANGED_SUITES:1}
-          echo "changed_suites=$CHANGED_SUITES" >> "$GITHUB_OUTPUT"
+          for i in ${CHANGED_FILES_ARRAY[@]}; do
+            dir=$(dirname $i)
+            cypressdir="cypress/e2e/"
+            if [[ $i == *.cy.js ]]; then
+                CHANGED_SUITES_ARRAY+=($i)
+            else
+              if [[ ${dir:0:${#cypressdir}} == $cypressdir ]]; then
+                CHANGED_SUITES_ARRAY+=($dir"/**/*")
+              fi
+            fi
+          done
+
+          CHANGED_SPECS=$(printf ",%s" "${CHANGED_SUITES_ARRAY[@]}")
+          CHANGED_SPECS=${CHANGED_SPECS:1}
+
+          echo ${CHANGED_SUITES_ARRAY[@]}
+          echo $CHANGED_SPECS
+
+          echo "changed_specs=$CHANGED_SPECS" >> "$GITHUB_OUTPUT"
 
       - name: Set force_run_all_suites
         id: force_run_all_suites
         run: |
-          VALUE=${{ steps.changed_suites.outputs.changed_suites == null || contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') || contains(steps.changed_files.outputs.all, 'package.json') || contains(steps.changed_files.outputs.all, '.github/workflows/push_e2e_test_run.yml') || contains(steps.changed_files.outputs.all, '.github/workflows/reusable_e2e_test_run.yml') }}
+          VALUE=${{ steps.changed_specs.outputs.changed_specs == null || contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') || contains(steps.changed_files.outputs.all, 'package.json') || contains(steps.changed_files.outputs.all, '.github/workflows/push_e2e_test_run.yml') || contains(steps.changed_files.outputs.all, '.github/workflows/reusable_e2e_test_run.yml') }}
           echo "force_run_all_suites=$VALUE" >> "$GITHUB_OUTPUT"
 
-      - name: Determine suites to run
-        id: determine_suite
+      - name: Determine specs to run
+        id: determine_specs
         run: |
           if [[ ${{ steps.force_run_all_suites.outputs.force_run_all_suites }} == true ]]; then
-            echo "suite=all" >> "$GITHUB_OUTPUT"
+            echo "specs=all" >> "$GITHUB_OUTPUT"
           else
-            echo "suite=${{ steps.changed_suites.outputs.changed_suites }}" >> "$GITHUB_OUTPUT"
+            echo "specs=${{ steps.changed_specs.outputs.changed_specs }}" >> "$GITHUB_OUTPUT"
           fi
 
   call-sandbox-chrome-reusable-e2e-test-run-workflow:
-    needs: detect-suites
+    needs: detect-specs
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
-      suite: ${{ needs.detect-suites.outputs.suite }}
+      specs: ${{ needs.detect-specs.outputs.specs }}
       browser: chrome
       report: false
       notify: false
