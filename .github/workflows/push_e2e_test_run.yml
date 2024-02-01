@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       specs: ${{ steps.determine_specs.outputs.specs }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@master
@@ -29,11 +30,29 @@ jobs:
       - name: Determine changed specs
         id: changed_specs
         run: |
+          CHANGED_FILES="${{ steps.changed_files.outputs.all }}"
+          CHANGED_FILES_ARRAY=(${CHANGED_FILES// / })
+
           CHANGED_SUITES_ARRAY=()
-          if [[ ${{ contains(steps.changed_files.outputs.all, 'cypress/e2e/admin/') }} == true ]]; then
-            CHANGED_SUITES_ARRAY+=("admin")
-          fi
+          for i in ${CHANGED_FILES_ARRAY[@]}; do
+            dir=$(dirname $i)
+            cypressdir="cypress/e2e/"
+            if [[ $i == *.cy.js ]]; then
+                CHANGED_SUITES_ARRAY+=($i)
+            else
+              if [[ ${dir:0:${#cypressdir}} == $cypressdir ]]; then
+                CHANGED_SUITES_ARRAY+=($dir"/**/*")
+              fi
+            fi
+          done
+
+          CHANGED_SPECS=$(printf ",%s" "${CHANGED_SUITES_ARRAY[@]}")
+          CHANGED_SPECS=${CHANGED_SPECS:1}
+
           echo ${CHANGED_SUITES_ARRAY[@]}
+          echo $CHANGED_SPECS
+
+          echo "changed_specs=$CHANGED_SPECS" >> "$GITHUB_OUTPUT"
 
       - name: Set force_run_all_suites
         id: force_run_all_suites
