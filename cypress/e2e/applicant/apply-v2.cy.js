@@ -5,19 +5,15 @@ import {
   signInAsApplyApplicant,
   clickText,
   log,
+  yesSectionComplete,
 } from "../../common/common";
 import {
-  fillOutEligibity,
-  submitApplication,
   equalitySectionAccept,
-  equalitySectionDecline,
   fillOrgProfile,
   partialFillOrgProfile,
   editDetailsOnSummaryScreen,
   confirmDetailsOnSummaryScreen,
   confirmOrgAndFundingDetails,
-  fillMqOrgQuestionsAsLimitedCompany,
-  fillMqFunding,
   validateMqNonLimitedJourney,
   validateMqIndividualJourney,
   validateMqIndividualSummaryScreen,
@@ -30,31 +26,17 @@ import {
   validateOrgDetailsForNonLimitedCompany,
   validateOrgDetailsForIndividual,
   validateOrgDetailsForCharity,
+  validateSubmissionSummarySection,
+  triggerChangeFromSummary,
 } from "./helper";
-
-// Details object
-const MQ_DETAILS = {
-  name: "MyOrg",
-  address: ["addressLine1", "addressLine2", "city", "county", "postcod"],
-  orgType: "Limited company",
-  companiesHouse: "12345",
-  charitiesCommission: "67890",
-  howMuchFunding: "100",
-  fundingLocation: [
-    "North East (England)",
-    "North West (England)",
-    "Yorkshire and the Humber",
-    "East Midlands (England)",
-    "West Midlands (England)",
-    "London",
-    "South East (England)",
-    "South West (England)",
-    "Scotland",
-    "Wales",
-    "Northern Ireland",
-    "Outside of the UK",
-  ],
-};
+import {
+  equalitySectionDecline,
+  fillMqFunding,
+  fillMqOrgQuestionsAsLimitedCompany,
+  fillOutEligibity,
+  submitApplication,
+} from "../../common/apply-helper";
+import { MQ_DETAILS } from "../../common/constants";
 
 describe("Apply for a Grant V2", () => {
   beforeEach(() => {
@@ -164,13 +146,13 @@ describe("Apply for a Grant V2", () => {
     cy.get('[data-cy="cy-status-tag-Funding-In Progress"]').should("exist");
 
     log(
-      "Apply V2 Internal MQ Partial - Validating Org Details for Non-Limited Company",
+      "Apply V2 Internal MQ Empty - Validating Org Details for Non-Limited Company",
     );
     validateOrgDetailsForNonLimitedCompany();
-    log("Apply V2 Internal MQ Partial - Validating Org Details for Individual");
+    log("Apply V2 Internal MQ Empty - Validating Org Details for Individual");
     validateOrgDetailsForIndividual();
     log(
-      "Apply V2 Internal MQ Partial - Validating MQ summary screen for Charity",
+      "Apply V2 Internal MQ Empty - Validating MQ summary screen for Charity",
     );
     validateOrgDetailsForCharity();
 
@@ -181,11 +163,15 @@ describe("Apply for a Grant V2", () => {
       ["North East (England)"],
       MQ_DETAILS,
     );
-    log("Apply V2 Internal MQ Partial - Submitting application");
+
+    log("Apply V2 Internal MQ Empty - Reviewing submission");
+    cy.contains("Review and submit").click();
+
+    log("Apply V2 Internal MQ Empty - Submitting application");
     submitApplication();
 
     // Fill E&D Questions and return to dashboard
-    log("Apply V2 Internal MQ Partial - Filling out equality section");
+    log("Apply V2 Internal MQ Empty - Filling out equality section");
     equalitySectionAccept();
     clickText("View your applications");
     clickText("Back");
@@ -372,7 +358,77 @@ describe("Apply for a Grant V2", () => {
     log("Apply V2 Internal MQ Partial - Edit Funding Details");
     editFundingDetails(MQ_DETAILS);
 
-    // Submit & skip E&D questions and return to dashboard
+    log("Apply V2 Internal MQ Partial - Reviewing submission");
+
+    log("Apply V1 Internal Grant - Reviewing submission");
+    cy.contains("Review and submit").click();
+    validateSubmissionSummarySection("Eligibility", [
+      { key: "Eligibility Statement", value: "Yes" },
+    ]);
+    validateSubmissionSummarySection("Your organisation", [
+      { key: "Type of organisation", value: "Charity" },
+      { key: "Name", value: "MyOrg1" },
+      {
+        key: "Address",
+        value: "addressLine11,addressLine21,city1,county1,postcod1",
+      },
+      { key: "Enter your Charity Commission number", value: "678901" },
+      { key: "Enter your Charity Commission number", value: "Change" },
+      { key: "Enter your Companies House number", value: "123451" },
+    ]);
+    validateSubmissionSummarySection("Funding", [
+      {
+        key: "How much does your organisation require as a grant?",
+        value: "1001",
+      },
+      {
+        key: "Where will this funding be spent?",
+        value: "North East (England)",
+      },
+    ]);
+
+    log(
+      "Apply V2 Internal Grant - validating that can change answers from summary page",
+    );
+    triggerChangeFromSummary("Your organisation", "Name");
+    cy.get('[data-cy="cy-name-text-input"]').type(
+      "{selectall}{backspace}MyOrg2",
+    );
+    clickSaveAndContinue();
+
+    triggerChangeFromSummary(
+      "Your organisation",
+      "Enter your Charity Commission number",
+    );
+    cy.get('[data-cy="cy-charityCommissionNumber-text-input"]').clear();
+    clickSaveAndContinue();
+
+    validateSubmissionSummarySection("Your organisation", [
+      { key: "Name", value: "MyOrg2" },
+      { key: "Enter your Charity Commission number", value: "-" },
+    ]);
+
+    log(
+      "Apply V2 Internal Grant - checking that setting Eligibility to No does not return you to summary",
+    );
+    triggerChangeFromSummary("Eligibility", "Eligibility Statement");
+    cy.get('[data-cy="cy-radioInput-option-No"]').click();
+    clickSaveAndContinue();
+    yesSectionComplete();
+
+    cy.contains("Review and submit").should("be.disabled");
+
+    cy.get('[data-cy="cy-section-title-link-Eligibility"]').click();
+    cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+    clickSaveAndContinue();
+    yesSectionComplete();
+
+    cy.contains("Review and submit").click();
+    validateSubmissionSummarySection("Eligibility", [
+      { key: "Eligibility Statement", value: "Yes" },
+    ]);
+
+    // Submit, skip E&D questions and return to dashboard
     log("Apply V2 Internal MQ Partial - Submitting application");
     submitApplication();
     equalitySectionDecline();
