@@ -69,13 +69,30 @@ Push runs kick off automatically when creating a PR to develop, or when a push i
 
 It runs with the following configuration:
 
-- All suites
+- All affected tests (described below)
 - Chrome browser
 - Sandbox environment
 - No reports (uploaded or presigned)
 - No Slack notification
 
 If you want to change any of these settings for your branch, this can be done [here](.github/workflows/manual_e2e_test_run.yml)
+
+Affected Tests
+
+1. If you make a change to any tests (or add a new test) then only those tests will execute (with 2 exceptions, listed below)
+2. if you make a change to a helper/constants/etc file in a test folder, then all the tests in that folder will execute
+3. If you make a change to certain files/folders (e.g. workflow, seed, common - full list below) then all the tests in the repo will execute
+
+Files/folders that will trigger all suites:
+
+- package.json
+- cypress.config.ts
+- cypress/common/\*
+- cypress/seed/\*
+- cypress/support/\*
+- cypress/fixtures/\*
+- .github/workflows/push_e2e_test_run.yml
+- .github/workflows/reusable_e2e_test_run.yml
 
 ---
 
