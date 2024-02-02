@@ -197,7 +197,7 @@ const ADVERTS = [
         "en-US": TEST_V2_INTERNAL_GRANT.advertName,
       },
       grantMaximumAwardDisplay: {
-        "en-US": "£10,000",
+        "en-US": "£500,000",
       },
       grantWebpageUrl: {
         "en-US": TEST_V2_INTERNAL_GRANT.applicationUrl,
@@ -229,13 +229,13 @@ const ADVERTS = [
         "en-US": TEST_V2_INTERNAL_GRANT.contentfulSlug,
       },
       grantMaximumAward: {
-        "en-US": 10000,
+        "en-US": 500000,
       },
       grantTotalAwardAmount: {
         "en-US": 1000000,
       },
       grantApplicationCloseDate: {
-        "en-US": "2040-10-24T23:59",
+        "en-US": "2035-10-24T23:59",
       },
       grantObjectivesTab: {
         "en-US": {
@@ -262,7 +262,7 @@ const ADVERTS = [
         },
       },
       grantApplicationOpenDate: {
-        "en-US": "2023-08-24T00:01",
+        "en-US": "2013-08-24T00:01",
       },
       grantEligibilityTab: {
         "en-US": {
@@ -288,7 +288,7 @@ const ADVERTS = [
         "en-US": TEST_V2_EXTERNAL_GRANT.advertName,
       },
       grantMaximumAwardDisplay: {
-        "en-US": "£10,000",
+        "en-US": "£2",
       },
       grantWebpageUrl: {
         "en-US": TEST_V2_EXTERNAL_GRANT.applicationUrl,
@@ -320,13 +320,13 @@ const ADVERTS = [
         "en-US": TEST_V2_EXTERNAL_GRANT.contentfulSlug,
       },
       grantMaximumAward: {
-        "en-US": 10000,
+        "en-US": 2,
       },
       grantTotalAwardAmount: {
-        "en-US": 1000000,
+        "en-US": 100000,
       },
       grantApplicationCloseDate: {
-        "en-US": "2040-10-24T23:59",
+        "en-US": "2050-10-24T23:59",
       },
       grantObjectivesTab: {
         "en-US": {

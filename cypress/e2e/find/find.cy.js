@@ -308,6 +308,80 @@ describe("Find a Grant", () => {
         Cypress.env("testV1InternalGrant").advertName,
       );
     });
+
+    describe("Sorting search results", () => {
+      beforeEach(() => {
+        cy.task("publishGrantsToContentful");
+        cy.wait(5000);
+
+        searchForGrant(Cypress.env("testV2InternalGrant").advertName);
+        cy.contains(Cypress.env("testV2InternalGrant").advertName);
+      });
+
+      it("can sort by opening date", () => {
+        cy.contains("Find a grant");
+        cy.get(".govuk-select").contains("Opening date").click();
+        cy.get("#combo-0").contains("Opening date").click();
+
+        cy.wait(5000);
+
+        cy.get(".grants_list")
+          .children("li")
+          .first()
+          .should(
+            "include.text",
+            Cypress.env("testV2InternalGrant").advertName,
+          );
+      });
+
+      it("can sort by closing date", () => {
+        cy.contains("Find a grant");
+        cy.get(".govuk-select").contains("Opening date").click();
+        cy.get("#combo-1").contains("Closing date").click();
+
+        cy.wait(5000);
+
+        cy.get(".grants_list")
+          .children("li")
+          .first()
+          .should(
+            "include.text",
+            Cypress.env("testV2InternalGrant").advertName,
+          );
+      });
+
+      it("can sort by value, high to low", () => {
+        cy.contains("Find a grant");
+        cy.get(".govuk-select").contains("Opening date").click();
+        cy.get("#combo-2").contains("Grant value: High to low").click();
+
+        cy.wait(5000);
+
+        cy.get(".grants_list")
+          .children("li")
+          .first()
+          .should(
+            "include.text",
+            Cypress.env("testV2InternalGrant").advertName,
+          );
+      });
+
+      it("can sort by value, low to high", () => {
+        cy.contains("Find a grant");
+        cy.get(".govuk-select").contains("Opening date").click();
+        cy.get("#combo-3").contains("Grant value: Low to high").click();
+
+        cy.wait(5000);
+
+        // 'Low to high' sorts by minimum value, and lots of grants start at £1 minimum.
+        // This means the precise the grant we want may not be at the top of the list.
+        // Instead verify that the first grant is at least one with the minimum possible value.
+        cy.get(".grants_list")
+          .children("li")
+          .first()
+          .should("include.text", "£1");
+      });
+    });
   });
 
   describe("Manage notifications and saved searches", () => {
