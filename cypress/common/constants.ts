@@ -52,3 +52,26 @@ export const TEST_V2_EXTERNAL_GRANT = {
   schemeName: "Cypress - Test Scheme V2 External",
   schemeId: getTestID(2),
 };
+
+export const MQ_DETAILS = {
+  name: "MyOrg",
+  address: ["addressLine1", "addressLine2", "city", "county", "postcod"],
+  orgType: "Limited company",
+  companiesHouse: "12345",
+  charitiesCommission: "67890",
+  howMuchFunding: "100",
+  fundingLocation: [
+    "North East (England)",
+    "North West (England)",
+    "Yorkshire and the Humber",
+    "East Midlands (England)",
+    "West Midlands (England)",
+    "London",
+    "South East (England)",
+    "South West (England)",
+    "Scotland",
+    "Wales",
+    "Northern Ireland",
+    "Outside of the UK",
+  ],
+};
