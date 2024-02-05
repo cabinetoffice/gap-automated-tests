@@ -320,7 +320,7 @@ const ADVERTS = [
         "en-US": TEST_V2_EXTERNAL_GRANT.contentfulSlug,
       },
       grantMaximumAward: {
-        "en-US": 2,
+        "en-US": 10000,
       },
       grantTotalAwardAmount: {
         "en-US": 100000,
