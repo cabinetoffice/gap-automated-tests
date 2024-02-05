@@ -1,3 +1,5 @@
+import { signInToIntegrationSite } from "../../common/common";
+
 describe("Sort search results", () => {
   beforeEach(() => {
     cy.task("setUpUser");
