@@ -13,6 +13,10 @@ on:
           - applicant
           - admin
           - superadmin
+      specs:
+        type: string
+        description: (optional) enter spec files, will override suites above
+        required: false
       browser:
         type: choice
         description: Select browser to run tests against
@@ -48,7 +52,7 @@ jobs:
   call-reusable-e2e-test-run-workflow:
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
-      specs: ${{ inputs.suite == 'all' && 'cypress/e2e/**/*' || format('cypress/e2e/{0}/**/*', inputs.suite) }}
+      specs: ${{ inputs.specs != '' && inputs.specs || inputs.suite == 'all' && 'cypress/e2e/**/*' || format('cypress/e2e/{0}/**/*', inputs.suite) }}
       browser: ${{ inputs.browser }}
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
