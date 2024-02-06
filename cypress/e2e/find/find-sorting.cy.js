@@ -21,8 +21,6 @@ describe("Sort search results", () => {
     cy.get(".govuk-select").contains("Opening date").click();
     cy.get("#combo-0").contains("Opening date").click();
 
-    cy.wait(5000);
-
     cy.get(".grants_list")
       .children("li")
       .first()
@@ -31,8 +29,6 @@ describe("Sort search results", () => {
     // Closing date sort
     cy.get(".govuk-select").contains("Opening date").click();
     cy.get("#combo-1").contains("Closing date").click();
-
-    cy.wait(5000);
 
     cy.get(".grants_list")
       .children("li")
@@ -43,8 +39,6 @@ describe("Sort search results", () => {
     cy.get(".govuk-select").contains("Closing date").click();
     cy.get("#combo-2").contains("Grant value: High to low").click();
 
-    cy.wait(5000);
-
     cy.get(".grants_list")
       .children("li")
       .first()
@@ -53,8 +47,6 @@ describe("Sort search results", () => {
     // Low to high sort
     cy.get(".govuk-select").contains("Grant value: High to low").click();
     cy.get("#combo-3").contains("Grant value: Low to high").click();
-
-    cy.wait(5000);
 
     // 'Low to high' sorts by minimum value, and lots of grants start at £1 minimum.
     // This means the precise the grant we want may not be at the top of the list.

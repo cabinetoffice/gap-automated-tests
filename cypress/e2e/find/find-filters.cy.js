@@ -163,12 +163,12 @@ describe("Sort search results", () => {
             const date = day + " " + monthYear;
 
             cy.get(
-              '[data-cy="cyDatePicker-fromModal"] > .dates > tbody > :nth-child(1) > [tabindex="0"]',
+              '[data-cy="cyDatePicker-fromModal"] > .dates > tbody > :nth-child(2) > [tabindex="0"]',
             ).click();
 
             cy.get('[data-cy="cyDatePicker-to"]').click();
             cy.get(
-              '[data-cy="cyDatePicker-toModal"] > .dates > tbody > :nth-child(1) > [tabindex="0"]',
+              '[data-cy="cyDatePicker-toModal"] > .dates > tbody > :nth-child(2) > [tabindex="0"]',
             ).click();
 
             cy.get('[data-cy="cyApplyFilter"]').click();

@@ -35,6 +35,7 @@ Manual runs can be triggered by visiting the [Manual Actions page](https://githu
 Here you can select the branch, as well as any of the following configurations:
 
 - One or all suites
+- A specific spec or set of spec files (which will override the suites you select above) - full path must be provided e.g. `cypress/e2e/superadmin/superadmin-navigation.cy.js`
 - One or both browsers
 - One environment
   - If selecting QA, ensure that you've selected the `main` branch as this should be versioned to the latest release.
@@ -79,20 +80,20 @@ If you want to change any of these settings for your branch, this can be done [h
 
 Affected Tests
 
-1. If you make a change to any tests (or add a new test) then only those tests will execute (with 2 exceptions, listed below)
-2. if you make a change to a helper/constants/etc file in a test folder, then all the tests in that folder will execute
-3. If you make a change to certain files/folders (e.g. workflow, seed, common - full list below) then all the tests in the repo will execute
+1. If you make a change to any tests (or add a new test) then only those tests will execute (with 2 exceptions, listed below).
+2. if you make a change to a `helper`/`constants`/etc file in a test folder, then all the tests in that folder will execute.
+3. If you make a change to certain files/folders (e.g. `workflows`, `seed`, `common` - full list below) then all the tests in the repo will execute.
 
 Files/folders that will trigger all suites:
 
-- package.json
-- cypress.config.ts
-- cypress/common/\*
-- cypress/seed/\*
-- cypress/support/\*
-- cypress/fixtures/\*
-- .github/workflows/push_e2e_test_run.yml
-- .github/workflows/reusable_e2e_test_run.yml
+- `package.json`
+- `cypress.config.ts`
+- `cypress/common/*`
+- `cypress/seed/*`
+- `cypress/support/*`
+- `cypress/fixtures/*`
+- `.github/workflows/push_e2e_test_run.yml`
+- `.github/workflows/reusable_e2e_test_run.yml`
 
 ---
 
