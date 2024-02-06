@@ -297,6 +297,9 @@ describe("Create a Grant", () => {
     );
     publishAdvert(true);
 
+    cy.contains("Send feedback").click();
+    cy.wait(1000);
+
     cy.contains("Grant advert");
     cy.contains("Your advert is scheduled to be published on");
     cy.contains("View or change your advert");
