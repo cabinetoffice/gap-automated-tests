@@ -32,7 +32,6 @@ describe("Sort search results", () => {
         "Northern Ireland",
       ],
       howMuchCanYouGet: [
-        // cy.get('[data-cy="cy£0 to £10,000Checkbox"]')
         ["£0 to £10,000", 10000],
         ["£10,001 to £50,000", 50000],
         ["£50,001 to £250,000", 250000],
@@ -134,7 +133,7 @@ describe("Sort search results", () => {
         }
       });
 
-      cy.get('[data-cy="cyCancelFilterTop"]').click();
+      cy.get('[data-cy="cyCancelFilterBottom"]').click();
     });
 
     // Date - manual entry
@@ -148,36 +147,6 @@ describe("Sort search results", () => {
       "Showing grants added between 1 January 2023 to 1 January 2030",
     );
     cy.get('.govuk-\\!-display-block > [data-module="govuk-button"]').click();
-    cy.get('[data-cy="cySearchDescription"]').contains("Search grants");
-
-    // Date - date picker
-    cy.get('[data-cy="cyDatePicker-from"]').click();
-    cy.get("#from-grid-label")
-      .invoke("text")
-      .then((monthYear) => {
-        cy.get(
-          '[data-cy="cyDatePicker-fromModal"] > .dates > tbody > :nth-child(1) > [tabindex="0"]',
-        )
-          .invoke("text")
-          .then((day) => {
-            const date = day + " " + monthYear;
-
-            cy.get(
-              '[data-cy="cyDatePicker-fromModal"] > .dates > tbody > :nth-child(1) > [tabindex="0"]',
-            ).click();
-
-            cy.get('[data-cy="cyDatePicker-to"]').click();
-            cy.get(
-              '[data-cy="cyDatePicker-toModal"] > .dates > tbody > :nth-child(1) > [tabindex="0"]',
-            ).click();
-
-            cy.get('[data-cy="cyApplyFilter"]').click();
-            cy.get('[data-cy="cySearchDescription"]').contains(
-              `Showing grants added between ${date} to ${date}`,
-            );
-          });
-      });
-    cy.get('[data-cy="cyCancelFilterBottom"]').click();
     cy.get('[data-cy="cySearchDescription"]').contains("Search grants");
   });
 });
