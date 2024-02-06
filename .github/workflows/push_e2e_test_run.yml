@@ -2,7 +2,9 @@ name: Push E2E Test Run
 
 on:
   pull_request:
-    branches: develop
+    branches:
+      - develop
+      - main
   push:
     branches:
       - develop
