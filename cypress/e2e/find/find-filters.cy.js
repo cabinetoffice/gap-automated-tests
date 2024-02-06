@@ -1,6 +1,6 @@
-import { signInToIntegrationSite } from "../../common/common";
+import { signInToIntegrationSite, log } from "../../common/common";
 
-describe("Sort search results", () => {
+describe("Filter search results", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
@@ -45,7 +45,8 @@ describe("Sort search results", () => {
       ],
     };
 
-    // Who can apply
+    log("Find Filters - Who Can Apply");
+
     filters.whoCanApply.forEach((filterOption, filterIndex) => {
       cy.get(`[data-cy="cy${filterOption[0]}Checkbox"]`).click();
       cy.get('[data-cy="cyApplyFilter"]').click();
@@ -76,7 +77,8 @@ describe("Sort search results", () => {
       cy.get('[data-cy="cyCancelFilterTop"]').click();
     });
 
-    // Location
+    log("Find Filters - Location");
+
     filters.location.forEach((filterOption, filterIndex) => {
       cy.get(`[data-cy="cy${filterOption}Checkbox"]`).click();
       cy.get('[data-cy="cyApplyFilter"]').click();
@@ -107,7 +109,8 @@ describe("Sort search results", () => {
       cy.get('[data-cy="cyCancelFilterTop"]').click();
     });
 
-    // How much you can get
+    log("Find Filters - How much can you get");
+
     filters.howMuchCanYouGet.forEach((filterRange, filterIndex, filters) => {
       cy.get(`[data-cy="cy${filterRange[0]}Checkbox"]`).click();
       cy.get('[data-cy="cyApplyFilter"]').click();
@@ -153,7 +156,8 @@ describe("Sort search results", () => {
       cy.get('[data-cy="cyCancelFilterBottom"]').click();
     });
 
-    // Date
+    log("Find Filters - Date");
+
     filters.dateAdded.forEach((date) => {
       cy.get(`[data-cy="cyDateFilter-${date[0]}Day"]`).type("01");
       cy.get(`[data-cy="cyDateFilter-${date[0]}Month"]`).type("01");

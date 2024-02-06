@@ -1,4 +1,8 @@
-import { searchForGrant, signInToIntegrationSite } from "../../common/common";
+import {
+  log,
+  searchForGrant,
+  signInToIntegrationSite,
+} from "../../common/common";
 
 describe("Sort search results", () => {
   beforeEach(() => {
@@ -17,7 +21,8 @@ describe("Sort search results", () => {
     searchForGrant(Cypress.env("testV2InternalGrant").advertName);
     cy.contains(Cypress.env("testV2InternalGrant").advertName);
 
-    // Opening date sort
+    log("Find Sorting - Opening date sort");
+
     cy.get(".govuk-select").contains("Opening date").click();
     cy.get("#combo-0").contains("Opening date").click();
 
@@ -26,7 +31,8 @@ describe("Sort search results", () => {
       .first()
       .should("include.text", Cypress.env("testV2InternalGrant").advertName);
 
-    // Closing date sort
+    log("Find Sorting - Closing date sort");
+
     cy.get(".govuk-select").contains("Opening date").click();
     cy.get("#combo-1").contains("Closing date").click();
 
@@ -35,7 +41,8 @@ describe("Sort search results", () => {
       .first()
       .should("include.text", Cypress.env("testV2InternalGrant").advertName);
 
-    // High to low sort
+    log("Find Sorting - High to low sort");
+
     cy.get(".govuk-select").contains("Closing date").click();
     cy.get("#combo-2").contains("Grant value: High to low").click();
 
@@ -44,7 +51,8 @@ describe("Sort search results", () => {
       .first()
       .should("include.text", Cypress.env("testV2InternalGrant").advertName);
 
-    // Low to high sort
+    log("Find Sorting - Low to high sort");
+
     cy.get(".govuk-select").contains("Grant value: High to low").click();
     cy.get("#combo-3").contains("Grant value: Low to high").click();
 
