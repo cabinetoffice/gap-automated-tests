@@ -35,6 +35,7 @@ Manual runs can be triggered by visiting the [Manual Actions page](https://githu
 Here you can select the branch, as well as any of the following configurations:
 
 - One or all suites
+- A specific spec or set of spec files (which will override the suites you select above) - full path must be provided e.g. `cypress/e2e/superadmin/superadmin-navigation.cy.js`
 - One or both browsers
 - One environment
   - If selecting QA, ensure that you've selected the `main` branch as this should be versioned to the latest release.
