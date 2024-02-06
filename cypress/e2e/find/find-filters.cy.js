@@ -53,9 +53,16 @@ describe("Sort search results", () => {
       // Verify filter
       cy.get("body").then((body) => {
         if (body.find(".grants_list").length) {
-          cy.get(".grants_list > :nth-child(1) > :nth-child(5)").contains(
-            filterOption[1],
-          );
+          cy.get(".grants_list")
+            .children("li")
+            .first()
+            .within(() => {
+              cy.contains("Who can apply")
+                .parent()
+                .within(() => {
+                  cy.contains(filterOption[1]);
+                });
+            });
         } else {
           cy.url().then((url) => {
             cy.wrap(url).should(
@@ -66,9 +73,6 @@ describe("Sort search results", () => {
         }
       });
 
-      cy.get(".grants_list > :nth-child(1) > :nth-child(5)").contains(
-        filterOption[1],
-      );
       cy.get('[data-cy="cyCancelFilterTop"]').click();
     });
 
@@ -80,9 +84,16 @@ describe("Sort search results", () => {
       // Verify filter
       cy.get("body").then((body) => {
         if (body.find(".grants_list").length) {
-          cy.get(".grants_list > :nth-child(1) > :nth-child(3)").contains(
-            filterOption,
-          );
+          cy.get(".grants_list")
+            .children("li")
+            .first()
+            .within(() => {
+              cy.contains("Location")
+                .parent()
+                .within(() => {
+                  cy.contains(filterOption);
+                });
+            });
         } else {
           cy.url().then((url) => {
             cy.wrap(url).should(
@@ -104,24 +115,30 @@ describe("Sort search results", () => {
       // Verify filter
       cy.get("body").then((body) => {
         if (body.find(".grants_list").length) {
-          cy.get(".grants_list > :nth-child(1) > :nth-child(6)")
-            .invoke("text")
-            .then((text) => {
-              // Extract values from advert listing
-              const p1Index = text.indexOf("£");
-              const s1Index = text.indexOf(" ", p1Index);
-              const p2Index = text.indexOf("£", s1Index);
-              const maxPriceText = text.slice(p2Index + 1).replace(",", "");
+          cy.get(".grants_list")
+            .children("li")
+            .first()
+            .within(() => {
+              cy.contains("How much you can get")
+                .parent()
+                .invoke("text")
+                .then((text) => {
+                  // Extract values from advert listing
+                  const p1Index = text.indexOf("£");
+                  const s1Index = text.indexOf(" ", p1Index);
+                  const p2Index = text.indexOf("£", s1Index);
+                  const maxPriceText = text.slice(p2Index + 1).replace(",", "");
 
-              const maxPrice = maxPriceText.includes("million")
-                ? parseInt(parseFloat(maxPriceText) * 1000000)
-                : parseInt(maxPriceText);
+                  const maxPrice = maxPriceText.includes("million")
+                    ? parseInt(parseFloat(maxPriceText) * 1000000)
+                    : parseInt(maxPriceText);
 
-              if (filterIndex < filters.length - 1) {
-                cy.wrap(maxPrice).should("be.lte", filterRange[1]);
-              } else {
-                cy.wrap(maxPrice).should("be.gte", filterRange[1]);
-              }
+                  if (filterIndex < filters.length - 1) {
+                    cy.wrap(maxPrice).should("be.lte", filterRange[1]);
+                  } else {
+                    cy.wrap(maxPrice).should("be.gte", filterRange[1]);
+                  }
+                });
             });
         } else {
           cy.url().then((url) => {
@@ -136,7 +153,7 @@ describe("Sort search results", () => {
       cy.get('[data-cy="cyCancelFilterBottom"]').click();
     });
 
-    // Date - manual entry
+    // Date
     filters.dateAdded.forEach((date) => {
       cy.get(`[data-cy="cyDateFilter-${date[0]}Day"]`).type("01");
       cy.get(`[data-cy="cyDateFilter-${date[0]}Month"]`).type("01");
@@ -146,7 +163,8 @@ describe("Sort search results", () => {
     cy.get('[data-cy="cySearchDescription"]').contains(
       "Showing grants added between 1 January 2023 to 1 January 2030",
     );
-    cy.get('.govuk-\\!-display-block > [data-module="govuk-button"]').click();
+
+    cy.get('[name="clearDateFilters"]').click();
     cy.get('[data-cy="cySearchDescription"]').contains("Search grants");
   });
 });
