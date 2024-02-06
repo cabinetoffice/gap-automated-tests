@@ -1,0 +1,18 @@
+name: Repeated Scheduled QA E2E Test Run Workflow
+
+on:
+  schedule:
+    - cron: "0 1,3,5,7,17,19,21,23 * * 1-5" # every weeknight, every 2h
+
+jobs:
+  call-qa-reusable-e2e-test-run-workflow:
+    name: QA E2E Test Run
+    uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
+    with:
+      report: true
+      notify: true
+      environment: QA
+      branch: main
+    secrets: inherit
+
+  # =============================
