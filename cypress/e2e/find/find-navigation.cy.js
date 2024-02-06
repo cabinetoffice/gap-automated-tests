@@ -1,4 +1,10 @@
+import { signInToIntegrationSite } from "../../common/common";
+
 describe("Find a Grant - Navigation", () => {
+  beforeEach(() => {
+    signInToIntegrationSite();
+  });
+
   it("loads the page", () => {
     cy.contains("Find a grant");
   });

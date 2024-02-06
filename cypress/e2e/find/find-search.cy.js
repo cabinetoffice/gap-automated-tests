@@ -1,7 +1,11 @@
-import { searchForGrant } from "../../common/common";
+import { searchForGrant, signInToIntegrationSite } from "../../common/common";
 import { clickThroughPagination, countNumberOfPages } from "./helper";
 
 describe("Find a Grant - Search", () => {
+  beforeEach(() => {
+    signInToIntegrationSite();
+  });
+
   it("Interacts with the home page and enters a search term > 100 characters", () => {
     cy.contains("Find a grant");
 
