@@ -1,13 +1,4 @@
-import { signInToIntegrationSite } from "../../common/common";
-
 describe("Find a Grant - Navigation", () => {
-  beforeEach(() => {
-    cy.task("setUpUser");
-    cy.task("setUpApplyData");
-    cy.task("setUpFindData");
-    signInToIntegrationSite();
-  });
-
   it("loads the page", () => {
     cy.contains("Find a grant");
   });
