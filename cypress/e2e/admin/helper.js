@@ -101,10 +101,11 @@ export function publishApplicationForm() {
 function sectionsAndQuestions() {
   // add section
   cy.get('[data-cy="cy-button-addNewSection"]').click();
-  cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
-  cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Custom Section", {
-    force: true,
-  });
+  cy.get('[data-cy="cy-sectionTitle-text-input"]')
+    .click()
+    .type("Custom Section", {
+      force: true,
+    });
   clickSaveAndContinue();
 
   // add question to new section
@@ -162,6 +163,20 @@ function sectionsAndQuestions() {
 
   editSectionName("Custom Section", "Shiny new section name");
 
+  moveQuestion(0, "Custom Question 1", "Down");
+  moveQuestion(1, "Custom Question 1", "Down");
+  moveQuestion(2, "Custom Question 1", "Down");
+  moveQuestion(3, "Custom Question 1", "Down");
+  moveQuestion(4, "Custom Question 1", "Down");
+  moveQuestion(5, "Custom Question 1", "Down");
+
+  moveQuestion(6, "Custom Question 1", "Up");
+  moveQuestion(5, "Custom Question 1", "Up");
+  moveQuestion(4, "Custom Question 1", "Up");
+  moveQuestion(3, "Custom Question 1", "Up");
+  moveQuestion(2, "Custom Question 1", "Up");
+  moveQuestion(1, "Custom Question 1", "Up");
+
   const questionIndexes = Array.from({ length: 7 }, (_, index) =>
     String(index + 1),
   );
@@ -171,21 +186,82 @@ function sectionsAndQuestions() {
 
   cy.contains(".govuk-button", "Save and go back").click();
 
-  // add section
   cy.get('[data-cy="cy-button-addNewSection"]').click();
-  cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
-  cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Deletable Section", {
-    force: true,
-  });
+  cy.get('[data-cy="cy-sectionTitle-text-input"]')
+    .click()
+    .type("Custom Section two", {
+      force: true,
+    });
   clickSaveAndContinue();
-  // delete section
+  clickText("Save and go back");
+
+  cy.get('[data-cy="cy-button-addNewSection"]').click();
+  cy.get('[data-cy="cy-sectionTitle-text-input"]')
+    .click()
+    .type("Custom Section three", {
+      force: true,
+    });
+  clickSaveAndContinue();
+  clickText("Save and go back");
+
+  moveSection("3. Shiny new section name", "Down");
+  moveSection("4. Shiny new section name", "Down");
+
+  moveSection("5. Shiny new section name", "Up");
+  moveSection("4. Shiny new section name", "Up");
+
+  selectActionForItemInTable("4. Custom Section two", "Edit section", {
+    actionCellElement: "div",
+    textCellElement: "div",
+  });
   cy.get(".govuk-button").contains("Delete section").click();
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
   cy.get('[data-cy="cy-button-Confirm"]').click();
 
-  cy.get('[data-cy="cy_sections_deleteSectionBtn-Deletable Section"]').should(
-    "not.exist",
-  );
+  selectActionForItemInTable("4. Custom Section three", "Edit section", {
+    actionCellElement: "div",
+    textCellElement: "div",
+  });
+  cy.get(".govuk-button").contains("Delete section").click();
+  cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+  cy.get('[data-cy="cy-button-Confirm"]').click();
+}
+
+function moveSection(sectionName, direction) {
+  selectActionForItemInTable(sectionName, direction, {
+    actionCellElement: "div",
+    textCellElement: "div",
+    actionCellType: "button",
+  });
+}
+
+function moveQuestion(currentIndex, questionName, direction) {
+  cy.get("table")
+    // Not a great selector but not sure of a better way to do this
+    .find(
+      `[aria-label="Move question ${questionName} ${direction.toLowerCase()}"]`,
+    )
+    .parents("tr")
+    .invoke("index")
+    .then((i) => {
+      cy.wrap(i).should("eq", currentIndex);
+    });
+
+  selectActionForItemInTable(questionName, direction, {
+    actionCellElement: "td",
+    textCellElement: "td",
+    actionCellType: "button",
+  });
+
+  cy.get("table")
+    .find(
+      `[aria-label="Move question ${questionName} ${direction.toLowerCase()}"]`,
+    )
+    .parents("tr")
+    .invoke("index")
+    .then((i) => {
+      cy.wrap(i).should("eq", currentIndex + (direction === "Up" ? -1 : 1));
+    });
 }
 
 function editSectionName(previousSectionName, newSectionName) {
