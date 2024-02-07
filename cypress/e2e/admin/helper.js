@@ -6,6 +6,7 @@ import {
   yesQuestionComplete,
   saveAndExit,
   clickText,
+  selectActionForItemInTable,
 } from "../../common/common";
 
 const getIframeBody = (iFrameSelector) =>
@@ -154,9 +155,9 @@ function sectionsAndQuestions() {
     '[data-cy="cy-radioInput-option-ShortAnswer"]',
   );
 
-  editQuestion(8, "To edit and delete question", "To delete question");
+  editQuestion("To edit and delete question", "To delete question");
 
-  deleteQuestion(8, "To delete question");
+  deleteQuestion("To delete question");
 
   const questionIndexes = Array.from({ length: 7 }, (_, index) =>
     String(index + 1),
@@ -199,12 +200,11 @@ function addOptionalQuestion(questionText, description, type) {
   clickSaveAndContinue();
 }
 
-function editQuestion(index, previousQuestionTitle, newQuestionTitle) {
+function editQuestion(previousQuestionTitle, newQuestionTitle) {
   cy.contains(previousQuestionTitle).should("exist");
-  cy.get("a:contains(Edit)").each(($element, eleIndex) => {
-    if (eleIndex === index) {
-      cy.wrap($element).click();
-    }
+  selectActionForItemInTable(previousQuestionTitle, "Edit", {
+    actionCellElement: "td",
+    textCellElement: "td",
   });
   cy.get('[data-cy="cy-fieldTitle-text-input"]')
     .clear()
@@ -216,12 +216,11 @@ function editQuestion(index, previousQuestionTitle, newQuestionTitle) {
   cy.contains(newQuestionTitle).should("exist");
 }
 
-function deleteQuestion(index, questionTitle) {
+function deleteQuestion(questionTitle) {
   cy.contains(questionTitle).should("exist");
-  cy.get("a:contains(Edit)").each(($element, eleIndex) => {
-    if (eleIndex === index) {
-      cy.wrap($element).click();
-    }
+  selectActionForItemInTable(questionTitle, "Edit", {
+    actionCellElement: "td",
+    textCellElement: "td",
   });
   cy.contains(".govuk-button", "Delete question").click();
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
