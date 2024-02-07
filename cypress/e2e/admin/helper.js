@@ -4,6 +4,8 @@ import {
   downloadFileFromLink,
   log,
   yesQuestionComplete,
+  saveAndExit,
+  clickText,
 } from "../../common/common";
 
 const getIframeBody = (iFrameSelector) =>
