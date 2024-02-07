@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {
   clickSaveAndContinue,
+  clickText,
   downloadFileFromLink,
   log,
   saveAndExit,
@@ -66,6 +67,10 @@ function sectionsAndQuestions() {
     '[data-cy="cy-radioInput-option-Date"]',
   );
 
+  editQuestion(6, "Custom Question 7", "Custom Question 7 - Updated");
+
+  deleteQuestion(6, "Custom Question 7 - Updated");
+
   const questionIndexes = Array.from({ length: 7 }, (_, index) =>
     String(index + 1),
   );
@@ -105,6 +110,28 @@ function addOptionalQuestion(questionText, description, type) {
   clickSaveAndContinue();
   cy.get(type).click();
   clickSaveAndContinue();
+}
+
+function editQuestion(index, previousQuestionTitle, newQuestionTitle) {
+  cy.get(previousQuestionTitle).should("exist");
+  cy.contains(".govuk-link", "Edit").eq(index).click();
+  cy.get('[data-cy="cy-fieldTitle-text-input"]')
+    .clear()
+    .type(newQuestionTitle, {
+      force: true,
+    });
+  clickSaveAndContinue();
+  cy.get(previousQuestionTitle).should("not.exist");
+  cy.get(newQuestionTitle).should("exist");
+}
+
+function deleteQuestion(index, questionTitle) {
+  cy.get(questionTitle).should("exist");
+  cy.contains(".govuk-link", "Edit").eq(index).click();
+  cy.contains(".govuk-button", "Delete question").click();
+  cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+  clickText("Confirm");
+  cy.get(questionTitle).should("not.exist");
 }
 
 function addOptionalMultiChoiceQuestion(questionText, description, type) {
