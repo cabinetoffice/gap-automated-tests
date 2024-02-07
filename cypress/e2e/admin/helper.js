@@ -7,6 +7,7 @@ import {
   saveAndExit,
   clickText,
   selectActionForItemInTable,
+  clickSave,
 } from "../../common/common";
 
 const getIframeBody = (iFrameSelector) =>
@@ -159,6 +160,8 @@ function sectionsAndQuestions() {
 
   deleteQuestion("To delete question");
 
+  editSectionName("Custom Section", "Shiny new section name");
+
   const questionIndexes = Array.from({ length: 7 }, (_, index) =>
     String(index + 1),
   );
@@ -183,6 +186,22 @@ function sectionsAndQuestions() {
   cy.get('[data-cy="cy_sections_deleteSectionBtn-Deletable Section"]').should(
     "not.exist",
   );
+}
+
+function editSectionName(previousSectionName, newSectionName) {
+  cy.contains(previousSectionName).should("exist");
+  selectActionForItemInTable(previousSectionName, "Edit", {
+    actionCellElement: "dd",
+    textCellElement: "dd",
+  });
+  cy.get('[data-cy="cy-sectionTitle-text-input"]')
+    .clear()
+    .type(newSectionName, {
+      force: true,
+    });
+  clickSave();
+  cy.contains(previousSectionName).should("not.exist");
+  cy.contains(newSectionName).should("exist");
 }
 
 function addOptionalQuestion(questionText, description, type) {
