@@ -84,7 +84,6 @@ describe("Create a Grant", () => {
       "Scheme details with an in progress advert journey - submitting feedback form",
     );
     cy.contains("Send feedback").click();
-    cy.wait(1000);
 
     log(
       "Scheme details with an in progress advert journey - Changing from scheduled to published",
@@ -95,9 +94,13 @@ describe("Create a Grant", () => {
     cy.get('[data-cy="cy_unscheduleConfirmation-ConfirmButton"]').click();
     advertSection3(false);
     publishAdvert(false);
+
     cy.contains("Very satisfied").click();
     cy.contains("Send feedback").click();
+    // This wait is necessary as the cy.url() command will attempt to execute immediately after submitting the form
+    // hence later cy.visit() commands will attempt to visit the wrong page
     cy.wait(1000);
+
     cy.url().then((url) => {
       const schemeUrl = url;
       cy.get('[data-cy="cy-link-to-advert-on-find"]').then(($el) => {
