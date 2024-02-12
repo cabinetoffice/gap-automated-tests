@@ -80,6 +80,12 @@ describe("Create a Grant", () => {
     );
     publishAdvert(true);
 
+    log(
+      "Scheme details with an in progress advert journey - submitting feedback form",
+    );
+    cy.contains("Send feedback").click();
+    cy.wait(1000);
+
     log("Changing from scheduled to published");
     cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
     cy.get('[data-cy="cy-unschedule-advert-button"]').click();
