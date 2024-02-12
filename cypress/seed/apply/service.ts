@@ -151,10 +151,9 @@ const insertSubmissionsAndMQs = async () => {
 };
 
 const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
-  let row: unknown[] = [[]];
-
-  row = await retry(
-    async () => await runSqlForApply([getExportedSubmission], applyInsertSubstitutions),
+  const row = await retry(
+    async () =>
+      await runSqlForApply([getExportedSubmission], applyInsertSubstitutions),
     (response: { status: string }) => response[0][0].status === "COMPLETE",
     30,
     1000,
