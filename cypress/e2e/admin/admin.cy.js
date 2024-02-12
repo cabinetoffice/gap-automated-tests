@@ -622,7 +622,6 @@ describe("Downloads and Due Diligence", () => {
     log(
       "Admin V2 Internal - Manage Due Diligence & Spotlight - Waiting for submission export lambda to execute",
     );
-    cy.wait(10000);
 
     log(
       "Admin V2 Internal - Manage Due Diligence & Spotlight - Validating downloaded submission export",
@@ -703,7 +702,6 @@ describe("Downloads and Due Diligence", () => {
     log(
       "Admin V1 Internal - Download Submission Export - Waiting for submission export lambda to execute",
     );
-    cy.wait(10000);
 
     log(
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
