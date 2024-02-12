@@ -14,10 +14,87 @@ on:
       - "**.md"
 
 jobs:
+  detect-specs:
+    runs-on: ubuntu-latest
+    outputs:
+      specs: ${{ steps.determine_specs.outputs.specs }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@master
+
+      - name: Get changed files
+        uses: jitterbit/get-changed-files@v1
+        id: changed_files
+
+      - name: Determine changed specs
+        id: changed_specs
+        run: |
+          CHANGED_FILES="${{ steps.changed_files.outputs.all }}"
+          CHANGED_FILES_ARRAY=(${CHANGED_FILES// / })
+
+          CHANGED_SUITES_ARRAY=()
+          for i in ${CHANGED_FILES_ARRAY[@]}; do
+            dir=$(dirname $i)
+            cypressdir="cypress/e2e/"
+            if [[ $i == *.cy.js ]]; then
+                CHANGED_SUITES_ARRAY+=($i)
+            else
+              if [[ ${dir:0:${#cypressdir}} == $cypressdir ]]; then
+                CHANGED_SUITES_ARRAY+=($dir"/**/*")
+              fi
+            fi
+          done
+
+          # clean up subpaths
+          CLEAN_CHANGED_FILES=()
+          wildcard='**/*'
+          for i in ${CHANGED_SUITES_ARRAY[@]}; do
+            should_add='true'
+            for j in ${CHANGED_SUITES_ARRAY[@]}; do
+              j_len=${#j}-${#wildcard}
+              if [[ ${j: -${#wildcard}} == $wildcard ]]; then
+                if [[ ${i:0:$j_len} == ${j:0:$j_len} ]]; then
+                  should_add='false'
+                  if [[ ! " ${CLEAN_CHANGED_FILES[*]} " =~ ${j} ]]; then
+                    CLEAN_CHANGED_FILES+=(${j})
+                  fi
+                fi
+              fi
+            done
+            if [[ $should_add == 'true' && ! " ${CLEAN_CHANGED_FILES[*]} " =~ ${i} ]]; then
+              CLEAN_CHANGED_FILES+=(${i})
+            fi
+          done
+
+          CHANGED_SPECS=$(printf ",%s" "${CLEAN_CHANGED_FILES[@]}")
+          CHANGED_SPECS=${CHANGED_SPECS:1}
+
+          echo ${CLEAN_CHANGED_FILES[@]}
+          echo $CHANGED_SPECS
+
+          echo "changed_specs=$CHANGED_SPECS" >> "$GITHUB_OUTPUT"
+
+      - name: Set force_run_all_suites
+        id: force_run_all_suites
+        run: |
+          VALUE=${{ steps.changed_specs.outputs.changed_specs == null || contains(steps.changed_files.outputs.all, 'cypress/common') || contains(steps.changed_files.outputs.all, 'cypress/seed') || contains(steps.changed_files.outputs.all, 'cypress.config.ts') || contains(steps.changed_files.outputs.all, 'cypress/support') || contains(steps.changed_files.outputs.all, 'cypress/fixtures') || contains(steps.changed_files.outputs.all, 'package.json') || contains(steps.changed_files.outputs.all, '.github/workflows/push_e2e_test_run.yml') || contains(steps.changed_files.outputs.all, '.github/workflows/reusable_e2e_test_run.yml') }}
+          echo "force_run_all_suites=$VALUE" >> "$GITHUB_OUTPUT"
+
+      - name: Determine specs to run
+        id: determine_specs
+        run: |
+          if [[ ${{ steps.force_run_all_suites.outputs.force_run_all_suites }} == true ]]; then
+            echo "specs=cypress/e2e/**/*" >> "$GITHUB_OUTPUT"
+          else
+            echo "specs=${{ steps.changed_specs.outputs.changed_specs }}" >> "$GITHUB_OUTPUT"
+          fi
+
   call-sandbox-chrome-reusable-e2e-test-run-workflow:
+    needs: detect-specs
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
-      suite: all
+      specs: ${{ needs.detect-specs.outputs.specs }}
       browser: chrome
       report: false
       notify: false

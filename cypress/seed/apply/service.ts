@@ -72,6 +72,7 @@ import {
   postLoginBaseUrl,
   spotlightSubstitutions,
 } from "./constants";
+import { retry } from "./helper";
 
 const runSqlForApply = async (
   scripts: string[],
@@ -269,9 +270,14 @@ const insertSubmissionsAndMQs = async () => {
 };
 
 const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
-  const row = await runSqlForApply(
-    [getExportedSubmission],
-    applyInsertSubstitutions,
+  let row: unknown[] = [[]];
+
+  row = await retry(
+    async () =>
+      await runSqlForApply([getExportedSubmission], applyInsertSubstitutions),
+    (response: { status: string }) => response[0][0].status === "COMPLETE",
+    30,
+    1000,
   );
   console.log(schemeId, row[0][0]);
   return {

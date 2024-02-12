@@ -252,3 +252,15 @@ export const validateActionForItemInTable = (
         });
     });
 };
+
+export const validateValueForKeyInTable = (
+  key: string,
+  value: string,
+  options = { keyElement: "dt", valueElement: "dd" },
+) => {
+  cy.contains(options.keyElement, key)
+    .parent()
+    .within(() => {
+      cy.get(options.valueElement).contains(value);
+    });
+};

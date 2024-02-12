@@ -1,4 +1,5 @@
 import { defineConfig } from "cypress";
+import * as dayjs from "dayjs";
 import {
   TEST_V1_EXTERNAL_GRANT,
   TEST_V1_INTERNAL_GRANT,
@@ -167,7 +168,7 @@ export default defineConfig({
           return await getExportedSubmissionUrlAndLocation(schemeId);
         },
         log(message) {
-          console.log(message);
+          console.log(dayjs().format() + " | " + message);
 
           return null;
         },

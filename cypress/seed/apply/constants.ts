@@ -105,29 +105,6 @@ const V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID =
 const V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID =
   V2_INTERNAL_NON_LIMITED_COMPANY_MANDATORY_QUESTION_ID;
 
-const MQ_DETAILS = {
-  name: "MyOrg",
-  address: ["addressLine1", "addressLine2", "city", "county", "postcod"],
-  orgType: "Limited company",
-  companiesHouse: "12345",
-  charitiesCommission: "67890",
-  howMuchFunding: "100",
-  fundingLocation: [
-    "North East (England)",
-    "North West (England)",
-    "Yorkshire and the Humber",
-    "East Midlands (England)",
-    "West Midlands (England)",
-    "London",
-    "South East (England)",
-    "South West (England)",
-    "Scotland",
-    "Wales",
-    "Northern Ireland",
-    "Outside of the UK",
-  ],
-};
-
 const applyInsertSubstitutions = {
   [insertApplicants]: [
     SUPER_ADMIN_ID,
@@ -445,7 +422,6 @@ export {
   APPLICANT_ID,
   DEPARTMENT_NAME,
   FUNDING_ID,
-  MQ_DETAILS,
   SPOTLIGHT_BATCH_ID,
   SUPER_ADMIN_ID,
   TECHNICAL_SUPPORT_ID,
