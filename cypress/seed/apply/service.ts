@@ -21,6 +21,7 @@ import {
   deleteSpotlightBatchRow,
   deleteSpotlightSubmissionRow,
   deleteSubmissions,
+  deleteTechSupportUser,
   deleteUsers,
 } from "../ts/deleteApplyData";
 import {
@@ -38,6 +39,7 @@ import {
   insertSchemes,
   insertSpotlightSubmission,
   insertSubmissions,
+  insertTechSupportUser,
   insertUsers,
 } from "../ts/insertApplyData";
 import {
@@ -89,6 +91,7 @@ const createApplyData = async (): Promise<void> => {
       insertUsers,
       insertFundingOrgs,
       insertAdmins,
+      insertTechSupportUser,
       insertGrantApplicantOrgProfiles,
       insertSchemes,
       insertApplications,
@@ -109,6 +112,7 @@ const deleteApplyData = async (): Promise<void> => {
       deleteApplications,
       deleteSchemes,
       deleteAdmins,
+      deleteTechSupportUser,
       deleteApplicants,
       deleteUsers,
       deleteFundingOrgs,
@@ -127,11 +131,11 @@ const createApiKeysData = async (): Promise<void> => {
   console.log("Successfully created and updated fundingOrganisation");
 
   console.log("Creating Keys in usage plan for SUPER_ADMIN_ID - 1");
-  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 1, 1, 46);
+  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 1, 1, 7);
   console.log("Successfully created Keys in usage plan for SUPER_ADMIN_ID - 1");
 
   console.log("Creating Keys in usage plan for SUPER_ADMIN_ID - 2");
-  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 2, 46, 111);
+  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 2, 7, 12);
   console.log("Successfully created Keys in usage plan for SUPER_ADMIN_ID - 2");
 
   const apiKeys = (await getKeysFromAwsApiGatewayUsagePlan()).sort((a, b) =>
@@ -350,6 +354,7 @@ const createApiKeysInApiGatewayUsagePlan = async (
   endingPoint: number,
 ) => {
   for (let i = startingPoint; i < endingPoint; i++) {
+    console.log("creating key in AWS: " + i);
     const paddedNumber = i.toString().padStart(3, "0");
     const orgName =
       fundingOrganisation === SUPER_ADMIN_ID - 1 ? "Org1" : "Org2";

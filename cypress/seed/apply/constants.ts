@@ -24,6 +24,7 @@ import {
   deleteSpotlightBatchRow,
   deleteSpotlightSubmissionRow,
   deleteSubmissions,
+  deleteTechSupportUser,
   deleteUsers,
 } from "../ts/deleteApplyData";
 import {
@@ -40,6 +41,7 @@ import {
   insertSchemes,
   insertSpotlightSubmission,
   insertSubmissions,
+  insertTechSupportUser,
   insertUsers,
 } from "../ts/insertApplyData";
 
@@ -151,9 +153,10 @@ const applyInsertSubstitutions = {
     ADMIN_ID,
     FUNDING_ID,
     ADMIN_ID,
-    TECHNICAL_SUPPORT_ID,
+  ],
+  [insertTechSupportUser]: [
     FUNDING_ID,
-    TECHNICAL_SUPPORT_ID,
+    process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
   ],
   [insertGrantApplicantOrgProfiles]: [
     SUPER_ADMIN_ID,
@@ -255,6 +258,7 @@ const applyDeleteSubstitutions = {
   [deleteApplications]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSchemes]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteAdmins]: [SUPER_ADMIN_ID, ADMIN_ID, TECHNICAL_SUPPORT_ID, ...allSubs],
+  [deleteTechSupportUser]: [...allSubs],
   [deleteFundingOrgs]: [SUPER_ADMIN_ID],
   [deleteApplicants]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
   [deleteUsers]: [

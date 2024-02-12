@@ -23,8 +23,13 @@ const insertAdmins: string = `
 INSERT INTO public.grant_admin(grant_admin_id, funder_id, user_id)
     VALUES
     ($1, $2, $3),
-    ($4, $5, $6),
-    ($7, $8, $9);
+    ($4, $5, $6);
+`;
+
+const insertTechSupportUser: string = `
+INSERT INTO public.tech_support_user(funder_id, user_sub)
+    VALUES
+    ($1, $2);
 `;
 
 const insertGrantApplicantOrgProfiles: string = `
@@ -170,5 +175,6 @@ export {
   insertSchemes,
   insertSpotlightSubmission,
   insertSubmissions,
+  insertTechSupportUser,
   insertUsers,
 };

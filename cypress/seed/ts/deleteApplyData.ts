@@ -38,6 +38,8 @@ DELETE FROM public.grant_admin WHERE grant_admin_id IN ($1, $2, $3) OR user_id I
 );
 `;
 
+const deleteTechSupportUser: string = `DELETE FROM public.tech_support_user WHERE user_sub IN ($1, $2, $3, $4)`;
+
 const deleteApplicants: string = `
 DELETE FROM public.grant_applicant WHERE
     id IN ($1, $2, $3) OR
@@ -98,5 +100,6 @@ export {
   deleteSpotlightBatchRow,
   deleteSpotlightSubmissionRow,
   deleteSubmissions,
+  deleteTechSupportUser,
   deleteUsers,
 };

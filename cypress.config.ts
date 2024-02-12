@@ -93,6 +93,7 @@ export default defineConfig({
 
           return null;
         },
+        // TODO rename
         async create110ApiKeys() {
           await deleteApiKeysData().then(async () => {
             await createApiKeysData();

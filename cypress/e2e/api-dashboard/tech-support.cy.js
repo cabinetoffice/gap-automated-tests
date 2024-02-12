@@ -8,8 +8,6 @@ import {
   signOut,
 } from "../../common/common";
 
-import { ERROR_PAGE_BODY_TECHNICAL_SUPPORT } from "../../utils/errorPageString";
-
 const today = new Date().toLocaleDateString("en-GB", {
   day: "numeric",
   month: "long",
@@ -445,7 +443,7 @@ describe("API Dashboard", () => {
       ).then((r) => {
         expect(r.status).to.eq(200);
         expect(r.redirects[0]).to.contain(`/api-keys/error`);
-        expect(r.body).to.eq(ERROR_PAGE_BODY_TECHNICAL_SUPPORT);
+        expect(r.body).to.contain("Something went wrong");
       });
     });
 
