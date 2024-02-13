@@ -80,16 +80,27 @@ describe("Create a Grant", () => {
     );
     publishAdvert(true);
 
-    log("Changing from scheduled to published");
+    log(
+      "Scheme details with an in progress advert journey - submitting feedback form",
+    );
+    cy.contains("Send feedback").click();
+
+    log(
+      "Scheme details with an in progress advert journey - Changing from scheduled to published",
+    );
     cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
     cy.get('[data-cy="cy-unschedule-advert-button"]').click();
     cy.get('[data-cy="cy-radioInput-option-YesUnscheduleMyAdvert"]').click();
     cy.get('[data-cy="cy_unscheduleConfirmation-ConfirmButton"]').click();
     advertSection3(false);
     publishAdvert(false);
+
     cy.contains("Very satisfied").click();
     cy.contains("Send feedback").click();
+    // This wait is necessary as the cy.url() command will attempt to execute immediately after submitting the form
+    // hence later cy.visit() commands will attempt to visit the wrong page
     cy.wait(1000);
+
     cy.url().then((url) => {
       const schemeUrl = url;
       cy.get('[data-cy="cy-link-to-advert-on-find"]').then(($el) => {
@@ -109,7 +120,9 @@ describe("Create a Grant", () => {
           "Your advert has been unpublished",
         );
         // Need to wait for Contentful to update.
-        log("Waiting for Contentful to unpublish advert");
+        log(
+          "Scheme details with an in progress advert journey - Waiting for Contentful to unpublish advert",
+        );
         cy.wait(10000);
 
         cy.visit(advertUrl, { failOnStatusCode: false });

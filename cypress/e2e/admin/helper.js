@@ -127,6 +127,9 @@ function sectionsAndQuestions() {
     '[data-cy="cy-radioInput-option-LongAnswer"]',
   );
 
+  cy.get('[data-cy="cy-maxWords-text-input-numeric"]').type("500");
+  clickSaveAndContinue();
+
   addOptionalMultiChoiceQuestion(
     "Custom Question 4",
     "Short description",

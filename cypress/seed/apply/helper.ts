@@ -6,14 +6,8 @@ const getUUID = (index = 0) =>
 const getTestID = (index = 0) =>
   -(Math.abs(+process.env.FIRST_USER_ID) + index);
 
-function sleep(milliseconds: number) {
-  const start = new Date().getTime();
-  for (let i = 0; i < 1e7; i++) {
-    if (new Date().getTime() - start > milliseconds) {
-      break;
-    }
-  }
-}
+const sleep = async (ms: number) =>
+  await new Promise((resolve) => setTimeout(resolve, ms));
 
 const retry = async (
   func: any,
