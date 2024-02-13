@@ -81,6 +81,7 @@ export const navigateToSpecificUser = (email: string) => {
   selectActionForItemInTable(email, "Edit", {
     textCellElement: "td",
     actionCellElement: "td",
+    actionCellType: "a",
   });
 };
 
@@ -216,12 +217,18 @@ export const filterSelection = (fieldSet: string, label: string) => {
 export const selectActionForItemInTable = (
   text: string,
   action: string,
-  options = { textCellElement: "dt", actionCellElement: "dd" },
+  options = {
+    textCellElement: "dt",
+    actionCellElement: "dd",
+    actionCellType: "a",
+  },
 ) => {
   cy.contains(options.textCellElement, text)
     .parent()
     .within(($tr) => {
-      cy.get(`${options.actionCellElement} a`).contains(action).click();
+      cy.get(`${options.actionCellElement} ${options.actionCellType || "a"}`)
+        .contains(action)
+        .click();
     });
 };
 

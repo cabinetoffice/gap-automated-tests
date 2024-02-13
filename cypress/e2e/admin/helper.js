@@ -3,9 +3,93 @@ import {
   clickSaveAndContinue,
   downloadFileFromLink,
   log,
-  saveAndExit,
   yesQuestionComplete,
+  saveAndExit,
+  clickText,
+  selectActionForItemInTable,
+  clickSave,
 } from "../../common/common";
+
+const getIframeBody = (iFrameSelector) =>
+  cy
+    .get(iFrameSelector, { timeout: 8000 })
+    .its("0.contentDocument.body")
+    .should("not.be.empty")
+    .then(cy.wrap);
+
+export function createGrant(GRANT_NAME) {
+  const ggisNumber = "Cypress Test GGIS Number";
+  const contactEmail = "test@and-cypress-email.com";
+
+  cy.get("[data-cy=cy_addAGrantButton]").click();
+
+  cy.get("[data-cy=cy-name-text-input]").click();
+  cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME, { force: true });
+
+  clickSaveAndContinue();
+
+  cy.get("[data-cy=cy-ggisReference-text-input]").click();
+  cy.get("[data-cy=cy-ggisReference-text-input]").type(ggisNumber, {
+    force: true,
+  });
+
+  clickSaveAndContinue();
+
+  cy.get("[data-cy=cy-contactEmail-text-input]").click();
+  cy.get("[data-cy=cy-contactEmail-text-input]").type(contactEmail, {
+    force: true,
+  });
+
+  clickSaveAndContinue();
+
+  cy.get("[data-cy='cy_summaryListValue_Grant name']").contains(GRANT_NAME);
+
+  cy.get(
+    "[data-cy='cy_summaryListValue_GGIS Scheme Reference Number']",
+  ).contains(ggisNumber);
+
+  cy.get("[data-cy='cy_summaryListValue_Support email address']").contains(
+    contactEmail,
+  );
+
+  cy.get("[data-cy=cy_addAGrantConfirmationPageButton]").click();
+
+  cy.contains(GRANT_NAME).parent().contains("View").click();
+}
+
+export function applicationForm() {
+  cy.get('[data-cy="cyBuildApplicationForm"]').click();
+
+  cy.get('[data-cy="cy-applicationName-text-input"]').click();
+  cy.get('[data-cy="cy-applicationName-text-input"]').type(
+    "Cypress - Grant Application",
+    { force: true },
+  );
+  cy.get('[data-cy="cy-button-Continue"]').click();
+
+  cy.get('[data-cy="cy_Section-Eligibility Statement"]').click();
+
+  cy.get('[data-cy="cy-displayText-text-area"]').type("eligibility", {
+    force: true,
+  });
+  saveAndExit();
+
+  cy.get('[data-cy="cy_Section-due-diligence-checks"]').click();
+
+  // the diligence checks page throws a React error in the background of loading the page, and cypress stops
+  // processing on any exception. This line just tells it to continue on an unchecked exception.
+  cy.on("uncaught:exception", () => false);
+
+  cy.get(
+    '[data-cy="cy-checkbox-value-I understand that applicants will be asked for this information"]',
+  ).click();
+  saveAndExit();
+
+  sectionsAndQuestions();
+
+  // publish
+  publishApplicationForm();
+}
 
 export function publishApplicationForm() {
   cy.get('[data-cy="cy_publishApplication-button"]').click();
@@ -17,10 +101,11 @@ export function publishApplicationForm() {
 function sectionsAndQuestions() {
   // add section
   cy.get('[data-cy="cy-button-addNewSection"]').click();
-  cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
-  cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Custom Section", {
-    force: true,
-  });
+  cy.get('[data-cy="cy-sectionTitle-text-input"]')
+    .click()
+    .type("Custom Section", {
+      force: true,
+    });
   clickSaveAndContinue();
 
   // add question to new section
@@ -69,6 +154,32 @@ function sectionsAndQuestions() {
     '[data-cy="cy-radioInput-option-Date"]',
   );
 
+  addOptionalQuestion(
+    "To edit and delete question",
+    "Short description",
+    '[data-cy="cy-radioInput-option-ShortAnswer"]',
+  );
+
+  editQuestion("To edit and delete question", "To delete question");
+
+  deleteQuestion("To delete question");
+
+  editSectionName("Custom Section", "Shiny new section name");
+
+  moveQuestion(0, "Custom Question 1", "Down");
+  moveQuestion(1, "Custom Question 1", "Down");
+  moveQuestion(2, "Custom Question 1", "Down");
+  moveQuestion(3, "Custom Question 1", "Down");
+  moveQuestion(4, "Custom Question 1", "Down");
+  moveQuestion(5, "Custom Question 1", "Down");
+
+  moveQuestion(6, "Custom Question 1", "Up");
+  moveQuestion(5, "Custom Question 1", "Up");
+  moveQuestion(4, "Custom Question 1", "Up");
+  moveQuestion(3, "Custom Question 1", "Up");
+  moveQuestion(2, "Custom Question 1", "Up");
+  moveQuestion(1, "Custom Question 1", "Up");
+
   const questionIndexes = Array.from({ length: 7 }, (_, index) =>
     String(index + 1),
   );
@@ -78,21 +189,98 @@ function sectionsAndQuestions() {
 
   cy.contains(".govuk-button", "Save and go back").click();
 
-  // add section
   cy.get('[data-cy="cy-button-addNewSection"]').click();
-  cy.get('[data-cy="cy-sectionTitle-text-input"]').click();
-  cy.get('[data-cy="cy-sectionTitle-text-input"]').type("Deletable Section", {
-    force: true,
-  });
+  cy.get('[data-cy="cy-sectionTitle-text-input"]')
+    .click()
+    .type("Custom Section two", {
+      force: true,
+    });
   clickSaveAndContinue();
-  // delete section
+  clickText("Save and go back");
+
+  cy.get('[data-cy="cy-button-addNewSection"]').click();
+  cy.get('[data-cy="cy-sectionTitle-text-input"]')
+    .click()
+    .type("Custom Section three", {
+      force: true,
+    });
+  clickSaveAndContinue();
+  clickText("Save and go back");
+
+  moveSection("3. Shiny new section name", "Down");
+  moveSection("4. Shiny new section name", "Down");
+
+  moveSection("5. Shiny new section name", "Up");
+  moveSection("4. Shiny new section name", "Up");
+
+  selectActionForItemInTable("4. Custom Section two", "Edit section", {
+    actionCellElement: "div",
+    textCellElement: "div",
+  });
   cy.get(".govuk-button").contains("Delete section").click();
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
   cy.get('[data-cy="cy-button-Confirm"]').click();
 
-  cy.get('[data-cy="cy_sections_deleteSectionBtn-Deletable Section"]').should(
-    "not.exist",
-  );
+  selectActionForItemInTable("4. Custom Section three", "Edit section", {
+    actionCellElement: "div",
+    textCellElement: "div",
+  });
+  cy.get(".govuk-button").contains("Delete section").click();
+  cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+  cy.get('[data-cy="cy-button-Confirm"]').click();
+}
+
+function moveSection(sectionName, direction) {
+  selectActionForItemInTable(sectionName, direction, {
+    actionCellElement: "div",
+    textCellElement: "div",
+    actionCellType: "button",
+  });
+}
+
+function moveQuestion(currentIndex, questionName, direction) {
+  cy.get("table")
+    // Not a great selector but not sure of a better way to do this
+    .find(
+      `[aria-label="Move question ${questionName} ${direction.toLowerCase()}"]`,
+    )
+    .parents("tr")
+    .invoke("index")
+    .then((i) => {
+      cy.wrap(i).should("eq", currentIndex);
+    });
+
+  selectActionForItemInTable(questionName, direction, {
+    actionCellElement: "td",
+    textCellElement: "td",
+    actionCellType: "button",
+  });
+
+  cy.get("table")
+    .find(
+      `[aria-label="Move question ${questionName} ${direction.toLowerCase()}"]`,
+    )
+    .parents("tr")
+    .invoke("index")
+    .then((i) => {
+      cy.wrap(i).should("eq", currentIndex + (direction === "Up" ? -1 : 1));
+    });
+}
+
+function editSectionName(previousSectionName, newSectionName) {
+  cy.contains(previousSectionName).should("exist");
+  selectActionForItemInTable(previousSectionName, "Edit", {
+    actionCellElement: "dd",
+    textCellElement: "dd",
+  });
+  cy.get('[data-cy="cy-sectionTitle-text-input"]')
+    .clear()
+    .type(newSectionName, {
+      force: true,
+    });
+  clickSave();
+  cy.contains(previousSectionName).should("not.exist");
+  cy.contains(newSectionName).should("exist");
 }
 
 function addOptionalQuestion(questionText, description, type) {
@@ -108,6 +296,34 @@ function addOptionalQuestion(questionText, description, type) {
   clickSaveAndContinue();
   cy.get(type).click();
   clickSaveAndContinue();
+}
+
+function editQuestion(previousQuestionTitle, newQuestionTitle) {
+  cy.contains(previousQuestionTitle).should("exist");
+  selectActionForItemInTable(previousQuestionTitle, "Edit", {
+    actionCellElement: "td",
+    textCellElement: "td",
+  });
+  cy.get('[data-cy="cy-fieldTitle-text-input"]')
+    .clear()
+    .type(newQuestionTitle, {
+      force: true,
+    });
+  clickText("Save changes");
+  cy.contains(previousQuestionTitle).should("not.exist");
+  cy.contains(newQuestionTitle).should("exist");
+}
+
+function deleteQuestion(questionTitle) {
+  cy.contains(questionTitle).should("exist");
+  selectActionForItemInTable(questionTitle, "Edit", {
+    actionCellElement: "td",
+    textCellElement: "td",
+  });
+  cy.contains(".govuk-button", "Delete question").click();
+  cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+  clickText("Confirm");
+  cy.contains(questionTitle).should("not.exist");
 }
 
 function addOptionalMultiChoiceQuestion(questionText, description, type) {
@@ -135,13 +351,6 @@ function addOptionalMultiChoiceQuestion(questionText, description, type) {
   cy.get('[data-cy="cy-button-Save question"]').click();
 }
 
-const getIframeBody = (iFrameSelector) =>
-  cy
-    .get(iFrameSelector, { timeout: 8000 })
-    .its("0.contentDocument.body")
-    .should("not.be.empty")
-    .then(cy.wrap);
-
 export function publishAdvert(scheduled) {
   cy.get('[data-cy="cy-publish-advert-button"]').click();
 
@@ -156,80 +365,6 @@ export function publishAdvert(scheduled) {
   ).should("exist");
 
   cy.get('[data-cy="back-to-my-account-button"]').click();
-}
-
-export function applicationForm() {
-  cy.get('[data-cy="cyBuildApplicationForm"]').click();
-
-  cy.get('[data-cy="cy-applicationName-text-input"]').click();
-  cy.get('[data-cy="cy-applicationName-text-input"]').type(
-    "Cypress - Grant Application",
-    { force: true },
-  );
-  cy.get('[data-cy="cy-button-Continue"]').click();
-
-  cy.get('[data-cy="cy_Section-Eligibility Statement"]').click();
-
-  cy.get('[data-cy="cy-displayText-text-area"]').type("eligibility", {
-    force: true,
-  });
-  saveAndExit();
-
-  cy.get('[data-cy="cy_Section-due-diligence-checks"]').click();
-
-  // the diligence checks page throws a React error in the background of loading the page, and cypress stops
-  // processing on any exception. This line just tells it to continue on an unchecked exception.
-  cy.on("uncaught:exception", () => false);
-
-  cy.get(
-    '[data-cy="cy-checkbox-value-I understand that applicants will be asked for this information"]',
-  ).click();
-  saveAndExit();
-
-  sectionsAndQuestions();
-
-  // publish
-  publishApplicationForm();
-}
-
-export function createGrant(GRANT_NAME) {
-  const ggisNumber = "Cypress Test GGIS Number";
-  const contactEmail = "test@and-cypress-email.com";
-
-  cy.get("[data-cy=cy_addAGrantButton]").click();
-
-  cy.get("[data-cy=cy-name-text-input]").click();
-  cy.get("[data-cy=cy-name-text-input]").type(GRANT_NAME, { force: true });
-
-  clickSaveAndContinue();
-
-  cy.get("[data-cy=cy-ggisReference-text-input]").click();
-  cy.get("[data-cy=cy-ggisReference-text-input]").type(ggisNumber, {
-    force: true,
-  });
-
-  clickSaveAndContinue();
-
-  cy.get("[data-cy=cy-contactEmail-text-input]").click();
-  cy.get("[data-cy=cy-contactEmail-text-input]").type(contactEmail, {
-    force: true,
-  });
-
-  clickSaveAndContinue();
-
-  cy.get("[data-cy='cy_summaryListValue_Grant name']").contains(GRANT_NAME);
-
-  cy.get(
-    "[data-cy='cy_summaryListValue_GGIS Scheme Reference Number']",
-  ).contains(ggisNumber);
-
-  cy.get("[data-cy='cy_summaryListValue_Support email address']").contains(
-    contactEmail,
-  );
-
-  cy.get("[data-cy=cy_addAGrantConfirmationPageButton]").click();
-
-  cy.contains(GRANT_NAME).parent().contains("View").click();
 }
 
 export function advertSection5() {
