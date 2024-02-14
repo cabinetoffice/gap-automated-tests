@@ -9,11 +9,11 @@ import {
 
 const firstUserId = Cypress.env("firstUserId");
 
-const ORIGINAL_DEPARTMENT_NAME = `Cypress - Test Department ${firstUserId}`;
-const ADDED_DEPARTMENT_NAME = `Cypress - Test Add Department ${firstUserId}`;
-const DEPARTMENT_NAME_DELETE = `Cypress - Test Department ${firstUserId} Delete`;
-const DEPARTMENT_NAME = `Cypress - Test Department ${firstUserId} Edit`;
-const EDITED_DEPARTMENT_NAME = `Cypress - Test Edited Department ${firstUserId}`;
+const ORIGINAL_DEPARTMENT_NAME = `Cypress - Test Department -${firstUserId}`;
+const ADDED_DEPARTMENT_NAME = `Cypress - Test Add Department -${firstUserId}`;
+const DEPARTMENT_NAME_DELETE = `Cypress - Test Department -${firstUserId} Delete`;
+const DEPARTMENT_NAME = `Cypress - Test Department -${firstUserId} Edit`;
+const EDITED_DEPARTMENT_NAME = `Cypress - Test Edited Department -${firstUserId}`;
 
 describe("Super Admin", () => {
   beforeEach(() => {

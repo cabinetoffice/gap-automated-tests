@@ -65,7 +65,7 @@ describe("API Admin - No existing keys", () => {
 
     cy.get('[data-cy="api-keys-department-name"]')
       .should("be.visible")
-      .contains("Cypress - Test Funding Organisation");
+      .contains("Cypress - Test Department");
 
     cy.get('[data-cy="api-keys-no-api-keys"]')
       .should("be.visible")
@@ -298,7 +298,7 @@ describe("API Admin - Existing API Keys", () => {
 
     cy.get('[data-cy="api-keys-department-name"]')
       .should("be.visible")
-      .should("have.text", "Cypress - Test Funding Organisation");
+      .contains("Cypress - Test Department");
 
     cy.get('[data-cy="create-key-summary-list"]')
       .children()

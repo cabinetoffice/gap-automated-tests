@@ -11,7 +11,7 @@ import {
 
 const firstUserId = Cypress.env("firstUserId");
 
-const ORIGINAL_DEPARTMENT_NAME = `Cypress - Test Department ${firstUserId}`;
+const ORIGINAL_DEPARTMENT_NAME = `Cypress - Test Department -${firstUserId}`;
 
 describe("Super Admin", () => {
   beforeEach(() => {

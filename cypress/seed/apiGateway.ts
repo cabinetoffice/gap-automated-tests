@@ -1,10 +1,10 @@
 import {
   APIGatewayClient,
-  GetUsagePlanKeysCommand,
-  DeleteApiKeyCommand,
   CreateApiKeyCommand,
-  type UsagePlanKey,
   CreateUsagePlanKeyCommand,
+  DeleteApiKeyCommand,
+  GetUsagePlanKeysCommand,
+  type UsagePlanKey,
 } from "@aws-sdk/client-api-gateway";
 import { promisify } from "util";
 

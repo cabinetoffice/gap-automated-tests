@@ -7,7 +7,7 @@ import {
 
 const firstUserId = Cypress.env("firstUserId");
 
-const ORIGINAL_DEPARTMENT_NAME = `Cypress - Test Department ${firstUserId}`;
+const ORIGINAL_DEPARTMENT_NAME = `Cypress - Test Department -${firstUserId}`;
 
 const SUPER_ADMIN_DASHBOARD = `${Cypress.env(
   "applicationBaseUrl",

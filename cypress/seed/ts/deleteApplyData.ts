@@ -48,8 +48,8 @@ DELETE FROM public.grant_applicant WHERE
 
 const deleteUsers: string = `
 DELETE FROM public.gap_user WHERE
-    gap_user_id IN ($1, $2, $3, $4) OR
-    user_sub IN ($5, $6, $7, $8);
+    gap_user_id IN ($1, $2, $3) OR
+    user_sub IN ($4, $5, $6, $7);
 `;
 
 const deleteFundingOrgs: string = `

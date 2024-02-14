@@ -69,7 +69,7 @@ const allSubs = [
   process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
 ];
 
-const DEPARTMENT_NAME = `Cypress - Test Department ${process.env.FIRST_USER_ID}`;
+const DEPARTMENT_NAME = `Cypress - Test Department ${getTestID()}`;
 
 const SUPER_ADMIN_ID = getTestID();
 const ADMIN_ID = getTestID(1);
@@ -119,10 +119,8 @@ const applyInsertSubstitutions = {
     process.env.ONE_LOGIN_SUPER_ADMIN_SUB,
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_SUB,
-    TECHNICAL_SUPPORT_ID,
-    process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
   ],
-  [insertFundingOrgs]: [FUNDING_ID],
+  [insertFundingOrgs]: [FUNDING_ID, `Cypress - Test Department ${FUNDING_ID}`],
   [insertAdmins]: [
     SUPER_ADMIN_ID,
     FUNDING_ID,
@@ -238,13 +236,7 @@ const applyDeleteSubstitutions = {
   [deleteTechSupportUser]: [...allSubs],
   [deleteFundingOrgs]: [SUPER_ADMIN_ID],
   [deleteApplicants]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
-  [deleteUsers]: [
-    SUPER_ADMIN_ID,
-    ADMIN_ID,
-    APPLICANT_ID,
-    TECHNICAL_SUPPORT_ID,
-    ...allSubs,
-  ],
+  [deleteUsers]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 

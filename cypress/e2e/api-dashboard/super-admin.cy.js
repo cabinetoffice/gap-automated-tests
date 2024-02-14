@@ -5,7 +5,7 @@ import {
   signInAsSuperAdmin,
   signInToIntegrationSite,
 } from "../../common/common";
-import { checkFirst10RowsContent } from "./helper";
+import { checkTableContent } from "./helper";
 
 const today = new Date().toLocaleDateString("en-GB", {
   day: "numeric",
@@ -18,7 +18,7 @@ const SUPER_ADMIN_DASHBOARD = `${BASE_URL}/apply/admin/super-admin-dashboard`;
 
 describe("Api Dashboard SuperAdmin journeys", () => {
   after(() => {
-    cy.task("deleteApiKeys"); // deletes the 110 apiKeys created, so there won't stay in the db till next run
+    cy.task("deleteApiKeys");
   });
 
   describe("Navigation test", () => {
@@ -78,7 +78,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
 
         cy.task("deleteExistingApiKeysFromDb", originalData);
       });
-      cy.task("create110ApiKeys", {}, { timeout: 300000 });
+      cy.task("create11ApiKeys", {}, { timeout: 300000 });
     });
 
     beforeEach(() => {
@@ -127,7 +127,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       );
 
       cy.log(
-        "Should show 11 keys, 2 organisation in the filters and the pagination bar - Checking the table side",
+        "Should show 11 keys, 2 organisation in the filters and the pagination bar - Checking the table",
       );
 
       cy.log(
@@ -162,8 +162,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         .find("tr")
         .should("have.length", 10);
 
-      // first 10 single rows content
-      checkFirst10RowsContent(today);
+      checkTableContent(today);
 
       cy.log(
         "Should show 11 keys, 2 organisation in the filters and the pagination bar - Checking the pagination bar",
