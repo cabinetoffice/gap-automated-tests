@@ -1,5 +1,11 @@
-import { runSQLFromJs } from "../database";
 import { type UsagePlanKey } from "@aws-sdk/client-api-gateway";
+import {
+  createKeyInAwsApiGatewayUsagePlan,
+  deleteApiKey,
+  getKeysFromAwsApiGatewayUsagePlan,
+  removeKeysFromAwsApiGatewayUsagePlan,
+} from "../apiGateway";
+import { runSQLFromJs } from "../database";
 import {
   deleteAdmins,
   deleteAdverts,
@@ -19,60 +25,55 @@ import {
 } from "../ts/deleteApplyData";
 import {
   addSpotlightBatchRow,
+  addSubmissionToMostRecentBatch,
+  createApiKey,
+  createApiKeyWithDefaultTimestamp,
+  createApiKeysFundingOrganisations,
   insertAdmins,
   insertAdverts,
   insertApplicants,
   insertApplications,
   insertFundingOrgs,
   insertGrantApplicantOrgProfiles,
-  insertSchemes,
-  insertUsers,
-  addSubmissionToMostRecentBatch,
   insertMandatoryQuestions,
+  insertSchemes,
   insertSpotlightSubmission,
   insertSubmissions,
-  createApiKeysFundingOrganisations,
-  createApiKey,
-  createApiKeyWithDefaultTimestamp,
+  insertUsers,
 } from "../ts/insertApplyData";
-import {
-  readdQueuedSpotlightSubmissions,
-  removeQueuedSpotlightSubmissions,
-  updateSpotlightSubmissionStatus,
-} from "../ts/updateApplyData";
-import {
-  V2_INTERNAL_SCHEME_ID,
-  applyDatabaseUrl,
-  applyServiceDbName,
-  spotlightSubstitutions,
-  applyInsertSubstitutions,
-  applyDeleteSubstitutions,
-  applyUpdateSubstitutions,
-  V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
-  V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
-  postLoginBaseUrl,
-  SUPER_ADMIN_ID,
-  FUNDING_ID,
-  deleteApiKeysSubstitutions,
-  createApiKeySubstitutions,
-  createApiKeyFundingOrganisationSubstitutions,
-  createApiKeySubstitutionsForRecreation,
-  getAPIKeysByFunderIdSubstitutions,
-  createApiKeySubstitutionsForTechSupport,
-} from "./constants";
 import {
   getExportedSubmission,
   selectAllApiKeys,
   selectApiKeysByFunderId,
 } from "../ts/selectApplyData";
 import {
-  createKeyInAwsApiGatewayUsagePlan,
-  deleteApiKey,
-  getKeysFromAwsApiGatewayUsagePlan,
-  removeKeysFromAwsApiGatewayUsagePlan,
-} from "../apiGateway";
+  readdQueuedSpotlightSubmissions,
+  removeQueuedSpotlightSubmissions,
+  updateSpotlightSubmissionStatus,
+} from "../ts/updateApplyData";
+import {
+  FUNDING_ID,
+  SUPER_ADMIN_ID,
+  V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+  V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
+  V2_INTERNAL_SCHEME_ID,
+  applyDatabaseUrl,
+  applyDeleteSubstitutions,
+  applyInsertSubstitutions,
+  applyServiceDbName,
+  applyUpdateSubstitutions,
+  createApiKeyFundingOrganisationSubstitutions,
+  createApiKeySubstitutions,
+  createApiKeySubstitutionsForRecreation,
+  createApiKeySubstitutionsForTechSupport,
+  deleteApiKeysSubstitutions,
+  getAPIKeysByFunderIdSubstitutions,
+  postLoginBaseUrl,
+  spotlightSubstitutions,
+} from "./constants";
 
 import { promisify } from "util";
+import { retry } from "./helper";
 
 const runSqlForApply = async (
   scripts: string[],
@@ -272,9 +273,12 @@ const insertSubmissionsAndMQs = async () => {
 };
 
 const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
-  const row = await runSqlForApply(
-    [getExportedSubmission],
-    applyInsertSubstitutions,
+  const row = await retry(
+    async () =>
+      await runSqlForApply([getExportedSubmission], applyInsertSubstitutions),
+    (response: { status: string }) => response[0][0].status === "COMPLETE",
+    30,
+    1000,
   );
   console.log(schemeId, row[0][0]);
   return {
@@ -352,24 +356,24 @@ interface ApiKeyDb {
   api_gateway_id: string;
 }
 export {
-  createApplyData,
-  deleteApplyData,
-  insertSubmissionsAndMQs,
-  cleanupTestSpotlightSubmissions,
-  updateSpotlightSubmission,
+  addSpotlightBatch,
   addToRecentBatch,
+  cleanupTestSpotlightSubmissions,
+  createApiKeysData,
+  createApiKeysInApiGatewayForTechnicalSupport,
+  createApplyData,
+  deleteAPIKeysForTechSupport,
+  deleteApiKeysData,
+  deleteApplyData,
+  deleteExistingApiKeys,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
-  addSpotlightBatch,
+  getAPIKeysByFunderId,
   getExportedSubmissionUrlAndLocation,
-  deleteApiKeysData,
-  createApiKeysData,
   grabAllApiKeys,
-  type ApiKeyDb,
-  deleteExistingApiKeys,
+  insertSubmissionsAndMQs,
   recreateApiKeysInDatabase,
   refillDbWithAllPreExistingApiKeys,
-  getAPIKeysByFunderId,
-  deleteAPIKeysForTechSupport,
-  createApiKeysInApiGatewayForTechnicalSupport,
+  updateSpotlightSubmission,
+  type ApiKeyDb,
 };

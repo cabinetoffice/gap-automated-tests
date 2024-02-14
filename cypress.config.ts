@@ -36,6 +36,7 @@ import {
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
 } from "./cypress/common/constants";
+import * as dayjs from "dayjs";
 const xlsx = require("node-xlsx").default;
 const fs = require("fs");
 const decompress = require("decompress");
@@ -166,7 +167,7 @@ export default defineConfig({
           return await getExportedSubmissionUrlAndLocation(schemeId);
         },
         log(message) {
-          console.log(message);
+          console.log(dayjs().format() + " | " + message);
 
           return null;
         },
