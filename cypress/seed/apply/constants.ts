@@ -340,7 +340,12 @@ const applyUpdateSubstitutions = {
 };
 
 const createApiKeyFundingOrganisationSubstitutions = {
-  [createApiKeysFundingOrganisations]: [SUPER_ADMIN_ID - 2, SUPER_ADMIN_ID - 1],
+  [createApiKeysFundingOrganisations]: [
+    SUPER_ADMIN_ID - 2,
+    `CypressApiKeysEvilOrg${FUNDING_ID}`,
+    SUPER_ADMIN_ID - 1,
+    `CypressApiKeysTestOrg${FUNDING_ID}`,
+  ],
 };
 
 const today = new Date().toLocaleDateString("en-GB", {

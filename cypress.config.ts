@@ -16,14 +16,11 @@ import {
   deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
   deleteApplyData,
-  deleteExistingApiKeys,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   getAPIKeysByFunderId,
   getExportedSubmissionUrlAndLocation,
-  grabAllApiKeys,
   insertSubmissionsAndMQs,
-  refillDbWithAllPreExistingApiKeys,
   updateSpotlightSubmission,
 } from "./cypress/seed/apply/service";
 import {
@@ -98,24 +95,6 @@ export default defineConfig({
           await deleteApiKeysData().then(async () => {
             await createApiKeysData();
           });
-
-          return null;
-        },
-        async grabExistingApiKeysFromDb() {
-          return await grabAllApiKeys();
-        },
-        async deleteExistingApiKeysFromDb(originalData) {
-          await deleteExistingApiKeys(originalData[0]);
-
-          return null;
-        },
-        async refillDbWithPreExistingApiKeys(originalData) {
-          await refillDbWithAllPreExistingApiKeys(originalData[0]);
-
-          return null;
-        },
-        async deleteApiKeys() {
-          await deleteApiKeysData();
 
           return null;
         },

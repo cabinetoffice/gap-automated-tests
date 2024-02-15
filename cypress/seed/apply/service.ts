@@ -75,7 +75,9 @@ import {
   spotlightSubstitutions,
 } from "./constants";
 
-import { retry } from "./helper";
+import { getTestID, retry } from "./helper";
+
+const FIRST_USER_ID = process.env.FIRST_USER_ID;
 
 const runSqlForApply = async (
   scripts: string[],
@@ -367,7 +369,7 @@ const createApiKeysInApiGatewayUsagePlan = async (
     const paddedNumber = i.toString().padStart(3, "0");
     const orgName =
       fundingOrganisation === SUPER_ADMIN_ID - 1 ? "Org1" : "Org2";
-    const keyName = `${orgName}Cypress${paddedNumber}`;
+    const keyName = `${orgName}Cypress${paddedNumber}${getTestID()}`;
     await createKeyInAwsApiGatewayUsagePlan(keyName);
   }
 };
@@ -381,7 +383,7 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
   const params = [];
   for (let i = startingPoint; i < endingPoint; i++) {
     const paddedNumber = i.toString().padStart(3, "0");
-    const keyName = `CypressE2ETestTechSupport${paddedNumber}`;
+    const keyName = `CypressE2ETestTechSupport${paddedNumber}${FIRST_USER_ID}`;
     const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
     const keyValue = keyName + keyName; // TODO this is weird, do we need to do it?
 
