@@ -69,6 +69,9 @@ const deleteSpotlightSubmissionRow: string = `
     DELETE FROM public.spotlight_submission
     WHERE grant_scheme = $1;
 `;
+const deleteExportBatch = `DELETE FROM grant_export_batch WHERE created_by IN ($1, $2, $3);`;
+
+const deleteExport = `DELETE FROM grant_export WHERE created_by IN ($1, $2, $3);`;
 
 export {
   deleteSpotlightSubmissionRow,
@@ -83,4 +86,6 @@ export {
   deleteUsers,
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
+  deleteExportBatch,
+  deleteExport,
 };

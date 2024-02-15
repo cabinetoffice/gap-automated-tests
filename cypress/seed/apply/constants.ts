@@ -25,6 +25,8 @@ import {
   deleteApplicantOrgProfiles,
   deleteSpotlightSubmissionRow,
   deleteSpotlightBatchRow,
+  deleteExportBatch,
+  deleteExport,
 } from "../ts/deleteApplyData";
 import {
   TEST_V1_INTERNAL_GRANT,
@@ -228,6 +230,8 @@ const applyDeleteSubstitutions = {
     ...allSubs,
   ],
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
+  [deleteExportBatch]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
+  [deleteExport]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 
 const spotlightSubstitutions = {
