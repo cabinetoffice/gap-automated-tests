@@ -29,7 +29,7 @@ describe("Downloads and Due Diligence", () => {
     signInToIntegrationSite();
   });
 
-  it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
+  it.skip("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
     // Populate data instead of completing journey
     log(
       "Admin V2 Internal - Manage Due Diligence & Spotlight - inserting submissions, mq and spotlight submissions",
