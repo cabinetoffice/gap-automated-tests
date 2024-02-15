@@ -19,6 +19,8 @@ import {
   deleteApplicantOrgProfiles,
   deleteApplicants,
   deleteApplications,
+  deleteExport,
+  deleteExportBatch,
   deleteFundingOrgs,
   deleteSchemes,
   deleteSpotlightBatchRow,
@@ -238,6 +240,8 @@ const applyDeleteSubstitutions = {
   [deleteApplicants]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
   [deleteUsers]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
+  [deleteExportBatch]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
+  [deleteExport]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
 };
 
 const deleteApiKeysSubstitutions = {
