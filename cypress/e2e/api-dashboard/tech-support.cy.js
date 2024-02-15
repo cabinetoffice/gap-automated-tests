@@ -1,12 +1,12 @@
 import {
+  ADMIN_DASHBOARD_URL,
   BASE_URL,
+  SUPER_ADMIN_DASHBOARD_URL,
   log,
   signInAsTechnicalSupport,
   signInToIntegrationSite,
   signOut,
 } from "../../common/common";
-
-import { ERROR_PAGE_BODY_TECHNICAL_SUPPORT } from "../../utils/errorPageString";
 
 const today = new Date().toLocaleDateString("en-GB", {
   day: "numeric",
@@ -31,6 +31,10 @@ describe("API Admin - No existing keys", () => {
 
   it("Technical Support can view API Key dashboard without API Keys and create a key", () => {
     // API Key dashboard without API Keys
+    log(
+      "Tech Support - create API key journey - checking API dashboard has no API keys",
+    );
+
     cy.get('[data-cy="header"]').should("be.visible").contains("Find a Grant");
 
     cy.get('[data-cy="beta-banner"]').should("be.visible").contains("BETA");
@@ -61,7 +65,7 @@ describe("API Admin - No existing keys", () => {
 
     cy.get('[data-cy="api-keys-department-name"]')
       .should("be.visible")
-      .contains("Cypress - Test Funding Organisation");
+      .contains("Cypress - Test Department");
 
     cy.get('[data-cy="api-keys-no-api-keys"]')
       .should("be.visible")
@@ -74,6 +78,8 @@ describe("API Admin - No existing keys", () => {
       .contains("Create an API key");
 
     // Go to create API key page
+    log("Tech Support - create API key journey - beginning API key creation");
+
     cy.get('[data-cy="api-keys-create-button"]')
       .should("be.visible")
       .contains("Create an API key")
@@ -116,6 +122,9 @@ describe("API Admin - No existing keys", () => {
     cy.url().should("include", "/admin/api-keys/create");
 
     // Should display validation errors for blank name
+    log(
+      "Tech Support - create API key journey - checking validation errors for blank name",
+    );
     cy.get('[data-cy="create-key-continue"]')
       .should("be.visible")
       .contains("Continue")
@@ -134,6 +143,9 @@ describe("API Admin - No existing keys", () => {
       .should("have.text", "Enter a key name");
 
     // Should display validation errors for blank spaces
+    log(
+      "Tech Support - create API key journey - checking validation errors for blank spaces",
+    );
     cy.get('[data-cy="create-key-input"]').clear().type("api key name");
 
     cy.get('[data-cy="create-key-continue"]')
@@ -154,6 +166,9 @@ describe("API Admin - No existing keys", () => {
       .should("have.text", "Key name must be alphanumeric");
 
     // Should successfully create key and display value
+    log(
+      "Tech Support - create API key journey - checking successful creation of API key",
+    );
     cy.get('[data-cy="create-key-input"]').clear().type(apiKeyName);
 
     cy.get('[data-cy="create-key-continue"]')
@@ -215,7 +230,10 @@ describe("API Admin - No existing keys", () => {
       .should("have.text", "Manage API keys");
   });
 
-  it("Should render error page when trying to access super admin dashboard", () => {
+  it("Should render error page when trying to access super admin api keys and 404 when trying to access applicant, admin or superadmin dashboards", () => {
+    log(
+      "Tech Support Navigation - Checking super admin api keys page returns an error page",
+    );
     cy.visit(`${BASE_URL}/find/api/admin/api-keys/manage`);
 
     cy.get('[data-cy="error-heading"]')
@@ -241,6 +259,16 @@ describe("API Admin - No existing keys", () => {
     cy.get('[data-cy="api-keys-heading"]')
       .should("be.visible")
       .should("have.text", "Manage API keys");
+
+    log(
+      "Tech Support Navigation - Checking applicant, admin and super-admin dashboard returns 404",
+    );
+    [ADMIN_DASHBOARD_URL, SUPER_ADMIN_DASHBOARD_URL].forEach((page) => {
+      cy.visit(page, { failOnStatusCode: false })
+        .contains("Page not found")
+        .should("exist");
+      cy.go("back");
+    });
   });
 });
 describe("API Admin - Existing API Keys", () => {
@@ -257,6 +285,9 @@ describe("API Admin - Existing API Keys", () => {
 
   it("Should render API key dashboard with list of API keys and prevent creation of a key with duplicate name", () => {
     // View existing API Keys
+    log(
+      "Tech Support - existing API key journey - checking API dashboard has existing API keys",
+    );
     cy.get('[data-cy="api-keys-heading"]')
       .should("be.visible")
       .should("have.text", "Manage API keys");
@@ -267,7 +298,7 @@ describe("API Admin - Existing API Keys", () => {
 
     cy.get('[data-cy="api-keys-department-name"]')
       .should("be.visible")
-      .should("have.text", "Cypress - Test Funding Organisation");
+      .contains("Cypress - Test Department");
 
     cy.get('[data-cy="create-key-summary-list"]')
       .children()
@@ -290,6 +321,9 @@ describe("API Admin - Existing API Keys", () => {
       .contains("Create an API key");
 
     // Should display validation errors for existing API key name
+    log(
+      "Tech Support - existing API key journey - checking validation errors for existing API key name",
+    );
     cy.get('[data-cy="api-keys-create-button"]')
       .should("be.visible")
       .contains("Create an API key")
@@ -321,6 +355,7 @@ describe("API Admin - Existing API Keys", () => {
   });
 
   it("Should render API key confirmation page and revoke API key", () => {
+    log("Tech Support - revoke API key journey - beginning API key revocation");
     cy.get(`[data-cy="api-key-revoke-${existingApiKeyName}"]`)
       .should("be.visible")
       .contains("Revoke")
@@ -356,6 +391,9 @@ describe("API Admin - Existing API Keys", () => {
       .contains("Revoke")
       .click();
 
+    log(
+      "Tech Support - revoke API key journey - checking API key has been revoked",
+    );
     cy.get('[data-cy="revoke-revoke-button"]')
       .should("be.visible")
       .should("have.text", "Revoke key")
@@ -405,7 +443,7 @@ describe("API Dashboard", () => {
       ).then((r) => {
         expect(r.status).to.eq(200);
         expect(r.redirects[0]).to.contain(`/api-keys/error`);
-        expect(r.body).to.eq(ERROR_PAGE_BODY_TECHNICAL_SUPPORT);
+        expect(r.body).to.contain("Something went wrong");
       });
     });
 

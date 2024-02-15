@@ -9,25 +9,27 @@ import { runSQLFromJs } from "../database";
 import {
   deleteAdmins,
   deleteAdverts,
-  deleteApiKeyById,
   deleteApiKeys,
   deleteApiKeysByFunderId,
+  deleteApiKeysById,
   deleteApiKeysFundingOrganisations,
   deleteApplicantOrgProfiles,
   deleteApplicants,
   deleteApplications,
+  deleteExport,
+  deleteExportBatch,
   deleteFundingOrgs,
   deleteSchemes,
   deleteSpotlightBatchRow,
   deleteSpotlightSubmissionRow,
   deleteSubmissions,
+  deleteTechSupportUser,
   deleteUsers,
 } from "../ts/deleteApplyData";
 import {
   addSpotlightBatchRow,
   addSubmissionToMostRecentBatch,
-  createApiKey,
-  createApiKeyWithDefaultTimestamp,
+  createApiKeyBaseQuery,
   createApiKeysFundingOrganisations,
   insertAdmins,
   insertAdverts,
@@ -39,6 +41,7 @@ import {
   insertSchemes,
   insertSpotlightSubmission,
   insertSubmissions,
+  insertTechSupportUser,
   insertUsers,
 } from "../ts/insertApplyData";
 import {
@@ -72,7 +75,6 @@ import {
   spotlightSubstitutions,
 } from "./constants";
 
-import { promisify } from "util";
 import { retry } from "./helper";
 
 const runSqlForApply = async (
@@ -93,6 +95,7 @@ const createApplyData = async (): Promise<void> => {
       insertUsers,
       insertFundingOrgs,
       insertAdmins,
+      insertTechSupportUser,
       insertGrantApplicantOrgProfiles,
       insertSchemes,
       insertApplications,
@@ -104,15 +107,18 @@ const createApplyData = async (): Promise<void> => {
 };
 
 const deleteApplyData = async (): Promise<void> => {
-  await deleteAPIKeysForTechSupport();
+  await deleteAPIKeysFromAwsForTechSupport();
   await runSqlForApply(
     [
       deleteApiKeys,
+      deleteExport,
+      deleteExportBatch,
       deleteAdverts,
       deleteSubmissions,
       deleteApplications,
       deleteSchemes,
       deleteAdmins,
+      deleteTechSupportUser,
       deleteApplicants,
       deleteUsers,
       deleteFundingOrgs,
@@ -131,11 +137,11 @@ const createApiKeysData = async (): Promise<void> => {
   console.log("Successfully created and updated fundingOrganisation");
 
   console.log("Creating Keys in usage plan for SUPER_ADMIN_ID - 1");
-  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 1, 1, 46);
+  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 1, 1, 7);
   console.log("Successfully created Keys in usage plan for SUPER_ADMIN_ID - 1");
 
   console.log("Creating Keys in usage plan for SUPER_ADMIN_ID - 2");
-  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 2, 46, 111);
+  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 2, 7, 12);
   console.log("Successfully created Keys in usage plan for SUPER_ADMIN_ID - 2");
 
   const apiKeys = (await getKeysFromAwsApiGatewayUsagePlan()).sort((a, b) =>
@@ -182,7 +188,7 @@ const getAPIKeysByFunderId = async () => {
   return rows;
 };
 
-const deleteAPIKeysForTechSupport = async () => {
+const deleteAPIKeysFromAwsForTechSupport = async () => {
   const rows = await getAPIKeysByFunderId();
   for (const row of rows[0] as ApiKeyDb[]) {
     const key = {
@@ -198,13 +204,9 @@ const deleteAPIKeysForTechSupport = async () => {
 const deleteExistingApiKeys = async (originalData: ApiKeyDb[]) => {
   const apiKeyIds = originalData.map((data) => data.api_key_id);
 
-  await Promise.all(
-    apiKeyIds.map(async (apiKeyId) => {
-      await runSqlForApply([deleteApiKeyById], {
-        [deleteApiKeyById]: [apiKeyId],
-      });
-    }),
-  );
+  await runSqlForApply([deleteApiKeysById], {
+    [deleteApiKeysById]: [apiKeyIds],
+  });
 
   console.log("Successfully deleted all existing Api Keys");
 };
@@ -288,24 +290,69 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
 };
 
 const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
-  const asyncSleep = promisify(setTimeout);
+  const numberOfColumns = 10; // number of columns to be substituted in the database
 
+  const substitutions = [];
   for (let i = 0; i < apiKeys.length; i++) {
-    const { id, name, value } = apiKeys[i];
-
-    await runSqlForApply(
-      [createApiKeyWithDefaultTimestamp],
-      createApiKeySubstitutions(i, id, name, value),
+    const apiKey = apiKeys[i];
+    substitutions.push(
+      createApiKeySubstitutions(i, apiKey.id, apiKey.name, apiKey.value),
     );
-    await asyncSleep(200);
   }
+
+  const queryString = buildQueryStringForSubstitutions(
+    createApiKeyBaseQuery,
+    substitutions,
+    numberOfColumns,
+  );
+
+  await runSqlForApply([queryString], {
+    [queryString]: substitutions.flatMap((item) => item),
+  });
+};
+
+const buildQueryStringForSubstitutions = (
+  query: string,
+  params: any[],
+  numberOfColumns: number,
+) => {
+  const substitutionParameters = buildDynamicQuerySubstitutions(
+    params,
+    numberOfColumns,
+  );
+
+  return `${query}${substitutionParameters.join(", ")}`;
+};
+
+const buildDynamicQuerySubstitutions = (
+  items: any[],
+  numberOfParamsPerItem: number,
+) => {
+  const substitutionGroups = [];
+
+  for (let i = 0; i < items.length; i++) {
+    const substitutions = [];
+    for (let j = 1; j <= numberOfParamsPerItem; j++) {
+      substitutions.push("$" + (numberOfParamsPerItem * i + j));
+    }
+    substitutionGroups.push("(" + substitutions.join(", ") + ")");
+  }
+
+  return substitutionGroups;
 };
 
 const recreateApiKeysInDatabase = async (apiKeys: ApiKeyDb[]) => {
-  for (const element of apiKeys) {
+  if (apiKeys !== null && apiKeys.length > 0) {
+    const numberOfColumns = 10; // number of columns to be substituted in the database
+    const queryString = buildQueryStringForSubstitutions(
+      createApiKeyBaseQuery,
+      apiKeys,
+      numberOfColumns,
+    );
+
     await runSqlForApply(
-      [createApiKey],
-      createApiKeySubstitutionsForRecreation(element),
+      [queryString],
+      createApiKeySubstitutionsForRecreation(queryString, apiKeys),
     );
   }
 };
@@ -316,6 +363,7 @@ const createApiKeysInApiGatewayUsagePlan = async (
   endingPoint: number,
 ) => {
   for (let i = startingPoint; i < endingPoint; i++) {
+    console.log("creating key in AWS: " + i);
     const paddedNumber = i.toString().padStart(3, "0");
     const orgName =
       fundingOrganisation === SUPER_ADMIN_ID - 1 ? "Org1" : "Org2";
@@ -328,19 +376,29 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
   startingPoint: number,
   endingPoint: number,
 ) => {
-  const asyncSleep = promisify(setTimeout);
+  const numberOfColumns = 10; // number of columns to be substituted in the database
+
+  const params = [];
   for (let i = startingPoint; i < endingPoint; i++) {
     const paddedNumber = i.toString().padStart(3, "0");
     const keyName = `CypressE2ETestTechSupport${paddedNumber}`;
     const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
-    const keyValue = keyName + keyName;
+    const keyValue = keyName + keyName; // TODO this is weird, do we need to do it?
 
-    await runSqlForApply(
-      [createApiKeyWithDefaultTimestamp],
+    params.push(
       createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
     );
-    await asyncSleep(200);
   }
+
+  const queryString = buildQueryStringForSubstitutions(
+    createApiKeyBaseQuery,
+    params,
+    numberOfColumns,
+  );
+
+  await runSqlForApply([queryString], {
+    [queryString]: params.flatMap((item) => item),
+  });
 };
 
 interface ApiKeyDb {
@@ -362,7 +420,7 @@ export {
   createApiKeysData,
   createApiKeysInApiGatewayForTechnicalSupport,
   createApplyData,
-  deleteAPIKeysForTechSupport,
+  deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
   deleteApplyData,
   deleteExistingApiKeys,

@@ -38,6 +38,8 @@ DELETE FROM public.grant_admin WHERE grant_admin_id IN ($1, $2, $3) OR user_id I
 );
 `;
 
+const deleteTechSupportUser: string = `DELETE FROM public.tech_support_user WHERE user_sub IN ($1, $2, $3, $4)`;
+
 const deleteApplicants: string = `
 DELETE FROM public.grant_applicant WHERE
     id IN ($1, $2, $3) OR
@@ -46,8 +48,8 @@ DELETE FROM public.grant_applicant WHERE
 
 const deleteUsers: string = `
 DELETE FROM public.gap_user WHERE
-    gap_user_id IN ($1, $2, $3, $4) OR
-    user_sub IN ($5, $6, $7, $8);
+    gap_user_id IN ($1, $2, $3) OR
+    user_sub IN ($4, $5, $6, $7);
 `;
 
 const deleteFundingOrgs: string = `
@@ -69,6 +71,9 @@ const deleteSpotlightSubmissionRow: string = `
     DELETE FROM public.spotlight_submission
     WHERE grant_scheme = $1;
 `;
+const deleteExportBatch = `DELETE FROM grant_export_batch WHERE created_by IN ($1, $2, $3);`;
+
+const deleteExport = `DELETE FROM grant_export WHERE created_by IN ($1, $2, $3);`;
 
 const deleteApiKeys = `
 DELETE FROM public.api_key WHERE funder_id = $1;
@@ -77,26 +82,29 @@ DELETE FROM public.api_key WHERE funder_id = $1;
 const deleteApiKeysByFunderId = `DELETE FROM public.api_key
 WHERE funder_id IN ($1, $2);`;
 
-const deleteApiKeyById = `DELETE FROM public.api_key
-WHERE api_key_id = $1;`;
+const deleteApiKeysById = `DELETE FROM public.api_key
+WHERE api_key_id = ANY($1::int[]);`;
 
 const deleteApiKeysFundingOrganisations = `DELETE FROM public.grant_funding_organisation WHERE funder_id IN ($1, $2)`;
 
 export {
-  deleteSpotlightSubmissionRow,
-  deleteSpotlightBatchRow,
-  deleteFailedSpotlightOauthAudit,
-  deleteAdverts,
-  deleteSubmissions,
-  deleteApplications,
-  deleteSchemes,
   deleteAdmins,
-  deleteApplicants,
-  deleteUsers,
-  deleteFundingOrgs,
-  deleteApplicantOrgProfiles,
+  deleteAdverts,
   deleteApiKeys,
   deleteApiKeysByFunderId,
+  deleteApiKeysById,
   deleteApiKeysFundingOrganisations,
-  deleteApiKeyById,
+  deleteApplicantOrgProfiles,
+  deleteApplicants,
+  deleteApplications,
+  deleteFailedSpotlightOauthAudit,
+  deleteFundingOrgs,
+  deleteSchemes,
+  deleteSpotlightBatchRow,
+  deleteSpotlightSubmissionRow,
+  deleteSubmissions,
+  deleteTechSupportUser,
+  deleteUsers,
+  deleteExportBatch,
+  deleteExport,
 };
