@@ -5,6 +5,8 @@ import {
   deleteApplicantOrgProfiles,
   deleteApplicants,
   deleteApplications,
+  deleteExport,
+  deleteExportBatch,
   deleteFundingOrgs,
   deleteSchemes,
   deleteSpotlightBatchRow,
@@ -78,6 +80,8 @@ const createApplyData = async (): Promise<void> => {
 const deleteApplyData = async (): Promise<void> => {
   await runSqlForApply(
     [
+      deleteExport,
+      deleteExportBatch,
       deleteAdverts,
       deleteSubmissions,
       deleteApplications,
