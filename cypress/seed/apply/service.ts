@@ -72,6 +72,7 @@ import {
   postLoginBaseUrl,
   spotlightSubstitutions,
 } from "./constants";
+
 import { retry } from "./helper";
 
 const runSqlForApply = async (
