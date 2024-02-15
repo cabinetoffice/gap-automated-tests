@@ -75,7 +75,7 @@ import {
   spotlightSubstitutions,
 } from "./constants";
 
-import { retry } from "./helper";
+import { getTestID, retry } from "./helper";
 
 const runSqlForApply = async (
   scripts: string[],
@@ -367,7 +367,7 @@ const createApiKeysInApiGatewayUsagePlan = async (
     const paddedNumber = i.toString().padStart(3, "0");
     const orgName =
       fundingOrganisation === SUPER_ADMIN_ID - 1 ? "Org1" : "Org2";
-    const keyName = `${orgName}Cypress${paddedNumber}`;
+    const keyName = `${orgName}Cypress${paddedNumber}${getTestID()}`;
     await createKeyInAwsApiGatewayUsagePlan(keyName);
   }
 };
