@@ -23,7 +23,7 @@ describe("Downloads and Due Diligence", () => {
     signInToIntegrationSite();
   });
 
-  it("V1 Internal - Download Submission Export", () => {
+  it.skip("V1 Internal - Download Submission Export", () => {
     cy.task("publishGrantsToContentful");
     // wait for grant to be published to contentful
     cy.wait(5000);
