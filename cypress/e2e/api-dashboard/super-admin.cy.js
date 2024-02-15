@@ -153,53 +153,34 @@ describe("Api Dashboard SuperAdmin journeys", () => {
         .should("be.gte", 10);
     });
 
-    it("Should show only the filtered keys when department filters are set, and clear all filters should reset those filter", () => {
+    it(`API Key filters - Selecting ${ORG_2} in the filter`, () => {
       cy.log(
-        `Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Selecting ${ORG_2} in the filter`,
+        `API Key filters - Selecting ${ORG_2} in the filter | applying filters`,
       );
       cy.get(`[data-cy="admin-dashboard-filter-${ORG_2}-checkbox"]`).click();
-
-      cy.log(
-        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - verifying that the checkbox is checked",
-      );
       cy.get(`[data-cy="admin-dashboard-filter-${ORG_2}-checkbox"]`).should(
         "be.checked",
       );
-
-      cy.log(
-        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Clicking Apply filters",
-      );
       cy.get(`[data-cy="admin-dashboard-filter-apply-button"]`).click();
-
-      cy.log(
-        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Verify that the url contain the selected department",
-      );
       cy.url().should(
         "eq",
         `${API_DASHBOARD_BASE_URL}/api-keys/manage?selectedDepartments=${ORG_2}`,
       );
 
-      cy.log(
-        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - verifying that the checkbox is checked",
-      );
       cy.get(`[data-cy="admin-dashboard-filter-${ORG_2}-checkbox"]`).should(
         "be.checked",
       );
 
       cy.log(
-        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Clicking Clear all filters",
+        `API Key filters - Selecting ${ORG_2} in the filter | clearing filters`,
       );
 
       cy.get(`[data-cy="admin-dashboard-filter-clear-button"]`).click();
 
       cy.log(
-        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - Verify that the url contain no departments",
+        `API Key filters - Selecting ${ORG_2} in the filter | check that filters are unchecked`,
       );
       cy.url().should("eq", `${API_DASHBOARD_BASE_URL}/api-keys/manage`);
-
-      cy.log(
-        "Should show only the filtered keys when department filters are set, and clear all filters should reset those filter - verifying that the checkboxes are not checked",
-      );
       cy.get(`[data-cy="admin-dashboard-filter-${ORG_1}-checkbox"]`).should(
         "not.be.checked",
       );

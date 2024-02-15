@@ -77,6 +77,8 @@ import {
 
 import { getTestID, retry } from "./helper";
 
+const FIRST_USER_ID = process.env.FIRST_USER_ID;
+
 const runSqlForApply = async (
   scripts: string[],
   substitutions: Record<string, any[]>,
@@ -381,7 +383,7 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
   const params = [];
   for (let i = startingPoint; i < endingPoint; i++) {
     const paddedNumber = i.toString().padStart(3, "0");
-    const keyName = `CypressE2ETestTechSupport${paddedNumber}`;
+    const keyName = `CypressE2ETestTechSupport${paddedNumber}${FIRST_USER_ID}`;
     const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
     const keyValue = keyName + keyName; // TODO this is weird, do we need to do it?
 

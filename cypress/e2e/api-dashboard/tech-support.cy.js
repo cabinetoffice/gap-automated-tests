@@ -14,8 +14,10 @@ const today = new Date().toLocaleDateString("en-GB", {
   year: "numeric",
 });
 
-const apiKeyName = "CypressE2ETestTechSupportCreateAPIKey";
-const existingApiKeyName = "CypressE2ETestTechSupport001";
+const firstUserId = Cypress.env("firstUserId");
+
+const apiKeyName = `CypressE2ETestTechSupportCreateAPIKey${firstUserId}`;
+const existingApiKeyName = `CypressE2ETestTechSupport001${firstUserId}`;
 const API_DASHBOARD_BASE_URL = BASE_URL + "/find/api/admin";
 
 describe("API Admin - No existing keys", () => {
