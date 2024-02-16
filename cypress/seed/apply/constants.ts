@@ -71,13 +71,13 @@ const allSubs = [
   process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
 ];
 
-const DEPARTMENT_NAME = `Cypress - Test Department ${getTestID()}`;
-
 const SUPER_ADMIN_ID = getTestID();
 const ADMIN_ID = getTestID(1);
 const APPLICANT_ID = getTestID(2);
 const TECHNICAL_SUPPORT_ID = getTestID(3);
 const FUNDING_ID = getTestID();
+
+const DEPARTMENT_NAME = `Cypress - Test Department ${FUNDING_ID}`;
 
 const V1_INTERNAL_SCHEME_ID = getTestID();
 const V1_EXTERNAL_SCHEME_ID = getTestID(3);
