@@ -162,6 +162,7 @@ const createApiKeysData = async (): Promise<void> => {
 };
 
 const deleteApiKeysData = async (): Promise<void> => {
+  console.log("Deleting Api Keys and funding org from Apply database");
   await runSqlForApply(
     [deleteApiKeysByFunderId, deleteApiKeysFundingOrganisations],
     deleteApiKeysSubstitutions, // the $1, etc in the sql script

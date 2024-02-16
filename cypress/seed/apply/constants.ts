@@ -245,7 +245,7 @@ const applyDeleteSubstitutions = {
 };
 
 const deleteApiKeysSubstitutions = {
-  [deleteApiKeysByFunderId]: [ADMIN_ID, APPLICANT_ID],
+  [deleteApiKeysByFunderId]: [ADMIN_ID, APPLICANT_ID, SUPER_ADMIN_ID],
   [deleteApiKeysFundingOrganisations]: [ADMIN_ID, APPLICANT_ID],
 };
 
@@ -362,7 +362,7 @@ const createApiKeySubstitutions = (
 ) => {
   const fundingOrganisation = name.startsWith("Org1") ? ADMIN_ID : APPLICANT_ID;
   return [
-    -(i + 1),
+    -(fundingOrganisation + 1),
     fundingOrganisation,
     hashApiKey(value),
     name,
@@ -382,7 +382,7 @@ const createApiKeySubstitutionsForTechSupport = (
   value: string,
 ) => {
   return [
-    -(1000 + i + 1),
+    -(FUNDING_ID + i + 1),
     FUNDING_ID,
     hashApiKey(value),
     name,
