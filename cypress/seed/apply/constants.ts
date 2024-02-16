@@ -222,7 +222,7 @@ const applyInsertSubstitutions = {
 };
 
 const applyDeleteSubstitutions = {
-  [deleteApiKeys]: [FUNDING_ID],
+  [deleteApiKeys]: [...allSubs],
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [
     SUPER_ADMIN_ID,
@@ -245,8 +245,8 @@ const applyDeleteSubstitutions = {
 };
 
 const deleteApiKeysSubstitutions = {
-  [deleteApiKeysByFunderId]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
-  [deleteApiKeysFundingOrganisations]: [SUPER_ADMIN_ID - 1, SUPER_ADMIN_ID - 2],
+  [deleteApiKeysByFunderId]: [ADMIN_ID, APPLICANT_ID],
+  [deleteApiKeysFundingOrganisations]: [ADMIN_ID, APPLICANT_ID],
 };
 
 const getAPIKeysByFunderIdSubstitutions = {
@@ -341,9 +341,9 @@ const applyUpdateSubstitutions = {
 
 const createApiKeyFundingOrganisationSubstitutions = {
   [createApiKeysFundingOrganisations]: [
-    SUPER_ADMIN_ID - 2,
+    APPLICANT_ID,
     `CypressApiKeysEvilOrg${FUNDING_ID}`,
-    SUPER_ADMIN_ID - 1,
+    ADMIN_ID,
     `CypressApiKeysTestOrg${FUNDING_ID}`,
   ],
 };
@@ -360,9 +360,7 @@ const createApiKeySubstitutions = (
   name: string,
   value: string,
 ) => {
-  const fundingOrganisation = name.startsWith("Org1")
-    ? SUPER_ADMIN_ID - 1
-    : SUPER_ADMIN_ID - 2;
+  const fundingOrganisation = name.startsWith("Org1") ? ADMIN_ID : APPLICANT_ID;
   return [
     -(i + 1),
     fundingOrganisation,

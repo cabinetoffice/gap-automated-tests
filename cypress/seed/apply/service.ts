@@ -55,6 +55,8 @@ import {
   updateSpotlightSubmissionStatus,
 } from "../ts/updateApplyData";
 import {
+  ADMIN_ID,
+  APPLICANT_ID,
   FUNDING_ID,
   SUPER_ADMIN_ID,
   V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
@@ -138,13 +140,13 @@ const createApiKeysData = async (): Promise<void> => {
   );
   console.log("Successfully created and updated fundingOrganisation");
 
-  console.log("Creating Keys in usage plan for SUPER_ADMIN_ID - 1");
-  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 1, 1, 7);
-  console.log("Successfully created Keys in usage plan for SUPER_ADMIN_ID - 1");
+  console.log(`Creating Keys in usage plan for ${ADMIN_ID}`);
+  await createApiKeysInApiGatewayUsagePlan(ADMIN_ID, 1, 7);
+  console.log(`Successfully created Keys in usage plan for ${ADMIN_ID}`);
 
-  console.log("Creating Keys in usage plan for SUPER_ADMIN_ID - 2");
-  await createApiKeysInApiGatewayUsagePlan(SUPER_ADMIN_ID - 2, 7, 12);
-  console.log("Successfully created Keys in usage plan for SUPER_ADMIN_ID - 2");
+  console.log(`Creating Keys in usage plan for ${APPLICANT_ID}`);
+  await createApiKeysInApiGatewayUsagePlan(APPLICANT_ID, 7, 12);
+  console.log(`Successfully created Keys in usage plan for ${APPLICANT_ID}`);
 
   const apiKeys = (await getKeysFromAwsApiGatewayUsagePlan()).sort((a, b) =>
     a.name.localeCompare(b.name),
