@@ -315,6 +315,7 @@ const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
     numberOfColumns,
   );
   console.log("Query created: ", queryString);
+  console.log("Substitutions created: ", substitutions);
 
   await runSqlForApply([queryString], {
     [queryString]: substitutions.flatMap((item) => item),
@@ -331,7 +332,6 @@ const buildQueryStringForSubstitutions = (
     params,
     numberOfColumns,
   );
-  console.log(`${query}${substitutionParameters.join(", ")}`);
 
   return `${query}${substitutionParameters.join(", ")}`;
 };
@@ -349,7 +349,6 @@ const buildDynamicQuerySubstitutions = (
     }
     substitutionGroups.push("(" + substitutions.join(", ") + ")");
   }
-  console.log("substitutions groups: ", substitutionGroups);
   return substitutionGroups;
 };
 
