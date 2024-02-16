@@ -331,6 +331,7 @@ const buildQueryStringForSubstitutions = (
     params,
     numberOfColumns,
   );
+  console.log(`${query}${substitutionParameters.join(", ")}`);
 
   return `${query}${substitutionParameters.join(", ")}`;
 };
@@ -348,7 +349,7 @@ const buildDynamicQuerySubstitutions = (
     }
     substitutionGroups.push("(" + substitutions.join(", ") + ")");
   }
-
+  console.log("substitutions groups: ", substitutionGroups);
   return substitutionGroups;
 };
 
