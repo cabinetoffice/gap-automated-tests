@@ -75,9 +75,7 @@ const deleteExportBatch = `DELETE FROM grant_export_batch WHERE created_by IN ($
 
 const deleteExport = `DELETE FROM grant_export WHERE created_by IN ($1, $2, $3);`;
 
-const deleteApiKeys = `
-DELETE FROM public.api_key WHERE funder_id IN ($1, $2, $3, $4);
-`;
+const deleteApiKeys = `DELETE FROM public.api_key WHERE funder_id IN ($1, $2, $3);`;
 
 const deleteApiKeysByFunderId = `DELETE FROM public.api_key
 WHERE funder_id IN ($1, $2);`;
