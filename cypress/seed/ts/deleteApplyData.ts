@@ -73,6 +73,8 @@ const deleteExportBatch = `DELETE FROM grant_export_batch WHERE created_by IN ($
 
 const deleteExport = `DELETE FROM grant_export WHERE created_by IN ($1, $2, $3);`;
 
+const deleteTechSupportUser = `DELETE FROM public.tech_support_user WHERE user_sub IN ($1, $2, $3, $4)`;
+
 export {
   deleteSpotlightSubmissionRow,
   deleteSpotlightBatchRow,
@@ -88,4 +90,5 @@ export {
   deleteApplicantOrgProfiles,
   deleteExportBatch,
   deleteExport,
+  deleteTechSupportUser,
 };
