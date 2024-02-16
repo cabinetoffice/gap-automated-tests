@@ -12,6 +12,7 @@ import {
   deleteSpotlightBatchRow,
   deleteSpotlightSubmissionRow,
   deleteSubmissions,
+  deleteTechSupportUser,
   deleteUsers,
 } from "../ts/deleteApplyData";
 import {
@@ -80,6 +81,7 @@ const createApplyData = async (): Promise<void> => {
 const deleteApplyData = async (): Promise<void> => {
   await runSqlForApply(
     [
+      deleteTechSupportUser,
       deleteExport,
       deleteExportBatch,
       deleteAdverts,
