@@ -362,7 +362,7 @@ const createApiKeySubstitutions = (
 ) => {
   const fundingOrganisation = name.startsWith("Org1") ? ADMIN_ID : APPLICANT_ID;
   return [
-    -(fundingOrganisation + 1),
+    FUNDING_ID - i,
     fundingOrganisation,
     hashApiKey(value),
     name,
@@ -382,7 +382,7 @@ const createApiKeySubstitutionsForTechSupport = (
   value: string,
 ) => {
   return [
-    -(FUNDING_ID + i + 1),
+    FUNDING_ID - 1000 - i,
     FUNDING_ID,
     hashApiKey(value),
     name,
