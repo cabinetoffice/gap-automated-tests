@@ -115,6 +115,7 @@ const deleteApplyData = async (): Promise<void> => {
   await runSqlForApply(
     [
       deleteApiKeys,
+      deleteTechSupportUser,
       deleteExport,
       deleteExportBatch,
       deleteAdverts,
