@@ -1,7 +1,7 @@
 import { type UsagePlanKey } from "@aws-sdk/client-api-gateway";
 import {
   createKeyInAwsApiGatewayUsagePlan,
-  deleteApiKey,
+  deleteApiKeyFromAws,
   getKeysFromAwsApiGatewayUsagePlan,
   removeKeysFromAwsApiGatewayUsagePlan,
 } from "../apiGateway";
@@ -58,7 +58,6 @@ import {
   ADMIN_ID,
   APPLICANT_ID,
   FUNDING_ID,
-  SUPER_ADMIN_ID,
   V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   V2_INTERNAL_SCHEME_ID,
@@ -77,7 +76,7 @@ import {
   spotlightSubstitutions,
 } from "./constants";
 
-import { getTestID, retry } from "./helper";
+import { retry } from "./helper";
 
 const FIRST_USER_ID = process.env.FIRST_USER_ID;
 
@@ -195,12 +194,14 @@ const getAPIKeysByFunderId = async () => {
 
 const deleteAPIKeysFromAwsForTechSupport = async () => {
   const rows = await getAPIKeysByFunderId();
+  console.log(`Deleting all Api Keys for Funder ID ${FUNDING_ID} from AWS`);
+
   for (const row of rows[0] as ApiKeyDb[]) {
     const key = {
       id: row.api_gateway_id,
       name: row.api_key_name,
     };
-    await deleteApiKey(key);
+    await deleteApiKeyFromAws(key);
 
     console.log("Successfully deleted all existing Technical Support Api Keys");
   }
@@ -295,11 +296,14 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
 };
 
 const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
+  console.log("Creating Api Keys in the database");
   const numberOfColumns = 10; // number of columns to be substituted in the database
 
   const substitutions = [];
   for (let i = 0; i < apiKeys.length; i++) {
     const apiKey = apiKeys[i];
+    console.log("Creating Api Key substitution for key: " + i);
+
     substitutions.push(
       createApiKeySubstitutions(i, apiKey.id, apiKey.name, apiKey.value),
     );
@@ -310,10 +314,12 @@ const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
     substitutions,
     numberOfColumns,
   );
+  console.log("Query created: ", queryString);
 
   await runSqlForApply([queryString], {
     [queryString]: substitutions.flatMap((item) => item),
   });
+  console.log("Successfully created Api Keys in the database");
 };
 
 const buildQueryStringForSubstitutions = (
@@ -370,9 +376,8 @@ const createApiKeysInApiGatewayUsagePlan = async (
   for (let i = startingPoint; i < endingPoint; i++) {
     console.log("creating key in AWS: " + i);
     const paddedNumber = i.toString().padStart(3, "0");
-    const orgName =
-      fundingOrganisation === SUPER_ADMIN_ID - 1 ? "Org1" : "Org2";
-    const keyName = `${orgName}Cypress${paddedNumber}${getTestID()}`;
+    const orgName = fundingOrganisation === ADMIN_ID ? "Org1" : "Org2";
+    const keyName = `${orgName}Cypress${paddedNumber}${FIRST_USER_ID}`;
     await createKeyInAwsApiGatewayUsagePlan(keyName);
   }
 };

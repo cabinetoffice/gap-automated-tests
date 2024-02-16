@@ -35,7 +35,7 @@ export async function removeKeysFromAwsApiGatewayUsagePlan() {
     for (const key of keys) {
       console.log(`Deleting API key with id ${key.id}`);
 
-      await deleteApiKey(key);
+      await deleteApiKeyFromAws(key);
 
       count++;
 
@@ -58,7 +58,7 @@ export async function createKeyInAwsApiGatewayUsagePlan(apiKeyName: string) {
   }
 }
 
-export async function deleteApiKey(key: UsagePlanKey) {
+export async function deleteApiKeyFromAws(key: UsagePlanKey) {
   try {
     const asyncSleep = promisify(setTimeout);
     const deleteApiKeyCommand = new DeleteApiKeyCommand({ apiKey: key.id });

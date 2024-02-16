@@ -18,7 +18,6 @@ import {
   deleteApplyData,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
-  getAPIKeysByFunderId,
   getExportedSubmissionUrlAndLocation,
   insertSubmissionsAndMQs,
   updateSpotlightSubmission,
@@ -95,11 +94,6 @@ export default defineConfig({
           await deleteApiKeysData().then(async () => {
             await createApiKeysData();
           });
-
-          return null;
-        },
-        async getAPIKeysByFunderId() {
-          await getAPIKeysByFunderId();
 
           return null;
         },
