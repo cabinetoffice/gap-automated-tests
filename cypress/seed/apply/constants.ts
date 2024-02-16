@@ -233,7 +233,7 @@ const applyDeleteSubstitutions = {
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
   [deleteExportBatch]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
   [deleteExport]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
-  [deleteTechSupportUser]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
+  [deleteTechSupportUser]: [...allSubs],
 };
 
 const spotlightSubstitutions = {
