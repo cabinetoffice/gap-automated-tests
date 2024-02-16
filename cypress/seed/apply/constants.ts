@@ -222,7 +222,7 @@ const applyInsertSubstitutions = {
 };
 
 const applyDeleteSubstitutions = {
-  [deleteApiKeys]: [...allSubs],
+  [deleteApiKeys]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [
     SUPER_ADMIN_ID,
