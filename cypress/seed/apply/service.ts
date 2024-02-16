@@ -142,11 +142,15 @@ const createApiKeysData = async (): Promise<void> => {
 
   console.log(`Creating Keys in usage plan for ${ADMIN_ID}`);
   await createApiKeysInApiGatewayUsagePlan(ADMIN_ID, 1, 7);
-  console.log(`Successfully created Keys in usage plan for ${ADMIN_ID}`);
+  console.log(
+    `Successfully created Keys in usage plan for funding org: ${ADMIN_ID}`,
+  );
 
   console.log(`Creating Keys in usage plan for ${APPLICANT_ID}`);
   await createApiKeysInApiGatewayUsagePlan(APPLICANT_ID, 7, 12);
-  console.log(`Successfully created Keys in usage plan for ${APPLICANT_ID}`);
+  console.log(
+    `Successfully created Keys in usage plan for funding org: ${APPLICANT_ID}`,
+  );
 
   const apiKeys = (await getKeysFromAwsApiGatewayUsagePlan()).sort((a, b) =>
     a.name.localeCompare(b.name),
@@ -303,7 +307,6 @@ const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
   const substitutions = [];
   for (let i = 0; i < apiKeys.length; i++) {
     const apiKey = apiKeys[i];
-    console.log("Creating Api Key substitution for key: " + i);
 
     substitutions.push(
       createApiKeySubstitutions(i, apiKey.id, apiKey.name, apiKey.value),
@@ -315,8 +318,6 @@ const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
     substitutions,
     numberOfColumns,
   );
-  console.log("Query created: ", queryString);
-  console.log("Substitutions created: ", substitutions);
 
   await runSqlForApply([queryString], {
     [queryString]: substitutions.flatMap((item) => item),

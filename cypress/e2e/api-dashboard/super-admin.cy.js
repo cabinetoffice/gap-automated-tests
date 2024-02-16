@@ -18,7 +18,7 @@ const SUPER_ADMIN_DASHBOARD = `${BASE_URL}/apply/admin/super-admin-dashboard`;
 const ORG_1 = `CypressApiKeysEvilOrg-${firstUserId}`;
 const ORG_2 = `CypressApiKeysTestOrg-${firstUserId}`;
 
-const KEY_NAME = `Org1Cypress001-${firstUserId}`;
+const KEY_NAME = `Org1Cypress001${firstUserId}`;
 
 describe("Api Dashboard SuperAdmin journeys", () => {
   describe("Navigation test", () => {
@@ -285,7 +285,7 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       cy.get(`[data-cy='error-back-link']`).should(
         "have.attr",
         "href",
-        "https://find-government-grants.service.gov.uk/", // this value is hard coded into the service and will need fixed.
+        "/find/api/admin/api-keys/manage",
       );
     });
   });
