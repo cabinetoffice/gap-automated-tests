@@ -66,7 +66,6 @@ import {
   applyUpdateSubstitutions,
   createApiKeyFundingOrganisationSubstitutions,
   createApiKeySubstitutions,
-  createApiKeySubstitutionsForRecreation,
   createApiKeySubstitutionsForTechSupport,
   deleteApiKeysSubstitutions,
   getAPIKeysByFunderIdSubstitutions,
@@ -330,22 +329,6 @@ const buildDynamicQuerySubstitutions = (
   return substitutionGroups;
 };
 
-const recreateApiKeysInDatabase = async (apiKeys: ApiKeyDb[]) => {
-  if (apiKeys !== null && apiKeys.length > 0) {
-    const numberOfColumns = 10; // number of columns to be substituted in the database
-    const queryString = buildQueryStringForSubstitutions(
-      createApiKeyBaseQuery,
-      apiKeys,
-      numberOfColumns,
-    );
-
-    await runSqlForApply(
-      [queryString],
-      createApiKeySubstitutionsForRecreation(queryString, apiKeys),
-    );
-  }
-};
-
 const createApiKeysInApiGatewayUsagePlan = async (
   fundingOrganisation: number,
   startingPoint: number,
@@ -416,7 +399,6 @@ export {
   getAPIKeysByFunderId,
   getExportedSubmissionUrlAndLocation,
   insertSubmissionsAndMQs,
-  recreateApiKeysInDatabase,
   updateSpotlightSubmission,
   type ApiKeyDb,
 };
