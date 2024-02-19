@@ -70,6 +70,10 @@ const deleteSpotlightSubmissionRow: string = `
     WHERE grant_scheme = $1;
 `;
 
+const deleteAttachment = `DELETE FROM grant_attachment WHERE grant_attachment_id=$1;`;
+
+const deleteApiKeys = `DELETE FROM public.api_key WHERE funder_id = $1;`;
+
 export {
   deleteSpotlightSubmissionRow,
   deleteSpotlightBatchRow,
@@ -83,4 +87,6 @@ export {
   deleteUsers,
   deleteFundingOrgs,
   deleteApplicantOrgProfiles,
+  deleteAttachment,
+  deleteApiKeys,
 };
