@@ -1,3 +1,5 @@
+import { createHash } from "crypto";
+
 const getUUID = (index = 0) =>
   `${Math.abs(+process.env.FIRST_USER_ID + index)
     .toString()
@@ -5,6 +7,14 @@ const getUUID = (index = 0) =>
 
 const getTestID = (index = 0) =>
   -(Math.abs(+process.env.FIRST_USER_ID) + index);
+
+const hashApiKey = (apiKey: string) => {
+  const hash = createHash("sha512");
+  hash.update(apiKey, "utf-8");
+  const hashed = hash.digest("hex");
+
+  return hashed;
+};
 
 const sleep = async (ms: number) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
@@ -30,4 +40,4 @@ const retry = async (
   return null;
 };
 
-export { getUUID, getTestID, retry };
+export { getTestID, getUUID, hashApiKey, retry };

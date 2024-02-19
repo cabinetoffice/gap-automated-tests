@@ -1,34 +1,38 @@
 import { defineConfig } from "cypress";
+import * as dayjs from "dayjs";
+import {
+  TEST_V1_EXTERNAL_GRANT,
+  TEST_V1_INTERNAL_GRANT,
+  TEST_V2_EXTERNAL_GRANT,
+  TEST_V2_INTERNAL_GRANT,
+} from "./cypress/common/constants";
+import {
+  addSpotlightBatch,
+  addToRecentBatch,
+  cleanupTestSpotlightSubmissions,
+  createApiKeysData,
+  createApiKeysInApiGatewayForTechnicalSupport,
+  createApplyData,
+  deleteAPIKeysFromAwsForTechSupport,
+  deleteApiKeysData,
+  deleteApplyData,
+  deleteSpotlightBatch,
+  deleteSpotlightSubmission,
+  getExportedSubmissionUrlAndLocation,
+  insertSubmissionsAndMQs,
+  updateSpotlightSubmission,
+} from "./cypress/seed/apply/service";
+import {
+  publishGrantAdverts,
+  removeAdvertByName,
+} from "./cypress/seed/contentful";
+import { createFindData, deleteFindData } from "./cypress/seed/find";
 import {
   addFailedOauthAudit,
   addSuccessOauthAudit,
   createTestUsers,
   deleteTestUsers,
 } from "./cypress/seed/user";
-import {
-  createApplyData,
-  deleteApplyData,
-  updateSpotlightSubmission,
-  addToRecentBatch,
-  addSpotlightBatch,
-  cleanupTestSpotlightSubmissions,
-  deleteSpotlightBatch,
-  deleteSpotlightSubmission,
-  insertSubmissionsAndMQs,
-  getExportedSubmissionUrlAndLocation,
-} from "./cypress/seed/apply/service";
-import { createFindData, deleteFindData } from "./cypress/seed/find";
-import {
-  publishGrantAdverts,
-  removeAdvertByName,
-} from "./cypress/seed/contentful";
-import {
-  TEST_V1_INTERNAL_GRANT,
-  TEST_V1_EXTERNAL_GRANT,
-  TEST_V2_EXTERNAL_GRANT,
-  TEST_V2_INTERNAL_GRANT,
-} from "./cypress/common/constants";
-import * as dayjs from "dayjs";
 const xlsx = require("node-xlsx").default;
 const fs = require("fs");
 const decompress = require("decompress");
@@ -86,8 +90,26 @@ export default defineConfig({
 
           return null;
         },
+        async create11ApiKeys() {
+          await deleteApiKeysData().then(async () => {
+            await createApiKeysData();
+          });
+
+          return null;
+        },
+        async deleteAPIKeysFromAwsForTechSupport() {
+          await deleteAPIKeysFromAwsForTechSupport();
+
+          return null;
+        },
+        async createApiKeysInApiGatewayForTechnicalSupport() {
+          await createApiKeysInApiGatewayForTechnicalSupport(1, 2);
+
+          return null;
+        },
         async removeAdvertByName(name) {
           await removeAdvertByName(name);
+
           return null;
         },
         async publishGrantsToContentful() {
@@ -145,6 +167,10 @@ export default defineConfig({
       oneLoginAdminPassword: process.env.ONE_LOGIN_ADMIN_PASSWORD,
       oneLoginSuperAdminEmail: process.env.ONE_LOGIN_SUPER_ADMIN_EMAIL,
       oneLoginSuperAdminPassword: process.env.ONE_LOGIN_SUPER_ADMIN_PASSWORD,
+      oneLoginTechnicalSupportEmail:
+        process.env.ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL,
+      oneLoginTechnicalSupportPassword:
+        process.env.ONE_LOGIN_TECHNICAL_SUPPORT_PASSWORD,
       userDbUrl: process.env.USERS_DATABASE_URL,
       userDbName: process.env.USERS_DATABASE_NAME,
       applyDbUrl: process.env.APPLY_DATABASE_URL,
@@ -164,6 +190,10 @@ export default defineConfig({
       testV2ExternalGrant: {
         ...TEST_V2_EXTERNAL_GRANT,
       },
+      awsRegion: process.env.AWS_API_GATEWAY_REGION,
+      awsAccessKey: process.env.AWS_API_GATEWAY_ACCESS_KEY,
+      awsSecretKey: process.env.AWS_API_GATEWAY_SECRET_KEY,
+      awsApiGatewayUsagePlanId: process.env.API_GATEWAY_USAGE_PLAN_ID,
     },
     reporter: "cypress-mochawesome-reporter",
     reporterOptions: {
@@ -181,5 +211,6 @@ export default defineConfig({
       overwrite: false,
     },
     baseUrl: process.env.APPLICATION_BASE_URL,
+    chromeWebSecurity: false,
   },
 });

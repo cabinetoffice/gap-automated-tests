@@ -1,6 +1,7 @@
 export const BASE_URL = Cypress.env("applicationBaseUrl");
 export const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
 export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
+export const APPLICANT_DASHBOARD_URL = `${BASE_URL}/apply/applicant/dashboard`;
 export const ADMIN_DASHBOARD_URL = `${BASE_URL}/apply/admin/dashboard`;
 export const SUPER_ADMIN_DASHBOARD_URL = `${BASE_URL}/apply/admin/super-admin-dashboard`;
 
@@ -63,6 +64,13 @@ export const signInAsSuperAdmin = () => {
   signInWithOneLoginApply(
     Cypress.env("oneLoginSuperAdminEmail"),
     Cypress.env("oneLoginSuperAdminPassword"),
+  );
+};
+
+export const signInAsTechnicalSupport = () => {
+  signInWithOneLoginApply(
+    Cypress.env("oneLoginTechnicalSupportEmail"),
+    Cypress.env("oneLoginTechnicalSupportPassword"),
   );
 };
 
