@@ -15,3 +15,7 @@ SELECT * FROM public.grant_export WHERE submission_id IN (
     )
 );
 `;
+
+export const selectAllApiKeys = `SELECT * FROM public.api_key;`;
+
+export const selectApiKeysByFunderId = `SELECT * FROM public.api_key WHERE funder_id = $1;`;

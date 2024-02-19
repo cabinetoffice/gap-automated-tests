@@ -1,6 +1,7 @@
 export const BASE_URL = Cypress.env("applicationBaseUrl");
 export const ONE_LOGIN_BASE_URL = Cypress.env("oneLoginSandboxBaseUrl");
 export const POST_LOGIN_BASE_URL = Cypress.env("postLoginBaseUrl");
+export const APPLICANT_DASHBOARD_URL = `${BASE_URL}/apply/applicant/dashboard`;
 export const ADMIN_DASHBOARD_URL = `${BASE_URL}/apply/admin/dashboard`;
 export const SUPER_ADMIN_DASHBOARD_URL = `${BASE_URL}/apply/admin/super-admin-dashboard`;
 
@@ -66,6 +67,13 @@ export const signInAsSuperAdmin = () => {
   );
 };
 
+export const signInAsTechnicalSupport = () => {
+  signInWithOneLoginApply(
+    Cypress.env("oneLoginTechnicalSupportEmail"),
+    Cypress.env("oneLoginTechnicalSupportPassword"),
+  );
+};
+
 export const searchForUser = (email: string) => {
   cy.log("Entering email in search box");
   cy.get("[name=searchTerm]").type(email);
@@ -81,6 +89,7 @@ export const navigateToSpecificUser = (email: string) => {
   selectActionForItemInTable(email, "Edit", {
     textCellElement: "td",
     actionCellElement: "td",
+    actionCellType: "a",
   });
 };
 
@@ -216,12 +225,18 @@ export const filterSelection = (fieldSet: string, label: string) => {
 export const selectActionForItemInTable = (
   text: string,
   action: string,
-  options = { textCellElement: "dt", actionCellElement: "dd" },
+  options = {
+    textCellElement: "dt",
+    actionCellElement: "dd",
+    actionCellType: "a",
+  },
 ) => {
   cy.contains(options.textCellElement, text)
     .parent()
     .within(($tr) => {
-      cy.get(`${options.actionCellElement} a`).contains(action).click();
+      cy.get(`${options.actionCellElement} ${options.actionCellType || "a"}`)
+        .contains(action)
+        .click();
     });
 };
 
