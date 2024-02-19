@@ -396,8 +396,8 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
     const paddedNumber = i.toString().padStart(3, "0");
     const keyName = `CypressE2ETestTechSupport${paddedNumber}${FIRST_USER_ID}`;
     const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
-    const keyValue = keyName + keyName; // TODO this is weird, do we need to do it?
-
+    const keyValue = keyName + keyName; // needs to be at least 20 characters long
+    console.log("keyValue ", keyValue);
     params.push(
       createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
     );

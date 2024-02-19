@@ -72,8 +72,6 @@ const deleteSpotlightSubmissionRow: string = `
     WHERE grant_scheme = $1;
 `;
 
-const deleteAttachment = `DELETE FROM grant_attachment WHERE grant_attachment_id=$1;`;
-
 const deleteExportBatch = `DELETE FROM grant_export_batch WHERE created_by IN ($1, $2, $3);`;
 
 const deleteExport = `DELETE FROM grant_export WHERE created_by IN ($1, $2, $3);`;
@@ -108,5 +106,4 @@ export {
   deleteUsers,
   deleteExportBatch,
   deleteExport,
-  deleteAttachment,
 };

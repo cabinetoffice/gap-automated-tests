@@ -9,7 +9,7 @@ import {
 import { promisify } from "util";
 
 const region = process.env.AWS_API_GATEWAY_REGION;
-const usagePlanId = process.env.API_GATEWAY_USAGE_PLAN_ID;
+const usagePlanId = process.env.AWS_API_GATEWAY_USAGE_PLAN_ID;
 const accessKeyId = process.env.AWS_API_GATEWAY_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_API_GATEWAY_SECRET_KEY;
 
