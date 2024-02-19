@@ -11,7 +11,6 @@ import {
   deleteAdverts,
   deleteApiKeys,
   deleteApiKeysByFunderId,
-  deleteApiKeysById,
   deleteApiKeysFundingOrganisations,
   deleteApplicantOrgProfiles,
   deleteApplicants,
@@ -46,7 +45,6 @@ import {
 } from "../ts/insertApplyData";
 import {
   getExportedSubmission,
-  selectAllApiKeys,
   selectApiKeysByFunderId,
 } from "../ts/selectApplyData";
 import {
@@ -181,13 +179,6 @@ const deleteApiKeysData = async (): Promise<void> => {
   console.log("Successfully removed Keys Aws Api Gateway");
 };
 
-const grabAllApiKeys = async () => {
-  const rows = await runSqlForApply([selectAllApiKeys], null);
-  console.log("Successfully selected all Api Keys");
-
-  return rows;
-};
-
 const getAPIKeysByFunderId = async () => {
   const rows = await runSqlForApply(
     [selectApiKeysByFunderId],
@@ -211,22 +202,6 @@ const deleteAPIKeysFromAwsForTechSupport = async () => {
 
     console.log("Successfully deleted all existing Technical Support Api Keys");
   }
-};
-
-const deleteExistingApiKeys = async (originalData: ApiKeyDb[]) => {
-  const apiKeyIds = originalData.map((data) => data.api_key_id);
-
-  await runSqlForApply([deleteApiKeysById], {
-    [deleteApiKeysById]: [apiKeyIds],
-  });
-
-  console.log("Successfully deleted all existing Api Keys");
-};
-
-const refillDbWithAllPreExistingApiKeys = async (originalData: ApiKeyDb[]) => {
-  await recreateApiKeysInDatabase(originalData);
-
-  console.log("Successfully recreated all Api Keys");
 };
 
 const cleanupTestSpotlightSubmissions = async () => {
@@ -396,7 +371,7 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
     const paddedNumber = i.toString().padStart(3, "0");
     const keyName = `CypressE2ETestTechSupport${paddedNumber}${FIRST_USER_ID}`;
     const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
-    const keyValue = keyName + keyName; // needs to be at least 20 characters long
+    const keyValue = keyName + keyName; // in aws the key valueneeds to be at least 30 characters long
     console.log("keyValue ", keyValue);
     params.push(
       createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
@@ -436,15 +411,12 @@ export {
   deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
   deleteApplyData,
-  deleteExistingApiKeys,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   getAPIKeysByFunderId,
   getExportedSubmissionUrlAndLocation,
-  grabAllApiKeys,
   insertSubmissionsAndMQs,
   recreateApiKeysInDatabase,
-  refillDbWithAllPreExistingApiKeys,
   updateSpotlightSubmission,
   type ApiKeyDb,
 };

@@ -81,9 +81,6 @@ const deleteApiKeys = `DELETE FROM public.api_key WHERE funder_id IN ($1, $2, $3
 const deleteApiKeysByFunderId = `DELETE FROM public.api_key
 WHERE funder_id IN ($1, $2, $3);`;
 
-const deleteApiKeysById = `DELETE FROM public.api_key
-WHERE api_key_id = ANY($1::int[]);`;
-
 const deleteApiKeysFundingOrganisations = `DELETE FROM public.grant_funding_organisation WHERE funder_id IN ($1, $2)`;
 
 export {
@@ -91,7 +88,6 @@ export {
   deleteAdverts,
   deleteApiKeys,
   deleteApiKeysByFunderId,
-  deleteApiKeysById,
   deleteApiKeysFundingOrganisations,
   deleteApplicantOrgProfiles,
   deleteApplicants,

@@ -13,7 +13,6 @@ INSERT INTO public.gap_user (gap_user_id, user_sub)
     ($3, $4);
 `;
 
-// 'Cypress - Test Funding Organisation'
 const insertFundingOrgs: string = `
 INSERT INTO public.grant_funding_organisation(funder_id, organisation_name)
     VALUES ($1, $2);
