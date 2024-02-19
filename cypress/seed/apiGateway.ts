@@ -52,6 +52,7 @@ export async function createKeyInAwsApiGatewayUsagePlan(apiKeyName: string) {
   try {
     const apiKeyId = await createApiKey(apiKeyName);
     await associateApiKeyToUsagePlan(apiKeyId);
+
     return apiKeyId;
   } catch (error) {
     console.error("Error:", error.message);
@@ -73,6 +74,7 @@ export async function deleteApiKeyFromAws(key: UsagePlanKey) {
 }
 
 export async function createApiKey(apiKeyName: string) {
+  console.log(`Creating API key with name ${apiKeyName}`);
   const maxRetries = 3;
   let retryCount = 0;
 
@@ -91,7 +93,7 @@ export async function createApiKey(apiKeyName: string) {
         await apiGatewayClient.send(createApiKeyCommand);
 
       await asyncSleep(200);
-
+      console.log(`API key with name ${apiKeyName} created`);
       return createApiKeyResponse.id;
     } catch (error) {
       retryCount++;
@@ -110,6 +112,7 @@ export async function createApiKey(apiKeyName: string) {
 
 export async function associateApiKeyToUsagePlan(apiKeyId: string) {
   try {
+    console.log(`Associating API key ${apiKeyId} to usage plan`);
     const asyncSleep = promisify(setTimeout);
 
     const createUsagePlanKeyCommand = new CreateUsagePlanKeyCommand({
@@ -118,9 +121,12 @@ export async function associateApiKeyToUsagePlan(apiKeyId: string) {
       keyType: "API_KEY",
     });
 
-    await apiGatewayClient.send(createUsagePlanKeyCommand);
-
-    await asyncSleep(200);
+    await apiGatewayClient.send(createUsagePlanKeyCommand).then(async () => {
+      await asyncSleep(200);
+      console.log(
+        `API key ${apiKeyId} associated to usage plan ${usagePlanId}`,
+      );
+    });
   } catch (error) {
     console.error("Error in associateApiKeyToUsagePlan:", error.message);
   }

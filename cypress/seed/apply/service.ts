@@ -355,7 +355,6 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
     const keyName = `CypressE2ETestTechSupport${paddedNumber}${FIRST_USER_ID}`;
     const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
     const keyValue = keyName + keyName; // in aws the key valueneeds to be at least 30 characters long
-    console.log("keyValue ", keyValue);
     params.push(
       createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
     );

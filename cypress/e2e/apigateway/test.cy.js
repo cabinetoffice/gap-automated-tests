@@ -1,16 +1,25 @@
 import { log } from "../../common/common";
+import { getUUID } from "../../seed/apply/helper";
+
 const apiGatewayUrl = Cypress.env("apiGatewayUrl");
 const firstUserId = parseInt(Cypress.env("firstUserId"));
+
+const submission0Id = getUUID(0, firstUserId);
+const submission1Id = getUUID(1, firstUserId);
+const submission2Id = getUUID(2, firstUserId);
+const submission3Id = getUUID(3, firstUserId);
 const apiKey =
   `CypressE2ETestTechSupport001${firstUserId}` +
   `CypressE2ETestTechSupport001${firstUserId}`;
+
 describe("API Endpoint Test", () => {
-  before(() => {
+  beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
     cy.task("createApiKeysInApiGatewayForTechnicalSupport");
     cy.task("insertSubmissionsAndMQs");
   });
+
   describe("/submissions", () => {
     const url = apiGatewayUrl + "/submissions";
     describe("non happy path", () => {
@@ -53,7 +62,7 @@ describe("API Endpoint Test", () => {
     describe("happy path", () => {
       it("Should return 200 status code and validate response body", () => {
         log(
-          `API Endpoint Test - ${url} - happy path - return 200 status code and validate response body`,
+          `API Endpoint Test - ${url} - happy path - using apikey: ${apiKey} return 200 status code and validate response body `,
         );
 
         cy.request({
@@ -74,13 +83,13 @@ describe("API Endpoint Test", () => {
           expect(response.body.applications[0].submissions).to.have.lengthOf(3);
           expect(
             response.body.applications[0].submissions[0].submissionId,
-          ).to.equal(`000000${firstUserId + 1}-0000-0000-0000-000000000000`);
+          ).to.equal(submission1Id);
           expect(
             response.body.applications[0].submissions[1].submissionId,
-          ).to.equal(`000000${firstUserId + 2}-0000-0000-0000-000000000000`);
+          ).to.equal(submission2Id);
           expect(
             response.body.applications[0].submissions[2].submissionId,
-          ).to.equal(`000000${firstUserId + 3}-0000-0000-0000-000000000000`);
+          ).to.equal(submission3Id);
 
           expect(response.body.applications[1].applicationFormName).to.equal(
             "Cypress - Test Application V1 Internal",
@@ -88,7 +97,7 @@ describe("API Endpoint Test", () => {
           expect(response.body.applications[1].submissions).to.have.lengthOf(1);
           expect(
             response.body.applications[1].submissions[0].submissionId,
-          ).to.equal(`000000${firstUserId}-0000-0000-0000-000000000000`);
+          ).to.equal(submission0Id);
         });
       });
     });
@@ -138,7 +147,7 @@ describe("API Endpoint Test", () => {
       describe("multiple submissions", () => {
         it("Should return 200 status code and validate response body", () => {
           log(
-            `API Endpoint Test - ${url} - happy path - multiple submission - return 200 status code and validate response body`,
+            `API Endpoint Test - ${url} - happy path - multiple submission - using apikey: ${apiKey} return 200 status code and validate response body`,
           );
 
           cy.request({
@@ -160,13 +169,13 @@ describe("API Endpoint Test", () => {
             );
             expect(
               response.body.applications[0].submissions[0].submissionId,
-            ).to.equal(`000000${firstUserId + 1}-0000-0000-0000-000000000000`);
+            ).to.equal(submission1Id);
             expect(
               response.body.applications[0].submissions[1].submissionId,
-            ).to.equal(`000000${firstUserId + 2}-0000-0000-0000-000000000000`);
+            ).to.equal(submission2Id);
             expect(
               response.body.applications[0].submissions[2].submissionId,
-            ).to.equal(`000000${firstUserId + 3}-0000-0000-0000-000000000000`);
+            ).to.equal(submission3Id);
           });
         });
       });
@@ -175,7 +184,7 @@ describe("API Endpoint Test", () => {
         it("Should return 200 status code and validate response body", () => {
           const url = apiGatewayUrl + "/submissions/GGIS_ID_1";
           log(
-            `API Endpoint Test - ${url} - happy path - single submission - return 200 status code and validate response body`,
+            `API Endpoint Test - ${url} - happy path - single submission - using apikey: ${apiKey} return 200 status code and validate response body`,
           );
 
           cy.request({
@@ -197,7 +206,7 @@ describe("API Endpoint Test", () => {
             );
             expect(
               response.body.applications[0].submissions[0].submissionId,
-            ).to.equal(`000000${firstUserId}-0000-0000-0000-000000000000`);
+            ).to.equal(submission0Id);
           });
         });
       });
