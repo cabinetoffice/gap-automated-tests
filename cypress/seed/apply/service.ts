@@ -110,6 +110,7 @@ const createApplyData = async (): Promise<void> => {
 };
 
 const deleteApplyData = async (): Promise<void> => {
+  console.log("deleting data from Apply database");
   await deleteAPIKeysFromAwsForTechSupport();
   await runSqlForApply(
     [
