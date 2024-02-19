@@ -4,7 +4,6 @@ const firstUserId = parseInt(Cypress.env("firstUserId"));
 const apiKey =
   `CypressE2ETestTechSupport001${firstUserId}` +
   `CypressE2ETestTechSupport001${firstUserId}`;
-
 describe("API Endpoint Test", () => {
   before(() => {
     cy.task("setUpUser");

@@ -269,7 +269,6 @@ describe("API Admin - No existing keys", () => {
       cy.visit(page, { failOnStatusCode: false })
         .contains("Page not found")
         .should("exist");
-      cy.go("back");
     });
   });
 });
