@@ -8,9 +8,7 @@ const submission0Id = getUUID(0, firstUserId);
 const submission1Id = getUUID(1, firstUserId);
 const submission2Id = getUUID(2, firstUserId);
 const submission3Id = getUUID(3, firstUserId);
-const apiKey =
-  `CypressE2ETestTechSupport001${firstUserId}` +
-  `CypressE2ETestTechSupport001${firstUserId}`;
+const apiKey = `CypressE2ETestTechSupport001${firstUserId}`;
 
 describe("API Endpoint Test", () => {
   before(() => {

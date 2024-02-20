@@ -83,7 +83,7 @@ export async function createApiKey(apiKeyName: string) {
       const params = {
         name: apiKeyName,
         enabled: true,
-        value: apiKeyName + apiKeyName,
+        value: apiKeyName,
       };
       const asyncSleep = promisify(setTimeout);
 
