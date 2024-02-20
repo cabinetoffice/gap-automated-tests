@@ -410,6 +410,7 @@ export const editDetailsOnSummaryScreen = (details) => {
     "IAmApplyingAsAnIndividual",
     "LimitedCompany",
     "NonLimitedCompany",
+    "LocalAuthority",
     "Charity",
   ].forEach((item) => {
     cy.get(`[data-cy=cy-radioInput-option-${item}]`)
@@ -429,7 +430,7 @@ export const editDetailsOnSummaryScreen = (details) => {
 
   cy.contains("Enter your Companies House number (if you have one)");
   cy.get("[data-cy=cy-companiesHouseNumber-text-input]")
-    .should("have.value", details.companiesHouse)
+    .should("have.value", "")
     .clear()
     .type(details.companiesHouse + "1");
   clickSaveAndContinue();
@@ -445,7 +446,7 @@ export const editDetailsOnSummaryScreen = (details) => {
 
   cy.contains("Enter your Charity Commission number (if you have one)");
   cy.get("[data-cy=cy-charityCommissionNumber-text-input]")
-    .should("have.value", details.charitiesCommission)
+    .should("have.value", "")
     .clear()
     .type(details.charitiesCommission + "1");
   clickSaveAndContinue();
@@ -644,7 +645,10 @@ export const editFundingDetails = (details) => {
   clickSaveAndContinue();
 };
 
-export const confirmDetailsOnSummaryScreen = (details) => {
+export const confirmDetailsOnSummaryScreen = (
+  details,
+  areCharityCommissionAndCompaniesHouseNumberEmpty = false,
+) => {
   // Confirm your details
 
   // Name
@@ -668,13 +672,19 @@ export const confirmDetailsOnSummaryScreen = (details) => {
 
   // Companies House
   cy.get('[data-cy="cy-organisation-value-Companies House number"]').contains(
-    details.companiesHouse,
+    areCharityCommissionAndCompaniesHouseNumberEmpty
+      ? "-"
+      : details.companiesHouse,
   );
 
   // Charities Commission
   cy.get(
     '[data-cy="cy-organisation-value-Charity Commission number"]',
-  ).contains(details.charitiesCommission);
+  ).contains(
+    areCharityCommissionAndCompaniesHouseNumberEmpty
+      ? "-"
+      : details.charitiesCommission,
+  );
 
   // How much funding
   cy.get(
@@ -750,6 +760,7 @@ export const confirmOrgAndFundingDetails = (
   orgType,
   fundingLocations,
   details,
+  areCharityCommissionAndCompaniesHouseNumberEmpty = false,
 ) => {
   // Check Org Details Match
   cy.get('[data-cy="cy-section-title-link-Your organisation"]').click();
@@ -770,10 +781,18 @@ export const confirmOrgAndFundingDetails = (
       );
     });
   cy.get(
-    `[data-cy="cy-section-value-${details.companiesHouse + suffix}"]`,
+    `[data-cy="cy-section-value-${
+      areCharityCommissionAndCompaniesHouseNumberEmpty
+        ? "null"
+        : details.companiesHouse + suffix
+    }"]`,
   ).should("exist");
   cy.get(
-    `[data-cy="cy-section-value-${details.charitiesCommission + suffix}"]`,
+    `[data-cy="cy-section-value-${
+      areCharityCommissionAndCompaniesHouseNumberEmpty
+        ? "null"
+        : details.charitiesCommission + suffix
+    }"]`,
   ).should("exist");
 
   cy.get('[data-cy="cy-isComplete-question-title"]').contains(

@@ -75,7 +75,7 @@ describe("Apply for a Grant V2", () => {
     log("Apply V2 Internal MQ Empty - Filling out MQ as Non-Limited Company");
     validateMqNonLimitedJourney();
 
-    // Go back to Org Type, change to Individual and check that Companies House and Charity Commission are skipped and that copy is changed
+    // Go back to Org Type, change to Individual (this will set the CCN and CHN to null) and check that Companies House and Charity Commission are skipped and that copy is changed
     log("Apply V2 Internal MQ Empty - Filling out MQ as Individual");
     validateMqIndividualJourney();
 
@@ -102,7 +102,8 @@ describe("Apply for a Grant V2", () => {
     validateMqLimitedCompanySummaryScreen();
 
     cy.contains("Confirm your details");
-    confirmDetailsOnSummaryScreen(MQ_DETAILS);
+    // because previously we selected Individual, CHN and CCN are null so it will show the -
+    confirmDetailsOnSummaryScreen(MQ_DETAILS, true);
 
     // Click through and edit fields
     log("Apply V2 Internal MQ Empty - Editing details from summary screen");
@@ -146,6 +147,7 @@ describe("Apply for a Grant V2", () => {
     log(
       "Apply V2 Internal MQ Empty - Validating MQ summary screen for Charity",
     );
+    // because previously we selected Individual, CHN and CCN are null so it will show the -
     validateOrgDetailsForCharity();
 
     // Confirm Org & Funding Details and Submit
@@ -154,6 +156,7 @@ describe("Apply for a Grant V2", () => {
       "Charity",
       ["North East (England)"],
       MQ_DETAILS,
+      true,
     );
 
     log("Apply V2 Internal MQ Empty - Reviewing submission");
