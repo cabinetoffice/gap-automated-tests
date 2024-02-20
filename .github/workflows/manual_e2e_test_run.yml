@@ -13,8 +13,7 @@ on:
           - applicant
           - admin
           - superadmin
-          - apigateway
-          - apidashboard
+          - api-dashboard
       specs:
         type: string
         description: (optional) enter spec files, will override suites above
