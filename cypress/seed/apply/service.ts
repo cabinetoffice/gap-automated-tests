@@ -3,16 +3,11 @@ import {
   createKeyInAwsApiGatewayUsagePlan,
   deleteApiKeyFromAws,
   getKeysFromAwsApiGatewayUsagePlan,
-  removeKeysFromAwsApiGatewayUsagePlan,
 } from "../apiGateway";
 import { runSQLFromJs } from "../database";
 import {
   deleteAdmins,
   deleteAdverts,
-  deleteApiKeys,
-  deleteApiKeysByFunderId,
-  deleteApiKeysById,
-  deleteApiKeysFundingOrganisations,
   deleteApplicantOrgProfiles,
   deleteApplicants,
   deleteApplications,
@@ -70,7 +65,6 @@ import {
   createApiKeySubstitutions,
   createApiKeySubstitutionsForRecreation,
   createApiKeySubstitutionsForTechSupport,
-  deleteApiKeysSubstitutions,
   getAPIKeysByFunderIdSubstitutions,
   postLoginBaseUrl,
   spotlightSubstitutions,
@@ -113,7 +107,6 @@ const deleteApplyData = async (): Promise<void> => {
   await deleteAPIKeysFromAwsForTechSupport();
   await runSqlForApply(
     [
-      deleteApiKeys,
       deleteTechSupportUser,
       deleteExport,
       deleteExportBatch,
@@ -165,21 +158,6 @@ const createApiKeysData = async (): Promise<void> => {
   console.log("Successfully created apiKeys into the Apply database");
 };
 
-const deleteApiKeysData = async (): Promise<void> => {
-  console.log("Deleting Api Keys and funding org from Apply database");
-  await runSqlForApply(
-    [deleteApiKeysByFunderId, deleteApiKeysFundingOrganisations],
-    deleteApiKeysSubstitutions, // the $1, etc in the sql script
-  );
-
-  console.log(
-    "Successfully removed Keys from Apply database and the funding Organisation associated with it",
-  );
-
-  await removeKeysFromAwsApiGatewayUsagePlan();
-  console.log("Successfully removed Keys Aws Api Gateway");
-};
-
 const grabAllApiKeys = async () => {
   const rows = await runSqlForApply([selectAllApiKeys], null);
   console.log("Successfully selected all Api Keys");
@@ -210,22 +188,6 @@ const deleteAPIKeysFromAwsForTechSupport = async () => {
 
     console.log("Successfully deleted all existing Technical Support Api Keys");
   }
-};
-
-const deleteExistingApiKeys = async (originalData: ApiKeyDb[]) => {
-  const apiKeyIds = originalData.map((data) => data.api_key_id);
-
-  await runSqlForApply([deleteApiKeysById], {
-    [deleteApiKeysById]: [apiKeyIds],
-  });
-
-  console.log("Successfully deleted all existing Api Keys");
-};
-
-const refillDbWithAllPreExistingApiKeys = async (originalData: ApiKeyDb[]) => {
-  await recreateApiKeysInDatabase(originalData);
-
-  console.log("Successfully recreated all Api Keys");
 };
 
 const cleanupTestSpotlightSubmissions = async () => {
@@ -395,7 +357,7 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
     const paddedNumber = i.toString().padStart(3, "0");
     const keyName = `CypressE2ETestTechSupport${paddedNumber}${FIRST_USER_ID}`;
     const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
-    const keyValue = keyName + keyName; // TODO this is weird, do we need to do it?
+    const keyValue = keyName + keyName;
 
     params.push(
       createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
@@ -433,9 +395,7 @@ export {
   createApiKeysInApiGatewayForTechnicalSupport,
   createApplyData,
   deleteAPIKeysFromAwsForTechSupport,
-  deleteApiKeysData,
   deleteApplyData,
-  deleteExistingApiKeys,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   getAPIKeysByFunderId,
@@ -443,7 +403,6 @@ export {
   grabAllApiKeys,
   insertSubmissionsAndMQs,
   recreateApiKeysInDatabase,
-  refillDbWithAllPreExistingApiKeys,
   updateSpotlightSubmission,
   type ApiKeyDb,
 };
