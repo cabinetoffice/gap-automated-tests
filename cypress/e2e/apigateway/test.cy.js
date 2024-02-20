@@ -13,7 +13,7 @@ const apiKey =
   `CypressE2ETestTechSupport001${firstUserId}`;
 
 describe("API Endpoint Test", () => {
-  beforeEach(() => {
+  before(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
     cy.task("createApiKeysInApiGatewayForTechnicalSupport");
