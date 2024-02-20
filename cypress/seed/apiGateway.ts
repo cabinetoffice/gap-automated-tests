@@ -48,9 +48,12 @@ export async function removeKeysFromAwsApiGatewayUsagePlan() {
   }
 }
 
-export async function createKeyInAwsApiGatewayUsagePlan(apiKeyName: string) {
+export async function createKeyInAwsApiGatewayUsagePlan(
+  apiKeyName: string,
+  apiKeyValue: string,
+) {
   try {
-    const apiKeyId = await createApiKey(apiKeyName);
+    const apiKeyId = await createApiKey(apiKeyName, apiKeyValue);
     await associateApiKeyToUsagePlan(apiKeyId);
 
     return apiKeyId;
@@ -73,7 +76,7 @@ export async function deleteApiKeyFromAws(key: UsagePlanKey) {
   }
 }
 
-export async function createApiKey(apiKeyName: string) {
+export async function createApiKey(apiKeyName: string, apiKeyValue: string) {
   console.log(`Creating API key with name ${apiKeyName}`);
   const maxRetries = 3;
   let retryCount = 0;
@@ -83,7 +86,7 @@ export async function createApiKey(apiKeyName: string) {
       const params = {
         name: apiKeyName,
         enabled: true,
-        value: apiKeyName,
+        value: apiKeyValue,
       };
       const asyncSleep = promisify(setTimeout);
 

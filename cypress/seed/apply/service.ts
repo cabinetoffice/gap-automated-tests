@@ -333,13 +333,14 @@ const createApiKeysInApiGatewayUsagePlan = async (
   fundingOrganisation: number,
   startingPoint: number,
   endingPoint: number,
+  keyValue = FIRST_USER_ID.padEnd(20, "x"),
 ) => {
   for (let i = startingPoint; i < endingPoint; i++) {
     console.log("creating key in AWS: " + i);
     const paddedNumber = i.toString().padStart(3, "0");
     const orgName = fundingOrganisation === ADMIN_ID ? "Org1" : "Org2";
     const keyName = `${orgName}Cypress${paddedNumber}${FIRST_USER_ID}`;
-    await createKeyInAwsApiGatewayUsagePlan(keyName);
+    await createKeyInAwsApiGatewayUsagePlan(keyName, keyValue + i);
   }
 };
 
@@ -353,8 +354,9 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
   for (let i = startingPoint; i < endingPoint; i++) {
     const paddedNumber = i.toString().padStart(3, "0");
     const keyName = `CypressE2ETestTechSupport${paddedNumber}${FIRST_USER_ID}`;
-    const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
     const keyValue = keyName;
+    const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName, keyValue);
+
     console.log("creating key in AWS with value: ", keyValue);
     params.push(
       createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
