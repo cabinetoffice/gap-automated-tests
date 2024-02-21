@@ -1,5 +1,6 @@
 import { log } from "../../common/common";
 import { getUUID } from "../../seed/apply/helper";
+import { makeRequestWithRetry } from "./helpers";
 
 const apiGatewayUrl = Cypress.env("apiGatewayUrl");
 const firstUserId = parseInt(Cypress.env("firstUserId"));
@@ -63,14 +64,7 @@ describe("API Endpoint Test", () => {
           `API Endpoint Test - ${url} - happy path - using apikey: ${apiKey} return 200 status code and validate response body `,
         );
 
-        cy.request({
-          method: "GET",
-          url,
-          headers: {
-            "x-api-key": apiKey,
-          },
-          retryOnStatusCodeFailure: true,
-        }).then((response) => {
+        makeRequestWithRetry("GET", url, apiKey).then((response) => {
           expect(response.status).to.equal(200);
           expect(response.body).to.have.property("numberOfResults");
           expect(response.body.numberOfResults).to.equal(2);
@@ -149,14 +143,7 @@ describe("API Endpoint Test", () => {
             `API Endpoint Test - ${url} - happy path - multiple submission - using apikey: ${apiKey} return 200 status code and validate response body`,
           );
 
-          cy.request({
-            method: "GET",
-            url,
-            headers: {
-              "x-api-key": apiKey,
-            },
-            retryOnStatusCodeFailure: true,
-          }).then((response) => {
+          makeRequestWithRetry("GET", url, apiKey).then((response) => {
             expect(response.status).to.equal(200);
             expect(response.body).to.have.property("numberOfResults");
             expect(response.body.numberOfResults).to.equal(1);
@@ -186,15 +173,7 @@ describe("API Endpoint Test", () => {
           log(
             `API Endpoint Test - ${url} - happy path - single submission - using apikey: ${apiKey} return 200 status code and validate response body`,
           );
-
-          cy.request({
-            method: "GET",
-            url,
-            headers: {
-              "x-api-key": apiKey,
-            },
-            retryOnStatusCodeFailure: true,
-          }).then((response) => {
+          makeRequestWithRetry("GET", url, apiKey).then((response) => {
             expect(response.status).to.equal(200);
             expect(response.body).to.have.property("numberOfResults");
             expect(response.body.numberOfResults).to.equal(1);
