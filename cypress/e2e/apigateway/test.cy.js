@@ -69,6 +69,7 @@ describe("API Endpoint Test", () => {
           headers: {
             "x-api-key": apiKey,
           },
+          retryOnStatusCodeFailure: true,
         }).then((response) => {
           expect(response.status).to.equal(200);
           expect(response.body).to.have.property("numberOfResults");
@@ -154,6 +155,7 @@ describe("API Endpoint Test", () => {
             headers: {
               "x-api-key": apiKey,
             },
+            retryOnStatusCodeFailure: true,
           }).then((response) => {
             expect(response.status).to.equal(200);
             expect(response.body).to.have.property("numberOfResults");
@@ -190,6 +192,7 @@ describe("API Endpoint Test", () => {
             url,
             headers: {
               "x-api-key": apiKey,
+              retryOnStatusCodeFailure: true,
             },
           }).then((response) => {
             expect(response.status).to.equal(200);
