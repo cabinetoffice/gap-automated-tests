@@ -192,8 +192,8 @@ describe("API Endpoint Test", () => {
             url,
             headers: {
               "x-api-key": apiKey,
-              retryOnStatusCodeFailure: true,
             },
+            retryOnStatusCodeFailure: true,
           }).then((response) => {
             expect(response.status).to.equal(200);
             expect(response.body).to.have.property("numberOfResults");
