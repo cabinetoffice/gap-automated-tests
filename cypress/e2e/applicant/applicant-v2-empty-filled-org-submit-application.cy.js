@@ -128,6 +128,12 @@ describe("Apply for a Grant V2", () => {
       "exist",
     );
 
+    // VALIDATING SECTION OVERVIEW (Implemented with GAP-2273)
+    log("Application section overview page - V2 Grant");
+    // follow link to overview page
+    cy.get('[data-cy="cy-section-summary-link"]').click().click();
+    checkOverviewPage();
+
     log("Apply V2 Internal MQ Empty - Filling out Eligibility");
     fillOutEligibity();
 
@@ -220,3 +226,29 @@ describe("Apply for a Grant V2", () => {
     clickText("Continue to application form");
   });
 });
+
+const checkOverviewPage = () => {
+  // assert on headings
+  cy.get('[data-cy="cy-application-name"]').should(
+    "have.text",
+    "Cypress - Test Application V2 Internal",
+  );
+  cy.contains(
+    '[data-cy="cy-overview-heading"]',
+    "Overview of application questions",
+  );
+
+  // assert on section headings
+  cy.get(":nth-child(1) > .govuk-heading-m").should("have.text", "Eligibility");
+  cy.get(":nth-child(2) > .govuk-heading-m").should(
+    "have.text",
+    "Your organisation",
+  );
+  cy.get(":nth-child(3) > .govuk-heading-m").should("have.text", "Funding");
+
+  // assert on 'you will be asked' text
+  cy.get('[data-cy="cy-will-be-asked"]').should("have.length", 3);
+
+  // return to application form
+  cy.get('[data-cy="cy-back-to-application"]').click();
+};
