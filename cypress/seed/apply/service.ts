@@ -11,7 +11,6 @@ import {
   deleteAdverts,
   deleteApiKeys,
   deleteApiKeysByFunderId,
-  deleteApiKeysById,
   deleteApiKeysFundingOrganisations,
   deleteApplicantOrgProfiles,
   deleteApplicants,
@@ -46,7 +45,6 @@ import {
 } from "../ts/insertApplyData";
 import {
   getExportedSubmission,
-  selectAllApiKeys,
   selectApiKeysByFunderId,
 } from "../ts/selectApplyData";
 import {
@@ -68,7 +66,6 @@ import {
   applyUpdateSubstitutions,
   createApiKeyFundingOrganisationSubstitutions,
   createApiKeySubstitutions,
-  createApiKeySubstitutionsForRecreation,
   createApiKeySubstitutionsForTechSupport,
   deleteApiKeysSubstitutions,
   getAPIKeysByFunderIdSubstitutions,
@@ -110,6 +107,7 @@ const createApplyData = async (): Promise<void> => {
 };
 
 const deleteApplyData = async (): Promise<void> => {
+  console.log("deleting data from Apply database");
   await deleteAPIKeysFromAwsForTechSupport();
   await runSqlForApply(
     [
@@ -180,13 +178,6 @@ const deleteApiKeysData = async (): Promise<void> => {
   console.log("Successfully removed Keys Aws Api Gateway");
 };
 
-const grabAllApiKeys = async () => {
-  const rows = await runSqlForApply([selectAllApiKeys], null);
-  console.log("Successfully selected all Api Keys");
-
-  return rows;
-};
-
 const getAPIKeysByFunderId = async () => {
   const rows = await runSqlForApply(
     [selectApiKeysByFunderId],
@@ -210,22 +201,6 @@ const deleteAPIKeysFromAwsForTechSupport = async () => {
 
     console.log("Successfully deleted all existing Technical Support Api Keys");
   }
-};
-
-const deleteExistingApiKeys = async (originalData: ApiKeyDb[]) => {
-  const apiKeyIds = originalData.map((data) => data.api_key_id);
-
-  await runSqlForApply([deleteApiKeysById], {
-    [deleteApiKeysById]: [apiKeyIds],
-  });
-
-  console.log("Successfully deleted all existing Api Keys");
-};
-
-const refillDbWithAllPreExistingApiKeys = async (originalData: ApiKeyDb[]) => {
-  await recreateApiKeysInDatabase(originalData);
-
-  console.log("Successfully recreated all Api Keys");
 };
 
 const cleanupTestSpotlightSubmissions = async () => {
@@ -354,33 +329,18 @@ const buildDynamicQuerySubstitutions = (
   return substitutionGroups;
 };
 
-const recreateApiKeysInDatabase = async (apiKeys: ApiKeyDb[]) => {
-  if (apiKeys !== null && apiKeys.length > 0) {
-    const numberOfColumns = 10; // number of columns to be substituted in the database
-    const queryString = buildQueryStringForSubstitutions(
-      createApiKeyBaseQuery,
-      apiKeys,
-      numberOfColumns,
-    );
-
-    await runSqlForApply(
-      [queryString],
-      createApiKeySubstitutionsForRecreation(queryString, apiKeys),
-    );
-  }
-};
-
 const createApiKeysInApiGatewayUsagePlan = async (
   fundingOrganisation: number,
   startingPoint: number,
   endingPoint: number,
+  keyValue = FIRST_USER_ID.padEnd(20, "x"),
 ) => {
   for (let i = startingPoint; i < endingPoint; i++) {
     console.log("creating key in AWS: " + i);
     const paddedNumber = i.toString().padStart(3, "0");
     const orgName = fundingOrganisation === ADMIN_ID ? "Org1" : "Org2";
     const keyName = `${orgName}Cypress${paddedNumber}${FIRST_USER_ID}`;
-    await createKeyInAwsApiGatewayUsagePlan(keyName);
+    await createKeyInAwsApiGatewayUsagePlan(keyName, keyValue + i);
   }
 };
 
@@ -394,8 +354,10 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
   for (let i = startingPoint; i < endingPoint; i++) {
     const paddedNumber = i.toString().padStart(3, "0");
     const keyName = `CypressE2ETestTechSupport${paddedNumber}${FIRST_USER_ID}`;
-    const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName);
-    const keyValue = keyName + keyName; // TODO this is weird, do we need to do it?
+    const keyValue = keyName;
+    const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName, keyValue);
+
+    console.log("creating key in AWS with value: ", keyValue);
 
     params.push(
       createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
@@ -435,15 +397,11 @@ export {
   deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
   deleteApplyData,
-  deleteExistingApiKeys,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   getAPIKeysByFunderId,
   getExportedSubmissionUrlAndLocation,
-  grabAllApiKeys,
   insertSubmissionsAndMQs,
-  recreateApiKeysInDatabase,
-  refillDbWithAllPreExistingApiKeys,
   updateSpotlightSubmission,
   type ApiKeyDb,
 };
