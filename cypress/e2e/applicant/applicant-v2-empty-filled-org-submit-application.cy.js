@@ -128,9 +128,7 @@ describe("Apply for a Grant V2", () => {
       "exist",
     );
 
-    // VALIDATING SECTION OVERVIEW (Implemented with GAP-2273)
-    log("Application section overview page - V2 Grant");
-    // follow link to overview page
+    log("Application section overview page - V2 grant");
     cy.get('[data-cy="cy-section-summary-link"]').click().click();
     checkOverviewPage();
 
