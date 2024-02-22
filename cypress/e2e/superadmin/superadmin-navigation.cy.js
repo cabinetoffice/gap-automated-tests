@@ -105,6 +105,14 @@ describe("Super Admin", () => {
     // ADMIN DASHBOARD
     cy.get('[data-cy="cyadminDashPageLink"] > .govuk-link').click();
     validateDashboardLink(false);
+    // MANAGE API KEYS
+    cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
+    cy.get('[data-cy="header-navbar-back-to-dashboard-link"]')
+      .should("have.attr", "href", SUPER_ADMIN_DASHBOARD)
+      .click();
+    // INTEGRATIONS
+    cy.get('[data-cy="cyintegrationsPageLink"] > .govuk-link').click();
+    validateDashboardLink(false);
     // APPLICANT DASHBOARD - appending BASE URL to href
     cy.get('[data-cy="cyapplicantDashPageLink"] > .govuk-link').click();
     validateDashboardLink(true);
