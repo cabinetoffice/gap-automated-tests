@@ -99,6 +99,19 @@ describe("Super Admin", () => {
       Cypress.env("oneLoginSuperAdminEmail"),
     );
 
+    log("Super Admin Navigation - Dashboard Header Link");
+    // SA DASHBOARD
+    validateDashboardLink(false);
+    // ADMIN DASHBOARD
+    cy.get('[data-cy="cyadminDashPageLink"] > .govuk-link').click();
+    validateDashboardLink(false);
+    // APPLICANT DASHBOARD - appending BASE URL to href
+    cy.get('[data-cy="cyapplicantDashPageLink"] > .govuk-link').click();
+    validateDashboardLink(true);
+    // FIND HOME - appending BASE URL to href
+    cy.get('[data-cy="cyhomePageLink"] > .govuk-link').click();
+    validateDashboardLink(true);
+
     log("Super Admin Navigation - Signing out");
     cy.get('[data-cy="cy_SignOutLink"]').click();
 
@@ -106,3 +119,13 @@ describe("Super Admin", () => {
     cy.contains("Find a grant");
   });
 });
+
+const validateDashboardLink = (appendBaseUrl) => {
+  const dashboardLink = cy.get(".super-admin-link > .govuk-header__link");
+  const dashboardHref = appendBaseUrl
+    ? SUPER_ADMIN_DASHBOARD
+    : "/apply/admin/super-admin-dashboard";
+  dashboardLink.should("have.attr", "href", dashboardHref);
+  // navigate to SA dashboard link
+  dashboardLink.click();
+};
