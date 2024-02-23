@@ -42,8 +42,6 @@ describe("Find a Grant - Search", () => {
 
   it("can search for a grant", () => {
     cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
 
     searchForGrant(Cypress.env("testV1InternalGrant").advertName);
 

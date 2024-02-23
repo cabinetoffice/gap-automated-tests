@@ -39,8 +39,6 @@ describe("Apply for a Grant V2", () => {
 
   it("Mandatory Questions Flow - Empty & Filled Organisation Profile", () => {
     cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
 
     log("Apply V2 Internal MQ Empty - Signing in as applicant");
     // Sign in
