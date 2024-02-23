@@ -73,7 +73,7 @@ import {
   spotlightSubstitutions,
 } from "./constants";
 
-import { retry } from "./helper";
+import { retry } from "../helper";
 
 const FIRST_USER_ID = process.env.FIRST_USER_ID;
 

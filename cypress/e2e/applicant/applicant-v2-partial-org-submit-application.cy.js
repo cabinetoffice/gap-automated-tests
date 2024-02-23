@@ -31,8 +31,6 @@ describe("Apply for a Grant V2", () => {
 
   it("Mandatory Questions Flow - Partially Filled Org Profile", () => {
     cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
 
     // Sign in
     log("Apply V2 Internal MQ Partial - Logging in as applicant");

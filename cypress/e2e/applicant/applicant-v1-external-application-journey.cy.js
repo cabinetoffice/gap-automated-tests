@@ -14,8 +14,6 @@ describe("Apply for a Grant", () => {
 
   it("Can complete V1 External grant journey", () => {
     cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
 
     // Sign in
     log("Apply V1 External Grant - Signing in as applicant");
