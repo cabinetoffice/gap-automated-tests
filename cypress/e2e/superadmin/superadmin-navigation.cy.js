@@ -40,6 +40,8 @@ describe("Super Admin", () => {
 
     cy.visit(SUPER_ADMIN_DASHBOARD);
 
+    cy.contains("Manage users");
+
     log("Super Admin Navigation - Clicking Applicant dashboard");
     cy.get('[data-cy="cyapplicantDashPageLink"] > .govuk-link').click();
 
@@ -49,6 +51,8 @@ describe("Super Admin", () => {
     cy.contains("View your applications");
 
     cy.visit(SUPER_ADMIN_DASHBOARD);
+
+    cy.contains("Manage users");
 
     log("Super Admin Navigation - Clicking Manage API Keys");
     cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
@@ -60,6 +64,8 @@ describe("Super Admin", () => {
 
     cy.visit(SUPER_ADMIN_DASHBOARD);
 
+    cy.contains("Manage users");
+
     log("Super Admin Navigation - Clicking Home");
     cy.get('[data-cy="cyhomePageLink"] > .govuk-link').click();
 
@@ -67,6 +73,8 @@ describe("Super Admin", () => {
     cy.contains("Find a grant");
 
     cy.visit(SUPER_ADMIN_DASHBOARD);
+
+    cy.contains("Manage users");
 
     log("Super Admin Navigation - Navigating user pagination");
     log("Super Admin Navigation - Clicking next page");
@@ -136,4 +144,5 @@ const validateDashboardLink = ({ appendBaseUrl }) => {
   dashboardLink.should("have.attr", "href", dashboardHref);
   // navigate to SA dashboard link
   dashboardLink.click();
+  cy.contains("Manage users");
 };
