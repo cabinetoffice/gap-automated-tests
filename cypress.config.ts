@@ -193,7 +193,7 @@ export default defineConfig({
       awsRegion: process.env.AWS_API_GATEWAY_REGION,
       awsAccessKey: process.env.AWS_API_GATEWAY_ACCESS_KEY,
       awsSecretKey: process.env.AWS_API_GATEWAY_SECRET_KEY,
-      awsApiGatewayUsagePlanId: process.env.API_GATEWAY_USAGE_PLAN_ID,
+      awsApiGatewayUsagePlanId: process.env.AWS_API_GATEWAY_USAGE_PLAN_ID,
     },
     reporter: "cypress-mochawesome-reporter",
     reporterOptions: {

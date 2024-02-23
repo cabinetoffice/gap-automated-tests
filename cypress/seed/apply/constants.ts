@@ -52,7 +52,6 @@ import {
   selectApiKeysByFunderId,
 } from "../ts/selectApplyData";
 import { getTestID, getUUID, hashApiKey } from "./helper";
-import { type ApiKeyDb } from "./service";
 
 require("dotenv").config();
 
@@ -122,7 +121,7 @@ const applyInsertSubstitutions = {
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_SUB,
   ],
-  [insertFundingOrgs]: [FUNDING_ID, `Cypress - Test Department ${FUNDING_ID}`],
+  [insertFundingOrgs]: [FUNDING_ID, DEPARTMENT_NAME],
   [insertAdmins]: [
     SUPER_ADMIN_ID,
     FUNDING_ID,
@@ -354,6 +353,10 @@ const today = new Date().toLocaleDateString("en-GB", {
   year: "numeric",
 });
 
+const commonApiKeySubsValue = (value, name, id) => {
+  return [hashApiKey(value), name, null, today, false, null, null, id];
+};
+
 const createApiKeySubstitutions = (
   i: number,
   id: string,
@@ -364,14 +367,7 @@ const createApiKeySubstitutions = (
   return [
     FUNDING_ID - i,
     fundingOrganisation,
-    hashApiKey(value),
-    name,
-    null,
-    today,
-    false,
-    null,
-    null,
-    id,
+    ...commonApiKeySubsValue(value, name, id),
   ];
 };
 
@@ -384,32 +380,8 @@ const createApiKeySubstitutionsForTechSupport = (
   return [
     FUNDING_ID - 1000 - i,
     FUNDING_ID,
-    hashApiKey(value),
-    name,
-    null,
-    today,
-    false,
-    null,
-    null,
-    id,
+    ...commonApiKeySubsValue(value, name, id),
   ];
-};
-
-const createApiKeySubstitutionsForRecreation = (
-  query: string,
-  apiKeys: ApiKeyDb[],
-) => {
-  const params = [];
-  for (let i = 0; i < apiKeys.length; i++) {
-    const apiKey = apiKeys[i];
-    for (const key of Object.keys(apiKey)) {
-      params.push(apiKey[key]);
-    }
-  }
-
-  return {
-    [query]: params,
-  };
 };
 
 export {
@@ -437,7 +409,6 @@ export {
   applyUpdateSubstitutions,
   createApiKeyFundingOrganisationSubstitutions,
   createApiKeySubstitutions,
-  createApiKeySubstitutionsForRecreation,
   createApiKeySubstitutionsForTechSupport,
   deleteApiKeysSubstitutions,
   getAPIKeysByFunderIdSubstitutions,
