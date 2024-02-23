@@ -30,8 +30,6 @@ describe("Apply for a Grant", () => {
 
   it("Can start, save, come back, continue and submit new grant application for V1 Internal Grant", () => {
     cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
 
     log("Apply V1 Internal Grant - Searching for grant");
     searchForGrant(Cypress.env("testV1InternalGrant").advertName);

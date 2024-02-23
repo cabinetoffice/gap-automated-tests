@@ -16,7 +16,6 @@ describe("Sort search results", () => {
     cy.contains("Find a grant");
 
     cy.task("publishGrantsToContentful");
-    cy.wait(5000);
 
     searchForGrant(Cypress.env("testV2InternalGrant").advertName);
     cy.contains(Cypress.env("testV2InternalGrant").advertName);

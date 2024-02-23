@@ -25,8 +25,6 @@ describe("Downloads and Due Diligence", () => {
 
   it.skip("V1 Internal - Download Submission Export", () => {
     cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
 
     // Sign in and complete application as applicant
     cy.get('[data-cy="cySignInAndApply-Link"]').click();

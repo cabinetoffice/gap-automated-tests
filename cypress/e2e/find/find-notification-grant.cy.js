@@ -21,8 +21,6 @@ describe("Find a Grant - Grant Notification", () => {
 
   it("can subscribe and unsubscribe from updates for a SINGLE grant", () => {
     cy.task("publishGrantsToContentful");
-    // wait for grant to be published to contentful
-    cy.wait(5000);
 
     // --- UNAUTHENTICATED JOURNEY ---
     // go to home page

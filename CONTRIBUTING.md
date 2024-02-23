@@ -15,8 +15,6 @@ There are examples in the apply journeys of the types of things that should be l
 ```js
 it("Can apply for a V1 Grant", () => {
   cy.task("publishGrantsToContentful");
-  // wait for grant to be published to contentful
-  cy.wait(5000);
 
   log("Apply V1 Internal Grant - Searching for grant");
   searchForGrant(ADVERT_NAME);
@@ -111,14 +109,12 @@ If there are any patterns you need to implement in your test that are complicate
 
 ### Searching for a grant in Find
 
-If your test needs to search for a grant in Find, you must first publish adverts for that test in Contentful and wait for them to be added:
+If your test needs to search for a grant in Find, you must first publish adverts for that test in Contentful:
 
 ```js
 it("can search for a grant", () => {
   // publish grant to contentful
   cy.task("publishGrantsToContentful");
-  // wait for grant to be published to contentful
-  cy.wait(5000);
   // now you can search for it as normal
   searchForGrant("Cypress");
   // continue tests and assertions as normal
