@@ -1,46 +1,57 @@
 import {
-  insertApplicants,
-  insertUsers,
-  insertFundingOrgs,
-  insertAdmins,
-  insertGrantApplicantOrgProfiles,
-  insertSchemes,
-  insertApplications,
-  insertAdverts,
-  addSpotlightBatchRow,
-  addSubmissionToMostRecentBatch,
-  insertMandatoryQuestions,
-  insertSpotlightSubmission,
-  insertSubmissions,
-} from "../ts/insertApplyData";
-import {
-  deleteAdverts,
-  deleteSubmissions,
-  deleteApplications,
-  deleteSchemes,
-  deleteAdmins,
-  deleteApplicants,
-  deleteUsers,
-  deleteFundingOrgs,
-  deleteApplicantOrgProfiles,
-  deleteSpotlightSubmissionRow,
-  deleteSpotlightBatchRow,
-} from "../ts/deleteApplyData";
-import {
-  TEST_V1_INTERNAL_GRANT,
   TEST_V1_EXTERNAL_GRANT,
+  TEST_V1_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
 } from "../../common/constants";
 import {
-  v1InternalAdvert,
   v1ExternalAdvert,
+  v1InternalAdvert,
   v2ExternalAdvert,
   v2InternalAdvert,
 } from "../data/apply";
+import {
+  deleteAdmins,
+  deleteAdverts,
+  deleteApiKeys,
+  deleteApiKeysByFunderId,
+  deleteApiKeysFundingOrganisations,
+  deleteApplicantOrgProfiles,
+  deleteApplicants,
+  deleteApplications,
+  deleteExport,
+  deleteExportBatch,
+  deleteFundingOrgs,
+  deleteSchemes,
+  deleteSpotlightBatchRow,
+  deleteSpotlightSubmissionRow,
+  deleteSubmissions,
+  deleteTechSupportUser,
+  deleteUsers,
+} from "../ts/deleteApplyData";
+import {
+  addSpotlightBatchRow,
+  addSubmissionToMostRecentBatch,
+  createApiKeysFundingOrganisations,
+  insertAdmins,
+  insertAdverts,
+  insertApplicants,
+  insertApplications,
+  insertFundingOrgs,
+  insertGrantApplicantOrgProfiles,
+  insertMandatoryQuestions,
+  insertSchemes,
+  insertSpotlightSubmission,
+  insertSubmissions,
+  insertTechSupportUser,
+  insertUsers,
+} from "../ts/insertApplyData";
 
-import { getTestID, getUUID } from "./helper";
-import { getExportedSubmission } from "../ts/selectApplyData";
+import {
+  getExportedSubmission,
+  selectApiKeysByFunderId,
+} from "../ts/selectApplyData";
+import { getTestID, getUUID, hashApiKey } from "./helper";
 
 require("dotenv").config();
 
@@ -59,13 +70,13 @@ const allSubs = [
   process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
 ];
 
-const DEPARTMENT_NAME = `Cypress - Test Department ${process.env.FIRST_USER_ID}`;
-
 const SUPER_ADMIN_ID = getTestID();
 const ADMIN_ID = getTestID(1);
 const APPLICANT_ID = getTestID(2);
 const TECHNICAL_SUPPORT_ID = getTestID(3);
 const FUNDING_ID = getTestID();
+
+const DEPARTMENT_NAME = `Cypress - Test Department ${FUNDING_ID}`;
 
 const V1_INTERNAL_SCHEME_ID = getTestID();
 const V1_EXTERNAL_SCHEME_ID = getTestID(3);
@@ -95,29 +106,6 @@ const V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID =
 const V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID =
   V2_INTERNAL_NON_LIMITED_COMPANY_MANDATORY_QUESTION_ID;
 
-const MQ_DETAILS = {
-  name: "MyOrg",
-  address: ["addressLine1", "addressLine2", "city", "county", "postcod"],
-  orgType: "Limited company",
-  companiesHouse: "12345",
-  charitiesCommission: "67890",
-  howMuchFunding: "100",
-  fundingLocation: [
-    "North East (England)",
-    "North West (England)",
-    "Yorkshire and the Humber",
-    "East Midlands (England)",
-    "West Midlands (England)",
-    "London",
-    "South East (England)",
-    "South West (England)",
-    "Scotland",
-    "Wales",
-    "Northern Ireland",
-    "Outside of the UK",
-  ],
-};
-
 const applyInsertSubstitutions = {
   [insertApplicants]: [
     SUPER_ADMIN_ID,
@@ -133,7 +121,7 @@ const applyInsertSubstitutions = {
     ADMIN_ID,
     process.env.ONE_LOGIN_ADMIN_SUB,
   ],
-  [insertFundingOrgs]: [FUNDING_ID],
+  [insertFundingOrgs]: [FUNDING_ID, DEPARTMENT_NAME],
   [insertAdmins]: [
     SUPER_ADMIN_ID,
     FUNDING_ID,
@@ -141,6 +129,10 @@ const applyInsertSubstitutions = {
     ADMIN_ID,
     FUNDING_ID,
     ADMIN_ID,
+  ],
+  [insertTechSupportUser]: [
+    FUNDING_ID,
+    process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
   ],
   [insertGrantApplicantOrgProfiles]: [
     SUPER_ADMIN_ID,
@@ -229,6 +221,7 @@ const applyInsertSubstitutions = {
 };
 
 const applyDeleteSubstitutions = {
+  [deleteApiKeys]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
   [deleteAdverts]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSubmissions]: [
     SUPER_ADMIN_ID,
@@ -241,16 +234,22 @@ const applyDeleteSubstitutions = {
   [deleteApplications]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteSchemes]: [SUPER_ADMIN_ID, ADMIN_ID, ...allSubs],
   [deleteAdmins]: [SUPER_ADMIN_ID, ADMIN_ID, TECHNICAL_SUPPORT_ID, ...allSubs],
+  [deleteTechSupportUser]: [...allSubs],
   [deleteFundingOrgs]: [SUPER_ADMIN_ID],
   [deleteApplicants]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
-  [deleteUsers]: [
-    SUPER_ADMIN_ID,
-    ADMIN_ID,
-    APPLICANT_ID,
-    TECHNICAL_SUPPORT_ID,
-    ...allSubs,
-  ],
+  [deleteUsers]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID, ...allSubs],
   [deleteApplicantOrgProfiles]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
+  [deleteExportBatch]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
+  [deleteExport]: [SUPER_ADMIN_ID, ADMIN_ID, APPLICANT_ID],
+};
+
+const deleteApiKeysSubstitutions = {
+  [deleteApiKeysByFunderId]: [ADMIN_ID, APPLICANT_ID, SUPER_ADMIN_ID],
+  [deleteApiKeysFundingOrganisations]: [ADMIN_ID, APPLICANT_ID],
+};
+
+const getAPIKeysByFunderIdSubstitutions = {
+  [selectApiKeysByFunderId]: [FUNDING_ID],
 };
 
 const spotlightSubstitutions = {
@@ -339,29 +338,80 @@ const applyUpdateSubstitutions = {
   ],
 };
 
+const createApiKeyFundingOrganisationSubstitutions = {
+  [createApiKeysFundingOrganisations]: [
+    APPLICANT_ID,
+    `CypressApiKeysEvilOrg${FUNDING_ID}`,
+    ADMIN_ID,
+    `CypressApiKeysTestOrg${FUNDING_ID}`,
+  ],
+};
+
+const today = new Date().toLocaleDateString("en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+const commonApiKeySubsValue = (value, name, id) => {
+  return [hashApiKey(value), name, null, today, false, null, null, id];
+};
+
+const createApiKeySubstitutions = (
+  i: number,
+  id: string,
+  name: string,
+  value: string,
+) => {
+  const fundingOrganisation = name.startsWith("Org1") ? ADMIN_ID : APPLICANT_ID;
+  return [
+    FUNDING_ID - i,
+    fundingOrganisation,
+    ...commonApiKeySubsValue(value, name, id),
+  ];
+};
+
+const createApiKeySubstitutionsForTechSupport = (
+  i: number,
+  id: string,
+  name: string,
+  value: string,
+) => {
+  return [
+    FUNDING_ID - 1000 - i,
+    FUNDING_ID,
+    ...commonApiKeySubsValue(value, name, id),
+  ];
+};
+
 export {
-  applyInsertSubstitutions,
-  applyDeleteSubstitutions,
-  applyUpdateSubstitutions,
-  spotlightSubstitutions,
-  applyServiceDbName,
-  applyDatabaseUrl,
-  postLoginBaseUrl,
-  SUPER_ADMIN_ID,
   ADMIN_ID,
-  APPLICANT_ID,
-  FUNDING_ID,
-  V1_INTERNAL_SCHEME_ID,
-  V1_EXTERNAL_SCHEME_ID,
-  V2_INTERNAL_SCHEME_ID,
-  V2_EXTERNAL_SCHEME_ID,
-  ADVERT_ID_V1_INTERNAL,
   ADVERT_ID_V1_EXTERNAL,
-  ADVERT_ID_V2_INTERNAL,
+  ADVERT_ID_V1_INTERNAL,
   ADVERT_ID_V2_EXTERNAL,
+  ADVERT_ID_V2_INTERNAL,
+  APPLICANT_ID,
+  DEPARTMENT_NAME,
+  FUNDING_ID,
+  SPOTLIGHT_BATCH_ID,
+  SUPER_ADMIN_ID,
+  TECHNICAL_SUPPORT_ID,
+  V1_EXTERNAL_SCHEME_ID,
+  V1_INTERNAL_SCHEME_ID,
+  V2_EXTERNAL_SCHEME_ID,
   V2_INTERNAL_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
   V2_INTERNAL_NON_LIMITED_COMPANY_SPOTLIGHT_SUBMISSION_ID,
-  SPOTLIGHT_BATCH_ID,
-  MQ_DETAILS,
-  DEPARTMENT_NAME,
+  V2_INTERNAL_SCHEME_ID,
+  applyDatabaseUrl,
+  applyDeleteSubstitutions,
+  applyInsertSubstitutions,
+  applyServiceDbName,
+  applyUpdateSubstitutions,
+  createApiKeyFundingOrganisationSubstitutions,
+  createApiKeySubstitutions,
+  createApiKeySubstitutionsForTechSupport,
+  deleteApiKeysSubstitutions,
+  getAPIKeysByFunderIdSubstitutions,
+  postLoginBaseUrl,
+  spotlightSubstitutions,
 };

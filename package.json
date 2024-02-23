@@ -13,6 +13,7 @@
     "cy:run:apply": "npx cypress run --spec \"cypress/e2e/applicant/*.cy.js\"",
     "cy:run:admin": "npx cypress run --spec \"cypress/e2e/admin/*.cy.js\"",
     "cy:run:superadmin": "npx cypress run --spec \"cypress/e2e/super-admin/*.cy.js\"",
+    "cy:run:apidashboard": "npx cypress run --spec \"cypress/e2e/api-dashboard/*.cy.js\"",
     "lint": "npx eslint --ext .js,.ts ./",
     "lint:fix": "npx eslint --ext .js,.ts ./ --fix",
     "prettier:write": "npx prettier . --write",
@@ -60,6 +61,7 @@
     "**/*.ts": "eslint --ext .js,.ts ./ --fix"
   },
   "dependencies": {
+    "@aws-sdk/client-api-gateway": "^3.490.0",
     "@percy/cypress": "^3.1.2",
     "contentful-management": "^10.46.2",
     "cypress-file-upload": "^5.0.8",

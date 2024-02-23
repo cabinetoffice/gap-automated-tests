@@ -46,6 +46,10 @@ const userSubstitutions = {
     APPLICANT_ID,
     process.env.ONE_LOGIN_APPLICANT_EMAIL,
     process.env.ONE_LOGIN_APPLICANT_SUB,
+    TECHNICAL_SUPPORT_ID,
+    process.env.ONE_LOGIN_TECHNICAL_SUPPORT_EMAIL,
+    process.env.ONE_LOGIN_TECHNICAL_SUPPORT_SUB,
+    DEPARTMENT_ID,
   ],
   [insertRoles]: [
     SUPER_ADMIN_ID,
@@ -57,6 +61,9 @@ const userSubstitutions = {
     ADMIN_ID,
     APPLICANT_ID,
     APPLICANT_ID,
+    TECHNICAL_SUPPORT_ID,
+    TECHNICAL_SUPPORT_ID,
+    TECHNICAL_SUPPORT_ID,
   ],
   [deleteFailedSpotlightOauthAudit]: [SUPER_ADMIN_ID],
   [deleteUsers]: [

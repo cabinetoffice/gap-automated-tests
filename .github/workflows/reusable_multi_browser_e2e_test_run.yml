@@ -3,17 +3,20 @@ name: Reusable Multi-Browser E2E Test Run Workflow
 on:
   workflow_call:
     inputs:
-      suite:
-        default: all
+      specs:
+        default: cypress/e2e/**/*
         type: string
       report:
-        default: false
+        default: "false"
         type: string
       notify:
-        default: false
+        default: "false"
         type: string
       environment:
         default: SANDBOX
+        type: string
+      branch:
+        default: ./
         type: string
 
 jobs:
@@ -21,22 +24,24 @@ jobs:
     name: Chrome E2E Test Run
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
-      suite: ${{ inputs.suite }}
+      specs: ${{ inputs.specs }}
       browser: chrome
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
+      branch: ${{ inputs.branch }}
     secrets: inherit
 
   call-firefox-reusable-e2e-test-run-workflow:
     name: Firefox E2E Test Run
     uses: ./.github/workflows/reusable_e2e_test_run.yml
     with:
-      suite: ${{ inputs.suite }}
+      specs: ${{ inputs.specs }}
       browser: firefox
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
+      branch: ${{ inputs.branch }}
     secrets: inherit
     needs: call-chrome-reusable-e2e-test-run-workflow
     if: always()

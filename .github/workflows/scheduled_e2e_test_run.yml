@@ -9,20 +9,20 @@ jobs:
     name: Sandbox E2E Test Run
     uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
-      suite: all
       report: true
       notify: true
       environment: SANDBOX
+      branch: develop
     secrets: inherit
 
   call-qa-reusable-e2e-test-run-workflow:
     name: QA E2E Test Run
     uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
-      suite: all
       report: true
       notify: true
       environment: QA
+      branch: main
     secrets: inherit
 
   # =============================
