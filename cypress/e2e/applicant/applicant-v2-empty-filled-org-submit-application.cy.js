@@ -21,6 +21,7 @@ import {
   validateOrgDetailsForNonLimitedCompany,
   validateOrgDetailsForIndividual,
   validateOrgDetailsForCharity,
+  validateMqLocalAuthorityJourney,
 } from "./helper";
 import {
   fillMqFunding,
@@ -74,6 +75,10 @@ describe("Apply for a Grant V2", () => {
     // Go back to Org Type, change to Non-Limited Company and check that Companies House and Charity Commission are skipped
     log("Apply V2 Internal MQ Empty - Filling out MQ as Non-Limited Company");
     validateMqNonLimitedJourney();
+
+    // Go back to Org Type, change to LocalAuthority (this will set the CCN and CHN to null) and check that Companies House and Charity Commission are skipped and that copy is changed
+    log("Apply V2 Internal MQ Empty - Filling out MQ as Individual");
+    validateMqLocalAuthorityJourney();
 
     // Go back to Org Type, change to Individual (this will set the CCN and CHN to null) and check that Companies House and Charity Commission are skipped and that copy is changed
     log("Apply V2 Internal MQ Empty - Filling out MQ as Individual");
