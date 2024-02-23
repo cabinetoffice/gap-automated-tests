@@ -218,6 +218,13 @@ describe("Api Dashboard SuperAdmin journeys", () => {
       cy.log(
         `Should be able to revoke any key from any department - Clicking revoke key link for key ${KEY_NAME}`,
       );
+
+      cy.get(`[data-cy="admin-dashboard-filter-${ORG_2}-checkbox"]`).click();
+      cy.get(`[data-cy="admin-dashboard-filter-${ORG_2}-checkbox"]`).should(
+        "be.checked",
+      );
+      cy.get(`[data-cy="admin-dashboard-filter-apply-button"]`).click();
+
       cy.get(
         `[data-cy="admin-dashboard-list-table-row-Revoked-${KEY_NAME}-link"]`,
       ).click();

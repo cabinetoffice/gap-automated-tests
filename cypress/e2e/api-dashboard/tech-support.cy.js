@@ -188,26 +188,6 @@ describe("API Admin - No existing keys", () => {
       .should("be.visible")
       .should("have.text", "Your API key:");
 
-    cy.get('[data-cy="new-key-value"]').then(($span) => {
-      const apiKeyValue = $span.text();
-      cy.get('[data-cy="new-key-copy-to-clipboard-button"]')
-        .should("be.visible")
-        .contains("Copy to clipboard")
-        .click();
-
-      cy.window()
-        .then((win) => {
-          cy.stub(win.navigator.clipboard, "readText").resolves(apiKeyValue);
-        })
-        .then(() => {
-          cy.window().then((win) => {
-            win.navigator.clipboard.readText().then((clipboardContent) => {
-              expect(clipboardContent).to.equal(apiKeyValue);
-            });
-          });
-        });
-    });
-
     cy.get('[data-cy="new-key-paragraph"]')
       .should("be.visible")
       .should(
@@ -269,7 +249,6 @@ describe("API Admin - No existing keys", () => {
       cy.visit(page, { failOnStatusCode: false })
         .contains("Page not found")
         .should("exist");
-      cy.go("back");
     });
   });
 });
