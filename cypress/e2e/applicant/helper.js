@@ -132,15 +132,15 @@ export const validateMqNonLimitedJourney = () => {
 
 export const validateMqIndividualJourney = () => {
   clickBack();
-  cy.contains("Enter your organisation's address");
+  cy.contains("Enter your local authority address");
   clickBack();
-  cy.contains("Enter the name of your organisation");
+  cy.contains("Enter the name of your local authority");
   clickBack();
   cy.contains("Choose your application type");
   cy.get(`[data-cy=cy-radioInput-option-IAmApplyingAsAnIndividual]`)
     .should("not.be.checked")
     .click();
-  cy.get(`[data-cy=cy-radioInput-option-NonLimitedCompany]`).should(
+  cy.get(`[data-cy=cy-radioInput-option-LocalAuthority]`).should(
     "not.be.checked",
   );
   clickSaveAndContinue();
@@ -153,6 +153,35 @@ export const validateMqIndividualJourney = () => {
   // Address
   cy.contains("Enter your organisation's address").should("not.exist");
   cy.contains("Enter your address").should("exist");
+  clickSaveAndContinue();
+
+  // How much funding
+  cy.contains("How much funding are you applying for?").should("exist");
+};
+
+export const validateMqLocalAuthorityJourney = () => {
+  clickBack();
+  cy.contains("Enter your organisation's address");
+  clickBack();
+  cy.contains("Enter the name of your organisation");
+  clickBack();
+  cy.contains("Choose your application type");
+  cy.get(`[data-cy=cy-radioInput-option-LocalAuthority]`)
+    .should("not.be.checked")
+    .click();
+  cy.get(`[data-cy=cy-radioInput-option-NonLimitedCompany]`).should(
+    "not.be.checked",
+  );
+  clickSaveAndContinue();
+
+  // Name
+  cy.contains("Enter the name of your local authority").should("exist");
+  cy.contains("Enter your full name").should("not.exist");
+  clickSaveAndContinue();
+
+  // Address
+  cy.contains("Enter your local authority address").should("exist");
+  cy.contains("Enter your address").should("not.exist");
   clickSaveAndContinue();
 
   // How much funding
