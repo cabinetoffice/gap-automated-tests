@@ -42,10 +42,10 @@ jobs:
           do
           matrix_array+=($i)
           done
-          # matrix=$(printf ",%s" "${matrix_array[@]}")
-          # matrix=${matrix:1}
-          # echo $matrix
-          echo "matrix=$matrix_array" >> "$GITHUB_OUTPUT"
+          matrix=$(printf ",%s" "${matrix_array[@]}")
+          matrix=[${matrix:1}]
+          echo $matrix
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
   reusable_e2e_test_run:
     name: Run E2E Tests env:${{ inputs.environment }} browser:${{ inputs.browser }} specs:${{ inputs.specs }}
@@ -58,7 +58,7 @@ jobs:
 
     strategy:
       matrix:
-        repeat: ${{ needs.create_matrix_array.outputs.matrix }}
+        repeat: ${{ fromJson(needs.create_matrix_array.outputs.matrix) }}
       max-parallel: 1
 
     steps:
