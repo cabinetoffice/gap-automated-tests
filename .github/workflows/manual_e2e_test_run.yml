@@ -49,8 +49,8 @@ on:
           - SANDBOX
           - QA
       repeat:
-        type: string
-        description: Select the number of times to run (must be an array i.e. [1, 2, 3])
+        type: number
+        description: Select the number of times to run
         required: false
 
 jobs:

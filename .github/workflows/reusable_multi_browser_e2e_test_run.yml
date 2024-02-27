@@ -19,8 +19,8 @@ on:
         default: ./
         type: string
       repeat:
-        default: "[1]"
-        type: string
+        default: 1
+        type: number
 jobs:
   call-chrome-reusable-e2e-test-run-workflow:
     name: Chrome E2E Test Run
