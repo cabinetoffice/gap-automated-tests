@@ -52,6 +52,7 @@ on:
         type: number
         description: Select the number of times to run
         required: false
+        default: 1
 
 jobs:
   call-reusable-e2e-test-run-workflow:
