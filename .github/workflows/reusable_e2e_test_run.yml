@@ -22,15 +22,44 @@ on:
         # this is set to ./ as it's not a valid name for a branch, but it could be any value
         default: ./
         type: string
+      repeat:
+        default: 1
+        type: number
 
 jobs:
+  create_matrix_array:
+    runs-on: ubuntu-latest
+
+    outputs:
+      matrix: ${{ steps.calculate_matrix_array.outputs.matrix }}
+
+    steps:
+      - name: Calculate matrix array
+        id: calculate_matrix_array
+        run: |
+          matrix_array=()
+          for ((i = 1; i <= ${{ inputs.repeat }}; i++));
+          do
+          matrix_array+=($i)
+          done
+          matrix=$(printf ",%s" "${matrix_array[@]}")
+          matrix=[${matrix:1}]
+          echo $matrix
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
   reusable_e2e_test_run:
     name: Run E2E Tests env:${{ inputs.environment }} browser:${{ inputs.browser }} specs:${{ inputs.specs }}
     runs-on: ubuntu-latest
+    needs: create_matrix_array
     concurrency: e2e_test_run_${{ inputs.environment }}
     # GitHub Actions doesn't have ternaries for some reason, so this only sets the environment if we want reports
     # (so it doesn't ping every time someone pushes)
     environment: ${{ inputs.notify == 'true' && inputs.environment || '' }}
+
+    strategy:
+      matrix:
+        repeat: ${{ fromJson(needs.create_matrix_array.outputs.matrix) }}
+      max-parallel: 1
 
     steps:
       - name: Install OpenVPN 3
