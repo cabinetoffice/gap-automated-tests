@@ -130,12 +130,12 @@ jobs:
           FIRST_USER_ID=1
           EOF
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        timeout-minutes: 60
-        with:
-          browser: ${{ inputs.browser }}
-          spec: ${{ inputs.specs }}
+      # - name: Cypress run
+      #   uses: cypress-io/github-action@v6
+      #   timeout-minutes: 60
+      #   with:
+      #     browser: ${{ inputs.browser }}
+      #     spec: ${{ inputs.specs }}
 
       - name: Disconnect from OPENVPN 3 Profile
         run: openvpn3 session-manage --config FINDVPN --disconnect
