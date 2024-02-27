@@ -99,4 +99,5 @@ jobs:
       report: false
       notify: false
       environment: SANDBOX
+      repeat: 3
     secrets: inherit
