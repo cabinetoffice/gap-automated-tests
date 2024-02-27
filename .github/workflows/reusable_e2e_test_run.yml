@@ -23,8 +23,8 @@ on:
         default: ./
         type: string
       repeat:
-        default: 1
-        type: number
+        default: "1"
+        type: string
 
 jobs:
   create_matrix_array:

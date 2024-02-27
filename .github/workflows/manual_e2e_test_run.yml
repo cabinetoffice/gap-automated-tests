@@ -51,7 +51,6 @@ on:
       repeat:
         type: number
         description: Select the number of times to run
-        required: false
         default: 1
 
 jobs:
