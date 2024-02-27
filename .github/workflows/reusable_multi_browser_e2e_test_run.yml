@@ -18,7 +18,9 @@ on:
       branch:
         default: ./
         type: string
-
+      repeat:
+        default: "[1]"
+        type: string
 jobs:
   call-chrome-reusable-e2e-test-run-workflow:
     name: Chrome E2E Test Run
@@ -30,6 +32,7 @@ jobs:
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
       branch: ${{ inputs.branch }}
+      repeat: ${{ inputs.repeat }}
     secrets: inherit
 
   call-firefox-reusable-e2e-test-run-workflow:
@@ -42,6 +45,7 @@ jobs:
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
       branch: ${{ inputs.branch }}
+      repeat: ${{ inputs.repeat }}
     secrets: inherit
     needs: call-chrome-reusable-e2e-test-run-workflow
     if: always()

@@ -48,6 +48,10 @@ on:
         options:
           - SANDBOX
           - QA
+      repeat:
+        type: string
+        description: Select the number of times to run (must be an array i.e. [1, 2, 3])
+        required: false
 
 jobs:
   call-reusable-e2e-test-run-workflow:
@@ -58,6 +62,7 @@ jobs:
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
+      repeat: ${{ inputs.repeat }}
     secrets: inherit
     if: ${{ !cancelled() && inputs.browser != 'all' }}
 
@@ -68,5 +73,6 @@ jobs:
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
+      repeat: ${{ inputs.repeat }}
     secrets: inherit
     if: ${{ !cancelled() && inputs.browser == 'all' }}

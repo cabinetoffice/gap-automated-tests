@@ -22,6 +22,9 @@ on:
         # this is set to ./ as it's not a valid name for a branch, but it could be any value
         default: ./
         type: string
+      repeat:
+        default: "[1]"
+        type: string
 
 jobs:
   reusable_e2e_test_run:
@@ -31,6 +34,11 @@ jobs:
     # GitHub Actions doesn't have ternaries for some reason, so this only sets the environment if we want reports
     # (so it doesn't ping every time someone pushes)
     environment: ${{ inputs.notify == 'true' && inputs.environment || '' }}
+
+    strategy:
+      matrix:
+        repeat: ${{ fromJson(inputs.repeat) }}
+      max-parallel: 1
 
     steps:
       - name: Install OpenVPN 3
