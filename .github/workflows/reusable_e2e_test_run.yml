@@ -43,7 +43,7 @@ jobs:
           matrix_array+=($i)
           done
           matrix=$(printf ",%s" "${matrix_array[@]}")
-          matrix=${matrix:1}
+          matrix=[${matrix:1}]
           echo $matrix
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
@@ -58,7 +58,7 @@ jobs:
 
     strategy:
       matrix:
-        repeat: ["${{ needs.create_matrix_array.outputs.matrix }}"]
+        repeat: ${{ needs.create_matrix_array.outputs.matrix }}
       max-parallel: 1
 
     steps:
