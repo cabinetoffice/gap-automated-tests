@@ -42,7 +42,8 @@ jobs:
           do
           matrix_array+=($i)
           done
-          matrix=${matrix_array[*]}
+          matrix=$(printf ",%s" "${matrix_array[@]}")
+          matrix=[${matrix:1}]
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
   reusable_e2e_test_run:
