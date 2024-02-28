@@ -2,9 +2,6 @@ import { signInToIntegrationSite, log } from "../../common/common";
 
 describe("Filter search results", () => {
   beforeEach(() => {
-    cy.task("setUpUser");
-    cy.task("setUpApplyData");
-    cy.task("setUpFindData");
     cy.task("publishGrantsToContentful");
     signInToIntegrationSite();
   });
