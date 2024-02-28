@@ -40,6 +40,7 @@ describe("Admin navigation", () => {
     );
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsApplyApplicant();
+    cy.visit("/apply/admin/dashboard");
     cy.log("asserting on content within the admin dashboard");
     cy.contains("Manage a grant");
     cy.contains(

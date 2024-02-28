@@ -60,6 +60,7 @@ describe("Apply for a Grant", () => {
     log("Apply V1 Internal Grant - Signing back in as applicant");
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsApplyApplicant();
+    cy.visit("/apply/applicant/dashboard");
 
     log("Apply V1 Internal Grant - Returning to in progress application");
     cy.get('[data-cy="cy-your-applications-link"]').click();
