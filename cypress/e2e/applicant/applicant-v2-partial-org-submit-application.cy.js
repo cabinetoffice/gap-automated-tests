@@ -26,12 +26,11 @@ describe("Apply for a Grant V2", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
+    cy.task("publishGrantsToContentful");
     signInToIntegrationSite();
   });
 
   it("Mandatory Questions Flow - Partially Filled Org Profile", () => {
-    cy.task("publishGrantsToContentful");
-
     // Sign in
     log("Apply V2 Internal MQ Partial - Logging in as applicant");
     cy.get('[data-cy="cySignInAndApply-Link"]').click();

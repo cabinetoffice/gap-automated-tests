@@ -31,7 +31,10 @@ describe("Downloads and Due Diligence", () => {
     cy.get(
       '[data-cy="cy_linkToScheme_Cypress - Test Scheme V2 External"]',
     ).click();
-    cy.get(".govuk-button--secondary").click();
+    cy.contains(
+      ".govuk-button--secondary",
+      "Manage due diligence checks",
+    ).click();
 
     // Check download link works
     assert200(cy.get(":nth-child(4) > .govuk-link"));
