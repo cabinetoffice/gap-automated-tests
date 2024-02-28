@@ -2,8 +2,11 @@ import { searchForGrant, signInToIntegrationSite } from "../../common/common";
 import { clickThroughPagination, countNumberOfPages } from "./helper";
 
 describe("Find a Grant - Search", () => {
-  beforeEach(() => {
+  before(() => {
     cy.task("publishGrantsToContentful");
+  });
+
+  beforeEach(() => {
     signInToIntegrationSite();
   });
 
