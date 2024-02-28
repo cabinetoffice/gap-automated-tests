@@ -45,8 +45,6 @@ describe("Find a Grant - Search", () => {
   });
 
   it("can search for a grant", () => {
-    cy.task("publishGrantsToContentful");
-
     searchForGrant(Cypress.env("testV1InternalGrant").advertName);
 
     cy.contains(Cypress.env("testV1InternalGrant").advertName);
