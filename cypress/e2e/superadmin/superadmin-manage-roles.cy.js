@@ -57,6 +57,7 @@ describe("Super Admin", () => {
     log("Super Admin Manage Roles - Signing in as applicant");
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();
+    cy.visit("/apply/admin/super-admin-dashboard");
 
     log("Super Admin Manage Roles - Expecting to land on super admin dashbard");
     cy.contains("Manage users");
