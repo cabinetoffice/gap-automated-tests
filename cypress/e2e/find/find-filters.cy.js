@@ -51,7 +51,7 @@ describe("Filter search results", () => {
 
       // Verify filter
       cy.get("body").then((body) => {
-        if (body.find(".grants_list").length) {
+        if (body.find(".grants_list").has("li").length > 0) {
           cy.get(".grants_list")
             .children("li")
             .first()
@@ -83,7 +83,7 @@ describe("Filter search results", () => {
 
       // Verify filter
       cy.get("body").then((body) => {
-        if (body.find(".grants_list").length) {
+        if (body.find(".grants_list").has("li").length > 0) {
           cy.get(".grants_list")
             .children("li")
             .first()
@@ -115,7 +115,7 @@ describe("Filter search results", () => {
 
       // Verify filter
       cy.get("body").then((body) => {
-        if (body.find(".grants_list").length) {
+        if (body.find(".grants_list").has("li").length > 0) {
           cy.get(".grants_list")
             .children("li")
             .first()

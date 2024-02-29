@@ -25,12 +25,11 @@ describe("Apply for a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
+    cy.task("publishGrantsToContentful");
     signInToIntegrationSite();
   });
 
   it("Can start, save, come back, continue and submit new grant application for V1 Internal Grant", () => {
-    cy.task("publishGrantsToContentful");
-
     log("Apply V1 Internal Grant - Searching for grant");
     searchForGrant(Cypress.env("testV1InternalGrant").advertName);
 
