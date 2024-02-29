@@ -25,12 +25,11 @@ describe("Apply for a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
+    cy.task("publishGrantsToContentful");
     signInToIntegrationSite();
   });
 
   it("Can start, save, come back, continue and submit new grant application for V1 Internal Grant", () => {
-    cy.task("publishGrantsToContentful");
-
     log("Apply V1 Internal Grant - Searching for grant");
     searchForGrant(Cypress.env("testV1InternalGrant").advertName);
 
@@ -85,6 +84,10 @@ describe("Apply for a Grant", () => {
     cy.contains("Custom Section").click();
 
     clickSaveAndContinue();
+    clickSaveAndContinue();
+    clickSaveAndContinue();
+    clickSaveAndContinue();
+    clickSaveAndContinue();
 
     cy.contains("Custom Question 6");
     cy.contains("Uploaded File");
@@ -109,6 +112,10 @@ describe("Apply for a Grant", () => {
     log("Apply V1 Internal Grant - Re-adding uploaded doc to submission");
     cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
 
+    clickSaveAndContinue();
+    clickSaveAndContinue();
+    clickSaveAndContinue();
+    clickSaveAndContinue();
     clickSaveAndContinue();
 
     fillOutDocUpload();
