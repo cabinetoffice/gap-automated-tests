@@ -48,6 +48,10 @@ on:
         options:
           - SANDBOX
           - QA
+      repeat:
+        type: number
+        description: Select the number of times to run
+        default: 1
 
 jobs:
   call-reusable-e2e-test-run-workflow:
@@ -58,15 +62,17 @@ jobs:
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
+      repeat: ${{ inputs.repeat }}
     secrets: inherit
     if: ${{ !cancelled() && inputs.browser != 'all' }}
 
   call-reusable-multi-browser-e2e-test-run-workflow:
     uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
-      specs: ${{ inputs.suite == 'all' && 'cypress/e2e/**/*' || format('cypress/e2e/{0}/**/*', inputs.suite) }}
+      specs: ${{ inputs.specs != '' && inputs.specs || inputs.suite == 'all' && 'cypress/e2e/**/*' || format('cypress/e2e/{0}/**/*', inputs.suite) }}
       report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
+      repeat: ${{ inputs.repeat }}
     secrets: inherit
     if: ${{ !cancelled() && inputs.browser == 'all' }}

@@ -9,13 +9,13 @@ describe("Sort search results", () => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
     cy.task("setUpFindData");
+    cy.task("publishGrantsToContentful");
+
     signInToIntegrationSite();
   });
 
   it("can sort by each type", () => {
     cy.contains("Find a grant");
-
-    cy.task("publishGrantsToContentful");
 
     searchForGrant(Cypress.env("testV2InternalGrant").advertName);
     cy.contains(Cypress.env("testV2InternalGrant").advertName);

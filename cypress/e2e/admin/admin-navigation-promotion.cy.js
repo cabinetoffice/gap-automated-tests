@@ -1,5 +1,6 @@
 import {
   clickText,
+  selectActionForItemInTable,
   signInAsApplyApplicant,
   signInAsSuperAdmin,
   signInToIntegrationSite,
@@ -19,15 +20,18 @@ describe("Admin navigation", () => {
     cy.log("Promoting applicant account -> admin account");
     cy.get("[name=searchTerm]").type(Cypress.env("oneLoginApplicantEmail"));
     cy.get("[data-cy=cy-button-Search]").click();
-    cy.get(
-      '[data-cy="cy_table_row-for-Actions-row-0-cell-3"] > .govuk-link',
-    ).click();
-    clickText("Change");
+    selectActionForItemInTable(Cypress.env("oneLoginApplicantEmail"), "Edit", {
+      actionCellElement: "td",
+      textCellElement: "td",
+    });
+    selectActionForItemInTable("Roles", "Change", {
+      actionCellElement: "dd",
+      textCellElement: "dt",
+    });
     cy.get("[data-cy=cy-checkbox-value-3]").check();
     cy.log("Changing user roles");
     clickText("Change Roles");
     cy.log("Adding a department");
-    cy.contains("Change").first().click();
     clickText("Cypress - Test Department");
     clickText("Change department");
     signOut();
@@ -36,6 +40,7 @@ describe("Admin navigation", () => {
     );
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsApplyApplicant();
+    cy.visit("/apply/admin/dashboard");
     cy.log("asserting on content within the admin dashboard");
     cy.contains("Manage a grant");
     cy.contains(

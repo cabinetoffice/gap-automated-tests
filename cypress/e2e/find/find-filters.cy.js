@@ -2,9 +2,7 @@ import { signInToIntegrationSite, log } from "../../common/common";
 
 describe("Filter search results", () => {
   beforeEach(() => {
-    cy.task("setUpUser");
-    cy.task("setUpApplyData");
-    cy.task("setUpFindData");
+    cy.task("publishGrantsToContentful");
     signInToIntegrationSite();
   });
 
@@ -53,7 +51,7 @@ describe("Filter search results", () => {
 
       // Verify filter
       cy.get("body").then((body) => {
-        if (body.find(".grants_list").length) {
+        if (body.find(".grants_list").has("li").length > 0) {
           cy.get(".grants_list")
             .children("li")
             .first()
@@ -85,7 +83,7 @@ describe("Filter search results", () => {
 
       // Verify filter
       cy.get("body").then((body) => {
-        if (body.find(".grants_list").length) {
+        if (body.find(".grants_list").has("li").length > 0) {
           cy.get(".grants_list")
             .children("li")
             .first()
@@ -117,7 +115,7 @@ describe("Filter search results", () => {
 
       // Verify filter
       cy.get("body").then((body) => {
-        if (body.find(".grants_list").length) {
+        if (body.find(".grants_list").has("li").length > 0) {
           cy.get(".grants_list")
             .children("li")
             .first()

@@ -108,6 +108,7 @@ export const fillOutDocUpload = () => {
       mimeType: "application/msword",
     });
   });
+  cy.wait(3000);
   clickSaveAndContinue();
 };
 

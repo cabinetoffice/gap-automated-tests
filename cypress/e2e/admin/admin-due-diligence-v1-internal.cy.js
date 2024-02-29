@@ -74,6 +74,7 @@ describe("Downloads and Due Diligence", () => {
     log("Admin V1 Internal - Download Submission Export - signing in as admin");
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsAdmin();
+    cy.visit("/apply/admin/dashboard");
 
     // View V1 internal grant
     log("Admin V1 Internal - Download Submission Export - viewing grant");

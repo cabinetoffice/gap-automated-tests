@@ -25,12 +25,11 @@ describe("Apply for a Grant", () => {
   beforeEach(() => {
     cy.task("setUpUser");
     cy.task("setUpApplyData");
+    cy.task("publishGrantsToContentful");
     signInToIntegrationSite();
   });
 
   it("Can start, save, come back, continue and submit new grant application for V1 Internal Grant", () => {
-    cy.task("publishGrantsToContentful");
-
     log("Apply V1 Internal Grant - Searching for grant");
     searchForGrant(Cypress.env("testV1InternalGrant").advertName);
 
@@ -60,6 +59,7 @@ describe("Apply for a Grant", () => {
     log("Apply V1 Internal Grant - Signing back in as applicant");
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     signInAsApplyApplicant();
+    cy.visit("/apply/applicant/dashboard");
 
     log("Apply V1 Internal Grant - Returning to in progress application");
     cy.get('[data-cy="cy-your-applications-link"]').click();

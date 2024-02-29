@@ -30,9 +30,11 @@ describe("Super Admin", () => {
     cy.get("[data-cy=cy-button-Search]").click();
 
     log("Super Admin Change Grant Ownership - Clicking edit on admin user");
-    cy.get(
-      '[data-cy="cy_table_row-for-Actions-row-0-cell-3"] > .govuk-link',
-    ).click();
+
+    selectActionForItemInTable(Cypress.env("oneLoginAdminEmail"), "Edit", {
+      actionCellElement: "td",
+      textCellElement: "td",
+    });
 
     log("Super Admin Change Grant Ownership - Clicking change on first grant");
     selectActionForItemInTable(
@@ -118,9 +120,11 @@ describe("Super Admin", () => {
     log(
       "Super Admin Change Grant Ownership - Clicking edit on super admin user",
     );
-    cy.get(
-      '[data-cy="cy_table_row-for-Actions-row-0-cell-3"] > .govuk-link',
-    ).click();
+
+    selectActionForItemInTable(Cypress.env("oneLoginSuperAdminEmail"), "Edit", {
+      actionCellElement: "td",
+      textCellElement: "td",
+    });
 
     log(
       "Super Admin Change Grant Ownership - Verifying that the grant appears in the list",
