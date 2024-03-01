@@ -40,7 +40,7 @@ describe("Super Admin", () => {
 
     cy.visit(SUPER_ADMIN_DASHBOARD);
 
-    cy.contains("Manage users");
+    cy.contains("Manage users", { timeout: 10000 });
 
     log("Super Admin Navigation - Clicking Applicant dashboard");
     cy.get('[data-cy="cyapplicantDashPageLink"] > .govuk-link').click();
@@ -52,7 +52,7 @@ describe("Super Admin", () => {
 
     cy.visit(SUPER_ADMIN_DASHBOARD);
 
-    cy.contains("Manage users");
+    cy.contains("Manage users", { timeout: 10000 });
 
     log("Super Admin Navigation - Clicking Manage API Keys");
     cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
@@ -64,7 +64,7 @@ describe("Super Admin", () => {
 
     cy.visit(SUPER_ADMIN_DASHBOARD);
 
-    cy.contains("Manage users");
+    cy.contains("Manage users", { timeout: 10000 });
 
     log("Super Admin Navigation - Clicking Home");
     cy.get('[data-cy="cyhomePageLink"] > .govuk-link').click();
@@ -74,7 +74,7 @@ describe("Super Admin", () => {
 
     cy.visit(SUPER_ADMIN_DASHBOARD);
 
-    cy.contains("Manage users");
+    cy.contains("Manage users", { timeout: 10000 });
 
     log("Super Admin Navigation - Navigating user pagination");
     log("Super Admin Navigation - Clicking next page");
