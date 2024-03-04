@@ -48,6 +48,9 @@ INSERT INTO public.grant_scheme(grant_scheme_id, funder_id, version, ggis_identi
            ($16, $17, 1, 'GGIS_ID_4', NOW(), NOW(), $18, 'Cypress - Test Scheme V1 External', $19, $20);
 `;
 
+const insertEditors: string = `INSERT INTO public.scheme_editors(grant_admin_id, grant_scheme_id) 
+    VALUES ($1, $2), ($3, $4), ($5, $6), ($7, $8);`;
+
 const insertApplications: string = `
 INSERT INTO public.grant_application (grant_application_id, grant_scheme_id, version, created, last_update_by, last_updated, application_name, status, definition, created_by, last_published)
     VALUES (
@@ -173,4 +176,5 @@ export {
   insertSubmissions,
   insertTechSupportUser,
   insertUsers,
+  insertEditors,
 };
