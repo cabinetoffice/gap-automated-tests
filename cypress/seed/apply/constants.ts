@@ -168,12 +168,10 @@ const applyInsertSubstitutions = {
   ],
   [insertEditors]: [
     ADMIN_ID,
+    SUPER_ADMIN_ID,
     V1_INTERNAL_SCHEME_ID,
-    ADMIN_ID,
     V1_EXTERNAL_SCHEME_ID,
-    ADMIN_ID,
     V2_INTERNAL_SCHEME_ID,
-    ADMIN_ID,
     V2_EXTERNAL_SCHEME_ID,
   ],
   [insertApplications]: [
