@@ -50,7 +50,7 @@ INSERT INTO public.grant_scheme(grant_scheme_id, funder_id, version, ggis_identi
 
 const insertEditors: string = `
 INSERT INTO public.scheme_editors(grant_admin_id, grant_scheme_id) 
-    VALUES ($1, $3), ($1, $4), ($1, $5), ($1, $6)
+    VALUES ($1, $3), ($1, $4), ($1, $5), ($1, $6),
            ($2, $3), ($2, $4), ($2, $5), ($2, $6);`;
 
 const insertApplications: string = `
