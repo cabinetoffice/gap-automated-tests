@@ -595,3 +595,13 @@ export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
     },
   );
 };
+
+export const getSubmissionExportURL = (schemeId) => {
+  cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
+    (submission) => {
+      log(JSON.stringify(submission));
+
+      cy.visit(submission.url);
+    },
+  );
+};

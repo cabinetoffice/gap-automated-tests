@@ -5,8 +5,9 @@ import {
   signInAsApplyApplicant,
   signInToIntegrationSite,
   signOut,
+  downloadFileFromLink,
 } from "../../common/common";
-import { validateSubmissionDownload } from "./helper";
+import { getSubmissionExportURL } from "./helper";
 
 import {
   equalitySectionDecline,
@@ -23,7 +24,7 @@ describe("Downloads and Due Diligence", () => {
     signInToIntegrationSite();
   });
 
-  it.skip("V1 Internal - Download Submission Export", () => {
+  it("V1 Internal - Download Submission Export", () => {
     cy.task("publishGrantsToContentful");
 
     // Sign in and complete application as applicant
@@ -94,14 +95,28 @@ describe("Downloads and Due Diligence", () => {
     cy.contains("A list of applications is being created");
 
     log(
-      "Admin V1 Internal - Download Submission Export - Waiting for submission export lambda to execute",
-    );
-    cy.wait(10000);
-
-    log(
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
-    validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId, 2);
-    cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
+
+    getSubmissionExportURL(Cypress.env("testV1InternalGrant").schemeId);
+    cy.contains(Cypress.env("testV1InternalGrant").schemeName);
+    cy.contains("Your grant has 0 applications available to download.");
+    cy.contains(
+      "Your grant has 1 application that cannot be downloaded. You can still view a read-only version of these applications.",
+    );
+    cy.contains("My First Org");
+    cy.get(".govuk-link").contains("View").click();
+
+    cy.contains(Cypress.env("testV1InternalGrant").schemeName);
+    cy.contains("Eligibility");
+    cy.contains("Required checks");
+    cy.contains("Custom Section");
+    downloadFileFromLink(
+      cy.get(".govuk-body > .govuk-link"),
+      "GAP-SAN-20240305-142--122%2Fattachments.zip",
+    );
+
+    // validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId, 2);
+    // cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
   });
 });
