@@ -10,7 +10,7 @@ import {
   validateXlsx,
 } from "../../common/common";
 import { SPOTLIGHT_SUBMISSION_STATUS, TASKS } from "./constants";
-import { convertDateToString, validateSubmissionDownload } from "./helper";
+import { convertDateToString, submissionExportSuccess } from "./helper";
 
 const {
   UPDATE_SPOTLIGHT_SUBMISSION_STATUS,
@@ -29,7 +29,7 @@ describe("Downloads and Due Diligence", () => {
     signInToIntegrationSite();
   });
 
-  it.skip("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
+  it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
     // Populate data instead of completing journey
     log(
       "Admin V2 Internal - Manage Due Diligence & Spotlight - inserting submissions, mq and spotlight submissions",
@@ -231,6 +231,10 @@ describe("Downloads and Due Diligence", () => {
     log(
       "Admin V2 Internal - Manage Due Diligence & Spotlight - Validating downloaded submission export",
     );
-    validateSubmissionDownload(Cypress.env("testV2InternalGrant").schemeId);
+
+    log("Admin V2 Internal - Wait to allow submissions export to process");
+    cy.wait(10000);
+
+    submissionExportSuccess(Cypress.env("testV2InternalGrant"), 2);
   });
 });

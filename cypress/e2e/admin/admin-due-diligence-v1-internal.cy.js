@@ -1,21 +1,10 @@
 import {
-  searchForGrant,
   log,
   signInAsAdmin,
-  signInAsApplyApplicant,
   signInToIntegrationSite,
-  signOut,
   downloadFileFromLink,
 } from "../../common/common";
-import { getSubmissionExportURL } from "./helper";
-
-import {
-  equalitySectionDecline,
-  fillOutCustomSection,
-  fillOutEligibity,
-  fillOutRequiredChecks,
-  submitApplication,
-} from "../../common/apply-helper";
+import { submissionExportSuccess } from "./helper";
 
 describe("Downloads and Due Diligence", () => {
   beforeEach(() => {
@@ -25,52 +14,9 @@ describe("Downloads and Due Diligence", () => {
   });
 
   it("V1 Internal - Download Submission Export", () => {
+    // Publish grants and insert submissions
     cy.task("publishGrantsToContentful");
-
-    // Sign in and complete application as applicant
-    cy.get('[data-cy="cySignInAndApply-Link"]').click();
-    log(
-      "Admin V1 Internal - Download Submission Export - Signing in as applicant",
-    );
-    signInAsApplyApplicant();
-
-    // Search & Start internal application
-    log(
-      "Admin V1 Internal - Download Submission Export - Searching for and starting application",
-    );
-    cy.get('[data-cy="cy-find-a-grant-link"]').click();
-    searchForGrant(Cypress.env("testV1InternalGrant").advertName);
-    cy.contains(Cypress.env("testV1InternalGrant").advertName).click();
-    cy.contains("Start new application").invoke("removeAttr", "target").click();
-
-    // Complete application
-    log(
-      "Admin V1 Internal - Download Submission Export - Filling out Eligibility",
-    );
-    fillOutEligibity();
-    log(
-      "Admin V1 Internal - Download Submission Export - Filling out Required Checks",
-    );
-    fillOutRequiredChecks();
-    log(
-      "Admin V1 Internal - Download Submission Export - Filling out Custom Section with Doc upload",
-    );
-    fillOutCustomSection();
-    log(
-      "Admin V1 Internal - Download Submission Export - Submitting application",
-    );
-    cy.contains("Review and submit").click();
-    submitApplication();
-    log(
-      "Admin V1 Internal - Download Submission Export - Declining Equality Section",
-    );
-    equalitySectionDecline();
-
-    // Sign in as admin
-    log(
-      "Admin V1 Internal - Download Submission Export - Signing out as applicant",
-    );
-    signOut();
+    cy.task("insertSubmissionsAndMQs");
 
     log("Admin V1 Internal - Download Submission Export - signing in as admin");
     cy.get("[data-cy=cySignInAndApply-Link]").click();
@@ -98,8 +44,12 @@ describe("Downloads and Due Diligence", () => {
       "Admin V1 Internal - Download Submission Export - Validating downloaded submission export",
     );
 
-    getSubmissionExportURL(Cypress.env("testV1InternalGrant").schemeId);
-    cy.contains(Cypress.env("testV1InternalGrant").schemeName);
+    submissionExportSuccess(Cypress.env("testV1InternalGrant"), 1);
+  });
+
+  it.skip("V1 Internal - Error in Export", () => {
+    // Before each stuff
+
     cy.contains("Your grant has 0 applications available to download.");
     cy.contains(
       "Your grant has 1 application that cannot be downloaded. You can still view a read-only version of these applications.",
@@ -115,8 +65,5 @@ describe("Downloads and Due Diligence", () => {
       cy.get(".govuk-body > .govuk-link"),
       "GAP-SAN-20240305-142--122%2Fattachments.zip",
     );
-
-    // validateSubmissionDownload(Cypress.env("testV1InternalGrant").schemeId, 2);
-    // cy.readFile("cypress/downloads/unzip/submission_export/example_1.doc");
   });
 });

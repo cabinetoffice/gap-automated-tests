@@ -574,6 +574,16 @@ const downloadSubmissionExportZip = (submissionFileName) => {
   });
 };
 
+export const goToSubmissionExportURL = (schemeId) => {
+  cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
+    (submission) => {
+      log(JSON.stringify(submission));
+
+      cy.visit(submission.url);
+    },
+  );
+};
+
 export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
   cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
     (submission) => {
@@ -596,12 +606,40 @@ export const validateSubmissionDownload = (schemeId, filenameSuffix = 1) => {
   );
 };
 
-export const getSubmissionExportURL = (schemeId) => {
-  cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
-    (submission) => {
-      log(JSON.stringify(submission));
+export const submissionExportSuccess = (grantInformation, version) => {
+  goToSubmissionExportURL(grantInformation.schemeId);
 
-      cy.visit(submission.url);
-    },
+  // Submission export page
+  cy.contains(grantInformation.schemeName);
+  cy.contains(
+    `Your grant has ${
+      version === 1 ? "1 application" : "3 applications"
+    } available to download.`,
   );
+
+  const downloadAllButton = cy
+    .get(".govuk-button")
+    .contains("Download all applications");
+  downloadFileFromLink(downloadAllButton);
+
+  cy.get(".govuk-button").contains("View individual applications").click();
+
+  // Download Individual page
+  cy.contains(grantInformation.schemeName);
+  cy.contains("Download individual applications");
+
+  if (version === 1) {
+    cy.contains("Showing 1 to 1 of 1 applications");
+    cy.contains("V1 Internal Limited company");
+  } else if (version === 2) {
+    cy.contains("Showing 1 to 3 of 3 applications");
+    cy.contains("V2 Limited Company");
+    cy.contains("V2 Non-limited Company");
+    cy.contains("V2 Individual");
+  }
+
+  downloadFileFromLink(cy.get(".govuk-link").contains("Download"));
+
+  cy.get(".govuk-button").contains("Return to overview").click();
+  cy.contains("Applications available to download");
 };
