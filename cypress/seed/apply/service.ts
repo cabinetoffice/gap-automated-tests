@@ -126,7 +126,6 @@ const deleteApplyData = async (): Promise<void> => {
       deleteSchemes,
       deleteEditors,
       deleteAdmins,
-      deleteTechSupportUser,
       deleteApplicants,
       deleteUsers,
       deleteFundingOrgs,
@@ -226,6 +225,16 @@ const updateSpotlightSubmission = async (status: string) => {
   });
 
   return row;
+};
+
+const addAdminInTechSupportTable = async () => {
+  console.log("Adding Admin into the Tech support table in apply");
+
+  await runSqlForApply([insertTechSupportUser], {
+    [insertTechSupportUser]: [FUNDING_ID, process.env.ONE_LOGIN_ADMIN_SUB],
+  });
+
+  console.log("Successfully added Admin into the Tech support table in apply");
 };
 
 const addToRecentBatch = async () => {
@@ -410,5 +419,6 @@ export {
   getExportedSubmissionUrlAndLocation,
   insertSubmissionsAndMQs,
   updateSpotlightSubmission,
+  addAdminInTechSupportTable,
   type ApiKeyDb,
 };
