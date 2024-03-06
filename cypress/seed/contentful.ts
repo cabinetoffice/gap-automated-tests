@@ -422,39 +422,40 @@ const createAndPublish = async (
   environment: contentful.Environment,
   advert: contentful.Entry,
 ) => {
-  await environment.createEntry("grantDetails", advert).then(async (entry) => {
+  let entry = await environment.createEntry("grantDetails", advert);
+  console.log(
+    `Created grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.["en-US"]}`,
+  );
+
+  entry = await entry.publish();
+  console.log(
+    `Published grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.["en-US"]}`,
+  );
+
+  let counter = 0;
+  entry = await environment.getEntry(entry.sys.id);
+  while (entry.sys.publishedVersion === 0) {
+    // Retrying due to a bug in contentful
+
+    entry = await entry.unpublish();
     console.log(
-      `Created grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.["en-US"]}`,
+      `Attempt ${counter + 1}: Unpublished grant advert entry ${
+        entry.sys.id
+      } - ${entry.fields?.grantName?.["en-US"]}`,
     );
 
-    await entry.publish().then(async (entry) => {
-      console.log(
-        `Published grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.["en-US"]}`,
-      );
+    cy.wait(1000);
 
-      let counter = 0;
-      let response = await environment.getEntry(entry.sys.id);
-      while (response.sys.publishedVersion === 0) {
-        await entry.unpublish().then(() => {
-          console.log(
-            `Attempt ${counter + 1}: Unpublished grant advert entry ${
-              entry.sys.id
-            } - ${entry.fields?.grantName?.["en-US"]}`,
-          );
-        });
-        cy.wait(1000);
-        await entry.publish().then(() => {
-          console.log(
-            `Attempt ${counter + 1}: Published grant advert entry ${
-              entry.sys.id
-            } - ${entry.fields?.grantName?.["en-US"]}`,
-          );
-        });
-        response = await environment.getEntry(entry.sys.id);
-        if (counter++ > 5) break;
-      }
-    });
-  });
+    entry = await entry.publish();
+    console.log(
+      `Attempt ${counter + 1}: Published grant advert entry ${
+        entry.sys.id
+      } - ${entry.fields?.grantName?.["en-US"]}`,
+    );
+
+    entry = await environment.getEntry(entry.sys.id);
+    if (counter++ > 5) break;
+  }
 };
 
 const setupContentful = async () => {
