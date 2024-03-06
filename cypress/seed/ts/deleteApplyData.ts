@@ -23,7 +23,6 @@ DELETE FROM public.grant_application WHERE created_by IN (
     )
 );
 `;
-
 const deleteSchemes: string = `
 DELETE FROM public.grant_scheme WHERE created_by IN (
     SELECT grant_admin_id from public.grant_admin WHERE grant_admin_id IN ($1, $2) OR user_id IN (
@@ -31,6 +30,8 @@ DELETE FROM public.grant_scheme WHERE created_by IN (
     )
 );
 `;
+
+const deleteEditors: string = `DELETE FROM public.scheme_editors WHERE grant_admin_id IN ($1, $2);`;
 
 const deleteAdmins: string = `
 DELETE FROM public.grant_admin WHERE grant_admin_id IN ($1, $2, $3) OR user_id IN (
@@ -101,4 +102,5 @@ export {
   deleteUsers,
   deleteExportBatch,
   deleteExport,
+  deleteEditors,
 };
