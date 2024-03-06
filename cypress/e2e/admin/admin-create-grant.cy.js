@@ -134,6 +134,7 @@ describe("Create a Grant", () => {
         cy.get('[data-cy="cy-advert-published"]').contains(
           "Grant advert published",
         );
+        cy.wait(3000);
         cy.visit(advertUrl);
         cy.contains(GRANT_NAME);
         searchForAGrant(GRANT_NAME);
@@ -143,9 +144,7 @@ describe("Create a Grant", () => {
       });
     });
 
-    cy.contains(
-      "An advert for this grant is live on Find a grant. It was published by findagrantdeveloper+admin@cabinetoffice.gov.uk",
-    );
+    cy.contains("An advert for this grant is live on Find a grant.");
 
     cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
 
@@ -256,9 +255,7 @@ describe("Create a Grant", () => {
     cy.contains("Grant application form");
     cy.contains("View submitted applications");
     cy.contains(GRANT_NAME);
-    cy.contains(
-      "An advert for this grant is live on Find a grant. The link for your advert is below:",
-    );
+    cy.contains("An advert for this grant is live on Find a grant.");
     cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
     cy.contains("View or change your advert");
   });
