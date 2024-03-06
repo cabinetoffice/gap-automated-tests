@@ -144,7 +144,7 @@ describe("Create a Grant", () => {
     });
 
     cy.contains(
-      "An advert for this grant is live on Find a grant. The link for your advert is below:",
+      "An advert for this grant is live on Find a grant. It was published by findagrantdeveloper+admin@cabinetoffice.gov.uk",
     );
 
     cy.get('[data-cy="cy-link-to-advert-on-find"]').should("have.attr", "href");
