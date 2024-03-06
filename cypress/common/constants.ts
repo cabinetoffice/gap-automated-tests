@@ -75,3 +75,8 @@ export const MQ_DETAILS = {
     "Outside of the UK",
   ],
 };
+
+export const EXPORT_BATCH = {
+  export_batch_id_v1: "7f817af5-2289-4f78-b63b-ab36e8814f15",
+  export_batch_id_v2: "7f817af5-2289-4f78-b63b-ab36e8814f16",
+};

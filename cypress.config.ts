@@ -19,6 +19,7 @@ import {
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   getExportedSubmissionUrlAndLocation,
+  insertSubmissionAndExport,
   insertSubmissionsAndMQs,
   updateSpotlightSubmission,
 } from "./cypress/seed/apply/service";
@@ -120,6 +121,10 @@ export default defineConfig({
         async insertSubmissionsAndMQs() {
           await insertSubmissionsAndMQs();
 
+          return null;
+        },
+        async insertSubmissionAndExport() {
+          await insertSubmissionAndExport();
           return null;
         },
         async parseXlsx({ filePath }) {

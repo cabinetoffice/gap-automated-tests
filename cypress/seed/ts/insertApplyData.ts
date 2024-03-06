@@ -148,6 +148,25 @@ INSERT INTO public.spotlight_submission (id, grant_mandatory_questions_id, grant
     )
 `;
 
+const insertExportBatch = `
+INSERT INTO public.grant_export_batch (export_batch_id, application_id, status, email_address, created, created_by, last_updated, location)
+    VALUES (
+        $1, $2, 'NOT_GENERATED', 'test@test.com', now(), $3, now(), 'testLocation'
+    ),
+    (
+        $4, $2, 'NOT_GENERATED', 'test@test.com', now(), $3, now(), 'testLocation'
+    )
+`;
+
+const insertExport = `
+INSERT INTO public.grant_export (export_batch_id, submission_id, application_id, status, email_address, created, created_by, last_updated, location)
+    VALUES (
+        $1, $2, $3, $4, 'test@test.com', now(), $5, now(), 'testLocation'
+    ), (
+        $6, $7, $8, $4, 'test@test.com', now(), $5, now(), 'testLocation'
+    )
+`;
+
 const createApiKeysFundingOrganisations = `INSERT INTO public.grant_funding_organisation(funder_id, organisation_name)
 VALUES ($1, $2), ($3, $4);`;
 
@@ -178,4 +197,6 @@ export {
   insertTechSupportUser,
   insertUsers,
   insertEditors,
+  insertExport,
+  insertExportBatch,
 };

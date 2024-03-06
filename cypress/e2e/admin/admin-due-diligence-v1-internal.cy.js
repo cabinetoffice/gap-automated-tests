@@ -2,9 +2,10 @@ import {
   log,
   signInAsAdmin,
   signInToIntegrationSite,
-  downloadFileFromLink,
 } from "../../common/common";
 import { submissionExportSuccess } from "./helper";
+
+import { EXPORT_BATCH } from "../../common/constants";
 
 describe("Downloads and Due Diligence", () => {
   beforeEach(() => {
@@ -47,23 +48,38 @@ describe("Downloads and Due Diligence", () => {
     submissionExportSuccess(Cypress.env("testV1InternalGrant"), 1);
   });
 
-  it.skip("V1 Internal - Error in Export", () => {
-    // Before each stuff
+  it("Error in Export", () => {
+    // Sign in as admin
+    log("Admin V1 Internal - Download Submission Export - signing in as admin");
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+    cy.visit("/apply/admin/dashboard");
 
-    cy.contains("Your grant has 0 applications available to download.");
-    cy.contains(
-      "Your grant has 1 application that cannot be downloaded. You can still view a read-only version of these applications.",
+    // Insert failing submission and export and visit main download page
+    cy.task("insertSubmissionAndExport");
+    cy.visit(
+      `apply/admin/scheme/${Cypress.env("testV1InternalGrant").schemeId}/${
+        EXPORT_BATCH.export_batch_id_v1
+      }`,
     );
-    cy.contains("My First Org");
-    cy.get(".govuk-link").contains("View").click();
+    cy.contains(Cypress.env("testV1InternalGrant").schemeName);
+    cy.contains("Cannot download 1 application");
+    cy.contains("V1 Internal Limited company");
 
+    // View failed export
+    cy.get(".govuk-link").contains("View").click();
     cy.contains(Cypress.env("testV1InternalGrant").schemeName);
     cy.contains("Eligibility");
     cy.contains("Required checks");
     cy.contains("Custom Section");
-    downloadFileFromLink(
-      cy.get(".govuk-body > .govuk-link"),
-      "GAP-SAN-20240305-142--122%2Fattachments.zip",
+    cy.contains(
+      "download a copy of any files attached to this application (ZIP)",
     );
+
+    // Return to main page
+    cy.get(".govuk-button").click();
+    cy.contains(Cypress.env("testV1InternalGrant").schemeName);
+    cy.contains("Cannot download 1 application");
+    cy.contains("V1 Internal Limited company");
   });
 });

@@ -36,6 +36,8 @@ import {
   insertApplicants,
   insertApplications,
   insertEditors,
+  insertExport,
+  insertExportBatch,
   insertFundingOrgs,
   insertGrantApplicantOrgProfiles,
   insertMandatoryQuestions,
@@ -63,6 +65,7 @@ import {
   V2_INTERNAL_SCHEME_ID,
   applyDatabaseUrl,
   applyDeleteSubstitutions,
+  applyExportSubstitutions,
   applyInsertSubstitutions,
   applyServiceDbName,
   applyUpdateSubstitutions,
@@ -264,6 +267,13 @@ const insertSubmissionsAndMQs = async () => {
   );
 };
 
+const insertSubmissionAndExport = async () => {
+  await runSqlForApply(
+    [insertSubmissions, insertExportBatch, insertExport],
+    applyExportSubstitutions,
+  );
+};
+
 const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
   const row = await retry(
     async () =>
@@ -408,5 +418,6 @@ export {
   getExportedSubmissionUrlAndLocation,
   insertSubmissionsAndMQs,
   updateSpotlightSubmission,
+  insertSubmissionAndExport,
   type ApiKeyDb,
 };

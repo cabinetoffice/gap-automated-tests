@@ -12,6 +12,8 @@ import {
 import { SPOTLIGHT_SUBMISSION_STATUS, TASKS } from "./constants";
 import { convertDateToString, submissionExportSuccess } from "./helper";
 
+import { EXPORT_BATCH } from "../../common/constants";
+
 const {
   UPDATE_SPOTLIGHT_SUBMISSION_STATUS,
   ADD_SPOTLIGHT_BATCH,
@@ -236,5 +238,40 @@ describe("Downloads and Due Diligence", () => {
     cy.wait(10000);
 
     submissionExportSuccess(Cypress.env("testV2InternalGrant"), 2);
+  });
+
+  it("Error in Export", () => {
+    // Sign in as admin
+    log("Admin V2 Internal - Download Submission Export - signing in as admin");
+    cy.get("[data-cy=cySignInAndApply-Link]").click();
+    signInAsAdmin();
+    cy.visit("/apply/admin/dashboard");
+
+    // Insert failing submission and export and visit main download page
+    cy.task("insertSubmissionAndExport");
+    cy.visit(
+      `apply/admin/scheme/${Cypress.env("testV2InternalGrant").schemeId}/${
+        EXPORT_BATCH.export_batch_id_v2
+      }`,
+    );
+    cy.contains(Cypress.env("testV2InternalGrant").schemeName);
+    cy.contains("Cannot download 1 application");
+    cy.contains("V2 Limited Company");
+
+    // View failed export
+    cy.get(".govuk-link").contains("View").click();
+    cy.contains(Cypress.env("testV2InternalGrant").schemeName);
+    cy.contains("Eligibility");
+    cy.contains("Your organisation");
+    cy.contains("Funding");
+    cy.contains(
+      "download a copy of any files attached to this application (ZIP)",
+    );
+
+    // Return to main page
+    cy.get(".govuk-button").click();
+    cy.contains(Cypress.env("testV2InternalGrant").schemeName);
+    cy.contains("Cannot download 1 application");
+    cy.contains("V2 Limited Company");
   });
 });
