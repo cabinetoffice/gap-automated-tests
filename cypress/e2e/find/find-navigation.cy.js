@@ -6,7 +6,7 @@ describe("Find a Grant - Navigation", () => {
   });
 
   it("loads the page", () => {
-    cy.contains("Find a grant");
+    cy.contains("Find no grants");
   });
 
   it("Can navigate to information pages", () => {
