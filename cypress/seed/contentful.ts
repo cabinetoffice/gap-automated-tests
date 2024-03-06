@@ -426,10 +426,33 @@ const createAndPublish = async (
     console.log(
       `Created grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.["en-US"]}`,
     );
-    await entry.publish().then(() => {
+
+    await entry.publish().then(async (entry) => {
       console.log(
         `Published grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.["en-US"]}`,
       );
+
+      let counter = 0;
+      let response = await environment.getEntry(entry.sys.id);
+      while (response.sys.publishedVersion === 0) {
+        await entry.unpublish().then(() => {
+          console.log(
+            `Attempt ${counter + 1}: Unpublished grant advert entry ${
+              entry.sys.id
+            } - ${entry.fields?.grantName?.["en-US"]}`,
+          );
+        });
+        cy.wait(1000);
+        await entry.publish().then(() => {
+          console.log(
+            `Attempt ${counter + 1}: Published grant advert entry ${
+              entry.sys.id
+            } - ${entry.fields?.grantName?.["en-US"]}`,
+          );
+        });
+        response = await environment.getEntry(entry.sys.id);
+        if (counter++ > 5) break;
+      }
     });
   });
 };
