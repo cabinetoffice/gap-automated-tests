@@ -213,5 +213,7 @@ export default defineConfig({
     },
     baseUrl: process.env.APPLICATION_BASE_URL,
     chromeWebSecurity: false,
+    viewportWidth: 1000,
+    viewportHeight: 2000,
   },
 });
