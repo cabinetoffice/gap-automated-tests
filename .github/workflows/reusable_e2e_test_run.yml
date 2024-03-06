@@ -127,6 +127,7 @@ jobs:
           AWS_API_GATEWAY_ACCESS_KEY=${{ secrets.AWS_API_GATEWAY_ACCESS_KEY }}
           AWS_API_GATEWAY_SECRET_KEY=${{ secrets.AWS_API_GATEWAY_SECRET_KEY }}
           AWS_API_GATEWAY_USAGE_PLAN_ID=${{ secrets[format('{0}_AWS_API_GATEWAY_USAGE_PLAN_ID', inputs.environment)] }}
+          AWS_ENVIRONMENT=${{ vars[format('{0}_AWS_ENVIRONMENT', inputs.environment)] }}
           FIRST_USER_ID=1
           EOF
 

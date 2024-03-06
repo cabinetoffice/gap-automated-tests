@@ -78,6 +78,8 @@ import {
 import { retry } from "../helper";
 
 const FIRST_USER_ID = process.env.FIRST_USER_ID;
+const AWS_ENVIRONMENT = process.env.AWS_ENVIRONMENT;
+const API_KEY_VALUE = `${FIRST_USER_ID}${AWS_ENVIRONMENT}`;
 
 const runSqlForApply = async (
   scripts: string[],
@@ -337,7 +339,6 @@ const createApiKeysInApiGatewayUsagePlan = async (
   fundingOrganisation: number,
   startingPoint: number,
   endingPoint: number,
-  keyValue = FIRST_USER_ID.padEnd(20, "x"),
 ) => {
   for (let i = startingPoint; i < endingPoint; i++) {
     console.log("creating key in AWS: " + i);
@@ -345,8 +346,9 @@ const createApiKeysInApiGatewayUsagePlan = async (
     const paddedNumber = i.toString().padStart(3, "0");
     const orgName = fundingOrganisation === ADMIN_ID ? "Org1" : "Org2";
     const keyName = `${orgName}Cypress${paddedNumber}${FIRST_USER_ID}`;
+    const keyValue = API_KEY_VALUE.padEnd(20, "x") + i;
 
-    await createKeyInAwsApiGatewayUsagePlan(keyName, keyValue + i);
+    await createKeyInAwsApiGatewayUsagePlan(keyName, keyValue);
   }
 };
 

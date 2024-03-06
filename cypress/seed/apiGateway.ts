@@ -12,6 +12,7 @@ const region = process.env.AWS_API_GATEWAY_REGION;
 const usagePlanId = process.env.AWS_API_GATEWAY_USAGE_PLAN_ID;
 const accessKeyId = process.env.AWS_API_GATEWAY_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_API_GATEWAY_SECRET_KEY;
+const awsEnv = process.env.AWS_ENVIRONMENT;
 
 const apiGatewayClient = new APIGatewayClient({
   region,
@@ -87,6 +88,7 @@ export async function createApiKey(apiKeyName: string, apiKeyValue: string) {
         name: apiKeyName,
         enabled: true,
         value: apiKeyValue,
+        description: awsEnv,
       };
       const asyncSleep = promisify(setTimeout);
 
