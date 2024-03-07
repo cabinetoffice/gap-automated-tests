@@ -77,6 +77,6 @@ export const MQ_DETAILS = {
 };
 
 export const EXPORT_BATCH = {
-  export_batch_id_v1: "7f817af5-2289-4f78-b63b-ab36e8814f15",
-  export_batch_id_v2: "7f817af5-2289-4f78-b63b-ab36e8814f16",
+  export_batch_id_v1: getUUID(),
+  export_batch_id_v2: getUUID(1),
 };

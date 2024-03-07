@@ -577,8 +577,6 @@ const downloadSubmissionExportZip = (submissionFileName) => {
 export const goToSubmissionExportURL = (schemeId) => {
   cy.task("getExportedSubmissionUrlAndLocation", schemeId).then(
     (submission) => {
-      log(JSON.stringify(submission));
-
       cy.visit(submission.url);
     },
   );
