@@ -199,6 +199,7 @@ export default defineConfig({
       awsAccessKey: process.env.AWS_API_GATEWAY_ACCESS_KEY,
       awsSecretKey: process.env.AWS_API_GATEWAY_SECRET_KEY,
       awsApiGatewayUsagePlanId: process.env.AWS_API_GATEWAY_USAGE_PLAN_ID,
+      awsEnvironment: process.env.AWS_ENVIRONMENT,
     },
     reporter: "cypress-mochawesome-reporter",
     reporterOptions: {
@@ -217,5 +218,7 @@ export default defineConfig({
     },
     baseUrl: process.env.APPLICATION_BASE_URL,
     chromeWebSecurity: false,
+    viewportWidth: 1000,
+    viewportHeight: 2000,
   },
 });

@@ -95,7 +95,6 @@ jobs:
     with:
       specs: ${{ needs.detect-specs.outputs.specs }}
       browser: chrome
-      report: false
       notify: false
       environment: SANDBOX
     secrets: inherit

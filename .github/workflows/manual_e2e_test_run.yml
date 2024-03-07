@@ -27,13 +27,6 @@ on:
           - chrome
           - firefox
           - webkit
-      report:
-        type: choice
-        description: Upload report?
-        default: "false"
-        options:
-          - false
-          - true
       notify:
         type: choice
         description: Notify on Slack?
@@ -59,7 +52,6 @@ jobs:
     with:
       specs: ${{ inputs.specs != '' && inputs.specs || inputs.suite == 'all' && 'cypress/e2e/**/*' || format('cypress/e2e/{0}/**/*', inputs.suite) }}
       browser: ${{ inputs.browser }}
-      report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
       repeat: ${{ inputs.repeat }}
@@ -70,7 +62,6 @@ jobs:
     uses: ./.github/workflows/reusable_multi_browser_e2e_test_run.yml
     with:
       specs: ${{ inputs.specs != '' && inputs.specs || inputs.suite == 'all' && 'cypress/e2e/**/*' || format('cypress/e2e/{0}/**/*', inputs.suite) }}
-      report: ${{ inputs.report }}
       notify: ${{ inputs.notify }}
       environment: ${{ inputs.environment }}
       repeat: ${{ inputs.repeat }}
