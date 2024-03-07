@@ -173,10 +173,20 @@ const applyInsertSubstitutions = {
   ],
   [insertEditors]: [
     ADMIN_ID,
+    V1_INTERNAL_SCHEME_ID,
+    ADMIN_ID,
+    V1_EXTERNAL_SCHEME_ID,
+    ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    ADMIN_ID,
+    V2_EXTERNAL_SCHEME_ID,
     SUPER_ADMIN_ID,
     V1_INTERNAL_SCHEME_ID,
+    SUPER_ADMIN_ID,
     V1_EXTERNAL_SCHEME_ID,
+    SUPER_ADMIN_ID,
     V2_INTERNAL_SCHEME_ID,
+    SUPER_ADMIN_ID,
     V2_EXTERNAL_SCHEME_ID,
   ],
   [insertApplications]: [
@@ -394,6 +404,8 @@ const applyExportSubstitutions = {
     V1_INTERNAL_SCHEME_ID,
     ADMIN_ID,
     EXPORT_BATCH_ID_V2,
+    V2_INTERNAL_SCHEME_ID,
+    ADMIN_ID,
   ],
   [insertExport]: [
     EXPORT_BATCH_ID_V1,
@@ -404,6 +416,8 @@ const applyExportSubstitutions = {
     EXPORT_BATCH_ID_V2,
     V2_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
     V2_INTERNAL_SCHEME_ID,
+    "FAILED",
+    ADMIN_ID,
   ],
 };
 

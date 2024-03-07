@@ -50,8 +50,8 @@ INSERT INTO public.grant_scheme(grant_scheme_id, funder_id, version, ggis_identi
 
 const insertEditors: string = `
 INSERT INTO public.scheme_editors(grant_admin_id, grant_scheme_id) 
-    VALUES ($1, $3), ($1, $4), ($1, $5), ($1, $6),
-           ($2, $3), ($2, $4), ($2, $5), ($2, $6);`;
+    VALUES ($1, $2), ($3, $4), ($5, $6), ($7, $8),
+           ($9, $10), ($11, $12), ($13, $14), ($15, $16);`;
 
 const insertApplications: string = `
 INSERT INTO public.grant_application (grant_application_id, grant_scheme_id, version, created, last_update_by, last_updated, application_name, status, definition, created_by, last_published)
@@ -155,7 +155,7 @@ INSERT INTO public.grant_export_batch (export_batch_id, application_id, status, 
         $1, $2, 'NOT_GENERATED', 'test@test.com', now(), $3, now(), 'testLocation'
     ),
     (
-        $4, $2, 'NOT_GENERATED', 'test@test.com', now(), $3, now(), 'testLocation'
+        $4, $5, 'NOT_GENERATED', 'test@test.com', now(), $6, now(), 'testLocation'
     )
 `;
 
@@ -164,7 +164,7 @@ INSERT INTO public.grant_export (export_batch_id, submission_id, application_id,
     VALUES (
         $1, $2, $3, $4, 'test@test.com', now(), $5, now(), 'testLocation'
     ), (
-        $6, $7, $8, $4, 'test@test.com', now(), $5, now(), 'testLocation'
+        $6, $7, $8, $9, 'test@test.com', now(), $10, now(), 'testLocation'
     )
 `;
 
