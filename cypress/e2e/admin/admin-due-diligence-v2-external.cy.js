@@ -27,10 +27,7 @@ describe("Downloads and Due Diligence", () => {
 
     // View grant and get due diligence data
     log("Admin V2 External - Due Diligence download - viewing grant");
-    cy.get('[data-cy="cy_SchemeListButton"]').click();
-    cy.get(
-      '[data-cy="cy_linkToScheme_Cypress - Test Scheme V2 External"]',
-    ).click();
+    cy.contains("Cypress - Test Scheme V2 External").click();
     cy.contains(
       ".govuk-button--secondary",
       "Manage due diligence checks",

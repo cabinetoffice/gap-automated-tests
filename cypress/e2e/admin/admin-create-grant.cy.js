@@ -1,11 +1,11 @@
 import {
   clickBack,
+  clickContinue,
   clickText,
   log,
   saveAndExit,
   signInAsAdmin,
   signInToIntegrationSite,
-  clickContinue,
 } from "../../common/common";
 import { GRANT_NAME, TASKS } from "./constants";
 import {
@@ -250,7 +250,6 @@ describe("Create a Grant", () => {
       .click();
     cy.get("[data-cy=cySignInAndApply-Link]").click();
     cy.get('[data-cy="cy-apply-register-button"]').click();
-    cy.get('[data-cy="cy_SchemeListButton"]').click();
     cy.get(`[data-cy="cy_linkToScheme_${GRANT_NAME}"]`).click();
     cy.contains("Grant application form");
     cy.contains("View submitted applications");

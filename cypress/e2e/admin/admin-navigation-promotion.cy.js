@@ -43,10 +43,7 @@ describe("Admin navigation", () => {
     cy.visit("/apply/admin/dashboard");
     cy.log("asserting on content within the admin dashboard");
     cy.contains("Manage a grant");
-    cy.contains(
-      "Use this service to add your grant details and build an application form for applicants to use.",
-    );
-    cy.contains("Add grant details");
-    cy.contains("Start by adding the details of your grant.");
+    cy.contains("You do not own or have editing permissions for any grants.");
+    cy.contains("Add a grant");
   });
 });

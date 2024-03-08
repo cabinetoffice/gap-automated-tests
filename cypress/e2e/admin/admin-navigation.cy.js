@@ -18,17 +18,14 @@ describe("Admin navigation", () => {
     signInAsAdmin();
 
     cy.log("Logged into admin account - asserting on dashboard content");
-    cy.contains("Your grants");
+    cy.contains("Grants you own");
     cy.contains(Cypress.env("testV1InternalGrant").schemeName);
     cy.contains(Cypress.env("testV2InternalGrant").schemeName);
-    cy.contains("View all grants").click();
-    cy.contains("All grants");
-    cy.log("asserting on content within the 'all grants' page");
     cy.contains(Cypress.env("testV2ExternalGrant").schemeName);
     cy.contains(Cypress.env("testV1ExternalGrant").schemeName);
     cy.contains(Cypress.env("testV2InternalGrant").schemeName);
     cy.contains(Cypress.env("testV1InternalGrant").schemeName);
-    clickText("View");
+    clickText(Cypress.env("testV1InternalGrant").schemeName);
     cy.contains("Grant summary");
     cy.log("asserting the admin cannot view the super admin dashboard");
     assert404(SUPER_ADMIN_DASHBOARD_URL);
