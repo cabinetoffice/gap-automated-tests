@@ -1,5 +1,6 @@
 import {
   log,
+  searchForGrant,
   signInAsAdmin,
   signInToIntegrationSite,
 } from "../../common/common";
@@ -26,9 +27,11 @@ describe("Downloads and Due Diligence", () => {
 
     // View V1 internal grant
     log("Admin V1 Internal - Download Submission Export - viewing grant");
+
     cy.get(
       '[data-cy="cy_linkToScheme_Cypress - Test Scheme V1 Internal"]',
     ).click();
+    
     log(
       "Admin V1 Internal - Download Submission Export - Initiating download of submission export",
     );

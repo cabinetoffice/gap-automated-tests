@@ -1,13 +1,13 @@
 import dayjs from "dayjs";
 import {
+  clickSave,
   clickSaveAndContinue,
+  clickText,
   downloadFileFromLink,
   log,
-  yesQuestionComplete,
   saveAndExit,
-  clickText,
   selectActionForItemInTable,
-  clickSave,
+  yesQuestionComplete,
 } from "../../common/common";
 
 const getIframeBody = (iFrameSelector) =>
@@ -54,7 +54,7 @@ export function createGrant(GRANT_NAME) {
 
   cy.get("[data-cy=cy_addAGrantConfirmationPageButton]").click();
 
-  cy.contains(GRANT_NAME).parent().contains("View").click();
+  cy.contains(GRANT_NAME).click();
 }
 
 export function applicationForm() {
