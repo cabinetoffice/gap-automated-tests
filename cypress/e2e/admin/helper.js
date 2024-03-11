@@ -348,6 +348,9 @@ function addOptionalMultiChoiceQuestion(questionText, description, type) {
   cy.get('[data-cy="cy-options[1]-text-input"]').type("Choice 2", {
     force: true,
   });
+  cy.get('[data-cy="cy-options[2]-text-input"]').type("Choice 3", {
+    force: true,
+  });
   cy.get('[data-cy="cy-button-Save question"]').click();
 }
 
