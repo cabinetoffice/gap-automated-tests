@@ -45,10 +45,7 @@ describe("Downloads and Due Diligence", () => {
     signInAsAdmin();
 
     log("Admin V2 Internal - Manage Due Diligence & Spotlight - viewing grant");
-    cy.get('[data-cy="cy_SchemeListButton"]').click();
-    cy.get(
-      "[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']",
-    ).click();
+    cy.get("Test Scheme V2 Internal").click();
 
     clickText("Manage due diligence checks");
 
