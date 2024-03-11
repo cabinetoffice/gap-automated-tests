@@ -1,24 +1,24 @@
-import "dotenv/config";
-import { runSQLFromJs } from "./database";
+import 'dotenv/config';
+import { runSQLFromJs } from './database';
 import {
   insertDepartments,
   insertRoles,
   insertUsers,
-} from "./ts/insertTestUsers";
-import { deleteUsers, deleteDepartments } from "./ts/deleteTestUsers";
+} from './ts/insertTestUsers';
+import { deleteUsers, deleteDepartments } from './ts/deleteTestUsers';
 import {
   addFailedSpotlightOauthAudit,
   addSuccessSpotlightOauthAudit,
-} from "./ts/insertApplyData";
-import { deleteFailedSpotlightOauthAudit } from "./ts/deleteApplyData";
-import { ADDED_DEPARTMENT_NAME } from "../common/constants";
+} from './ts/insertApplyData';
+import { deleteFailedSpotlightOauthAudit } from './ts/deleteApplyData';
+import { ADDED_DEPARTMENT_NAME } from '../common/constants';
 
 const userServiceDbName: string =
-  process.env.USERS_DATABASE_NAME || "gapuserlocaldb";
+  process.env.USERS_DATABASE_NAME || 'gapuserlocaldb';
 
 const userDatabaseUrl: string =
   process.env.USERS_DATABASE_URL ||
-  "postgres://postgres:postgres@localhost:5432";
+  'postgres://postgres:postgres@localhost:5432';
 
 const SUPER_ADMIN_ID = -Math.abs(+process.env.FIRST_USER_ID);
 const ADMIN_ID = -(Math.abs(+process.env.FIRST_USER_ID) + 1);
@@ -95,7 +95,7 @@ export const createTestUsers = async (): Promise<void> => {
     userServiceDbName,
     userDatabaseUrl,
   );
-  console.log("Successfully added test users");
+  console.log('Successfully added test users');
 };
 
 export const deleteTestUsers = async (): Promise<void> => {
@@ -105,7 +105,7 @@ export const deleteTestUsers = async (): Promise<void> => {
     userServiceDbName,
     userDatabaseUrl,
   );
-  console.log("Successfully removed test users");
+  console.log('Successfully removed test users');
 };
 
 export const addFailedOauthAudit = async () => {

@@ -9,14 +9,14 @@ const retry = async (
 ) => {
   let i = 0;
   for (i; i < maxAttempts; i++) {
-    console.log("attempt", i + 1, " at running script");
+    console.log('attempt', i + 1, ' at running script');
     const response = await func();
     if (condition(response)) return response;
     if (i < maxAttempts - 1) sleep(delay);
   }
   console.log(
-    "Could not get good response from script in ",
-    +maxAttempts + " number of attempts",
+    'Could not get good response from script in ',
+    +maxAttempts + ' number of attempts',
   );
   return null;
 };

@@ -1,11 +1,11 @@
-require("dotenv").config();
-const { Client } = require("pg");
+require('dotenv').config();
+const { Client } = require('pg');
 
-const userServiceDbName = process.env.USERS_DATABASE_NAME || "gapuserlocaldb";
+const userServiceDbName = process.env.USERS_DATABASE_NAME || 'gapuserlocaldb';
 
 const userDatabaseUrl =
   process.env.USERS_DATABASE_URL ||
-  "postgres://postgres:postgres@localhost:5432";
+  'postgres://postgres:postgres@localhost:5432';
 
 const script = `
 SELECT 
@@ -29,19 +29,19 @@ const emails = [
 
 const runSQLFromJs = async (sqlScript, substitutions, dbName, dbUrl) => {
   try {
-    const connectionString = dbUrl + "/" + dbName;
+    const connectionString = dbUrl + '/' + dbName;
     const client = new Client({ connectionString });
     await client.connect();
     const res = await client.query(sqlScript, substitutions || []);
     await client.end();
     return res;
   } catch (error) {
-    console.error("Error executing SQL script: ", error);
+    console.error('Error executing SQL script: ', error);
   }
 };
 
-(async () => {
-  console.log("Checking User DB for the following emails:", emails);
+const getSubs = async () => {
+  console.log('Checking User DB for the following emails:', emails);
   try {
     const res = await runSQLFromJs(
       script,
@@ -54,7 +54,7 @@ const runSQLFromJs = async (sqlScript, substitutions, dbName, dbUrl) => {
       const emailEnvVarName = Object.keys(process.env).find(
         (key) => process.env[key] === row.email,
       );
-      const prefix = emailEnvVarName.split("_EMAIL")[0];
+      const prefix = emailEnvVarName.split('_EMAIL')[0];
       const subEnvVarName = `${prefix}_SUB`;
       const passwordEnvVarName = `${prefix}_PASSWORD`;
       console.log(`${emailEnvVarName}=${row.email}`);
@@ -62,6 +62,8 @@ const runSQLFromJs = async (sqlScript, substitutions, dbName, dbUrl) => {
       console.log(`${passwordEnvVarName}=XXXXXXXX`);
     });
   } catch (e) {
-    console.log("Execution failed", e);
+    console.log('Execution failed', e);
   }
-})();
+};
+
+getSubs();

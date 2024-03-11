@@ -1,4 +1,4 @@
-import { DEPARTMENT_NAME } from "../apply/constants";
+import { DEPARTMENT_NAME } from '../apply/constants';
 
 const insertDepartments: string = `
 INSERT INTO public.departments(id, ggis_id, name)

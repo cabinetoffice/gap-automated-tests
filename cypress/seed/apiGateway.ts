@@ -5,8 +5,8 @@ import {
   DeleteApiKeyCommand,
   GetUsagePlanKeysCommand,
   type UsagePlanKey,
-} from "@aws-sdk/client-api-gateway";
-import { promisify } from "util";
+} from '@aws-sdk/client-api-gateway';
+import { promisify } from 'util';
 
 const region = process.env.AWS_API_GATEWAY_REGION;
 const usagePlanId = process.env.AWS_API_GATEWAY_USAGE_PLAN_ID;
@@ -24,7 +24,7 @@ export async function removeKeysFromAwsApiGatewayUsagePlan() {
     const keys = await getKeysFromAwsApiGatewayUsagePlan();
 
     if (keys.length === 0) {
-      console.log("No API keys found in the usage plan.");
+      console.log('No API keys found in the usage plan.');
       return;
     }
 
@@ -40,12 +40,12 @@ export async function removeKeysFromAwsApiGatewayUsagePlan() {
 
       count++;
 
-      console.log("Keys left to delete", total - count);
+      console.log('Keys left to delete', total - count);
     }
 
-    console.log("All API keys deleted successfully.");
+    console.log('All API keys deleted successfully.');
   } catch (error) {
-    console.error("Error:", error.message);
+    console.error('Error:', error.message);
   }
 }
 
@@ -59,7 +59,7 @@ export async function createKeyInAwsApiGatewayUsagePlan(
 
     return apiKeyId;
   } catch (error) {
-    console.error("Error:", error.message);
+    console.error('Error:', error.message);
   }
 }
 
@@ -73,7 +73,7 @@ export async function deleteApiKeyFromAws(key: UsagePlanKey) {
 
     await asyncSleep(200);
   } catch (error) {
-    console.error("Error in deleteApiKey:", error.message);
+    console.error('Error in deleteApiKey:', error.message);
   }
 }
 
@@ -124,7 +124,7 @@ export async function associateApiKeyToUsagePlan(apiKeyId: string) {
     const createUsagePlanKeyCommand = new CreateUsagePlanKeyCommand({
       keyId: apiKeyId,
       usagePlanId,
-      keyType: "API_KEY",
+      keyType: 'API_KEY',
     });
 
     await apiGatewayClient.send(createUsagePlanKeyCommand).then(async () => {
@@ -134,7 +134,7 @@ export async function associateApiKeyToUsagePlan(apiKeyId: string) {
       );
     });
   } catch (error) {
-    console.error("Error in associateApiKeyToUsagePlan:", error.message);
+    console.error('Error in associateApiKeyToUsagePlan:', error.message);
   }
 }
 
