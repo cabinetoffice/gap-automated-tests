@@ -34,4 +34,7 @@ INSERT INTO public.roles_users(roles_id, users_gap_user_id)
 	(5, $12);
 `;
 
-export { insertDepartments, insertUsers, insertRoles };
+const insertRole =
+  "INSERT INTO public.roles_users(roles_id, users_gap_user_id) VALUES ($1, $2);";
+
+export { insertDepartments, insertUsers, insertRoles, insertRole };
