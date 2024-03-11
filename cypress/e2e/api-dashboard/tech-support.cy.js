@@ -144,11 +144,11 @@ describe('API Admin - No existing keys', () => {
       .should('be.visible')
       .should('have.text', 'Enter a key name');
 
-    // Should display validation errors for blank spaces
+    // Should display validation errors for empty space at start of name
     log(
-      'Tech Support - create API key journey - checking validation errors for blank spaces',
+      'Tech Support - create API key journey - checking validation errors empty space at start of name',
     );
-    cy.get('[data-cy="create-key-input"]').clear().type('api key name');
+    cy.get('[data-cy="create-key-input"]').clear().type(' api key name');
 
     cy.get('[data-cy="create-key-continue"]')
       .should('be.visible')
@@ -161,11 +161,34 @@ describe('API Admin - No existing keys', () => {
 
     cy.get('[data-cy="create-key-error-summary-list"]')
       .should('have.length', 1)
-      .contains('Key name must be alphanumeric');
+      .contains('Key name must not start with empty spaces');
 
     cy.get('[data-cy="create-key-input-validation-error-details"]')
       .should('be.visible')
-      .should('have.text', 'Key name must be alphanumeric');
+      .should('have.text', 'Key name must not start with empty spaces');
+
+    // Should display validation errors for empty space at the end of name
+    log(
+      'Tech Support - create API key journey - checking validation errors empty space at the end of name',
+    );
+    cy.get('[data-cy="create-key-input"]').clear().type('api key name ');
+
+    cy.get('[data-cy="create-key-continue"]')
+      .should('be.visible')
+      .contains('Continue')
+      .click();
+
+    cy.get('[data-cy="create-key-error-banner-heading"]')
+      .should('be.visible')
+      .contains('There is a problem');
+
+    cy.get('[data-cy="create-key-error-summary-list"]')
+      .should('have.length', 1)
+      .contains('Key name must not end with empty spaces');
+
+    cy.get('[data-cy="create-key-input-validation-error-details"]')
+      .should('be.visible')
+      .should('have.text', 'Key name must not end with empty spaces');
 
     // Should successfully create key and display value
     log(

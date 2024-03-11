@@ -7,6 +7,7 @@ import {
   TEST_V2_INTERNAL_GRANT,
 } from './cypress/common/constants';
 import {
+  addAdminInTechSupportTable,
   addSpotlightBatch,
   addToRecentBatch,
   cleanupTestSpotlightSubmissions,
@@ -30,8 +31,10 @@ import { createFindData, deleteFindData } from './cypress/seed/find';
 import {
   addFailedOauthAudit,
   addSuccessOauthAudit,
+  addTechSupportRoleToAdmin,
   createTestUsers,
   deleteTestUsers,
+  removeTechSupportRoleFromAdmin,
 } from './cypress/seed/user';
 const xlsx = require('node-xlsx').default;
 const fs = require('fs');
@@ -83,6 +86,14 @@ export default defineConfig({
             await createApplyData();
           });
 
+          return null;
+        },
+        async addTechSupportRoleToAdmin() {
+          // we remove the tech support user in apply db in deleteApplyData
+          await removeTechSupportRoleFromAdmin().then(async () => {
+            await addTechSupportRoleToAdmin();
+            await addAdminInTechSupportTable();
+          });
           return null;
         },
         async setUpFindData() {

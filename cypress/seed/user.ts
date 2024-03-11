@@ -2,10 +2,15 @@ import 'dotenv/config';
 import { runSQLFromJs } from './database';
 import {
   insertDepartments,
+  insertRole,
   insertRoles,
   insertUsers,
 } from './ts/insertTestUsers';
-import { deleteUsers, deleteDepartments } from './ts/deleteTestUsers';
+import {
+  deleteUsers,
+  deleteDepartments,
+  deleteRole,
+} from './ts/deleteTestUsers';
 import {
   addFailedSpotlightOauthAudit,
   addSuccessSpotlightOauthAudit,
@@ -106,6 +111,32 @@ export const deleteTestUsers = async (): Promise<void> => {
     userDatabaseUrl,
   );
   console.log('Successfully removed test users');
+};
+
+export const addTechSupportRoleToAdmin = async (): Promise<void> => {
+  console.log('Adding TECH_SUPPORT role for admin, in user db');
+
+  await runSQLFromJs(
+    [insertRole],
+    { [insertRole]: [5, ADMIN_ID] },
+    userServiceDbName,
+    userDatabaseUrl,
+  );
+
+  console.log('Successfully added TECH_SUPPORT role for admin, in user db');
+};
+
+export const removeTechSupportRoleFromAdmin = async (): Promise<void> => {
+  console.log('Removing TECH_SUPPORT role for admin, in user db');
+
+  await runSQLFromJs(
+    [deleteRole],
+    { [deleteRole]: [5, ADMIN_ID] },
+    userServiceDbName,
+    userDatabaseUrl,
+  );
+
+  console.log('Successfully removed TECH_SUPPORT role for admin, in user db');
 };
 
 export const addFailedOauthAudit = async () => {
