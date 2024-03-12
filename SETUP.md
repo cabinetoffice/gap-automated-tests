@@ -5,7 +5,7 @@
   - `ONE_LOGIN_SANDBOX_` properties used for signing in to the One Login integration environment - this is a static username/password for the whole environment, and you can obtain these by speaking to Conor Fayle (or probably most devs by this point).
   - The other email/password combinations are for specific accounts.
 - ESLint, Prettier and Husky are installed, so your code will auto-format when committing changes.
-- Make sure you connected to the correct VPN for the environment you are running on - you should have been issued with your own VPN profiles which you can use with OpenVPN.
+- Make sure you are connected to the correct VPN for the environment you are running on - you should have been issued with your own VPN profiles which you can use with OpenVPN.
 - Tests can be run against QA or Sandbox. You'll need to have the appropriate .env file in order to be able to run tests against each environment. The current `.env` file in use should be called simply `.env` and the other should be called `.env.qa` or `.env.sandbox` respectively.
   - There is a command to switch your current environment between the two: `npm run env:switch`
 - You will need to set up 3 users with One Login, and use these to run E2E tests locally. Steps:
