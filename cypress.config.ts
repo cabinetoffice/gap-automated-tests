@@ -1,12 +1,12 @@
-import { defineConfig } from "cypress";
-import * as dayjs from "dayjs";
+import { defineConfig } from 'cypress';
+import * as dayjs from 'dayjs';
 import {
   TEST_V1_EXTERNAL_GRANT,
   TEST_V1_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
   EXPORT_BATCH,
-} from "./cypress/common/constants";
+} from './cypress/common/constants';
 import {
   addAdminInTechSupportTable,
   addSpotlightBatch,
@@ -24,12 +24,12 @@ import {
   insertSubmissionAndExport,
   insertSubmissionsAndMQs,
   updateSpotlightSubmission,
-} from "./cypress/seed/apply/service";
+} from './cypress/seed/apply/service';
 import {
   publishGrantAdverts,
   removeAdvertByName,
-} from "./cypress/seed/contentful";
-import { createFindData, deleteFindData } from "./cypress/seed/find";
+} from './cypress/seed/contentful';
+import { createFindData, deleteFindData } from './cypress/seed/find';
 import {
   addFailedOauthAudit,
   addSuccessOauthAudit,
@@ -37,17 +37,17 @@ import {
   createTestUsers,
   deleteTestUsers,
   removeTechSupportRoleFromAdmin,
-} from "./cypress/seed/user";
-const xlsx = require("node-xlsx").default;
-const fs = require("fs");
-const decompress = require("decompress");
-require("dotenv").config();
+} from './cypress/seed/user';
+const xlsx = require('node-xlsx').default;
+const fs = require('fs');
+const decompress = require('decompress');
+require('dotenv').config();
 
 export default defineConfig({
   e2e: {
     setupNodeEvents(on) {
       // implement node event listeners here
-      on("task", {
+      on('task', {
         async addFailedOauthAudit() {
           await addFailedOauthAudit();
           return null;
@@ -150,18 +150,18 @@ export default defineConfig({
         unzip({ path, file }) {
           return decompress(
             path + file,
-            path + "unzip/" + file.replace(".zip", ""),
+            path + 'unzip/' + file.replace('.zip', ''),
           );
         },
         async getExportedSubmissionUrlAndLocation(schemeId: string) {
           return await getExportedSubmissionUrlAndLocation(schemeId);
         },
         log(message) {
-          console.log(dayjs().format() + " | " + message);
+          console.log(dayjs().format() + ' | ' + message);
 
           return null;
         },
-        async ls(filePath = "/cypress/downloads") {
+        async ls(filePath = '/cypress/downloads') {
           const list = fs.readdirSync(__dirname + filePath);
           console.log(list);
           return `ls ${filePath}: ${JSON.stringify(list)}`;
@@ -172,7 +172,7 @@ export default defineConfig({
           return null;
         },
       });
-      require("cypress-mochawesome-reporter/plugin")(on);
+      require('cypress-mochawesome-reporter/plugin')(on);
     },
     env: {
       oneLoginSandboxBaseUrl: process.env.ONE_LOGIN_BASE_URL,
@@ -216,13 +216,13 @@ export default defineConfig({
       awsApiGatewayUsagePlanId: process.env.AWS_API_GATEWAY_USAGE_PLAN_ID,
       awsEnvironment: process.env.AWS_ENVIRONMENT,
     },
-    reporter: "cypress-mochawesome-reporter",
+    reporter: 'cypress-mochawesome-reporter',
     reporterOptions: {
-      reportDir: "mochawesome-report",
-      reportFilename: "[status]_[datetime]_report",
-      timestamp: "yyyy-mm-ddTHH:MM:ssZ",
+      reportDir: 'mochawesome-report',
+      reportFilename: '[status]_[datetime]_report',
+      timestamp: 'yyyy-mm-ddTHH:MM:ssZ',
       charts: true,
-      reportPageTitle: "Find a Grant",
+      reportPageTitle: 'Find a Grant',
       embeddedScreenshots: true,
       inlineAssets: true,
       saveAllAttempts: false,

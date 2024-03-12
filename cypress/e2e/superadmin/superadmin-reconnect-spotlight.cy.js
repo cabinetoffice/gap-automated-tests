@@ -4,37 +4,37 @@ import {
   log,
   signInAsSuperAdmin,
   signInToIntegrationSite,
-} from "../../common/common";
-import { TASKS } from "./constants";
+} from '../../common/common';
+import { TASKS } from './constants';
 
 const { ADD_FAILED_OAUTH_AUDIT, ADD_SUCCESS_OAUTH_AUDIT } = TASKS;
-describe("Super Admin", () => {
+describe('Super Admin', () => {
   beforeEach(() => {
-    cy.task("setUpUser");
-    cy.task("setUpApplyData");
+    cy.task('setUpUser');
+    cy.task('setUpApplyData');
     signInToIntegrationSite();
   });
 
-  it("Can reconnect to spotlight", () => {
-    cy.get("[data-cy=cySignInAndApply-Link]").click();
-    log("Super Admin Reconnect Spotlight - Signing in as super admin");
+  it('Can reconnect to spotlight', () => {
+    cy.get('[data-cy=cySignInAndApply-Link]').click();
+    log('Super Admin Reconnect Spotlight - Signing in as super admin');
     signInAsSuperAdmin();
     cy.task(ADD_FAILED_OAUTH_AUDIT);
-    clickText("Integrations");
-    log("Super Admin Reconnect Spotlight - Reconnecting to Spotlight");
+    clickText('Integrations');
+    log('Super Admin Reconnect Spotlight - Reconnecting to Spotlight');
     reconnectSpotlight();
     cy.task(ADD_SUCCESS_OAUTH_AUDIT);
-    clickText("Integrations");
+    clickText('Integrations');
     cy.get("[data-cy='cy_table_row-for-Integration-row-0-cell-0']").contains(
-      "Spotlight",
+      'Spotlight',
     );
     cy.get('[data-cy="cy_table_row-for-Status-row-0-cell-1"]');
     cy.get("[data-cy='cy_table_row-for-Status-row-0-cell-1']").contains(
-      "Connected",
+      'Connected',
     );
   });
 });
 
 const reconnectSpotlight = () => {
-  assert200(cy.contains("Reconnect"));
+  assert200(cy.contains('Reconnect'));
 };

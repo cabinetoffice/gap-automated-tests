@@ -3,7 +3,7 @@ import {
   TEST_V1_EXTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
-} from "../../common/constants";
+} from '../../common/constants';
 
 const v1InternalAdvert = `
 {
