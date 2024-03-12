@@ -1,4 +1,4 @@
-import { DEPARTMENT_NAME } from "../apply/constants";
+import { DEPARTMENT_NAME } from '../apply/constants';
 
 const insertDepartments: string = `
 INSERT INTO public.departments(id, ggis_id, name)
@@ -35,6 +35,6 @@ INSERT INTO public.roles_users(roles_id, users_gap_user_id)
 `;
 
 const insertRole =
-  "INSERT INTO public.roles_users(roles_id, users_gap_user_id) VALUES ($1, $2);";
+  'INSERT INTO public.roles_users(roles_id, users_gap_user_id) VALUES ($1, $2);';
 
 export { insertDepartments, insertUsers, insertRoles, insertRole };

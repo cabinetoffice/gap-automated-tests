@@ -3,13 +3,13 @@ import {
   TEST_V1_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
-} from "../../common/constants";
+} from '../../common/constants';
 import {
   v1ExternalAdvert,
   v1InternalAdvert,
   v2ExternalAdvert,
   v2InternalAdvert,
-} from "../data/apply";
+} from '../data/apply';
 import {
   deleteAdmins,
   deleteAdverts,
@@ -29,7 +29,7 @@ import {
   deleteSubmissions,
   deleteTechSupportUser,
   deleteUsers,
-} from "../ts/deleteApplyData";
+} from '../ts/deleteApplyData';
 import {
   addSpotlightBatchRow,
   addSubmissionToMostRecentBatch,
@@ -47,21 +47,21 @@ import {
   insertSubmissions,
   insertTechSupportUser,
   insertUsers,
-} from "../ts/insertApplyData";
+} from '../ts/insertApplyData';
 
 import {
   getExportedSubmission,
   selectApiKeysByFunderId,
-} from "../ts/selectApplyData";
-import { getTestID, getUUID, hashApiKey } from "./helper";
+} from '../ts/selectApplyData';
+import { getTestID, getUUID, hashApiKey } from './helper';
 
-require("dotenv").config();
+require('dotenv').config();
 
-const applyServiceDbName = process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
+const applyServiceDbName = process.env.APPLY_DATABASE_NAME || 'gapapplylocaldb';
 
 const applyDatabaseUrl =
   process.env.APPLY_DATABASE_URL ||
-  "postgres://postgres:postgres@localhost:5432";
+  'postgres://postgres:postgres@localhost:5432';
 
 const postLoginBaseUrl = process.env.POST_LOGIN_BASE_URL;
 
@@ -358,10 +358,10 @@ const createApiKeyFundingOrganisationSubstitutions = {
   ],
 };
 
-const today = new Date().toLocaleDateString("en-GB", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
+const today = new Date().toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
 });
 
 const commonApiKeySubsValue = (value, name, id) => {
@@ -374,7 +374,7 @@ const createApiKeySubstitutions = (
   name: string,
   value: string,
 ) => {
-  const fundingOrganisation = name.startsWith("Org1") ? ADMIN_ID : APPLICANT_ID;
+  const fundingOrganisation = name.startsWith('Org1') ? ADMIN_ID : APPLICANT_ID;
   return [
     FUNDING_ID - i,
     fundingOrganisation,

@@ -1,5 +1,5 @@
-import "dotenv/config";
-import { Client } from "pg";
+import 'dotenv/config';
+import { Client } from 'pg';
 
 export const runSQLFromJs = async (
   sqlScripts: string[],
@@ -42,7 +42,7 @@ export const getConnectionStringByDbName = (
   dbUrl: string,
   dbName: string,
 ): string => {
-  return dbUrl + "/" + dbName;
+  return dbUrl + '/' + dbName;
 };
 
 export const runSingleQuery = async (

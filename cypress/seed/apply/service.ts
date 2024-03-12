@@ -1,11 +1,11 @@
-import { type UsagePlanKey } from "@aws-sdk/client-api-gateway";
+import { type UsagePlanKey } from '@aws-sdk/client-api-gateway';
 import {
   createKeyInAwsApiGatewayUsagePlan,
   deleteApiKeyFromAws,
   getKeysFromAwsApiGatewayUsagePlan,
   removeKeysFromAwsApiGatewayUsagePlan,
-} from "../apiGateway";
-import { runSQLFromJs } from "../database";
+} from '../apiGateway';
+import { runSQLFromJs } from '../database';
 import {
   deleteAdmins,
   deleteAdverts,
@@ -25,7 +25,7 @@ import {
   deleteSubmissions,
   deleteTechSupportUser,
   deleteUsers,
-} from "../ts/deleteApplyData";
+} from '../ts/deleteApplyData';
 import {
   addSpotlightBatchRow,
   addSubmissionToMostRecentBatch,
@@ -44,16 +44,16 @@ import {
   insertSubmissions,
   insertTechSupportUser,
   insertUsers,
-} from "../ts/insertApplyData";
+} from '../ts/insertApplyData';
 import {
   getExportedSubmission,
   selectApiKeysByFunderId,
-} from "../ts/selectApplyData";
+} from '../ts/selectApplyData';
 import {
   readdQueuedSpotlightSubmissions,
   removeQueuedSpotlightSubmissions,
   updateSpotlightSubmissionStatus,
-} from "../ts/updateApplyData";
+} from '../ts/updateApplyData';
 import {
   ADMIN_ID,
   APPLICANT_ID,
@@ -73,9 +73,9 @@ import {
   getAPIKeysByFunderIdSubstitutions,
   postLoginBaseUrl,
   spotlightSubstitutions,
-} from "./constants";
+} from './constants';
 
-import { retry } from "../helper";
+import { retry } from '../helper';
 
 const FIRST_USER_ID = process.env.FIRST_USER_ID;
 const AWS_ENVIRONMENT = process.env.AWS_ENVIRONMENT;
@@ -108,11 +108,11 @@ const createApplyData = async (): Promise<void> => {
     ],
     applyInsertSubstitutions,
   );
-  console.log("Successfully added data to Apply database");
+  console.log('Successfully added data to Apply database');
 };
 
 const deleteApplyData = async (): Promise<void> => {
-  console.log("deleting data from Apply database");
+  console.log('deleting data from Apply database');
   await deleteAPIKeysFromAwsForTechSupport();
   await runSqlForApply(
     [
@@ -133,7 +133,7 @@ const deleteApplyData = async (): Promise<void> => {
     ],
     applyDeleteSubstitutions,
   );
-  console.log("Successfully removed data from Apply database");
+  console.log('Successfully removed data from Apply database');
 };
 
 const createApiKeysData = async (): Promise<void> => {
@@ -141,7 +141,7 @@ const createApiKeysData = async (): Promise<void> => {
     [createApiKeysFundingOrganisations],
     createApiKeyFundingOrganisationSubstitutions,
   );
-  console.log("Successfully created and updated fundingOrganisation");
+  console.log('Successfully created and updated fundingOrganisation');
 
   console.log(`Creating Keys in usage plan for ${ADMIN_ID}`);
   await createApiKeysInApiGatewayUsagePlan(ADMIN_ID, 1, 7);
@@ -165,22 +165,22 @@ const createApiKeysData = async (): Promise<void> => {
 
   await createApiKeysInDatabase(apiKeys);
 
-  console.log("Successfully created apiKeys into the Apply database");
+  console.log('Successfully created apiKeys into the Apply database');
 };
 
 const deleteApiKeysData = async (): Promise<void> => {
-  console.log("Deleting Api Keys and funding org from Apply database");
+  console.log('Deleting Api Keys and funding org from Apply database');
   await runSqlForApply(
     [deleteApiKeysByFunderId, deleteApiKeysFundingOrganisations],
     deleteApiKeysSubstitutions, // the $1, etc in the sql script
   );
 
   console.log(
-    "Successfully removed Keys from Apply database and the funding Organisation associated with it",
+    'Successfully removed Keys from Apply database and the funding Organisation associated with it',
   );
 
   await removeKeysFromAwsApiGatewayUsagePlan();
-  console.log("Successfully removed Keys Aws Api Gateway");
+  console.log('Successfully removed Keys Aws Api Gateway');
 };
 
 const getAPIKeysByFunderId = async () => {
@@ -204,7 +204,7 @@ const deleteAPIKeysFromAwsForTechSupport = async () => {
     };
     await deleteApiKeyFromAws(key);
 
-    console.log("Successfully deleted all existing Technical Support Api Keys");
+    console.log('Successfully deleted all existing Technical Support Api Keys');
   }
 };
 
@@ -228,13 +228,13 @@ const updateSpotlightSubmission = async (status: string) => {
 };
 
 const addAdminInTechSupportTable = async () => {
-  console.log("Adding Admin into the Tech support table in apply");
+  console.log('Adding Admin into the Tech support table in apply');
 
   await runSqlForApply([insertTechSupportUser], {
     [insertTechSupportUser]: [FUNDING_ID, process.env.ONE_LOGIN_ADMIN_SUB],
   });
 
-  console.log("Successfully added Admin into the Tech support table in apply");
+  console.log('Successfully added Admin into the Tech support table in apply');
 };
 
 const addToRecentBatch = async () => {
@@ -279,19 +279,19 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
   const row = await retry(
     async () =>
       await runSqlForApply([getExportedSubmission], applyInsertSubstitutions),
-    (response: { status: string }) => response[0][0].status === "COMPLETE",
+    (response: { status: string }) => response[0][0].status === 'COMPLETE',
     30,
     1000,
   );
   console.log(schemeId, row[0][0]);
   return {
     url: `${postLoginBaseUrl}/apply/admin/scheme/${schemeId}/${row[0][0].export_batch_id}`,
-    location: row[0][0].location.split("/")[1],
+    location: row[0][0].location.split('/')[1],
   };
 };
 
 const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
-  console.log("Creating Api Keys in the database");
+  console.log('Creating Api Keys in the database');
   const numberOfColumns = 10; // number of columns to be substituted in the database
 
   const substitutions = [];
@@ -312,7 +312,7 @@ const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
   await runSqlForApply([queryString], {
     [queryString]: substitutions.flatMap((item) => item),
   });
-  console.log("Successfully created Api Keys in the database");
+  console.log('Successfully created Api Keys in the database');
 };
 
 const buildQueryStringForSubstitutions = (
@@ -325,7 +325,7 @@ const buildQueryStringForSubstitutions = (
     numberOfColumns,
   );
 
-  return `${query}${substitutionParameters.join(", ")}`;
+  return `${query}${substitutionParameters.join(', ')}`;
 };
 
 const buildDynamicQuerySubstitutions = (
@@ -337,9 +337,9 @@ const buildDynamicQuerySubstitutions = (
   for (let i = 0; i < items.length; i++) {
     const substitutions = [];
     for (let j = 1; j <= numberOfParamsPerItem; j++) {
-      substitutions.push("$" + (numberOfParamsPerItem * i + j));
+      substitutions.push('$' + (numberOfParamsPerItem * i + j));
     }
-    substitutionGroups.push("(" + substitutions.join(", ") + ")");
+    substitutionGroups.push('(' + substitutions.join(', ') + ')');
   }
   return substitutionGroups;
 };
@@ -350,12 +350,12 @@ const createApiKeysInApiGatewayUsagePlan = async (
   endingPoint: number,
 ) => {
   for (let i = startingPoint; i < endingPoint; i++) {
-    console.log("creating key in AWS: " + i);
+    console.log('creating key in AWS: ' + i);
 
-    const paddedNumber = i.toString().padStart(3, "0");
-    const orgName = fundingOrganisation === ADMIN_ID ? "Org1" : "Org2";
+    const paddedNumber = i.toString().padStart(3, '0');
+    const orgName = fundingOrganisation === ADMIN_ID ? 'Org1' : 'Org2';
     const keyName = `${orgName}Cypress${paddedNumber}${FIRST_USER_ID}`;
-    const keyValue = API_KEY_VALUE.padEnd(20, "x") + i;
+    const keyValue = API_KEY_VALUE.padEnd(20, 'x') + i;
 
     await createKeyInAwsApiGatewayUsagePlan(keyName, keyValue);
   }
@@ -369,12 +369,12 @@ const createApiKeysInApiGatewayForTechnicalSupport = async (
 
   const params = [];
   for (let i = startingPoint; i < endingPoint; i++) {
-    const paddedNumber = i.toString().padStart(3, "0");
+    const paddedNumber = i.toString().padStart(3, '0');
     const keyName = `CypressE2ETestTechSupport${paddedNumber}${FIRST_USER_ID}`;
     const keyValue = keyName;
     const keyId = await createKeyInAwsApiGatewayUsagePlan(keyName, keyValue);
 
-    console.log("creating key in AWS with value: ", keyValue);
+    console.log('creating key in AWS with value: ', keyValue);
     params.push(
       createApiKeySubstitutionsForTechSupport(i, keyId, keyName, keyValue),
     );

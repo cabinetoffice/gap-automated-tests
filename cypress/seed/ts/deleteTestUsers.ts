@@ -11,6 +11,6 @@ DELETE FROM public.departments
 `;
 
 const deleteRole =
-  " DELETE FROM roles_users WHERE roles_id= $1 AND users_gap_user_id=$2;";
+  ' DELETE FROM roles_users WHERE roles_id= $1 AND users_gap_user_id=$2;';
 
 export { deleteUsers, deleteDepartments, deleteRole };
