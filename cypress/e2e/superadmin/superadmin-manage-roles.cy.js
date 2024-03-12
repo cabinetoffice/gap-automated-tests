@@ -43,7 +43,6 @@ describe('Super Admin', () => {
     log(
       'Super admin manage roles - Delete schemes and navigate back to specific user',
     );
-    cy.wait(3000);
     cy.task('deleteSchemes');
     cy.wait(3000);
     cy.get('.govuk-back-link').click();
