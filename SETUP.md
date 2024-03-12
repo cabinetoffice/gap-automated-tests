@@ -5,11 +5,7 @@
   - `ONE_LOGIN_SANDBOX_` properties used for signing in to the One Login integration environment - this is a static username/password for the whole environment, and you can obtain these by speaking to Conor Fayle (or probably most devs by this point).
   - The other email/password combinations are for specific accounts.
 - ESLint, Prettier and Husky are installed, so your code will auto-format when committing changes.
-- Make sure you are whilelisted in the VPC for the environment you're running in. This can be done by
-  - Running the command `npm run vpc:add`
-    - To remove yourself: `npm run vpc:remove`
-    - If you don't have AWS access, you can run `npm run vpc:add:print` which will output the command with your IP address and the VPC Security Group ID, so that you can send this to someone with AWS access to execute it for you.
-  - Or following the steps in [Confluence Page](https://technologyprogramme.atlassian.net/wiki/spaces/GAS/pages/2511798342/Connecting+to+the+Apply+Databases).
+- Make sure you connected to the correct VPN for the environment you are running on - you should have been issued with your own VPN profiles which you can use with OpenVPN.
 - Tests can be run against QA or Sandbox. You'll need to have the appropriate .env file in order to be able to run tests against each environment. The current `.env` file in use should be called simply `.env` and the other should be called `.env.qa` or `.env.sandbox` respectively.
   - There is a command to switch your current environment between the two: `npm run env:switch`
 - You will need to set up 3 users with One Login, and use these to run E2E tests locally. Steps:
