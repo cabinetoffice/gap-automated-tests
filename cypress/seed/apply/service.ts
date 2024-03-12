@@ -136,6 +136,17 @@ const deleteApplyData = async (): Promise<void> => {
   console.log('Successfully removed data from Apply database');
 };
 
+const deleteApplySchemes = async (): Promise<void> => {
+  console.log(
+    'Deleting schemes from Apply database (including applications and adverts)',
+  );
+  await runSqlForApply(
+    [deleteAdverts, deleteApplications, deleteEditors, deleteSchemes],
+    applyDeleteSubstitutions,
+  );
+  console.log('Successfully deleted schemes');
+};
+
 const createApiKeysData = async (): Promise<void> => {
   await runSqlForApply(
     [createApiKeysFundingOrganisations],
@@ -413,6 +424,7 @@ export {
   deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
   deleteApplyData,
+  deleteApplySchemes,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   getAPIKeysByFunderId,

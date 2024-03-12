@@ -13,6 +13,10 @@ describe('Super Admin', () => {
     cy.task('setUpApplyData');
     signInToIntegrationSite();
   });
+  afterEach(() => {
+    cy.task('setUpUser');
+    cy.task('setUpApplyData');
+  });
 
   it('Can manage roles', () => {
     cy.get('[data-cy=cySignInAndApply-Link]').click();
@@ -20,7 +24,32 @@ describe('Super Admin', () => {
     signInAsSuperAdmin();
     navigateToSpecificUser(Cypress.env('oneLoginAdminEmail'));
 
-    log('Super Admin Manage Roles - Clicking remove on admin role');
+    log('Super Admin Manage Roles - Navigate to role selection');
+    cy.get(
+      ':nth-child(3) > .govuk-summary-list__actions > .govuk-link',
+    ).click();
+
+    log(
+      'Super admin manage roles - check that user with grant ownership CANNOT be demoted (copy text also appears)',
+    );
+    cy.contains(
+      'While this user owns grants, you cannot demote them to an applicant or delete their account. You must transfer those grants to another owner first.',
+    );
+    cy.get('[data-cy="cy-checkbox-value-3"]').should('be.disabled');
+
+    log('Navigate back to user page');
+    cy.get('.govuk-back-link').click();
+
+    log(
+      'Super admin manage roles - Delete schemes and navigate back to specific user',
+    );
+    cy.wait(3000);
+    cy.task('deleteSchemes');
+    cy.wait(3000);
+    cy.get('.govuk-back-link').click();
+    navigateToSpecificUser(Cypress.env('oneLoginAdminEmail'));
+
+    log('Super Admin Manage Roles - Navigate to role selection');
     cy.get(
       ':nth-child(3) > .govuk-summary-list__actions > .govuk-link',
     ).click();
@@ -41,7 +70,9 @@ describe('Super Admin', () => {
     navigateToSpecificUser(Cypress.env('oneLoginApplicantEmail'));
 
     log('Super Admin Manage Roles - Adding super admin role');
-    cy.get('.govuk-summary-list__actions > .govuk-link').click();
+    cy.get(
+      ':nth-child(3) > .govuk-summary-list__actions > .govuk-link',
+    ).click();
     cy.get('[data-cy="cy-checkbox-value-4"]').click();
     cy.get('.govuk-button').contains('Change Roles').click();
 
