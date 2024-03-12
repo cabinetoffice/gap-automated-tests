@@ -225,6 +225,6 @@ export default defineConfig({
     baseUrl: process.env.APPLICATION_BASE_URL,
     chromeWebSecurity: false,
     viewportWidth: 1000,
-    viewportHeight: process.env.HEADLESS_MOD === 'true' ? 2000 : 1000,
+    viewportHeight: process.env.HEADLESS_MODE === 'true' ? 2000 : 1000,
   },
 });
