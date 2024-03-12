@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cy:open:watch": "npx cypress open --config watchForFileChanges=true",
-    "cy:open:nowatch": "npx cypress open --config watchForFileChanges=false",
-    "cy:open": "npx cypress open --config watchForFileChanges=false --e2e --browser chrome",
+    "cy:open:watch": "HEADLESS_MODE=true cypress open --config watchForFileChanges=true",
+    "cy:open:nowatch": "HEADLESS_MODE=true cypress open --config watchForFileChanges=false",
+    "cy:open": "HEADLESS_MODE=true cypress open --config watchForFileChanges=false --e2e --browser chrome",
     "cy:run:all": "npx cypress run",
     "cy:run:find": "npx cypress run --spec \"cypress/e2e/find/*.cy.js\"",
     "cy:run:apply": "npx cypress run --spec \"cypress/e2e/applicant/*.cy.js\"",
