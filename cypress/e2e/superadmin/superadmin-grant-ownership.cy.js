@@ -141,7 +141,6 @@ describe('Super Admin', () => {
     log(
       'Super Admin Change Grant Ownership - Checking grant shows in admin dashboard',
     );
-    clickText('View all grants');
     cy.get('[data-cy="cy_table_row"] > :nth-child(1)').should(
       'contain.text',
       'Cypress - Test Scheme V1',
