@@ -1,4 +1,5 @@
 import {
+  log,
   signInAsAdmin,
   signInAsSuperAdmin,
   signInToIntegrationSite,
@@ -13,6 +14,7 @@ describe('Admin co-authorship', () => {
   });
 
   it('manages editors', () => {
+    log('Co-auth: Checking initial editor status as super-admin');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsSuperAdmin();
     cy.contains('a', 'Admin dashboard').click();
@@ -26,6 +28,7 @@ describe('Admin co-authorship', () => {
     cy.get('.govuk-summary-list').children().should('have.length', 3);
     signOut();
 
+    log('Co-auth: Removing super-admin as editor');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsAdmin();
     cy.contains('Grants you own');
@@ -40,6 +43,7 @@ describe('Admin co-authorship', () => {
     cy.get('.govuk-summary-list').children().should('have.length', 2);
     signOut();
 
+    log('Co-auth: Checking super-admin has been removed as editor');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsSuperAdmin();
     cy.contains('a', 'Admin dashboard').click();
@@ -50,6 +54,7 @@ describe('Admin co-authorship', () => {
     );
     signOut();
 
+    log('Co-auth: Readding super-admin as editor');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsAdmin();
     cy.contains('Grants you own');
@@ -59,26 +64,26 @@ describe('Admin co-authorship', () => {
     cy.contains('a', 'Add or manage editors').click();
     cy.get('.govuk-summary-list').children().should('have.length', 2);
 
+    log("Co-auth: Checking 'Add an editor' validation");
     cy.contains('a', 'Add an editor').click();
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').type(
       Cypress.env('oneLoginApplicantEmail'),
     );
     cy.contains('button', 'Confirm').click();
     cy.contains("This account does not have an 'Administrator' account.");
-    cy.get('[data-cy="cy-editorEmailAddress-text-input"]').clear();
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').type(
-      'Not a real email',
+      '{selectall}{backspace}' + 'Not a real email',
     );
     cy.contains('button', 'Confirm').click();
     cy.contains('Input a valid email address');
-    cy.get('[data-cy="cy-editorEmailAddress-text-input"]').clear();
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').type(
-      Cypress.env('oneLoginSuperAdminEmail'),
+      '{selectall}{backspace}' + Cypress.env('oneLoginSuperAdminEmail'),
     );
     cy.contains('button', 'Confirm').click();
     cy.get('.govuk-summary-list').children().should('have.length', 3);
     signOut();
 
+    log('Co-auth: Checking super-admin re-added editor status');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsSuperAdmin();
     cy.contains('a', 'Admin dashboard').click();
