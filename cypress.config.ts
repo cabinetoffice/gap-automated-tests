@@ -18,6 +18,7 @@ import {
   deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
   deleteApplyData,
+  deleteApplySchemes,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   getExportedSubmissionUrlAndLocation,
@@ -87,6 +88,11 @@ export default defineConfig({
           await deleteApplyData().then(async () => {
             await createApplyData();
           });
+
+          return null;
+        },
+        async deleteSchemes() {
+          await deleteApplySchemes();
 
           return null;
         },
