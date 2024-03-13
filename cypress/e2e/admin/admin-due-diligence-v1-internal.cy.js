@@ -5,7 +5,11 @@ import {
   signInToIntegrationSite,
   signOut,
 } from '../../common/common';
-import { validateSubmissionDownload, submissionExportSuccess } from './helper';
+import {
+  validateSubmissionDownload,
+  submissionExportSuccess,
+  runAccessability,
+} from './helper';
 
 import {
   equalitySectionDecline,
@@ -22,6 +26,7 @@ describe('Downloads and Due Diligence', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     signInToIntegrationSite();
+    runAccessability();
   });
 
   it('V1 Internal - Download Submission Export', () => {
