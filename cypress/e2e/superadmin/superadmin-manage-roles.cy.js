@@ -13,10 +13,6 @@ describe('Super Admin', () => {
     cy.task('setUpApplyData');
     signInToIntegrationSite();
   });
-  afterEach(() => {
-    cy.task('setUpUser');
-    cy.task('setUpApplyData');
-  });
 
   it('Can manage roles', () => {
     cy.get('[data-cy=cySignInAndApply-Link]').click();
@@ -40,13 +36,9 @@ describe('Super Admin', () => {
     log('Navigate back to user page');
     cy.get('.govuk-back-link').click();
 
-    log(
-      'Super admin manage roles - Delete schemes and navigate back to specific user',
-    );
+    log('Super admin manage roles - Delete schemes and reload page');
     cy.task('deleteSchemes');
-    cy.wait(3000);
-    cy.get('.govuk-back-link').click();
-    navigateToSpecificUser(Cypress.env('oneLoginAdminEmail'));
+    cy.reload();
 
     log('Super Admin Manage Roles - Navigate to role selection');
     cy.get(
