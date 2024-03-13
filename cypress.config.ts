@@ -5,6 +5,7 @@ import {
   TEST_V1_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
+  EXPORT_BATCH,
 } from './cypress/common/constants';
 import {
   addAdminInTechSupportTable,
@@ -20,6 +21,7 @@ import {
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   getExportedSubmissionUrlAndLocation,
+  insertSubmissionAndExport,
   insertSubmissionsAndMQs,
   updateSpotlightSubmission,
 } from './cypress/seed/apply/service';
@@ -133,6 +135,10 @@ export default defineConfig({
 
           return null;
         },
+        async insertSubmissionAndExport() {
+          await insertSubmissionAndExport();
+          return null;
+        },
         async parseXlsx({ filePath }) {
           try {
             return xlsx.parse(fs.readFileSync(__dirname + filePath));
@@ -200,6 +206,9 @@ export default defineConfig({
       },
       testV2ExternalGrant: {
         ...TEST_V2_EXTERNAL_GRANT,
+      },
+      exportBatch: {
+        ...EXPORT_BATCH,
       },
       awsRegion: process.env.AWS_API_GATEWAY_REGION,
       awsAccessKey: process.env.AWS_API_GATEWAY_ACCESS_KEY,

@@ -10,7 +10,9 @@ import {
   validateXlsx,
 } from '../../common/common';
 import { SPOTLIGHT_SUBMISSION_STATUS, TASKS } from './constants';
-import { convertDateToString, validateSubmissionDownload } from './helper';
+import { convertDateToString, submissionExportSuccess } from './helper';
+
+const EXPORT_BATCH = Cypress.env('exportBatch');
 
 const {
   UPDATE_SPOTLIGHT_SUBMISSION_STATUS,
@@ -29,7 +31,7 @@ describe('Downloads and Due Diligence', () => {
     signInToIntegrationSite();
   });
 
-  it.skip("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
+  it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
     // Populate data instead of completing journey
     log(
       'Admin V2 Internal - Manage Due Diligence & Spotlight - inserting submissions, mq and spotlight submissions',
@@ -45,7 +47,9 @@ describe('Downloads and Due Diligence', () => {
     signInAsAdmin();
 
     log('Admin V2 Internal - Manage Due Diligence & Spotlight - viewing grant');
-    cy.get('Test Scheme V2 Internal').click();
+    cy.get(
+      "[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal']",
+    ).click();
 
     clickText('Manage due diligence checks');
 
@@ -228,6 +232,45 @@ describe('Downloads and Due Diligence', () => {
     log(
       'Admin V2 Internal - Manage Due Diligence & Spotlight - Validating downloaded submission export',
     );
-    validateSubmissionDownload(Cypress.env('testV2InternalGrant').schemeId);
+
+    log('Admin V2 Internal - Wait to allow submissions export to process');
+    cy.wait(10000);
+
+    submissionExportSuccess(Cypress.env('testV2InternalGrant'), 2);
+  });
+
+  it('Error in Export', () => {
+    // Sign in as admin
+    log('Admin V2 Internal - Download Submission Export - signing in as admin');
+    cy.get('[data-cy=cySignInAndApply-Link]').click();
+    signInAsAdmin();
+    cy.visit('/apply/admin/dashboard');
+
+    // Insert failing submission and export and visit main download page
+    cy.task('insertSubmissionAndExport');
+    cy.visit(
+      `apply/admin/scheme/${Cypress.env('testV2InternalGrant').schemeId}/${
+        EXPORT_BATCH.export_batch_id_v2
+      }`,
+    );
+    cy.contains(Cypress.env('testV2InternalGrant').schemeName);
+    cy.contains('Cannot download 1 application');
+    cy.contains('V2 Limited Company');
+
+    // View failed export
+    cy.get('.govuk-link').contains('View').click();
+    cy.contains(Cypress.env('testV2InternalGrant').schemeName);
+    cy.contains('Eligibility');
+    cy.contains('Your organisation');
+    cy.contains('Funding');
+    cy.contains(
+      'download a copy of any files attached to this application (ZIP)',
+    );
+
+    // Return to main page
+    cy.get('.govuk-button').click();
+    cy.contains(Cypress.env('testV2InternalGrant').schemeName);
+    cy.contains('Cannot download 1 application');
+    cy.contains('V2 Limited Company');
   });
 });
