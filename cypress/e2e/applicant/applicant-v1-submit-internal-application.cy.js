@@ -165,7 +165,7 @@ describe('Apply for a Grant', () => {
       { key: 'Custom Question 4', value: 'Choice 1' },
       { key: 'Custom Question 5', value: 'Choice 1,Choice 2' },
       { key: 'Custom Question 6', value: 'example.doc' },
-      { key: 'Custom Question 7', value: '01-01-2000' },
+      { key: 'Custom Question 7', value: '1 January 2000' },
     ]);
 
     log(
