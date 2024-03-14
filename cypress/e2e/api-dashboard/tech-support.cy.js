@@ -23,6 +23,7 @@ const API_DASHBOARD_BASE_URL = BASE_URL + '/find/api/admin';
 describe('API Admin - No existing keys', () => {
   beforeEach(() => {
     cy.task('setUpUser');
+    cy.task('deleteAPIKeysFromAwsForTechSupport');
     cy.task('setUpApplyData');
     signInToIntegrationSite();
 
@@ -278,6 +279,7 @@ describe('API Admin - No existing keys', () => {
 describe('API Admin - Existing API Keys', () => {
   beforeEach(() => {
     cy.task('setUpUser');
+    cy.task('deleteAPIKeysFromAwsForTechSupport');
     cy.task('setUpApplyData');
     cy.task('createApiKeysInApiGatewayForTechnicalSupport');
     signInToIntegrationSite();
@@ -423,6 +425,9 @@ describe('API Admin - Existing API Keys', () => {
 
 describe('API Dashboard', () => {
   beforeEach(() => {
+    cy.task('setUpUser');
+    cy.task('deleteAPIKeysFromAwsForTechSupport');
+    cy.task('setUpApplyData');
     signInToIntegrationSite();
 
     cy.log('Clicking Sign in as a Technical Support user');
