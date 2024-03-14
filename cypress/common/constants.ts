@@ -16,6 +16,7 @@ export const TEST_V1_INTERNAL_GRANT = {
   contentfulSlug: `cypress_test_advert_v1_internal_contentful_slug_${firstUserId}`,
   applicationUrl: `${process.env.POST_LOGIN_BASE_URL}/apply/applicant/applications/-${firstGrantId}`,
   applicationName: 'Cypress - Test Application V1 Internal',
+  applicationId: getTestID(),
   schemeName: 'Cypress - Test Scheme V1 Internal',
   schemeId: getTestID(),
 };
@@ -27,6 +28,7 @@ export const TEST_V1_EXTERNAL_GRANT = {
   contentfulSlug: `cypress_test_advert_v1_external_contentful_slug_${firstUserId}`,
   applicationUrl: 'https://www.google.com',
   applicationName: 'Cypress - Test Application V1 External',
+  applicationId: getTestID(3),
   schemeName: 'Cypress - Test Scheme V1 External',
   schemeId: getTestID(3),
 };
@@ -38,6 +40,7 @@ export const TEST_V2_INTERNAL_GRANT = {
   contentfulSlug: `cypress_test_advert_v2_internal_contentful_slug_${firstUserId}`,
   applicationUrl: `${process.env.POST_LOGIN_BASE_URL}/apply/applicant/applications/-${secondGrantId}`,
   applicationName: 'Cypress - Test Application V2 Internal',
+  applicationId: getTestID(1),
   schemeName: 'Cypress - Test Scheme V2 Internal',
   schemeId: getTestID(1),
 };
@@ -49,6 +52,7 @@ export const TEST_V2_EXTERNAL_GRANT = {
   contentfulSlug: `cypress_test_advert_v2_external_contentful_slug_${firstUserId}`,
   applicationUrl: 'https://www.google.com',
   applicationName: 'Cypress - Test Application V2 External',
+  applicationId: getTestID(2),
   schemeName: 'Cypress - Test Scheme V2 External',
   schemeId: getTestID(2),
 };
