@@ -1,3 +1,6 @@
+import 'cypress-axe';
+import accessibilityLog from './accessibilityLog.js';
+
 export const BASE_URL = Cypress.env('applicationBaseUrl');
 export const ONE_LOGIN_BASE_URL = Cypress.env('oneLoginSandboxBaseUrl');
 export const POST_LOGIN_BASE_URL = Cypress.env('postLoginBaseUrl');
@@ -271,3 +274,8 @@ export const validateValueForKeyInTable = (
       cy.get(options.valueElement).contains(value);
     });
 };
+
+export function runAccessibility() {
+  cy.injectAxe();
+  cy.checkA11y(null, null, accessibilityLog);
+}

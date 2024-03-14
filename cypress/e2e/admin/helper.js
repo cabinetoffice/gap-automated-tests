@@ -10,6 +10,7 @@ import {
   yesQuestionComplete,
 } from '../../common/common';
 import 'cypress-axe';
+
 const getIframeBody = (iFrameSelector) =>
   cy
     .get(iFrameSelector, { timeout: 8000 })
@@ -644,8 +645,3 @@ export const submissionExportSuccess = (grantInformation, version) => {
   cy.get('.govuk-button').contains('Return to overview').click();
   cy.contains('Applications available to download');
 };
-
-export function runAccessability() {
-  cy.injectAxe();
-  cy.checkA11y(null, null, null);
-}

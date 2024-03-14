@@ -8,7 +8,7 @@ import {
 import {
   validateSubmissionDownload,
   submissionExportSuccess,
-  runAccessability,
+  runAccessibility,
 } from './helper';
 
 import {
@@ -26,7 +26,7 @@ describe('Downloads and Due Diligence', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     signInToIntegrationSite();
-    runAccessability();
+    runAccessibility();
   });
 
   it('V1 Internal - Download Submission Export', () => {
