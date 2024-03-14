@@ -23,6 +23,7 @@ describe('Api Dashboard SuperAdmin journeys', () => {
   describe('Navigation test', () => {
     before(() => {
       cy.task('setUpUser');
+      cy.task('deleteAPIKeysFromAwsForTechSupport');
       cy.task('setUpApplyData');
     });
 
@@ -70,6 +71,7 @@ describe('Api Dashboard SuperAdmin journeys', () => {
   describe('API Keys page', () => {
     before(() => {
       cy.task('setUpUser');
+      cy.task('deleteAPIKeysFromAwsForTechSupport');
       cy.task('setUpApplyData');
       cy.task('create11ApiKeys', {}, { timeout: 100000 });
     });
