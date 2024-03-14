@@ -119,7 +119,6 @@ describe('Admin co-authorship', () => {
       });
     cy.get('[data-cy="cy-displayText-text-area"]').type(' Edited');
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     clickSaveAndExit();
     assertMultipleEditorsErrorPage();
 
@@ -131,14 +130,12 @@ describe('Admin co-authorship', () => {
     cy.contains('a', 'Edit').click();
     cy.get('[data-cy="cy-sectionTitle-text-input"]').type(' Edited');
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     clickSave();
     assertMultipleEditorsErrorPage();
 
     log('Multiple Editors - Reorder sections');
     cy.contains('4. Custom Section Two');
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     cy.contains('4. Custom Section Two')
       .parent()
       .within(() => {
@@ -155,7 +152,6 @@ describe('Admin co-authorship', () => {
     cy.contains('a', 'Delete section').click();
     cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     cy.contains('button', 'Confirm').click();
     assertMultipleEditorsErrorPage();
 
@@ -168,7 +164,6 @@ describe('Admin co-authorship', () => {
       });
     cy.get('[data-cy="cy-fieldTitle-text-input"]').type(' Edited');
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     cy.contains('button', 'Save changes').click();
     assertMultipleEditorsErrorPage();
     cy.contains('Custom Question 1 Edited').should('not.exist');
@@ -184,7 +179,6 @@ describe('Admin co-authorship', () => {
     cy.contains('a', 'Change question type').click();
     cy.get('[data-cy="cy-radioInput-option-ShortAnswer"]').click();
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     clickSaveAndContinue();
     assertMultipleEditorsErrorPage();
     cy.contains('Custom Question 1')
@@ -208,7 +202,6 @@ describe('Admin co-authorship', () => {
     clickSaveAndContinue();
     cy.get('[data-cy="cy-maxWords-text-input-numeric"]').type('1000');
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     clickSaveAndContinue();
     assertMultipleEditorsErrorPage();
     cy.contains('Custom Question 1')
@@ -233,7 +226,6 @@ describe('Admin co-authorship', () => {
     cy.get('[data-cy="cy-options[0]-text-input"]').type('Option 1');
     cy.get('[data-cy="cy-options[1]-text-input"]').type('Option 2');
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     clickSaveAndContinue();
     assertMultipleEditorsErrorPage();
     cy.contains('Custom Question 1')
@@ -255,11 +247,10 @@ describe('Admin co-authorship', () => {
     cy.contains('a', 'Delete question').click();
     cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     cy.contains('button', 'Confirm').click();
     assertMultipleEditorsErrorPage();
 
-    log('Multiple Editors - Reorder questions');
+    log('Multiple Editors - Reorder questions - Up');
     cy.contains('3. Custom Section')
       .parent()
       .within(() => {
@@ -267,7 +258,6 @@ describe('Admin co-authorship', () => {
       });
     cy.contains('Custom Question 2');
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     cy.contains('Custom Question 2')
       .parent()
       .parent()
@@ -276,6 +266,8 @@ describe('Admin co-authorship', () => {
         cy.contains('button', 'Up').click();
       });
     assertMultipleEditorsErrorPage();
+
+    log('Multiple Editors - Reorder questions - Down');
     cy.contains('3. Custom Section')
       .parent()
       .within(() => {
@@ -283,7 +275,6 @@ describe('Admin co-authorship', () => {
       });
     cy.contains('Custom Question 1');
     cy.task('simulateMultipleApplicationFormEditors');
-    cy.wait(1000);
     cy.contains('Custom Question 1')
       .parent()
       .parent()
