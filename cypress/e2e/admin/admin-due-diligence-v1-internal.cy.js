@@ -41,6 +41,9 @@ describe('Downloads and Due Diligence', () => {
       'Admin V1 Internal - Download Submission Export - Searching for and starting application',
     );
     cy.get('[data-cy="cy-find-a-grant-link"]').click();
+
+    runAccessibility();
+
     searchForGrant(Cypress.env('testV1InternalGrant').advertName);
     cy.contains(Cypress.env('testV1InternalGrant').advertName).click();
     cy.contains('Start new application').invoke('removeAttr', 'target').click();
@@ -50,34 +53,45 @@ describe('Downloads and Due Diligence', () => {
       'Admin V1 Internal - Download Submission Export - Filling out Eligibility',
     );
     fillOutEligibity();
+    runAccessibility();
+
     log(
       'Admin V1 Internal - Download Submission Export - Filling out Required Checks',
     );
     fillOutRequiredChecks();
+    runAccessibility();
+
     log(
       'Admin V1 Internal - Download Submission Export - Filling out Custom Section with Doc upload',
     );
     fillOutCustomSection();
+    runAccessibility();
+
     log(
       'Admin V1 Internal - Download Submission Export - Submitting application',
     );
     cy.contains('Review and submit').click();
     submitApplication();
+    runAccessibility();
+
     log(
       'Admin V1 Internal - Download Submission Export - Declining Equality Section',
     );
     equalitySectionDecline();
+    runAccessibility();
 
     // Sign in as admin
     log(
       'Admin V1 Internal - Download Submission Export - Signing out as applicant',
     );
     signOut();
+    runAccessibility();
 
     log('Admin V1 Internal - Download Submission Export - signing in as admin');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsAdmin();
     cy.visit('/apply/admin/dashboard');
+    runAccessibility();
 
     // View V1 internal grant
     log('Admin V1 Internal - Download Submission Export - viewing grant');
@@ -85,6 +99,7 @@ describe('Downloads and Due Diligence', () => {
     cy.get(
       '[data-cy="cy_linkToScheme_Cypress - Test Scheme V1 Internal"]',
     ).click();
+    runAccessibility();
 
     log(
       'Admin V1 Internal - Download Submission Export - Initiating download of submission export',
@@ -92,10 +107,13 @@ describe('Downloads and Due Diligence', () => {
     cy.get(
       '[data-cy="cy_Scheme-details-page-button-View submitted application"]',
     ).click();
+    runAccessibility();
 
     cy.get('[data-cy="cy-button-Download submitted applications"]').click();
 
     cy.contains('A list of applications is being created');
+
+    runAccessibility();
 
     log(
       'Admin V1 Internal - Download Submission Export - Waiting for submission export lambda to execute',
