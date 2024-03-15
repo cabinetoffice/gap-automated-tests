@@ -55,6 +55,7 @@ import {
   readdQueuedSpotlightSubmissions,
   removeQueuedSpotlightSubmissions,
   updateSpotlightSubmissionStatus,
+  incrementApplicationFormVersion,
 } from '../ts/updateApplyData';
 import {
   ADMIN_ID,
@@ -79,6 +80,7 @@ import {
 } from './constants';
 
 import { retry } from '../helper';
+import { getTestID } from './helper';
 
 const FIRST_USER_ID = process.env.FIRST_USER_ID;
 const AWS_ENVIRONMENT = process.env.AWS_ENVIRONMENT;
@@ -146,6 +148,14 @@ const deleteApplySchemes = async (): Promise<void> => {
     applyDeleteSubstitutions,
   );
   console.log('Successfully deleted schemes');
+};
+
+const simulateMultipleApplicationFormEditors = async (): Promise<void> => {
+  const V1_APPLICATION_ID = getTestID();
+  console.log('Bumping application form version for ID:', V1_APPLICATION_ID);
+  await runSqlForApply([incrementApplicationFormVersion], {
+    [incrementApplicationFormVersion]: [V1_APPLICATION_ID],
+  });
 };
 
 const createApiKeysData = async (): Promise<void> => {
@@ -441,5 +451,6 @@ export {
   updateSpotlightSubmission,
   insertSubmissionAndExport,
   addAdminInTechSupportTable,
+  simulateMultipleApplicationFormEditors,
   type ApiKeyDb,
 };
