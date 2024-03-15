@@ -27,10 +27,7 @@ import {
   updateSpotlightSubmission,
   simulateMultipleApplicationFormEditors,
 } from './cypress/seed/apply/service';
-import {
-  publishGrantAdverts,
-  removeAdvertByName,
-} from './cypress/seed/contentful';
+import { publishGrantAdverts } from './cypress/seed/contentful';
 import { createFindData, deleteFindData } from './cypress/seed/find';
 import {
   addFailedOauthAudit,
@@ -129,11 +126,6 @@ export default defineConfig({
         },
         async createApiKeysInApiGatewayForTechnicalSupport() {
           await createApiKeysInApiGatewayForTechnicalSupport(1, 2);
-
-          return null;
-        },
-        async removeAdvertByName(name) {
-          await removeAdvertByName(name);
 
           return null;
         },

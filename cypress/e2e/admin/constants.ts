@@ -7,7 +7,6 @@ const TASKS = {
   ADD_SPOTLIGHT_BATCH: 'addSpotlightBatch',
   ADD_SUBMISSION_TO_MOST_RECENT_BATCH: 'addSubmissionToMostRecentBatch',
   CLEANUP_TEST_SPOTLIGHT_SUBMISSIONS: 'cleanupTestSpotlightSubmissions',
-  REMOVE_ADVERT_BY_NAME: 'removeAdvertByName',
 };
 
 const SPOTLIGHT_SUBMISSION_STATUS = {

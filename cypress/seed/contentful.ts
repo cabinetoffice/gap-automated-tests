@@ -1,382 +1,28 @@
 import * as contentful from 'contentful-management';
 import 'dotenv/config';
 import {
+  ADMIN_TEST_GRANT_NAME,
+  TEST_V1_EXTERNAL_GRANT,
+  TEST_V1_INTERNAL_GRANT,
+  TEST_V2_EXTERNAL_GRANT,
+  TEST_V2_INTERNAL_GRANT,
+} from '../common/constants';
+import { retry } from './helper';
+import {
+  SQSClient,
+  SendMessageCommand,
+  type SendMessageCommandInput,
+} from '@aws-sdk/client-sqs';
+import { getUUID } from './apply/helper';
+
+const ADVERTS = [
   TEST_V1_INTERNAL_GRANT,
   TEST_V1_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
-  ADMIN_TEST_GRANT_NAME,
-} from '../common/constants';
-import { retry } from './helper';
-
-const ADVERTS = [
-  {
-    fields: {
-      grantName: {
-        'en-US': TEST_V1_INTERNAL_GRANT.advertName,
-      },
-      grantMaximumAwardDisplay: {
-        'en-US': '£10,000',
-      },
-      grantWebpageUrl: {
-        'en-US': TEST_V1_INTERNAL_GRANT.applicationUrl,
-      },
-      grantMinimumAwardDisplay: {
-        'en-US': '£1',
-      },
-      grantSummaryTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantDatesTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantLocation: {
-        'en-US': ['National'],
-      },
-      grantApplicantType: {
-        'en-US': ['Personal / Individual'],
-      },
-      label: {
-        'en-US': TEST_V1_INTERNAL_GRANT.contentfulSlug,
-      },
-      grantMaximumAward: {
-        'en-US': 10000,
-      },
-      grantTotalAwardAmount: {
-        'en-US': 1000000,
-      },
-      grantApplicationCloseDate: {
-        'en-US': '2040-10-24T23:59',
-      },
-      grantObjectivesTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantSupportingInfoTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantMinimumAward: {
-        'en-US': 1,
-      },
-      grantApplyTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantApplicationOpenDate: {
-        'en-US': '2023-08-24T00:01',
-      },
-      grantEligibilityTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantTotalAwardDisplay: {
-        'en-US': '£1 million',
-      },
-      grantShortDescription: {
-        'en-US': 'This is a short description',
-      },
-      grantFunder: {
-        'en-US': 'The Department of Business',
-      },
-    },
-  },
-  {
-    fields: {
-      grantName: {
-        'en-US': TEST_V1_EXTERNAL_GRANT.advertName,
-      },
-      grantMaximumAwardDisplay: {
-        'en-US': '£10,000',
-      },
-      grantWebpageUrl: {
-        'en-US': TEST_V1_EXTERNAL_GRANT.applicationUrl,
-      },
-      grantMinimumAwardDisplay: {
-        'en-US': '£1',
-      },
-      grantSummaryTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantDatesTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantLocation: {
-        'en-US': ['National'],
-      },
-      grantApplicantType: {
-        'en-US': ['Personal / Individual'],
-      },
-      label: {
-        'en-US': TEST_V1_EXTERNAL_GRANT.contentfulSlug,
-      },
-      grantMaximumAward: {
-        'en-US': 10000,
-      },
-      grantTotalAwardAmount: {
-        'en-US': 1000000,
-      },
-      grantApplicationCloseDate: {
-        'en-US': '2040-10-24T23:59',
-      },
-      grantObjectivesTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantSupportingInfoTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantMinimumAward: {
-        'en-US': 1,
-      },
-      grantApplyTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantApplicationOpenDate: {
-        'en-US': '2023-08-24T00:01',
-      },
-      grantEligibilityTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantTotalAwardDisplay: {
-        'en-US': '£1 million',
-      },
-      grantShortDescription: {
-        'en-US': 'This is a short description',
-      },
-      grantFunder: {
-        'en-US': 'The Department of Business',
-      },
-    },
-  },
-  {
-    fields: {
-      grantName: {
-        'en-US': TEST_V2_INTERNAL_GRANT.advertName,
-      },
-      grantMaximumAwardDisplay: {
-        'en-US': '£500,000',
-      },
-      grantWebpageUrl: {
-        'en-US': TEST_V2_INTERNAL_GRANT.applicationUrl,
-      },
-      grantMinimumAwardDisplay: {
-        'en-US': '£1',
-      },
-      grantSummaryTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantDatesTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantLocation: {
-        'en-US': ['National'],
-      },
-      grantApplicantType: {
-        'en-US': ['Personal / Individual'],
-      },
-      label: {
-        'en-US': TEST_V2_INTERNAL_GRANT.contentfulSlug,
-      },
-      grantMaximumAward: {
-        'en-US': 500000,
-      },
-      grantTotalAwardAmount: {
-        'en-US': 1000000,
-      },
-      grantApplicationCloseDate: {
-        'en-US': '2035-10-24T23:59',
-      },
-      grantObjectivesTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantSupportingInfoTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantMinimumAward: {
-        'en-US': 1,
-      },
-      grantApplyTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantApplicationOpenDate: {
-        'en-US': '2013-08-24T00:01',
-      },
-      grantEligibilityTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantTotalAwardDisplay: {
-        'en-US': '£1 million',
-      },
-      grantShortDescription: {
-        'en-US': 'no',
-      },
-      grantFunder: {
-        'en-US': 'The Department of Business',
-      },
-    },
-  },
-  {
-    fields: {
-      grantName: {
-        'en-US': TEST_V2_EXTERNAL_GRANT.advertName,
-      },
-      grantMaximumAwardDisplay: {
-        'en-US': '£2',
-      },
-      grantWebpageUrl: {
-        'en-US': TEST_V2_EXTERNAL_GRANT.applicationUrl,
-      },
-      grantMinimumAwardDisplay: {
-        'en-US': '£1',
-      },
-      grantSummaryTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantDatesTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantLocation: {
-        'en-US': ['National'],
-      },
-      grantApplicantType: {
-        'en-US': ['Personal / Individual'],
-      },
-      label: {
-        'en-US': TEST_V2_EXTERNAL_GRANT.contentfulSlug,
-      },
-      grantMaximumAward: {
-        'en-US': 10000,
-      },
-      grantTotalAwardAmount: {
-        'en-US': 100000,
-      },
-      grantApplicationCloseDate: {
-        'en-US': '2050-10-24T23:59',
-      },
-      grantObjectivesTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantSupportingInfoTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantMinimumAward: {
-        'en-US': 1,
-      },
-      grantApplyTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantApplicationOpenDate: {
-        'en-US': '2023-08-24T00:01',
-      },
-      grantEligibilityTab: {
-        'en-US': {
-          nodeType: 'document',
-          content: [],
-          data: {},
-        },
-      },
-      grantTotalAwardDisplay: {
-        'en-US': '£1 million',
-      },
-      grantShortDescription: {
-        'en-US': 'no',
-      },
-      grantFunder: {
-        'en-US': 'The Department of Business',
-      },
-    },
-  },
 ];
 const SLUGS = [
-  ...ADVERTS.map((advert) => advert.fields.grantName['en-US']),
+  ...ADVERTS.map((advert) => advert.advertName),
   ADMIN_TEST_GRANT_NAME,
 ];
 
@@ -386,76 +32,46 @@ const advertIsPartOfSetup = (entry: contentful.Entry, advertName?: string) => {
   return SLUGS.includes(contentfulAdvertName);
 };
 
-const unpublishAndDelete = async (
-  entries: contentful.Collection<
-    contentful.Entry,
-    contentful.EntryProps<contentful.KeyValueMap>
-  >,
-  advertName?: string,
-) => {
-  let deletionExecuted = false;
-  for (const entry of entries.items) {
-    if (advertIsPartOfSetup(entry, advertName)) {
-      if (entry.isPublished())
-        await entry.unpublish().then(() => {
-          console.log(
-            `Unpublished grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
-          );
-        });
-      else
-        console.log(
-          `Grant advert not published, skipping ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
-        );
+const unpublishAndDelete = async (advertId: string) => {
+  const sqsClient = new SQSClient({ region: 'eu-west-2' });
 
-      await entry.delete().then(() => {
-        console.log(
-          `    Deleted grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
-        );
-        deletionExecuted = true;
-      });
-    }
-  }
-  return deletionExecuted;
+  const params: SendMessageCommandInput = {
+    MessageBody: getUUID(),
+    MessageAttributes: {
+      action: {
+        DataType: 'String',
+        StringValue: 'UNPUBLISH',
+      },
+      grantAdvertId: {
+        DataType: 'String',
+        StringValue: advertId,
+      },
+    },
+    QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
+  };
+
+  await sqsClient.send(new SendMessageCommand(params));
 };
 
-const createAndPublish = async (
-  environment: contentful.Environment,
-  advert: contentful.Entry,
-) => {
-  let entry = await environment.createEntry('grantDetails', advert);
-  console.log(
-    `Created grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
-  );
+const createAndPublish = async (advertId: string) => {
+  const sqsClient = new SQSClient({ region: 'eu-west-2' });
 
-  entry = await entry.publish();
-  console.log(
-    `Published grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
-  );
+  const params: SendMessageCommandInput = {
+    MessageBody: getUUID(),
+    MessageAttributes: {
+      action: {
+        DataType: 'String',
+        StringValue: 'PUBLISH',
+      },
+      grantAdvertId: {
+        DataType: 'String',
+        StringValue: advertId,
+      },
+    },
+    QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
+  };
 
-  let counter = 0;
-  entry = await environment.getEntry(entry.sys.id);
-  while (entry.sys.publishedVersion === 0) {
-    // Retrying due to a bug in contentful
-
-    entry = await entry.unpublish();
-    console.log(
-      `Attempt ${counter + 1}: Unpublished grant advert entry ${
-        entry.sys.id
-      } - ${entry.fields?.grantName?.['en-US']}`,
-    );
-
-    cy.wait(1000);
-
-    entry = await entry.publish();
-    console.log(
-      `Attempt ${counter + 1}: Published grant advert entry ${
-        entry.sys.id
-      } - ${entry.fields?.grantName?.['en-US']}`,
-    );
-
-    entry = await environment.getEntry(entry.sys.id);
-    if (counter++ > 5) break;
-  }
+  await sqsClient.send(new SendMessageCommand(params));
 };
 
 const setupContentful = async () => {
@@ -479,34 +95,39 @@ const areAllAdvertsPublished = (entries: { items: any[] }) => {
   return publishedAdverts.length === ADVERTS.length;
 };
 
+const isRequiredAndDraft = (entry: contentful.Entry) =>
+  advertIsPartOfSetup(entry) && entry.isDraft();
+
+const areAllAdvertsDraft = (entries: { items: any[] }) => {
+  const publishedAdverts = entries.items.filter(isRequiredAndDraft);
+  return publishedAdverts.length === ADVERTS.length;
+};
+
 export const publishGrantAdverts = async () => {
   console.log('Connecting to Contentful to manage grant adverts');
   const environment = await setupContentful();
 
-  console.log('Getting all adverts from Contentful');
-  const entries = await getContentfulEntries(environment);
-
   console.log('Initiating deletion of grant advert entries');
-  const deletionExecuted = await unpublishAndDelete(entries);
+  await Promise.all(
+    ADVERTS.map(async (advert) => await unpublishAndDelete(advert.advertId)),
+  );
 
-  if (!deletionExecuted) console.log('No grant adverts to be deleted');
+  await retry(
+    async () => await getContentfulEntries(environment),
+    areAllAdvertsDraft,
+    10,
+    1000,
+  );
 
   console.log('Initiating publication of grant advert');
   await Promise.all(
-    ADVERTS.map(async (advert) => await createAndPublish(environment, advert)),
+    ADVERTS.map(async (advert) => await createAndPublish(advert.advertId)),
   );
 
-  console.log('Validating that adverts are published before continuing');
   await retry(
     async () => await getContentfulEntries(environment),
     areAllAdvertsPublished,
     10,
     1000,
   );
-};
-
-export const removeAdvertByName = async (advertName: string) => {
-  const environment = await setupContentful();
-  const entries = await getContentfulEntries(environment);
-  await unpublishAndDelete(entries, advertName);
 };
