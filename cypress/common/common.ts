@@ -1,5 +1,6 @@
 import 'cypress-axe';
-import accessibilityLog from './accessibilityLog.js';
+
+// import accessibilityLog from './accessibilityLog';
 
 export const BASE_URL = Cypress.env('applicationBaseUrl');
 export const ONE_LOGIN_BASE_URL = Cypress.env('oneLoginSandboxBaseUrl');
@@ -275,7 +276,38 @@ export const validateValueForKeyInTable = (
     });
 };
 
-export function runAccessibility() {
-  cy.injectAxe();
-  cy.checkA11y(null, null, accessibilityLog);
+function accessibilityLogInfo(violationData) {
+  let currentURL;
+  cy.url().then((url) => {
+    currentURL = url;
+
+    let info = `${violationData.length} accessibility violation${
+      violationData.length === 1 ? '' : 's'
+    } ${
+      violationData.length === 1 ? 'was' : 'were'
+    } detected on page: ${currentURL}\n`;
+
+    violationData.forEach((violation) => {
+      info += `${violation.impact}: ${violation.description}\n`;
+
+      // TODO: Write this information to a file - example below of how we can write to files in Cypress
+      // cy.writeFile(`cypress/downloads/${filename}`, response.body, 'binary');
+    });
+
+    cy.log(info);
+  });
 }
+
+function violationCallback(violations) {
+  const violationData = violations.map(({ impact, description, tags }) => ({
+    impact,
+    description,
+    tags: tags.toString(),
+  }));
+  accessibilityLogInfo(violationData);
+}
+
+export const runAccessibility = () => {
+  cy.injectAxe();
+  cy.checkA11y(null, null, violationCallback, true);
+};
