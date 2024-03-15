@@ -130,6 +130,9 @@ export default defineConfig({
           return null;
         },
         async publishGrantsToContentful() {
+          await deleteApplyData().then(async () => {
+            await createApplyData();
+          });
           await publishGrantAdverts();
 
           return null;

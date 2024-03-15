@@ -37,6 +37,8 @@ const unpublishAndDelete = async (advertId: string) => {
 
   const params: SendMessageCommandInput = {
     MessageBody: getUUID(),
+    MessageGroupId: getUUID(),
+    MessageDeduplicationId: getUUID(),
     MessageAttributes: {
       action: {
         DataType: 'String',
@@ -58,6 +60,8 @@ const createAndPublish = async (advertId: string) => {
 
   const params: SendMessageCommandInput = {
     MessageBody: getUUID(),
+    MessageGroupId: getUUID(),
+    MessageDeduplicationId: getUUID(),
     MessageAttributes: {
       action: {
         DataType: 'String',
