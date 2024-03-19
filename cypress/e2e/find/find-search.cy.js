@@ -3,7 +3,7 @@ import { clickThroughPagination, countNumberOfPages } from './helper';
 
 describe('Find a Grant - Search', () => {
   before(() => {
-    cy.task('publishGrantsToContentful');
+    cy.task('setUpApplyData');
   });
 
   beforeEach(() => {

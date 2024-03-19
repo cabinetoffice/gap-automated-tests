@@ -39,8 +39,6 @@ describe('Apply for a Grant V2', () => {
   });
 
   it('Mandatory Questions Flow - Empty & Filled Organisation Profile', () => {
-    cy.task('publishGrantsToContentful');
-
     log('Apply V2 Internal MQ Empty - Signing in as applicant');
     // Sign in
     cy.get('[data-cy="cySignInAndApply-Link"]').click();

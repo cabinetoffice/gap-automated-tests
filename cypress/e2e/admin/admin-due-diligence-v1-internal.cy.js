@@ -26,11 +26,8 @@ describe('Downloads and Due Diligence', () => {
 
   it('V1 Internal - Download Submission Export', () => {
     // Publish grants and insert submissions
-    cy.task('publishGrantsToContentful');
     cy.task('insertSubmissionsAndMQs');
     it.skip('V1 Internal - Download Submission Export', () => {
-      cy.task('publishGrantsToContentful');
-
       // Sign in and complete application as applicant
       cy.get('[data-cy="cySignInAndApply-Link"]').click();
       log(

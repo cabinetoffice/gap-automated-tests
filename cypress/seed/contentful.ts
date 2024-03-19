@@ -1,17 +1,16 @@
 import * as contentful from 'contentful-management';
 import 'dotenv/config';
 import {
-  ADMIN_TEST_GRANT_NAME,
-  TEST_V1_EXTERNAL_GRANT,
   TEST_V1_INTERNAL_GRANT,
-  TEST_V2_EXTERNAL_GRANT,
+  TEST_V1_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
+  TEST_V2_EXTERNAL_GRANT,
 } from '../common/constants';
 import { retry } from './helper';
 import {
   SQSClient,
-  SendMessageCommand,
-  type SendMessageCommandInput,
+  SendMessageBatchCommand,
+  type SendMessageBatchCommandInput,
 } from '@aws-sdk/client-sqs';
 import { getUUID } from './apply/helper';
 
@@ -21,10 +20,37 @@ const ADVERTS = [
   TEST_V2_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
 ];
-const SLUGS = [
-  ...ADVERTS.map((advert) => advert.advertName),
-  ADMIN_TEST_GRANT_NAME,
-];
+
+const SLUGS = ADVERTS.map((advert) => advert.advertName);
+
+const createAndPublish = async (advertIds: string[]) => {
+  const sqsClient = new SQSClient({ region: 'eu-west-2' });
+
+  const params: SendMessageBatchCommandInput = {
+    QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
+    Entries: advertIds.map((advertId, index) => {
+      const id = getUUID(index);
+      return {
+        Id: id,
+        MessageBody: id,
+        MessageGroupId: id,
+        MessageDeduplicationId: id,
+        MessageAttributes: {
+          action: {
+            DataType: 'String',
+            StringValue: 'PUBLISH',
+          },
+          grantAdvertId: {
+            DataType: 'String',
+            StringValue: advertId,
+          },
+        },
+      };
+    }),
+  };
+
+  await sqsClient.send(new SendMessageBatchCommand(params));
+};
 
 const advertIsPartOfSetup = (entry: contentful.Entry, advertName?: string) => {
   const contentfulAdvertName = entry.fields?.grantName?.['en-US'];
@@ -32,50 +58,49 @@ const advertIsPartOfSetup = (entry: contentful.Entry, advertName?: string) => {
   return SLUGS.includes(contentfulAdvertName);
 };
 
-const unpublishAndDelete = async (advertId: string) => {
-  const sqsClient = new SQSClient({ region: 'eu-west-2' });
+const unpublishAndDelete = async (
+  entries: contentful.Collection<
+    contentful.Entry,
+    contentful.EntryProps<contentful.KeyValueMap>
+  >,
+  advertName?: string,
+) => {
+  let deletionExecuted = false;
+  for (const entry of entries.items) {
+    if (advertIsPartOfSetup(entry, advertName)) {
+      if (entry.isPublished()) {
+        await entry.unpublish();
+        console.log(
+          `Unpublished grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
+        );
+      } else {
+        console.log(
+          `Grant advert not published, skipping ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
+        );
+      }
 
-  const params: SendMessageCommandInput = {
-    MessageBody: getUUID(),
-    MessageGroupId: getUUID(),
-    MessageDeduplicationId: getUUID(),
-    MessageAttributes: {
-      action: {
-        DataType: 'String',
-        StringValue: 'UNPUBLISH',
-      },
-      grantAdvertId: {
-        DataType: 'String',
-        StringValue: advertId,
-      },
-    },
-    QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
-  };
+      await entry.delete();
+      await fetch(
+        `${process.env.OPEN_SEARCH_URL}/${process.env.OPEN_SEARCH_DOMAIN}/_doc/${entry.sys.id}`,
+        {
+          method: 'DELETE',
+          headers: new Headers({
+            Authorization:
+              'Basic ' +
+              btoa(
+                `${process.env.OPEN_SEARCH_USERNAME}:${process.env.OPEN_SEARCH_PASSWORD}`,
+              ),
+          }),
+        },
+      );
 
-  await sqsClient.send(new SendMessageCommand(params));
-};
-
-const createAndPublish = async (advertId: string) => {
-  const sqsClient = new SQSClient({ region: 'eu-west-2' });
-
-  const params: SendMessageCommandInput = {
-    MessageBody: getUUID(),
-    MessageGroupId: getUUID(),
-    MessageDeduplicationId: getUUID(),
-    MessageAttributes: {
-      action: {
-        DataType: 'String',
-        StringValue: 'PUBLISH',
-      },
-      grantAdvertId: {
-        DataType: 'String',
-        StringValue: advertId,
-      },
-    },
-    QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
-  };
-
-  await sqsClient.send(new SendMessageCommand(params));
+      console.log(
+        `Deleted grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
+      );
+      deletionExecuted = true;
+    }
+  }
+  return deletionExecuted;
 };
 
 const setupContentful = async () => {
@@ -99,39 +124,32 @@ const areAllAdvertsPublished = (entries: { items: any[] }) => {
   return publishedAdverts.length === ADVERTS.length;
 };
 
-const isRequiredAndDraft = (entry: contentful.Entry) =>
-  advertIsPartOfSetup(entry) && entry.isDraft();
-
-const areAllAdvertsDraft = (entries: { items: any[] }) => {
-  const publishedAdverts = entries.items.filter(isRequiredAndDraft);
-  return publishedAdverts.length === ADVERTS.length;
-};
-
 export const publishGrantAdverts = async () => {
   console.log('Connecting to Contentful to manage grant adverts');
   const environment = await setupContentful();
 
-  console.log('Initiating deletion of grant advert entries');
-  await Promise.all(
-    ADVERTS.map(async (advert) => await unpublishAndDelete(advert.advertId)),
-  );
+  console.log('Getting all adverts from Contentful');
+  const entries = await getContentfulEntries(environment);
 
-  await retry(
-    async () => await getContentfulEntries(environment),
-    areAllAdvertsDraft,
-    10,
-    1000,
-  );
+  console.log('Initiating deletion of grant advert entries');
+  const deletionExecuted = await unpublishAndDelete(entries);
+
+  if (!deletionExecuted) console.log('No grant adverts to be deleted');
 
   console.log('Initiating publication of grant advert');
-  await Promise.all(
-    ADVERTS.map(async (advert) => await createAndPublish(advert.advertId)),
-  );
+  await createAndPublish(ADVERTS.map((advert) => advert.advertId));
 
+  console.log('Validating that adverts are published before continuing');
   await retry(
     async () => await getContentfulEntries(environment),
     areAllAdvertsPublished,
-    10,
+    60,
     1000,
   );
+};
+
+export const removeAdvertByName = async (advertName: string) => {
+  const environment = await setupContentful();
+  const entries = await getContentfulEntries(environment);
+  await unpublishAndDelete(entries, advertName);
 };

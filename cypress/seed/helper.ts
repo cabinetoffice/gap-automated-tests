@@ -12,7 +12,7 @@ const retry = async (
     console.log('attempt', i + 1, ' at running script');
     const response = await func();
     if (condition(response)) return response;
-    if (i < maxAttempts - 1) sleep(delay);
+    if (i < maxAttempts - 1) await sleep(delay);
   }
   console.log(
     'Could not get good response from script in ',

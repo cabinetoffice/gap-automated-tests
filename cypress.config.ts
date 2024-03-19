@@ -17,7 +17,6 @@ import {
   createApplyData,
   deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
-  deleteApplyData,
   deleteApplySchemes,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
@@ -26,8 +25,8 @@ import {
   insertSubmissionsAndMQs,
   updateSpotlightSubmission,
   simulateMultipleApplicationFormEditors,
+  deleteApplyData,
 } from './cypress/seed/apply/service';
-import { publishGrantAdverts } from './cypress/seed/contentful';
 import { createFindData, deleteFindData } from './cypress/seed/find';
 import {
   addFailedOauthAudit,
@@ -37,6 +36,7 @@ import {
   deleteTestUsers,
   removeTechSupportRoleFromAdmin,
 } from './cypress/seed/user';
+import { publishGrantAdverts } from './cypress/seed/contentful';
 const xlsx = require('node-xlsx').default;
 const fs = require('fs');
 const decompress = require('decompress');
@@ -83,9 +83,9 @@ export default defineConfig({
           return null;
         },
         async setUpApplyData() {
-          await deleteApplyData().then(async () => {
-            await createApplyData();
-          });
+          await deleteApplyData();
+          await createApplyData();
+          await publishGrantAdverts();
 
           return null;
         },
@@ -126,14 +126,6 @@ export default defineConfig({
         },
         async createApiKeysInApiGatewayForTechnicalSupport() {
           await createApiKeysInApiGatewayForTechnicalSupport(1, 2);
-
-          return null;
-        },
-        async publishGrantsToContentful() {
-          await deleteApplyData().then(async () => {
-            await createApplyData();
-          });
-          await publishGrantAdverts();
 
           return null;
         },

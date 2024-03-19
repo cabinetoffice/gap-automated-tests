@@ -25,7 +25,6 @@ describe('Apply for a Grant', () => {
   beforeEach(() => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
-    cy.task('publishGrantsToContentful');
     signInToIntegrationSite();
   });
 

@@ -13,8 +13,6 @@ describe('Apply for a Grant', () => {
   });
 
   it('Can complete V1 External grant journey', () => {
-    cy.task('publishGrantsToContentful');
-
     // Sign in
     log('Apply V1 External Grant - Signing in as applicant');
     cy.get('[data-cy="cySignInAndApply-Link"]').click();

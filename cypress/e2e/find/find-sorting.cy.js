@@ -9,7 +9,6 @@ describe('Sort search results', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     cy.task('setUpFindData');
-    cy.task('publishGrantsToContentful');
 
     signInToIntegrationSite();
   });

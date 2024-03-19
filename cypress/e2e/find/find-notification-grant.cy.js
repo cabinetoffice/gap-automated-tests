@@ -20,8 +20,6 @@ describe('Find a Grant - Grant Notification', () => {
   });
 
   it('can subscribe and unsubscribe from updates for a SINGLE grant', () => {
-    cy.task('publishGrantsToContentful');
-
     // --- UNAUTHENTICATED JOURNEY ---
     // go to home page
     cy.contains('Find a grant');
