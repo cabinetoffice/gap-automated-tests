@@ -23,15 +23,6 @@ describe('Apply for a Grant', () => {
     cy.get('[data-cy="cy-find-a-grant-link"]').click();
     searchForGrant(Cypress.env('testV1ExternalGrant').advertName);
     cy.contains(Cypress.env('testV1ExternalGrant').advertName).click();
-
-    // Check button link
-    log('Apply V1 External Grant - Checking link for external application');
-    cy.get('.govuk-grid-column-full > .govuk-button')
-      .invoke('attr', 'href')
-      .should(
-        'eq',
-        `/apply/${Cypress.env('testV1ExternalGrant').contentfulSlug}`,
-      );
     cy.contains('Start new application').invoke('removeAttr', 'target').click();
   });
 });

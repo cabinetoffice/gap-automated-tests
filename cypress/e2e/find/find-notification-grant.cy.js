@@ -99,7 +99,7 @@ describe('Find a Grant - Grant Notification', () => {
     cy.get('[name="searchTerm"]').type(grantAdvertName);
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
-    cy.get(`#${Cypress.env('testV1InternalGrant').contentfulSlug}`)
+    cy.get(`[id="${Cypress.env('testV1InternalGrant').advertName}"]`)
       .children('h2')
       .should('have.text', grantAdvertName)
       .click();
