@@ -24,13 +24,7 @@ const ADVERTS = [
 const SLUGS = ADVERTS.map((advert) => advert.advertName);
 
 const createAndPublish = async (advertIds: string[]) => {
-  const sqsClient = new SQSClient({
-    region: 'eu-west-2',
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    },
-  });
+  const sqsClient = new SQSClient({ region: 'eu-west-2' });
 
   const params: SendMessageBatchCommandInput = {
     QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
