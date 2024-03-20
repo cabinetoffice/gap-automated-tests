@@ -7,6 +7,7 @@ import {
   signOut,
   clickBack,
   log,
+  runAccessibility,
 } from '../../common/common';
 import {
   equalitySectionAccept,
@@ -31,14 +32,20 @@ describe('Apply for a Grant', () => {
 
   it('Can start, save, come back, continue and submit new grant application for V1 Internal Grant', () => {
     log('Apply V1 Internal Grant - Searching for grant');
+    runAccessibility();
+
     searchForGrant(Cypress.env('testV1InternalGrant').advertName);
+    runAccessibility();
 
     cy.contains(Cypress.env('testV1InternalGrant').advertName).click();
+    runAccessibility();
 
     cy.contains('Start new application').invoke('removeAttr', 'target').click();
+    runAccessibility();
 
     log('Apply V1 Internal Grant - Signing in as applicant');
     signInAsApplyApplicant();
+    runAccessibility();
 
     // checks 'mailto' support email link
     cy.get('[data-cy="cy-support-email"]').should(
@@ -49,29 +56,40 @@ describe('Apply for a Grant', () => {
 
     log('Apply V1 Internal Grant - Filling out Eligibility');
     fillOutEligibity();
+    runAccessibility();
 
     // test sign out and back in
     log('Apply V1 Internal Grant - Signing out');
     cy.contains('Save and come back later').click();
+    runAccessibility();
 
     signOut();
+    runAccessibility();
 
     log('Apply V1 Internal Grant - Signing back in as applicant');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
+
     signInAsApplyApplicant();
+    runAccessibility();
     cy.visit('/apply/applicant/dashboard');
+    runAccessibility();
 
     log('Apply V1 Internal Grant - Returning to in progress application');
     cy.get('[data-cy="cy-your-applications-link"]').click();
+    runAccessibility();
     cy.contains('Edit').click();
+    runAccessibility();
 
     cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
 
     log('Apply V1 Internal Grant - Filling out Required Checks');
     fillOutRequiredChecks();
+    runAccessibility();
 
     log('Apply V1 Internal Grant - Filling out Custom Section');
     fillOutCustomSection();
+    runAccessibility();
 
     cy.get('[data-cy="cy-status-tag-Eligibility-Completed"]');
     cy.get('[data-cy="cy-status-tag-Required checks-Completed"]');
@@ -82,27 +100,42 @@ describe('Apply for a Grant', () => {
     cy.contains('Review and submit').should('not.be.disabled');
 
     cy.contains('Custom Section').click();
+    runAccessibility();
 
     clickSaveAndContinue();
+    runAccessibility();
     clickSaveAndContinue();
+    runAccessibility();
     clickSaveAndContinue();
+    runAccessibility();
     clickSaveAndContinue();
+    runAccessibility();
     clickSaveAndContinue();
+    runAccessibility();
 
+    runAccessibility();
     cy.contains('Custom Question 6');
     cy.contains('Uploaded File');
     cy.contains('example.doc');
     cy.contains('Remove File').click();
     cy.get('[data-testid="file-upload-input"]');
+    runAccessibility();
 
     clickBack();
+    runAccessibility();
     clickBack();
+    runAccessibility();
     clickBack();
+    runAccessibility();
     clickBack();
+    runAccessibility();
     clickBack();
+    runAccessibility();
     clickBack();
+    runAccessibility();
 
     cy.contains('Your Application');
+    runAccessibility();
 
     cy.get('[data-cy="cy-status-tag-Custom Section-In Progress"]');
 
@@ -111,23 +144,34 @@ describe('Apply for a Grant', () => {
     // re-add doc upload
     log('Apply V1 Internal Grant - Re-adding uploaded doc to submission');
     cy.get('[data-cy="cy-section-title-link-Custom Section"]').click();
+    runAccessibility();
 
     clickSaveAndContinue();
+    runAccessibility();
     clickSaveAndContinue();
+    runAccessibility();
     clickSaveAndContinue();
+    runAccessibility();
     clickSaveAndContinue();
+    runAccessibility();
     clickSaveAndContinue();
+    runAccessibility();
 
     fillOutDocUpload();
+    runAccessibility();
 
     clickSaveAndContinue();
+    runAccessibility();
+
     yesSectionComplete();
+    runAccessibility();
     cy.get('[data-cy="cy-status-tag-Custom Section-Completed"]');
 
     cy.contains('Review and submit').should('not.be.disabled');
 
     log('Apply V1 Internal Grant - Reviewing submission');
     cy.contains('Review and submit').click();
+    runAccessibility();
 
     validateSubmissionSummarySection('Eligibility', [
       { key: 'Eligibility Statement', value: 'Yes' },
@@ -178,7 +222,11 @@ describe('Apply for a Grant', () => {
     cy.get('[data-cy="cy-APPLICANT_ORG_NAME-text-input"]').type(
       '{selectall}{backspace}My Second Org',
     );
+    runAccessibility();
+
     clickSaveAndContinue();
+    runAccessibility();
+
     validateSubmissionSummarySection('Required checks', [
       { key: 'Enter the name of your organisation', value: 'My Second Org' },
     ]);
@@ -194,6 +242,7 @@ describe('Apply for a Grant', () => {
     cy.get('[data-cy="cy-checkbox-value-Choice 1"]').click();
     cy.get('[data-cy="cy-checkbox-value-Choice 2"]').click();
     clickSaveAndContinue();
+    runAccessibility();
     validateSubmissionSummarySection('Custom Section', [
       { key: 'Custom Question 5', value: '-' },
     ]);
@@ -201,12 +250,15 @@ describe('Apply for a Grant', () => {
     // submit
     log('Apply V1 Internal Grant - Submitting application');
     submitApplication();
+    runAccessibility();
 
     log('Apply V1 Internal Grant - Filling out equality section');
     equalitySectionAccept();
+    runAccessibility();
 
     log('Apply V1 Internal Grant - Viewing submission');
     cy.contains('View your applications').click();
+    runAccessibility();
 
     cy.contains('Your applications');
     cy.contains('All of your current and past applications are listed below.');
