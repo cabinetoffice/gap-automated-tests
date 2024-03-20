@@ -36,7 +36,10 @@ import {
   deleteTestUsers,
   removeTechSupportRoleFromAdmin,
 } from './cypress/seed/user';
-import { publishGrantAdverts } from './cypress/seed/contentful';
+import {
+  publishGrantAdverts,
+  removeAdvertByName,
+} from './cypress/seed/contentful';
 const xlsx = require('node-xlsx').default;
 const fs = require('fs');
 const decompress = require('decompress');
@@ -92,6 +95,11 @@ export default defineConfig({
           await deleteApplyData();
           await createApplyData({ publishedAds: false });
           await publishGrantAdverts();
+
+          return null;
+        },
+        async removeAdvertByName(name) {
+          await removeAdvertByName(name);
 
           return null;
         },
