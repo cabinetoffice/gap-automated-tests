@@ -124,6 +124,8 @@ jobs:
           OPEN_SEARCH_URL=${{ secrets[format('{0}_OPEN_SEARCH_URL', inputs.environment)] }}
           OPEN_SEARCH_USERNAME=${{ secrets[format('{0}_OPEN_SEARCH_USERNAME', inputs.environment)] }}
           PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE=${{ secrets[format('{0}_PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE', inputs.environment)] }}
+          AWS_ACCESS_KEY_ID=${{ vars['AWS_ACCESS_KEY_ID'] }}
+          AWS_SECRET_ACCESS_KEY=${{ secrets['AWS_SECRET_ACCESS_KEY'] }}
           AWS_API_GATEWAY_REGION=${{ vars.AWS_REGION }}
           AWS_API_GATEWAY_ACCESS_KEY=${{ secrets.AWS_API_GATEWAY_ACCESS_KEY }}
           AWS_API_GATEWAY_SECRET_KEY=${{ secrets.AWS_API_GATEWAY_SECRET_KEY }}
