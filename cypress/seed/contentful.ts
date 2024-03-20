@@ -12,6 +12,7 @@ import {
   SendMessageBatchCommand,
   type SendMessageBatchCommandInput,
 } from '@aws-sdk/client-sqs';
+import { randomUUID } from 'crypto';
 
 const ADVERTS = [
   TEST_V1_INTERNAL_GRANT,
@@ -28,7 +29,7 @@ const createAndPublish = async (advertIds: string[]) => {
   const params: SendMessageBatchCommandInput = {
     QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
     Entries: advertIds.map((advertId, index) => {
-      const id = crypto.randomUUID();
+      const id = randomUUID();
       return {
         Id: id,
         MessageBody: id,
@@ -79,19 +80,7 @@ const unpublishAndDelete = async (
       }
 
       await entry.delete();
-      await fetch(
-        `${process.env.OPEN_SEARCH_URL}/${process.env.OPEN_SEARCH_DOMAIN}/_doc/${entry.sys.id}`,
-        {
-          method: 'DELETE',
-          headers: new Headers({
-            Authorization:
-              'Basic ' +
-              btoa(
-                `${process.env.OPEN_SEARCH_USERNAME}:${process.env.OPEN_SEARCH_PASSWORD}`,
-              ),
-          }),
-        },
-      );
+      await deleteFromOpenSearch(entry.sys.id);
 
       console.log(
         `Deleted grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
@@ -99,7 +88,24 @@ const unpublishAndDelete = async (
       deletionExecuted = true;
     }
   }
+
   return deletionExecuted;
+};
+
+const deleteFromOpenSearch = async (entryId: string) => {
+  await fetch(
+    `${process.env.OPEN_SEARCH_URL}/${process.env.OPEN_SEARCH_DOMAIN}/_doc/${entryId}`,
+    {
+      method: 'DELETE',
+      headers: new Headers({
+        Authorization:
+          'Basic ' +
+          btoa(
+            `${process.env.OPEN_SEARCH_USERNAME}:${process.env.OPEN_SEARCH_PASSWORD}`,
+          ),
+      }),
+    },
+  );
 };
 
 const setupContentful = async () => {

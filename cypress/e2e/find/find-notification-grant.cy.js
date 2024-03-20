@@ -28,7 +28,7 @@ describe('Find a Grant - Grant Notification', () => {
     // search for and view test grant advert
     searchForGrant(grantAdvertName);
 
-    cy.get(`#${Cypress.env('testV1InternalGrant').contentfulSlug}`)
+    cy.get(`#${Cypress.env('testV1InternalGrant').advertName}`)
       .children('h2')
       .should('have.text', grantAdvertName)
       .click();

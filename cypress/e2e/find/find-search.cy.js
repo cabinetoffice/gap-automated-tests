@@ -59,7 +59,7 @@ describe('Find a Grant - Search', () => {
       'Closing date': '24 October 2040, 11:59pm',
     };
     Object.entries(grantData).forEach(([key, value]) => {
-      const elementId = `#${Cypress.env('testV1InternalGrant').contentfulSlug}`;
+      const elementId = `#${Cypress.env('testV1InternalGrant').advertName}`;
       cy.get(elementId).contains(key);
       cy.get(elementId).contains(value);
     });
