@@ -36,7 +36,7 @@ describe('Super Admin', () => {
     log(
       'Super Admin Navigation - Verifying that the user is on the admin dashboard',
     );
-    cy.contains('Manage a grant');
+    cy.contains('All of the grants linked to your account are listed below.');
 
     cy.visit(SUPER_ADMIN_DASHBOARD);
 

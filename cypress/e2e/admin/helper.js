@@ -23,8 +23,8 @@ export function createGrant(GRANT_NAME) {
 
   cy.get('[data-cy=cy_addAGrantButton]').click();
 
-  cy.get('[data-cy=cy-name-text-input]').click();
-  cy.get('[data-cy=cy-name-text-input]').type(GRANT_NAME, { force: true });
+  cy.get('[data-cy=cy-grantName-text-input]').click();
+  cy.get('[data-cy=cy-grantName-text-input]').type(GRANT_NAME, { force: true });
 
   clickSaveAndContinue();
 
@@ -486,8 +486,10 @@ export function advertSection2() {
 export function advertSection1(GRANT_NAME) {
   cy.get('[data-cy=cyBuildAdvert]').click();
 
-  cy.get('[data-cy=cy-name-text-input]').click();
-  cy.get('[data-cy=cy-name-text-input]').type(GRANT_NAME, { force: true });
+  cy.get('[data-cy=cy-advertName-text-input]').click();
+  cy.get('[data-cy=cy-advertName-text-input]').type(GRANT_NAME, {
+    force: true,
+  });
 
   clickSaveAndContinue();
 
