@@ -23,9 +23,9 @@ const ADVERTS = [
 
 const SLUGS = ADVERTS.map((advert) => advert.advertName);
 
-const createAndPublish = async (advertIds: string[]) => {
-  const sqsClient = new SQSClient({ region: 'eu-west-2' });
+const sqsClient = new SQSClient({ region: 'eu-west-2' });
 
+const createAndPublish = async (advertIds: string[]) => {
   const params: SendMessageBatchCommandInput = {
     QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
     Entries: advertIds.map((advertId, index) => {
@@ -48,6 +48,8 @@ const createAndPublish = async (advertIds: string[]) => {
       };
     }),
   };
+
+  console.log('Sending message to SQS: ', params);
 
   await sqsClient.send(new SendMessageBatchCommand(params));
 };
