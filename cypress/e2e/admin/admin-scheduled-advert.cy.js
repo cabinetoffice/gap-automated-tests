@@ -1,5 +1,6 @@
 import {
   log,
+  runAccessibility,
   signInAsAdmin,
   signInToIntegrationSite,
 } from '../../common/common';
@@ -26,41 +27,51 @@ describe('Create a Grant', () => {
   it('View scheme details with a scheduled advert', () => {
     cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
     signInAsAdmin();
+    runAccessibility();
     log('View scheme details with scheduled advert journey  - creating Grant');
     createGrant(GRANT_NAME + ' no application form');
+    runAccessibility();
 
     // create advert
     log(
       'View scheme details with scheduled advert journey - creating Advert Section 1',
     );
     advertSection1(GRANT_NAME);
+    runAccessibility();
     log(
       'View scheme details with scheduled advert journey - creating Advert Section 2',
     );
     advertSection2();
+    runAccessibility();
     log(
       'View scheme details with scheduled advert journey - creating Advert Section 3',
     );
     advertSection3(true);
+    runAccessibility();
     log(
       'View scheme details with scheduled advert journey - creating Advert Section 4',
     );
     advertSection4();
+    runAccessibility();
     log(
       'View scheme details with scheduled advert journey - creating Advert Section 5',
     );
     advertSection5();
+    runAccessibility();
 
     log(
       'View scheme details with scheduled advert journey - publishing advert',
     );
     publishAdvert(true);
+    runAccessibility();
 
     log(
       'Scheme details with an in progress advert journey - submitting feedback form',
     );
     cy.contains('Send feedback').click();
+    runAccessibility();
 
     cy.contains('Grant advert');
     cy.contains('Your advert is scheduled to be published on');
