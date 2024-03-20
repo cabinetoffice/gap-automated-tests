@@ -12,7 +12,6 @@ import {
   SendMessageBatchCommand,
   type SendMessageBatchCommandInput,
 } from '@aws-sdk/client-sqs';
-import { getUUID } from './apply/helper';
 
 const ADVERTS = [
   TEST_V1_INTERNAL_GRANT,
@@ -29,7 +28,7 @@ const createAndPublish = async (advertIds: string[]) => {
   const params: SendMessageBatchCommandInput = {
     QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
     Entries: advertIds.map((advertId, index) => {
-      const id = getUUID(index);
+      const id = crypto.randomUUID();
       return {
         Id: id,
         MessageBody: id,
@@ -49,7 +48,7 @@ const createAndPublish = async (advertIds: string[]) => {
     }),
   };
 
-  console.log('Sending message to SQS: ', params);
+  console.log('Sending message to SQS: ', params.Entries[0].MessageAttributes);
 
   await sqsClient.send(new SendMessageBatchCommand(params));
 };
