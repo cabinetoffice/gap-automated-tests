@@ -42,10 +42,18 @@ INSERT INTO public.grant_applicant_organisation_profile(id, address_line1, addre
 
 const insertSchemes: string = `
 INSERT INTO public.grant_scheme(grant_scheme_id, funder_id, version, ggis_identifier, created_date, last_updated, last_updated_by, scheme_name, scheme_contact, created_by)
-    VALUES ($1, $2, 1, 'GGIS_ID_1', NOW(), NOW(), $3, 'Cypress - Test Scheme V1 Internal', $4, $5),
-           ($6, $7, 2, 'GGIS_ID_2', NOW(), NOW(), $8, 'Cypress - Test Scheme V2 Internal', $9, $10),
-           ($11, $12, 2, 'GGIS_ID_3', NOW(), NOW(), $13, 'Cypress - Test Scheme V2 External', $14, $15),
-           ($16, $17, 1, 'GGIS_ID_4', NOW(), NOW(), $18, 'Cypress - Test Scheme V1 External', $19, $20);
+    VALUES ($1, $2, 1, 'GGIS_ID_1', NOW(), NOW(), $3, 'Cypress - Test Scheme V1 Internal ID:${
+      process.env.FIRST_USER_ID
+    }', $4, $5),
+           ($6, $7, 2, 'GGIS_ID_2', NOW(), NOW(), $8, 'Cypress - Test Scheme V2 Internal ID:${
+             process.env.FIRST_USER_ID + 1
+           }', $9, $10),
+           ($11, $12, 2, 'GGIS_ID_3', NOW(), NOW(), $13, 'Cypress - Test Scheme V2 External ID:${
+             process.env.FIRST_USER_ID + 2
+           }', $14, $15),
+           ($16, $17, 1, 'GGIS_ID_4', NOW(), NOW(), $18, 'Cypress - Test Scheme V1 External ID:${
+             process.env.FIRST_USER_ID + 3
+           }', $19, $20);
 `;
 
 const insertEditors: string = `
