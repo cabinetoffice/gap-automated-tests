@@ -32,6 +32,7 @@ import {
   createApiKeyBaseQuery,
   createApiKeysFundingOrganisations,
   insertAdmins,
+  insertAdverts,
   insertApplicants,
   insertApplications,
   insertDraftAdverts,
@@ -97,7 +98,11 @@ const runSqlForApply = async (
     applyDatabaseUrl,
   );
 
-const createApplyData = async (): Promise<void> => {
+const createApplyData = async ({
+  publishedAds,
+}: {
+  publishedAds: boolean;
+}): Promise<void> => {
   await runSqlForApply(
     [
       insertApplicants,
@@ -109,7 +114,7 @@ const createApplyData = async (): Promise<void> => {
       insertSchemes,
       insertEditors,
       insertApplications,
-      insertDraftAdverts,
+      publishedAds ? insertAdverts : insertDraftAdverts,
     ],
     applyInsertSubstitutions,
   );

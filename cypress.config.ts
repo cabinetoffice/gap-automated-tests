@@ -84,7 +84,13 @@ export default defineConfig({
         },
         async setUpApplyData() {
           await deleteApplyData();
-          await createApplyData();
+          await createApplyData({ publishedAds: true });
+
+          return null;
+        },
+        async setUpApplyDataWithAds() {
+          await deleteApplyData();
+          await createApplyData({ publishedAds: false });
           await publishGrantAdverts();
 
           return null;

@@ -74,6 +74,15 @@ INSERT INTO public.grant_application (grant_application_id, grant_scheme_id, ver
             );
 `;
 
+const insertAdverts: string = `
+INSERT INTO public.grant_advert(grant_advert_id, created, grant_advert_name, last_updated, response, status, version, created_by, last_updated_by, scheme_id, opening_date, closing_date, first_published_date, last_published_date, unpublished_date)
+    VALUES
+        ($1, now(), $2, now(), $3, 'PUBLISHED', 1, $4, $5, $6, now(), now() + interval '3 days', null, null, null),
+        ($7, now(), $8, now(), $9, 'PUBLISHED', 2, $10, $11, $12, now(), now() + interval '3 days', null, null, null),
+        ($13, now(), $14, now(), $15, 'PUBLISHED', 2, $16, $17, $18, now(), now() + interval '3 days', null, null, null ),
+        ($19, now(), $20, now(), $21, 'PUBLISHED', 1, $22, $23, $24, now(), now() + interval '3 days', null, null, null );
+`;
+
 const insertDraftAdverts: string = `
 INSERT INTO public.grant_advert(grant_advert_id, created, grant_advert_name, last_updated, response, status, version, created_by, last_updated_by, scheme_id, opening_date, closing_date, first_published_date, last_published_date, unpublished_date)
     VALUES
@@ -194,6 +203,7 @@ export {
   createApiKeyBaseQuery,
   createApiKeysFundingOrganisations,
   insertAdmins,
+  insertAdverts,
   insertDraftAdverts,
   insertApplicants,
   insertApplications,

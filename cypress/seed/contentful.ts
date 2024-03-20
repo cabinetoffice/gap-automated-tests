@@ -48,8 +48,6 @@ const createAndPublish = async (advertIds: string[]) => {
     }),
   };
 
-  console.log('Sending message to SQS: ', params.Entries[0].MessageAttributes);
-
   await sqsClient.send(new SendMessageBatchCommand(params));
 };
 

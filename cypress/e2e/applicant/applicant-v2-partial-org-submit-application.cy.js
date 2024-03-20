@@ -25,7 +25,7 @@ import { MQ_DETAILS } from '../../common/constants';
 describe('Apply for a Grant V2', () => {
   beforeEach(() => {
     cy.task('setUpUser');
-    cy.task('setUpApplyData');
+    cy.task('setUpApplyDataWithAds');
     signInToIntegrationSite();
   });
 

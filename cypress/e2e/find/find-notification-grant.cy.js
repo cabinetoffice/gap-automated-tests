@@ -14,7 +14,7 @@ import {
 describe('Find a Grant - Grant Notification', () => {
   beforeEach(() => {
     cy.task('setUpUser');
-    cy.task('setUpApplyData');
+    cy.task('setUpApplyDataWithAds');
     cy.task('setUpFindData');
     signInToIntegrationSite();
   });

@@ -7,7 +7,7 @@ import {
 describe('Sort search results', () => {
   beforeEach(() => {
     cy.task('setUpUser');
-    cy.task('setUpApplyData');
+    cy.task('setUpApplyDataWithAds');
     cy.task('setUpFindData');
 
     signInToIntegrationSite();
