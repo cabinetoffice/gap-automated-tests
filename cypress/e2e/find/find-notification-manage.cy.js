@@ -6,6 +6,7 @@ import {
   clickText,
   signInAsFindApplicant,
   signInToIntegrationSite,
+  runAccessibility,
 } from '../../common/common';
 
 describe('Find a Grant - Manage Notifications', () => {
@@ -27,6 +28,7 @@ describe('Find a Grant - Manage Notifications', () => {
         ' link in the emails we send to you.',
     );
     signInAsFindApplicant();
+    runAccessibility();
 
     cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
       'have.text',
@@ -36,6 +38,7 @@ describe('Find a Grant - Manage Notifications', () => {
 
     cy.get('[data-cy="cySearch grantsPageLink"]').click();
     clickText('Back');
+    runAccessibility();
 
     // journey when already logged in
     cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();

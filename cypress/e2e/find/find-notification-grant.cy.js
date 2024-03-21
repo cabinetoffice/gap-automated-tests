@@ -1,5 +1,6 @@
 import {
   clickText,
+  runAccessibility,
   searchForGrant,
   signInAsFindApplicant,
   signInToIntegrationSite,
@@ -34,6 +35,7 @@ describe('Find a Grant - Grant Notification', () => {
       .children('h2')
       .should('have.text', grantAdvertName)
       .click();
+    runAccessibility();
 
     // click 'Sign up for updates' and continue to One Login
     clickText('Sign up for updates');
@@ -82,9 +84,11 @@ describe('Find a Grant - Grant Notification', () => {
       'Are you sure you want to unsubscribe?',
     );
     clickText('Cancel');
+    runAccessibility();
 
     // Unsubscribe from updates
     clickText('Unsubscribe');
+    runAccessibility();
     cy.get('[data-cy="cyUnsubscribeConfirmationButton"]').click();
 
     // Check confirmation banner and that notification has been removed
@@ -100,11 +104,13 @@ describe('Find a Grant - Grant Notification', () => {
     clickText('Search for grants');
     cy.get('[name="searchTerm"]').type(grantAdvertName);
     cy.get('[data-cy="cySearchAgainButton"]').click();
+    runAccessibility();
 
     cy.get(`#${Cypress.env('testV1InternalGrant').contentfulSlug}`)
       .children('h2')
       .should('have.text', grantAdvertName)
       .click();
+    runAccessibility();
 
     clickText('Sign up for updates');
     cy.wrap(Date.now()).as('subscribedDate2');
