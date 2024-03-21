@@ -276,6 +276,16 @@ export const validateValueForKeyInTable = (
     });
 };
 
+export function initialiseAccessibilityLogFile() {
+  const specName = Cypress.spec.name;
+  const testName = Cypress.currentTest.title;
+  cy.writeFile(
+    `cypress/accessibility/logs/${specName}/${testName}.txt`,
+    '',
+    'utf-8',
+  );
+}
+
 function accessibilityLogInfo(violationData) {
   let currentURL;
   cy.url().then((url) => {
@@ -289,10 +299,16 @@ function accessibilityLogInfo(violationData) {
 
     violationData.forEach((violation) => {
       info += `${violation.impact}: ${violation.description}\n`;
-
-      // TODO: Write this information to a file - example below of how we can write to files in Cypress
-      // cy.writeFile(`cypress/downloads/${filename}`, response.body, 'binary');
     });
+
+    const specName = Cypress.spec.name;
+    const testName = Cypress.currentTest.title;
+    cy.writeFile(
+      `cypress/accessibility/logs/${specName}/${testName}.txt`,
+      info + '\n',
+      'utf-8',
+      { flag: 'a+' },
+    );
 
     cy.log(info);
   });

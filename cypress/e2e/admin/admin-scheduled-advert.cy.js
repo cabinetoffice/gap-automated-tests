@@ -1,4 +1,5 @@
 import {
+  initialiseAccessibilityLogFile,
   log,
   runAccessibility,
   signInAsAdmin,
@@ -21,6 +22,7 @@ describe('Create a Grant', () => {
   beforeEach(() => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
+    initialiseAccessibilityLogFile();
     signInToIntegrationSite();
   });
 

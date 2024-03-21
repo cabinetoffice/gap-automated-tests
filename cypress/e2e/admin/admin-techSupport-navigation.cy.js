@@ -1,5 +1,6 @@
 import {
   BASE_URL,
+  initialiseAccessibilityLogFile,
   runAccessibility,
   signInAsAdmin,
   signInToIntegrationSite,
@@ -13,6 +14,7 @@ describe('Admin navigation', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     cy.task('addTechSupportRoleToAdmin');
+    initialiseAccessibilityLogFile();
     signInToIntegrationSite();
   });
 

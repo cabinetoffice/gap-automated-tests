@@ -6,6 +6,7 @@ import {
   signInToIntegrationSite,
   runAccessibility,
   signOut,
+  initialiseAccessibilityLogFile,
 } from '../../common/common';
 import { validateSubmissionDownload, submissionExportSuccess } from './helper';
 
@@ -23,6 +24,7 @@ describe('Downloads and Due Diligence', () => {
   beforeEach(() => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
+    initialiseAccessibilityLogFile();
     signInToIntegrationSite();
   });
 

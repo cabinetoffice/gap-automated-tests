@@ -8,6 +8,7 @@ import {
   clickBack,
   log,
   runAccessibility,
+  initialiseAccessibilityLogFile,
 } from '../../common/common';
 import {
   equalitySectionAccept,
@@ -27,6 +28,7 @@ describe('Apply for a Grant', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     cy.task('publishGrantsToContentful');
+    initialiseAccessibilityLogFile();
     signInToIntegrationSite();
   });
 
