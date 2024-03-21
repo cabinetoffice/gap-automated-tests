@@ -49,7 +49,7 @@ describe('Downloads and Due Diligence', () => {
     log('Admin V2 Internal - Manage Due Diligence & Spotlight - viewing grant');
     cy.get(
       `[data-cy='cy_linkToScheme_Cypress - Test Scheme V2 Internal ID:${
-        Cypress.env('firstUserId') + 1
+        Number(Cypress.env('firstUserId')) + 1
       }']`,
     ).click();
 
@@ -78,7 +78,9 @@ describe('Downloads and Due Diligence', () => {
     const timestamp = convertDateToString(Date.now());
     const filePath = '/cypress/downloads/unzip/spotlight_checks';
 
-    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_charities_and_companies_1.xlsx`;
+    const limitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ID${
+      Number(Cypress.env('firstUserId')) + 1
+    }_charities_and_companies_1.xlsx`;
     validateXlsx(limitedCompanyFileName, [
       [
         Cypress.env('testV2InternalGrant').advertId,
@@ -94,7 +96,9 @@ describe('Downloads and Due Diligence', () => {
       ],
     ]);
 
-    const nonLimitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_non_limited_companies_1.xlsx`;
+    const nonLimitedCompanyFileName = `${filePath}/${timestamp}_GGIS_ID_2_Cypress__Test_Scheme_V2_Internal_ID${
+      Number(Cypress.env('firstUserId')) + 1
+    }_non_limited_companies_1.xlsx`;
     validateXlsx(nonLimitedCompanyFileName, [
       [
         Cypress.env('testV2ExternalGrant').advertId,

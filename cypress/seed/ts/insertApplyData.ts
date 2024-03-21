@@ -46,13 +46,13 @@ INSERT INTO public.grant_scheme(grant_scheme_id, funder_id, version, ggis_identi
       process.env.FIRST_USER_ID
     }', $4, $5),
            ($6, $7, 2, 'GGIS_ID_2', NOW(), NOW(), $8, 'Cypress - Test Scheme V2 Internal ID:${
-             process.env.FIRST_USER_ID + 1
+             Number(process.env.FIRST_USER_ID) + 1
            }', $9, $10),
            ($11, $12, 2, 'GGIS_ID_3', NOW(), NOW(), $13, 'Cypress - Test Scheme V2 External ID:${
-             process.env.FIRST_USER_ID + 2
+             Number(process.env.FIRST_USER_ID) + 2
            }', $14, $15),
            ($16, $17, 1, 'GGIS_ID_4', NOW(), NOW(), $18, 'Cypress - Test Scheme V1 External ID:${
-             process.env.FIRST_USER_ID + 3
+             Number(process.env.FIRST_USER_ID) + 3
            }', $19, $20);
 `;
 
