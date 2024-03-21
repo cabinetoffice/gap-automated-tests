@@ -114,7 +114,7 @@ If your test needs to search for a grant in Find, you must first publish adverts
 ```js
 it('can search for a grant', () => {
   // publish grant to contentful
-  cy.task('setUpApplyData');
+  cy.task('setUpApplyDataWithAds');
   // now you can search for it as normal
   searchForGrant('Cypress');
   // continue tests and assertions as normal
