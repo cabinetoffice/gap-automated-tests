@@ -1,7 +1,5 @@
 import 'cypress-axe';
 
-// import accessibilityLog from './accessibilityLog';
-
 export const BASE_URL = Cypress.env('applicationBaseUrl');
 export const ONE_LOGIN_BASE_URL = Cypress.env('oneLoginSandboxBaseUrl');
 export const POST_LOGIN_BASE_URL = Cypress.env('postLoginBaseUrl');
