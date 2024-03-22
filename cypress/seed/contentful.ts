@@ -134,7 +134,7 @@ export const publishGrantAdverts = async () => {
   await retry(
     async () => await getContentfulEntries(environment),
     (res) => areAllAdvertsPublished(res, ADVERTS.length),
-    15,
+    20,
     5000,
   );
 };
@@ -150,7 +150,7 @@ export const waitForAdvertToPublish = async (advertName: string) => {
   await retry(
     async () => await getContentfulEntries(environment, advertName),
     (res) => areAllAdvertsPublished(res, 1),
-    60,
+    100,
     1000,
   );
 };
