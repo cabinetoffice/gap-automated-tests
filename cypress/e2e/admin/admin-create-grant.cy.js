@@ -78,7 +78,7 @@ describe('Create a Grant', () => {
     log(
       'Scheme details with an in progress advert journey - publishing advert',
     );
-    publishAdvert(true);
+    publishAdvert(GRANT_NAME, true);
 
     log(
       'Scheme details with an in progress advert journey - submitting feedback form',
@@ -93,7 +93,7 @@ describe('Create a Grant', () => {
     cy.get('[data-cy="cy-radioInput-option-YesUnscheduleMyAdvert"]').click();
     cy.get('[data-cy="cy_unscheduleConfirmation-ConfirmButton"]').click();
     advertSection3(false);
-    publishAdvert(false);
+    publishAdvert(GRANT_NAME, false);
 
     cy.contains('Very satisfied').click();
     cy.contains('Send feedback').click();

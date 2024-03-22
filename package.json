@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-api-gateway": "^3.490.0",
+    "@aws-sdk/client-sqs": "^3.533.0",
     "@percy/cypress": "^3.1.2",
     "contentful-management": "^10.46.2",
     "cypress-file-upload": "^5.0.8",

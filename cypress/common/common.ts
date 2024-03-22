@@ -102,6 +102,7 @@ export const searchForGrant = (searchTerm: string) => {
   cy.get('[name="searchTerm"]')
     .should('have.attr', 'placeholder')
     .should('contains', 'enter a keyword or search term here');
+  cy.get('[name="searchTerm"]').clear();
   cy.get('[name="searchTerm"]').type(searchTerm);
 
   cy.get('[data-cy=cySearchGrantsBtn]').click();

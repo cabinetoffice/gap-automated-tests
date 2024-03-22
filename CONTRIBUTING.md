@@ -13,19 +13,19 @@ Ideally you will put both the title/summary of the test as well as the specific 
 There are examples in the apply journeys of the types of things that should be logged, e.g.
 
 ```js
-it("Can apply for a V1 Grant", () => {
-  cy.task("publishGrantsToContentful");
+it('Can apply for a V1 Grant', () => {
+  cy.task('setUpApplyData');
 
-  log("Apply V1 Internal Grant - Searching for grant");
+  log('Apply V1 Internal Grant - Searching for grant');
   searchForGrant(ADVERT_NAME);
 
-  log("Apply V1 Internal Grant - Beginning application");
+  log('Apply V1 Internal Grant - Beginning application');
   applyForGrant(ADVERT_NAME);
 
-  log("Apply V1 Internal Grant - Signing in as applicant");
+  log('Apply V1 Internal Grant - Signing in as applicant');
   signInAsApplyApplicant();
 
-  log("Apply V1 Internal Grant - Filling out Eligibility");
+  log('Apply V1 Internal Grant - Filling out Eligibility');
   fillOutEligibity();
 
   // ...etc
@@ -112,11 +112,11 @@ If there are any patterns you need to implement in your test that are complicate
 If your test needs to search for a grant in Find, you must first publish adverts for that test in Contentful:
 
 ```js
-it("can search for a grant", () => {
+it('can search for a grant', () => {
   // publish grant to contentful
-  cy.task("publishGrantsToContentful");
+  cy.task('setUpApplyDataWithAds');
   // now you can search for it as normal
-  searchForGrant("Cypress");
+  searchForGrant('Cypress');
   // continue tests and assertions as normal
   // ...
 });
@@ -132,10 +132,10 @@ To resolve this, you should click onto the first input you want to type in, then
 
 ```js
 cy.get('[data-cy="cy-title-text-input"]').click();
-cy.get('[data-cy="cy-title-text-input"]').type("title", {
+cy.get('[data-cy="cy-title-text-input"]').type('title', {
   force: true,
 });
-cy.get('[data-cy="cy-description-text-area"]').type("description", {
+cy.get('[data-cy="cy-description-text-area"]').type('description', {
   force: true,
 });
 ```
@@ -150,7 +150,7 @@ Step 1) Capture the date and store it as a variable **at the moment where the su
 // sign in
 signInAsApplicant();
 //capture date
-cy.wrap(Date.now()).as("subscribedDate");
+cy.wrap(Date.now()).as('subscribedDate');
 ```
 
 - Here, the "cy.wrap()" command is used, along with "as()" to create an **alias**. This will be used when you go to assert the captured date.
@@ -158,7 +158,7 @@ cy.wrap(Date.now()).as("subscribedDate");
 Step 2) Use the alias along with the "convertDateToString()" function to store the possible dates as a variable. (This is stored as an array of dates to prevent the a +/-1 increment to cause the date to error).
 
 ```js
-cy.get("@subscribedDate").then((subscribedDateTimestamp) => {
+cy.get('@subscribedDate').then((subscribedDateTimestamp) => {
   const subscriptionDates = convertDateToString(subscribedDateTimestamp);
 });
 ```
@@ -168,16 +168,16 @@ Step 3) Assert using this date variable, which is already formatted in the way t
 ```js
 cy.get(
   `[data-cy="cy${
-    Cypress.env("testV1InternalGrant").advertName
+    Cypress.env('testV1InternalGrant').advertName
   }UnsubscriptionTableName"]`,
 )
   .parent()
   .next()
-  .invoke("text")
+  .invoke('text')
   .should(
-    "be.oneOf",
+    'be.oneOf',
     subscriptionDates.map(
-      (subscriptionDate) => "You signed up for updates on " + subscriptionDate,
+      (subscriptionDate) => 'You signed up for updates on ' + subscriptionDate,
     ),
   );
 ```
