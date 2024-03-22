@@ -25,6 +25,7 @@ import {
   insertSubmissionAndExport,
   insertSubmissionsAndMQs,
   updateSpotlightSubmission,
+  simulateMultipleApplicationFormEditors,
 } from './cypress/seed/apply/service';
 import {
   publishGrantAdverts,
@@ -93,6 +94,11 @@ export default defineConfig({
         },
         async deleteSchemes() {
           await deleteApplySchemes();
+
+          return null;
+        },
+        async simulateMultipleApplicationFormEditors() {
+          await simulateMultipleApplicationFormEditors();
 
           return null;
         },
