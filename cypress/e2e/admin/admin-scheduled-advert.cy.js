@@ -22,8 +22,8 @@ describe('Create a Grant', () => {
   beforeEach(() => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
-    initialiseAccessibilityLogFile();
     signInToIntegrationSite();
+    initialiseAccessibilityLogFile();
   });
 
   it('View scheme details with a scheduled advert', () => {

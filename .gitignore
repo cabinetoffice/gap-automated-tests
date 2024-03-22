@@ -16,3 +16,5 @@ results/
 mochawesome-report/
 mocha/
 cypress-mochawesome-reporter.log
+
+cypress/accessibility/logs

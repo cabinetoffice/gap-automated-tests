@@ -24,8 +24,8 @@ describe('Downloads and Due Diligence', () => {
   beforeEach(() => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
-    initialiseAccessibilityLogFile();
     signInToIntegrationSite();
+    initialiseAccessibilityLogFile();
   });
 
   it('V1 Internal - Download Submission Export', () => {

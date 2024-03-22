@@ -1,5 +1,6 @@
 import {
   clickText,
+  initialiseAccessibilityLogFile,
   runAccessibility,
   searchForGrant,
   signInAsFindApplicant,
@@ -18,6 +19,7 @@ describe('Find a Grant - Grant Notification', () => {
     cy.task('setUpApplyData');
     cy.task('setUpFindData');
     signInToIntegrationSite();
+    initialiseAccessibilityLogFile();
   });
 
   it('can subscribe and unsubscribe from updates for a SINGLE grant', () => {

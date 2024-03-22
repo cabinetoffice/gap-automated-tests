@@ -9,7 +9,6 @@ import {
   selectActionForItemInTable,
   yesQuestionComplete,
 } from '../../common/common';
-import 'cypress-axe';
 
 const getIframeBody = (iFrameSelector) =>
   cy

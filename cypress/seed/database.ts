@@ -34,13 +34,13 @@ export const runSQLFromJs = async (
       console.error(
         `Error executing SQL script (Retry ${connectionRetries}/${maxConnectionRetries}): ${error}`,
       );
-      // if (connectionRetries === maxConnectionRetries) {
-      //   const message = `Failed to execute SQL script after ${maxConnectionRetries} attempts`;
-      //   console.error(message);
-      //   throw new Error(
-      //     message + `, most recent attempt failed with error:\n\n${error}`,
-      //   );
-      // }
+      if (connectionRetries === maxConnectionRetries) {
+        const message = `Failed to execute SQL script after ${maxConnectionRetries} attempts`;
+        console.error(message);
+        throw new Error(
+          message + `, most recent attempt failed with error:\n\n${error}`,
+        );
+      }
     }
   }
 };

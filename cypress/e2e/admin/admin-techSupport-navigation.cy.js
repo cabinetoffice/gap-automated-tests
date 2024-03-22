@@ -14,8 +14,8 @@ describe('Admin navigation', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     cy.task('addTechSupportRoleToAdmin');
-    initialiseAccessibilityLogFile();
     signInToIntegrationSite();
+    initialiseAccessibilityLogFile();
   });
 
   it('Admin can view the dashboard, cannot access the super-admin dashboard', () => {

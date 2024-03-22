@@ -3,6 +3,7 @@ import {
   signInAsFindApplicant,
   signInToIntegrationSite,
   runAccessibility,
+  initialiseAccessibilityLogFile,
 } from '../../common/common';
 import {
   checkSuccessBanner,
@@ -16,7 +17,9 @@ describe('Find a Grant - Saved Search Notifications', () => {
     cy.task('setUpApplyData');
     cy.task('setUpFindData');
     signInToIntegrationSite();
+    initialiseAccessibilityLogFile();
   });
+
   it('Can subscribe and unsubscribe a saved search notification', () => {
     cy.contains('Find a grant');
     // start saved search login journey

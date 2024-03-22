@@ -281,6 +281,7 @@ export function initialiseAccessibilityLogFile() {
     `cypress/accessibility/logs/${specName}/${testName}.txt`,
     '',
     'utf-8',
+    { log: true },
   );
 }
 
@@ -305,7 +306,7 @@ function accessibilityLogInfo(violationData) {
       `cypress/accessibility/logs/${specName}/${testName}.txt`,
       info + '\n',
       'utf-8',
-      { flag: 'a+' },
+      { flag: 'a+', log: false },
     );
 
     cy.log(info);

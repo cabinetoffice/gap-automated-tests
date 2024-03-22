@@ -7,6 +7,7 @@ import {
   signInAsFindApplicant,
   signInToIntegrationSite,
   runAccessibility,
+  initialiseAccessibilityLogFile,
 } from '../../common/common';
 
 describe('Find a Grant - Manage Notifications', () => {
@@ -15,7 +16,9 @@ describe('Find a Grant - Manage Notifications', () => {
     cy.task('setUpApplyData');
     cy.task('setUpFindData');
     signInToIntegrationSite();
+    initialiseAccessibilityLogFile();
   });
+
   it('can manage notifications through One Login when there are no notifications or saved searches', () => {
     // journey when not logged in
     cy.contains('Find a grant');

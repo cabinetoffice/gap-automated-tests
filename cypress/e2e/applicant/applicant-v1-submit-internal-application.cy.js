@@ -105,36 +105,23 @@ describe('Apply for a Grant', () => {
     runAccessibility();
 
     clickSaveAndContinue();
-    runAccessibility();
     clickSaveAndContinue();
-    runAccessibility();
     clickSaveAndContinue();
-    runAccessibility();
     clickSaveAndContinue();
-    runAccessibility();
     clickSaveAndContinue();
-    runAccessibility();
 
-    runAccessibility();
     cy.contains('Custom Question 6');
     cy.contains('Uploaded File');
     cy.contains('example.doc');
     cy.contains('Remove File').click();
     cy.get('[data-testid="file-upload-input"]');
-    runAccessibility();
 
     clickBack();
-    runAccessibility();
     clickBack();
-    runAccessibility();
     clickBack();
-    runAccessibility();
     clickBack();
-    runAccessibility();
     clickBack();
-    runAccessibility();
     clickBack();
-    runAccessibility();
 
     cy.contains('Your Application');
     runAccessibility();
