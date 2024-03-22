@@ -354,7 +354,7 @@ function addOptionalMultiChoiceQuestion(questionText, description, type) {
   cy.get('[data-cy="cy-button-Save question"]').click();
 }
 
-export function publishAdvert(scheduled) {
+export function publishAdvert(advertName, scheduled) {
   cy.get('[data-cy="cy-publish-advert-button"]').click();
 
   cy.get(
@@ -362,6 +362,8 @@ export function publishAdvert(scheduled) {
       scheduled ? 'Schedule my advert' : 'Confirm and publish'
     }"]`,
   ).click();
+
+  if (!scheduled) cy.task('waitForAdvertToPublish', advertName);
 
   cy.get(
     `[data-cy="cy-advert-${scheduled ? 'scheduled' : 'published'}"]`,

@@ -111,8 +111,8 @@ const getContentfulEntries = async (
       grantName || ADVERTS.map((advert) => advert.advertName).join(','),
   });
 
-const areAllAdvertsPublished = (entries: Entries) =>
-  entries.total === ADVERTS.length &&
+const areAllAdvertsPublished = (entries: Entries, expectedLength: number) =>
+  entries.total === expectedLength &&
   entries.items.every((entry) => entry.isPublished());
 
 export const publishGrantAdverts = async () => {
@@ -133,7 +133,7 @@ export const publishGrantAdverts = async () => {
   console.log('Validating that adverts are published before continuing');
   await retry(
     async () => await getContentfulEntries(environment),
-    areAllAdvertsPublished,
+    (res) => areAllAdvertsPublished(res, ADVERTS.length),
     15,
     5000,
   );
@@ -143,4 +143,14 @@ export const removeAdvertByName = async (advertName: string) => {
   const environment = await setupContentful();
   const entries = await getContentfulEntries(environment, advertName);
   await unpublishAndDelete(entries);
+};
+
+export const waitForAdvertToPublish = async (advertName: string) => {
+  const environment = await setupContentful();
+  await retry(
+    async () => await getContentfulEntries(environment, advertName),
+    (res) => areAllAdvertsPublished(res, 1),
+    60,
+    1000,
+  );
 };

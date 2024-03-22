@@ -39,6 +39,7 @@ import {
 import {
   publishGrantAdverts,
   removeAdvertByName,
+  waitForAdvertToPublish,
 } from './cypress/seed/contentful';
 const xlsx = require('node-xlsx').default;
 const fs = require('fs');
@@ -96,6 +97,11 @@ export default defineConfig({
           await deleteApplyData();
           await createApplyData({ publishedAds: false });
           await publishGrantAdverts();
+
+          return null;
+        },
+        async waitForAdvertToPublish(name) {
+          await waitForAdvertToPublish(name);
 
           return null;
         },

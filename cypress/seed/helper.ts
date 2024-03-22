@@ -1,9 +1,9 @@
 const sleep = async (ms: number) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
 
-const retry = async (
-  func: any,
-  condition: any,
+const retry = async <T>(
+  func: () => Promise<T>,
+  condition: (res: T) => boolean,
   maxAttempts = 30,
   delay = 1000,
 ) => {
