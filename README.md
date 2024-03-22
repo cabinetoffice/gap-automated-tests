@@ -112,7 +112,9 @@ It can be useful to have file watching on when debugging failures: `npm run cy:o
 
 However, if you are writing tests for a new journey, it can often be better to turn it off `npm run cy:open:nowatch`, allowing you to run through the journey and obtain the required data selectors etc. without the tests running every time you make a change.
 
-You can just use `npm run cy:open` as well which will do the same thing as `npm run cy:open:nowatch`
+You can just use `npm run cy:open` as well which will do the same thing as `npm run cy:open:nowatch`.
+
+You can also run all tests in the repo, or search for a set of tests and run these. There's a video at this link: https://github.com/cypress-io/cypress/issues/3607#issuecomment-670322179 - the UI is outdated but the functionality is the same.
 
 #### Console
 
