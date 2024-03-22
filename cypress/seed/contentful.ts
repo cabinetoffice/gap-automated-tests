@@ -14,6 +14,8 @@ import {
 } from '@aws-sdk/client-sqs';
 import { randomUUID } from 'crypto';
 
+type Entries = Awaited<ReturnType<typeof getContentfulEntries>>;
+
 const ADVERTS = [
   TEST_V1_INTERNAL_GRANT,
   TEST_V1_EXTERNAL_GRANT,
@@ -21,14 +23,12 @@ const ADVERTS = [
   TEST_V2_EXTERNAL_GRANT,
 ];
 
-const SLUGS = ADVERTS.map((advert) => advert.advertName);
-
-const sqsClient = new SQSClient({ region: 'eu-west-2' });
-
 const createAndPublish = async (advertIds: string[]) => {
+  const sqsClient = new SQSClient({ region: 'eu-west-2' });
+
   const params: SendMessageBatchCommandInput = {
     QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
-    Entries: advertIds.map((advertId, index) => {
+    Entries: advertIds.map((advertId) => {
       const id = randomUUID();
       return {
         Id: id,
@@ -52,47 +52,33 @@ const createAndPublish = async (advertIds: string[]) => {
   await sqsClient.send(new SendMessageBatchCommand(params));
 };
 
-const advertIsPartOfSetup = (entry: contentful.Entry, advertName?: string) => {
-  const contentfulAdvertName = entry.fields?.grantName?.['en-US'];
-  if (advertName) return contentfulAdvertName === advertName;
-  return SLUGS.includes(contentfulAdvertName);
-};
-
-const unpublishAndDelete = async (
-  entries: contentful.Collection<
-    contentful.Entry,
-    contentful.EntryProps<contentful.KeyValueMap>
-  >,
-  advertName?: string,
-) => {
+const unpublishAndDelete = async (entries: Entries) => {
   let deletionExecuted = false;
   for (const entry of entries.items) {
-    if (advertIsPartOfSetup(entry, advertName)) {
-      if (entry.isPublished()) {
-        await entry.unpublish();
-        console.log(
-          `Unpublished grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
-        );
-      } else {
-        console.log(
-          `Grant advert not published, skipping ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
-        );
-      }
-
-      await entry.delete();
-      await deleteFromOpenSearch(entry.sys.id);
-
+    if (entry.isPublished()) {
+      await entry.unpublish();
       console.log(
-        `Deleted grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
+        `Unpublished grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
       );
-      deletionExecuted = true;
+    } else {
+      console.log(
+        `Grant advert not published, skipping ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
+      );
     }
+
+    await entry.delete();
+    await deleteFromOpenSearch(entry.sys.id);
+
+    console.log(
+      `Deleted grant advert entry ${entry.sys.id} - ${entry.fields?.grantName?.['en-US']}`,
+    );
+    deletionExecuted = true;
   }
 
   return deletionExecuted;
 };
 
-const deleteFromOpenSearch = async (entryId: string) => {
+const deleteFromOpenSearch = async (entryId: string) =>
   await fetch(
     `${process.env.OPEN_SEARCH_URL}/${process.env.OPEN_SEARCH_DOMAIN}/_doc/${entryId}`,
     {
@@ -106,7 +92,6 @@ const deleteFromOpenSearch = async (entryId: string) => {
       }),
     },
   );
-};
 
 const setupContentful = async () => {
   const client = contentful.createClient({
@@ -116,18 +101,19 @@ const setupContentful = async () => {
   return await space.getEnvironment(process.env.CONTENTFUL_ENVIRONMENT_ID);
 };
 
-const getContentfulEntries = async (environment: contentful.Environment) => {
-  const entries = await environment.getEntries({ limit: 1000 });
-  return entries;
-};
+const getContentfulEntries = async (
+  environment: contentful.Environment,
+  grantName?: string,
+) =>
+  await environment.getEntries({
+    content_type: 'grantDetails',
+    'fields.grantName[in]':
+      grantName || ADVERTS.map((advert) => advert.advertName).join(','),
+  });
 
-const isRequiredAndPublished = (entry: contentful.Entry) =>
-  advertIsPartOfSetup(entry) && entry.isPublished();
-
-const areAllAdvertsPublished = (entries: { items: any[] }) => {
-  const publishedAdverts = entries.items.filter(isRequiredAndPublished);
-  return publishedAdverts.length === ADVERTS.length;
-};
+const areAllAdvertsPublished = (entries: Entries) =>
+  entries.total === ADVERTS.length &&
+  entries.items.every((entry) => entry.isPublished());
 
 export const publishGrantAdverts = async () => {
   console.log('Connecting to Contentful to manage grant adverts');
@@ -148,13 +134,13 @@ export const publishGrantAdverts = async () => {
   await retry(
     async () => await getContentfulEntries(environment),
     areAllAdvertsPublished,
-    60,
-    1000,
+    15,
+    5000,
   );
 };
 
 export const removeAdvertByName = async (advertName: string) => {
   const environment = await setupContentful();
-  const entries = await getContentfulEntries(environment);
-  await unpublishAndDelete(entries, advertName);
+  const entries = await getContentfulEntries(environment, advertName);
+  await unpublishAndDelete(entries);
 };

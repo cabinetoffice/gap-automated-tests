@@ -46,6 +46,7 @@ const decompress = require('decompress');
 require('dotenv').config();
 
 export default defineConfig({
+  taskTimeout: 120000,
   e2e: {
     setupNodeEvents(on) {
       // implement node event listeners here
