@@ -18,7 +18,7 @@ const retry = async <T>(
     'Could not get good response from script in ',
     +maxAttempts + ' number of attempts',
   );
-  return null;
+  throw new Error('Finished retrying attempts without passing condition');
 };
 
 export { retry };
