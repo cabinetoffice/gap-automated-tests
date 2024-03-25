@@ -16,15 +16,13 @@ import {
 describe('Find a Grant - Grant Notification', () => {
   beforeEach(() => {
     cy.task('setUpUser');
-    cy.task('setUpApplyData');
+    cy.task('setUpApplyDataWithAds');
     cy.task('setUpFindData');
     signInToIntegrationSite();
     initialiseAccessibilityLogFile();
   });
 
   it('can subscribe and unsubscribe from updates for a SINGLE grant', () => {
-    cy.task('publishGrantsToContentful');
-
     // --- UNAUTHENTICATED JOURNEY ---
     // go to home page
     cy.contains('Find a grant');
@@ -33,7 +31,7 @@ describe('Find a Grant - Grant Notification', () => {
     // search for and view test grant advert
     searchForGrant(grantAdvertName);
 
-    cy.get(`#${Cypress.env('testV1InternalGrant').contentfulSlug}`)
+    cy.get(`[id="${Cypress.env('testV1InternalGrant').advertName}"]`)
       .children('h2')
       .should('have.text', grantAdvertName)
       .click();
@@ -108,7 +106,7 @@ describe('Find a Grant - Grant Notification', () => {
     cy.get('[data-cy="cySearchAgainButton"]').click();
     runAccessibility();
 
-    cy.get(`#${Cypress.env('testV1InternalGrant').contentfulSlug}`)
+    cy.get(`[id="${Cypress.env('testV1InternalGrant').advertName}"]`)
       .children('h2')
       .should('have.text', grantAdvertName)
       .click();

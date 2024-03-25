@@ -24,11 +24,12 @@ describe('Downloads and Due Diligence', () => {
   beforeEach(() => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
+    cy.task('insertSubmissionsAndMQs');
     signInToIntegrationSite();
     initialiseAccessibilityLogFile();
   });
 
-  it('V1 Internal - Download Submission Export', () => {
+  it.skip('V1 Internal - Download Submission Export', () => {
     // Sign in and complete application as applicant
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     log(

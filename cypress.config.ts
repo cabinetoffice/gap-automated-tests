@@ -17,7 +17,6 @@ import {
   createApplyData,
   deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
-  deleteApplyData,
   deleteApplySchemes,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
@@ -26,11 +25,8 @@ import {
   insertSubmissionsAndMQs,
   updateSpotlightSubmission,
   simulateMultipleApplicationFormEditors,
+  deleteApplyData,
 } from './cypress/seed/apply/service';
-import {
-  publishGrantAdverts,
-  removeAdvertByName,
-} from './cypress/seed/contentful';
 import { createFindData, deleteFindData } from './cypress/seed/find';
 import {
   addFailedOauthAudit,
@@ -40,12 +36,18 @@ import {
   deleteTestUsers,
   removeTechSupportRoleFromAdmin,
 } from './cypress/seed/user';
+import {
+  publishGrantAdverts,
+  removeAdvertByName,
+  waitForAdvertToPublish,
+} from './cypress/seed/contentful';
 const xlsx = require('node-xlsx').default;
 const fs = require('fs');
 const decompress = require('decompress');
 require('dotenv').config();
 
 export default defineConfig({
+  taskTimeout: 120000,
   e2e: {
     setupNodeEvents(on) {
       // implement node event listeners here
@@ -86,9 +88,25 @@ export default defineConfig({
           return null;
         },
         async setUpApplyData() {
-          await deleteApplyData().then(async () => {
-            await createApplyData();
-          });
+          await deleteApplyData();
+          await createApplyData({ publishedAds: true });
+
+          return null;
+        },
+        async setUpApplyDataWithAds() {
+          await deleteApplyData();
+          await createApplyData({ publishedAds: false });
+          await publishGrantAdverts();
+
+          return null;
+        },
+        async waitForAdvertToPublish(name) {
+          await waitForAdvertToPublish(name);
+
+          return null;
+        },
+        async removeAdvertByName(name) {
+          await removeAdvertByName(name);
 
           return null;
         },
@@ -129,16 +147,6 @@ export default defineConfig({
         },
         async createApiKeysInApiGatewayForTechnicalSupport() {
           await createApiKeysInApiGatewayForTechnicalSupport(1, 2);
-
-          return null;
-        },
-        async removeAdvertByName(name) {
-          await removeAdvertByName(name);
-
-          return null;
-        },
-        async publishGrantsToContentful() {
-          await publishGrantAdverts();
 
           return null;
         },
@@ -244,8 +252,8 @@ export default defineConfig({
       overwrite: false,
     },
     baseUrl: process.env.APPLICATION_BASE_URL,
-    chromeWebSecurity: false,
     viewportWidth: 1000,
     viewportHeight: process.env.HEADFUL_MODE === 'true' ? 1000 : 2000,
+    experimentalRunAllSpecs: true,
   },
 });

@@ -66,7 +66,7 @@ describe('Create a Grant', () => {
     log(
       'View scheme details with scheduled advert journey - publishing advert',
     );
-    publishAdvert(true);
+    publishAdvert(GRANT_NAME, true);
     runAccessibility();
 
     log(

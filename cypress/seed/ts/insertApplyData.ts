@@ -42,10 +42,18 @@ INSERT INTO public.grant_applicant_organisation_profile(id, address_line1, addre
 
 const insertSchemes: string = `
 INSERT INTO public.grant_scheme(grant_scheme_id, funder_id, version, ggis_identifier, created_date, last_updated, last_updated_by, scheme_name, scheme_contact, created_by)
-    VALUES ($1, $2, 1, 'GGIS_ID_1', NOW(), NOW(), $3, 'Cypress - Test Scheme V1 Internal', $4, $5),
-           ($6, $7, 2, 'GGIS_ID_2', NOW(), NOW(), $8, 'Cypress - Test Scheme V2 Internal', $9, $10),
-           ($11, $12, 2, 'GGIS_ID_3', NOW(), NOW(), $13, 'Cypress - Test Scheme V2 External', $14, $15),
-           ($16, $17, 1, 'GGIS_ID_4', NOW(), NOW(), $18, 'Cypress - Test Scheme V1 External', $19, $20);
+    VALUES ($1, $2, 1, 'GGIS_ID_1', NOW(), NOW(), $3, 'Cypress - Test Scheme V1 Internal ID:${
+      process.env.FIRST_USER_ID
+    }', $4, $5),
+           ($6, $7, 2, 'GGIS_ID_2', NOW(), NOW(), $8, 'Cypress - Test Scheme V2 Internal ID:${
+             Number(process.env.FIRST_USER_ID) + 1
+           }', $9, $10),
+           ($11, $12, 2, 'GGIS_ID_3', NOW(), NOW(), $13, 'Cypress - Test Scheme V2 External ID:${
+             Number(process.env.FIRST_USER_ID) + 2
+           }', $14, $15),
+           ($16, $17, 1, 'GGIS_ID_4', NOW(), NOW(), $18, 'Cypress - Test Scheme V1 External ID:${
+             Number(process.env.FIRST_USER_ID) + 3
+           }', $19, $20);
 `;
 
 const insertEditors: string = `
@@ -67,12 +75,21 @@ INSERT INTO public.grant_application (grant_application_id, grant_scheme_id, ver
 `;
 
 const insertAdverts: string = `
-INSERT INTO public.grant_advert(grant_advert_id, contentful_entry_id, contentful_slug, created, grant_advert_name, last_updated, response, status, version, created_by, last_updated_by, scheme_id, opening_date, closing_date, first_published_date, last_published_date, unpublished_date)
+INSERT INTO public.grant_advert(grant_advert_id, created, grant_advert_name, last_updated, response, status, version, created_by, last_updated_by, scheme_id, opening_date, closing_date, first_published_date, last_published_date, unpublished_date)
     VALUES
-        ($1, $2, $3, now(), $4, now(), $5, 'PUBLISHED', 1, $6, $7, $8, now(), now() + interval '3 days', null, null, null),
-        ($9, $10, $11, now(), $12, now(), $13, 'PUBLISHED', 2, $14, $15, $16, now(), now() + interval '3 days', null, null, null),
-        ($17, $18, $19, now(), $20, now(), $21, 'PUBLISHED', 2, $22, $23, $24, now(), now() + interval '3 days', null, null, null ),
-        ($25, $26, $27, now(), $28, now(), $29, 'PUBLISHED', 1, $30, $31, $32, now(), now() + interval '3 days', null, null, null );
+        ($1, now(), $2, now(), $3, 'PUBLISHED', 1, $4, $5, $6, now(), now() + interval '3 days', null, null, null),
+        ($7, now(), $8, now(), $9, 'PUBLISHED', 2, $10, $11, $12, now(), now() + interval '3 days', null, null, null),
+        ($13, now(), $14, now(), $15, 'PUBLISHED', 2, $16, $17, $18, now(), now() + interval '3 days', null, null, null ),
+        ($19, now(), $20, now(), $21, 'PUBLISHED', 1, $22, $23, $24, now(), now() + interval '3 days', null, null, null );
+`;
+
+const insertDraftAdverts: string = `
+INSERT INTO public.grant_advert(grant_advert_id, created, grant_advert_name, last_updated, response, status, version, created_by, last_updated_by, scheme_id, opening_date, closing_date, first_published_date, last_published_date, unpublished_date)
+    VALUES
+        ($1, now(), $2, now(), $3, 'DRAFT', 1, $4, $5, $6, now(), now() + interval '3 days', null, null, null),
+        ($7, now(), $8, now(), $9, 'DRAFT', 2, $10, $11, $12, now(), now() + interval '3 days', null, null, null),
+        ($13, now(), $14, now(), $15, 'DRAFT', 2, $16, $17, $18, now(), now() + interval '3 days', null, null, null ),
+        ($19, now(), $20, now(), $21, 'DRAFT', 1, $22, $23, $24, now(), now() + interval '3 days', null, null, null );
 `;
 
 const addFailedSpotlightOauthAudit = `
@@ -187,6 +204,7 @@ export {
   createApiKeysFundingOrganisations,
   insertAdmins,
   insertAdverts,
+  insertDraftAdverts,
   insertApplicants,
   insertApplications,
   insertFundingOrgs,

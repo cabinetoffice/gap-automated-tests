@@ -18,3 +18,4 @@ mocha/
 cypress-mochawesome-reporter.log
 
 cypress/accessibility/logs
+yarn.lock

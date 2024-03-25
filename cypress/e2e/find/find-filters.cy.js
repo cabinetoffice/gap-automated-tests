@@ -2,7 +2,7 @@ import { signInToIntegrationSite, log } from '../../common/common';
 
 describe('Filter search results', () => {
   beforeEach(() => {
-    cy.task('publishGrantsToContentful');
+    cy.task('setUpApplyDataWithAds');
     signInToIntegrationSite();
   });
 

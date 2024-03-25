@@ -35,6 +35,7 @@ import {
   insertAdverts,
   insertApplicants,
   insertApplications,
+  insertDraftAdverts,
   insertEditors,
   insertExport,
   insertExportBatch,
@@ -97,7 +98,11 @@ const runSqlForApply = async (
     applyDatabaseUrl,
   );
 
-const createApplyData = async (): Promise<void> => {
+const createApplyData = async ({
+  publishedAds,
+}: {
+  publishedAds: boolean;
+}): Promise<void> => {
   await runSqlForApply(
     [
       insertApplicants,
@@ -109,7 +114,7 @@ const createApplyData = async (): Promise<void> => {
       insertSchemes,
       insertEditors,
       insertApplications,
-      insertAdverts,
+      publishedAds ? insertAdverts : insertDraftAdverts,
     ],
     applyInsertSubstitutions,
   );
@@ -308,7 +313,7 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
   const row = await retry(
     async () =>
       await runSqlForApply([getExportedSubmission], applyInsertSubstitutions),
-    (response: { status: string }) => response[0][0].status === 'COMPLETE',
+    (response) => response[0][0].status === 'COMPLETE',
     30,
     1000,
   );
@@ -441,7 +446,6 @@ export {
   createApplyData,
   deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
-  deleteApplyData,
   deleteApplySchemes,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
@@ -452,5 +456,6 @@ export {
   insertSubmissionAndExport,
   addAdminInTechSupportTable,
   simulateMultipleApplicationFormEditors,
+  deleteApplyData,
   type ApiKeyDb,
 };
