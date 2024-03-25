@@ -129,6 +129,20 @@ Alternatively you can run them for a single suite:
 - `npm run cy:run:superadmin`
 - `npm run cy:run:apidashboard`
 
+#### Flake Detection
+
+Diagnosing a flaky test has never been easier thanks to the command:
+`npm run cy:run:flake --spec=**/YOUR_TEST_HERE.cy.js`
+
+This will run the tests over and over until they fail - so maybe don't leave it running overnight.
+
+A counter of how many times it ran will be displayed when the test fails, as well as after each individual run so you can keep track.
+
+Bear in mind, however - if you modify the test you're running while this command is executed, the changes WILL be picked up the next time it retries, as each test run is considered a separate run. This is different from the current cy:run behaviour where the tests are "fixed in time" from when you first start executing them.
+
+You can even run multiple files (not sure why you'd want to, but it is an option):
+`npm run cy:run:flake --spec=**/YOUR_TEST_HERE.cy.js,**/ANOTHER_TEST_HERE.cy.js`
+
 #### Reports
 
 When running the E2E tests via `npm run cy:run:*`, reports are generated via [Mochawesome](https://www.npmjs.com/package/mochawesome) and [cypress-mochawesome-reporter](https://github.com/LironEr/cypress-mochawesome-reporter) in HTML format. They are stored at `mochawesome-report/*.html`
