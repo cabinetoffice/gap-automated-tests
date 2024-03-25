@@ -28,7 +28,7 @@ describe('Find a Grant - Search', () => {
 
     // perform invalid search
     const invalidSearch = 'x'.repeat(101);
-    cy.get('[data-cy="cyHomePageSearchInput"]').click().type(invalidSearch);
+    cy.get('[data-cy="cyHomePageSearchInput"]').type(invalidSearch);
 
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
 
@@ -86,7 +86,8 @@ describe('Find a Grant - Search', () => {
 
     // perform invalid search
     const invalidSearch = 'x'.repeat(101);
-    cy.get('[data-cy="cySearchAgainInput"]').click().type(invalidSearch);
+    cy.get('[data-cy="cySearchAgainInput"]').click();
+    cy.get('[data-cy="cySearchAgainInput"]').type(invalidSearch);
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
     cy.get('[data-cy="cyErrorBanner"]').contains('h2', 'There is a problem');
@@ -95,9 +96,9 @@ describe('Find a Grant - Search', () => {
       'Search term must be 100 characters or less',
     );
 
-    cy.get('[data-cy="cySearchAgainInput"]')
-      .click()
-      .type(Cypress.env('testV1InternalGrant').advertName);
+    cy.get('[data-cy="cySearchAgainInput"]').type(
+      Cypress.env('testV1InternalGrant').advertName,
+    );
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
     cy.get('[data-cy="cyGrantNameAndLink"]').should(
