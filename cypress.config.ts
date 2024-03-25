@@ -254,6 +254,5 @@ export default defineConfig({
     baseUrl: process.env.APPLICATION_BASE_URL,
     viewportWidth: 1000,
     viewportHeight: process.env.HEADFUL_MODE === 'true' ? 1000 : 2000,
-    experimentalRunAllSpecs: true,
   },
 });
