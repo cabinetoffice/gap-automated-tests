@@ -27,7 +27,7 @@ import {
   simulateMultipleApplicationFormEditors,
   deleteApplyData,
 } from './cypress/seed/apply/service';
-import { createFindData, deleteFindData } from './cypress/seed/find';
+import { deleteFindData } from './cypress/seed/find';
 import {
   addFailedOauthAudit,
   addSuccessOauthAudit,
@@ -129,7 +129,7 @@ export default defineConfig({
           return null;
         },
         async setUpFindData() {
-          await deleteFindData().then(async () => await createFindData());
+          await deleteFindData();
 
           return null;
         },
