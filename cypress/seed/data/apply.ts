@@ -565,7 +565,7 @@ const v2InternalAdvert = `
       {
        "id": "grantMaximumAward",
        "seen": true,
-       "response": "10000",
+       "response": "10001",
        "multiResponse": null
       },
       {
@@ -591,7 +591,7 @@ const v2InternalAdvert = `
        "seen": true,
        "response": null,
        "multiResponse": [
-        "24",
+        "23",
         "08",
         "2023",
         "00",
@@ -603,7 +603,7 @@ const v2InternalAdvert = `
        "seen": true,
        "response": null,
        "multiResponse": [
-        "24",
+        "23",
         "10",
         "2040",
         "23",

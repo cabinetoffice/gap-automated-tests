@@ -32,7 +32,7 @@ const deleteFromSavedSearch: string = `
 
 const deleteFindUser: string = `
     DELETE FROM public.gap_user
-        WHERE sub in ($1);
+        WHERE id in ($1) and sub in ($2);
 `;
 
 export {

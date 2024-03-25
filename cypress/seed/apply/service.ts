@@ -313,7 +313,7 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
   const row = await retry(
     async () =>
       await runSqlForApply([getExportedSubmission], applyInsertSubstitutions),
-    (response: { status: string }) => response[0][0].status === 'COMPLETE',
+    (response) => response[0][0].status === 'COMPLETE',
     30,
     1000,
   );
