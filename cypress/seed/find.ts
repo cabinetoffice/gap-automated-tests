@@ -18,16 +18,16 @@ const findDatabaseUrl: string =
 
 const findSubstitutions = {
   [insertFindUser]: [
-    process.env.ONE_LOGIN_APPLICANT_SUB,
     process.env.FIRST_USER_ID,
+    process.env.ONE_LOGIN_APPLICANT_SUB,
   ],
   [deleteFromUnsubscribe]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFromSubscription]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFromNewsletter]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFromSavedSearch]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFindUser]: [
-    process.env.ONE_LOGIN_APPLICANT_SUB,
     process.env.FIRST_USER_ID,
+    process.env.ONE_LOGIN_APPLICANT_SUB,
   ],
 };
 
