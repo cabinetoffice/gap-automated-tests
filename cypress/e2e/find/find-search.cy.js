@@ -86,6 +86,7 @@ describe('Find a Grant - Search', () => {
 
     // perform invalid search
     const invalidSearch = 'x'.repeat(101);
+    cy.get('[data-cy="cySearchAgainInput"]').click();
     cy.get('[data-cy="cySearchAgainInput"]').type(invalidSearch);
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
