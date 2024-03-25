@@ -18,7 +18,7 @@ const findDatabaseUrl: string =
 
 const findSubstitutions = {
   [insertFindUser]: [
-    Number(process.env.FIRST_USER_ID) - 1000,
+    -Math.abs(+process.env.FIRST_USER_ID),
     process.env.ONE_LOGIN_APPLICANT_SUB,
   ],
   [deleteFromUnsubscribe]: [process.env.ONE_LOGIN_APPLICANT_SUB],
@@ -26,7 +26,7 @@ const findSubstitutions = {
   [deleteFromNewsletter]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFromSavedSearch]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFindUser]: [
-    Number(process.env.FIRST_USER_ID) - 1000,
+    -Math.abs(+process.env.FIRST_USER_ID),
     process.env.ONE_LOGIN_APPLICANT_SUB,
   ],
 };
