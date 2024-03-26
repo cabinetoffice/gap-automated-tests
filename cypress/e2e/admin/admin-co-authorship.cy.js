@@ -69,16 +69,19 @@ describe('Admin co-authorship', () => {
 
     log("Co-auth: Checking 'Add an editor' validation");
     cy.contains('a', 'Add an editor').click();
+    cy.get('[data-cy="cy-editorEmailAddress-text-input"]').click();
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').type(
       Cypress.env('oneLoginApplicantEmail'),
     );
     cy.contains('button', 'Confirm').click();
     cy.contains("This account does not have an 'Administrator' account.");
+    cy.get('[data-cy="cy-editorEmailAddress-text-input"]').click();
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').type(
       '{selectall}{backspace}' + 'Not a real email',
     );
     cy.contains('button', 'Confirm').click();
     cy.contains('Input a valid email address');
+    cy.get('[data-cy="cy-editorEmailAddress-text-input"]').click();
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').type(
       '{selectall}{backspace}' + Cypress.env('oneLoginSuperAdminEmail'),
     );
