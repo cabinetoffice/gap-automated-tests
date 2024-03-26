@@ -83,10 +83,15 @@ describe('Find a Grant - Search', () => {
       clickThroughPagination(pageCount);
     });
     cy.get('[data-cy="cyPaginationPageNumber1"]').click();
+    cy.url().should(
+      'equal',
+      `${Cypress.env(
+        'applicationBaseUrl',
+      )}/grants?searchTerm=&skip=0&limit=10&page=1`,
+    );
 
     // perform invalid search
     const invalidSearch = 'x'.repeat(101);
-    cy.get('[data-cy="cySearchAgainInput"]').click();
     cy.get('[data-cy="cySearchAgainInput"]').type(invalidSearch);
     cy.get('[data-cy="cySearchAgainButton"]').click();
 
