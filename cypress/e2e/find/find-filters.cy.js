@@ -1,62 +1,62 @@
-import { signInToIntegrationSite, log } from "../../common/common";
+import { signInToIntegrationSite, log } from '../../common/common';
 
-describe("Filter search results", () => {
+describe('Filter search results', () => {
   beforeEach(() => {
-    cy.task("publishGrantsToContentful");
+    cy.task('setUpApplyDataWithAds');
     signInToIntegrationSite();
   });
 
-  it("can apply and clear filters", () => {
+  it('can apply and clear filters', () => {
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
 
     const filters = {
       whoCanApply: [
-        ["Personal / individual", "Personal / Individual"],
-        ["Public sector", "Public Sector"],
-        ["Private sector", "Private Sector"],
-        ["Non profit", "Non-profit"],
-        ["Local authority", "Local authority"],
+        ['Personal / individual', 'Personal / Individual'],
+        ['Public sector', 'Public Sector'],
+        ['Private sector', 'Private Sector'],
+        ['Non profit', 'Non-profit'],
+        ['Local authority', 'Local authority'],
       ],
       location: [
-        "National",
-        "England",
-        "North East England",
-        "North West England",
-        "South East England",
-        "South West England",
-        "Midlands",
-        "Scotland",
-        "Wales",
-        "Northern Ireland",
+        'National',
+        'England',
+        'North East England',
+        'North West England',
+        'South East England',
+        'South West England',
+        'Midlands',
+        'Scotland',
+        'Wales',
+        'Northern Ireland',
       ],
       howMuchCanYouGet: [
-        ["£0 to £10,000", 10000],
-        ["£10,001 to £50,000", 50000],
-        ["£50,001 to £250,000", 250000],
-        ["£250,001 to £1,000,000", 1000000],
-        ["£1,000,001 to £5,000,000", 5000000],
-        ["£5,000,000 plus", 5000000],
+        ['£0 to £10,000', 10000],
+        ['£10,001 to £50,000', 50000],
+        ['£50,001 to £250,000', 250000],
+        ['£250,001 to £1,000,000', 1000000],
+        ['£1,000,001 to £5,000,000', 5000000],
+        ['£5,000,000 plus', 5000000],
       ],
       dateAdded: [
-        ["from", "2023"],
-        ["to", "2030"],
+        ['from', '2023'],
+        ['to', '2030'],
       ],
     };
 
-    log("Find Filters - Who Can Apply");
+    log('Find Filters - Who Can Apply');
 
     filters.whoCanApply.forEach((filterOption, filterIndex) => {
       cy.get(`[data-cy="cy${filterOption[0]}Checkbox"]`).click();
       cy.get('[data-cy="cyApplyFilter"]').click();
 
       // Verify filter
-      cy.get("body").then((body) => {
-        if (body.find(".grants_list").has("li").length > 0) {
-          cy.get(".grants_list")
-            .children("li")
+      cy.get('body').then((body) => {
+        if (body.find('.grants_list').has('li').length > 0) {
+          cy.get('.grants_list')
+            .children('li')
             .first()
             .within(() => {
-              cy.contains("Who can apply")
+              cy.contains('Who can apply')
                 .parent()
                 .within(() => {
                   cy.contains(filterOption[1]);
@@ -65,7 +65,7 @@ describe("Filter search results", () => {
         } else {
           cy.url().then((url) => {
             cy.wrap(url).should(
-              "include",
+              'include',
               `fields.grantApplicantType.en-US=${filterIndex + 1}`,
             );
           });
@@ -75,20 +75,20 @@ describe("Filter search results", () => {
       cy.get('[data-cy="cyCancelFilterTop"]').click();
     });
 
-    log("Find Filters - Location");
+    log('Find Filters - Location');
 
     filters.location.forEach((filterOption, filterIndex) => {
       cy.get(`[data-cy="cy${filterOption}Checkbox"]`).click();
       cy.get('[data-cy="cyApplyFilter"]').click();
 
       // Verify filter
-      cy.get("body").then((body) => {
-        if (body.find(".grants_list").has("li").length > 0) {
-          cy.get(".grants_list")
-            .children("li")
+      cy.get('body').then((body) => {
+        if (body.find('.grants_list').has('li').length > 0) {
+          cy.get('.grants_list')
+            .children('li')
             .first()
             .within(() => {
-              cy.contains("Location")
+              cy.contains('Location')
                 .parent()
                 .within(() => {
                   cy.contains(filterOption);
@@ -97,7 +97,7 @@ describe("Filter search results", () => {
         } else {
           cy.url().then((url) => {
             cy.wrap(url).should(
-              "include",
+              'include',
               `fields.grantLocation.en-US=${filterIndex + 1}`,
             );
           });
@@ -107,44 +107,44 @@ describe("Filter search results", () => {
       cy.get('[data-cy="cyCancelFilterTop"]').click();
     });
 
-    log("Find Filters - How much can you get");
+    log('Find Filters - How much can you get');
 
     filters.howMuchCanYouGet.forEach((filterRange, filterIndex, filters) => {
       cy.get(`[data-cy="cy${filterRange[0]}Checkbox"]`).click();
       cy.get('[data-cy="cyApplyFilter"]').click();
 
       // Verify filter
-      cy.get("body").then((body) => {
-        if (body.find(".grants_list").has("li").length > 0) {
-          cy.get(".grants_list")
-            .children("li")
+      cy.get('body').then((body) => {
+        if (body.find('.grants_list').has('li').length > 0) {
+          cy.get('.grants_list')
+            .children('li')
             .first()
             .within(() => {
-              cy.contains("How much you can get")
+              cy.contains('How much you can get')
                 .parent()
-                .invoke("text")
+                .invoke('text')
                 .then((text) => {
                   // Extract values from advert listing
-                  const p1Index = text.indexOf("£");
-                  const s1Index = text.indexOf(" ", p1Index);
-                  const p2Index = text.indexOf("£", s1Index);
-                  const maxPriceText = text.slice(p2Index + 1).replace(",", "");
+                  const p1Index = text.indexOf('£');
+                  const s1Index = text.indexOf(' ', p1Index);
+                  const p2Index = text.indexOf('£', s1Index);
+                  const maxPriceText = text.slice(p2Index + 1).replace(',', '');
 
-                  const maxPrice = maxPriceText.includes("million")
+                  const maxPrice = maxPriceText.includes('million')
                     ? parseInt(parseFloat(maxPriceText) * 1000000)
                     : parseInt(maxPriceText);
 
                   if (filterIndex < filters.length - 1) {
-                    cy.wrap(maxPrice).should("be.lte", filterRange[1]);
+                    cy.wrap(maxPrice).should('be.lte', filterRange[1]);
                   } else {
-                    cy.wrap(maxPrice).should("be.gte", filterRange[1]);
+                    cy.wrap(maxPrice).should('be.gte', filterRange[1]);
                   }
                 });
             });
         } else {
           cy.url().then((url) => {
             cy.wrap(url).should(
-              "include",
+              'include',
               `fields.grantMaximumAward.en-US=${filterIndex + 1}`,
             );
           });
@@ -154,19 +154,19 @@ describe("Filter search results", () => {
       cy.get('[data-cy="cyCancelFilterBottom"]').click();
     });
 
-    log("Find Filters - Date");
+    log('Find Filters - Date');
 
     filters.dateAdded.forEach((date) => {
-      cy.get(`[data-cy="cyDateFilter-${date[0]}Day"]`).type("01");
-      cy.get(`[data-cy="cyDateFilter-${date[0]}Month"]`).type("01");
+      cy.get(`[data-cy="cyDateFilter-${date[0]}Day"]`).type('01');
+      cy.get(`[data-cy="cyDateFilter-${date[0]}Month"]`).type('01');
       cy.get(`[data-cy="cyDateFilter-${date[0]}Year"]`).type(date[1]);
     });
     cy.get('[data-cy="cyApplyFilter"]').click();
     cy.get('[data-cy="cySearchDescription"]').contains(
-      "Showing grants added between 1 January 2023 to 1 January 2030",
+      'Showing grants added between 1 January 2023 to 1 January 2030',
     );
 
     cy.get('[name="clearDateFilters"]').click();
-    cy.get('[data-cy="cySearchDescription"]').contains("Search grants");
+    cy.get('[data-cy="cySearchDescription"]').contains('Search grants');
   });
 });

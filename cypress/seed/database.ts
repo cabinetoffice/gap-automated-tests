@@ -1,5 +1,5 @@
-import "dotenv/config";
-import { Client } from "pg";
+import 'dotenv/config';
+import { Client } from 'pg';
 
 export const runSQLFromJs = async (
   sqlScripts: string[],
@@ -32,8 +32,15 @@ export const runSQLFromJs = async (
       connectionRetries++;
 
       console.error(
-        `Error executing SQL script : (Retry ${connectionRetries}/${maxConnectionRetries}): ${error}`,
+        `Error executing SQL script (Retry ${connectionRetries}/${maxConnectionRetries}): ${error}`,
       );
+      if (connectionRetries === maxConnectionRetries) {
+        const message = `Failed to execute SQL script after ${maxConnectionRetries} attempts`;
+        console.error(message);
+        throw new Error(
+          message + `, most recent attempt failed with error:\n\n${error}`,
+        );
+      }
     }
   }
 };
@@ -42,7 +49,7 @@ export const getConnectionStringByDbName = (
   dbUrl: string,
   dbName: string,
 ): string => {
-  return dbUrl + "/" + dbName;
+  return dbUrl + '/' + dbName;
 };
 
 export const runSingleQuery = async (

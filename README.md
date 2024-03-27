@@ -112,7 +112,9 @@ It can be useful to have file watching on when debugging failures: `npm run cy:o
 
 However, if you are writing tests for a new journey, it can often be better to turn it off `npm run cy:open:nowatch`, allowing you to run through the journey and obtain the required data selectors etc. without the tests running every time you make a change.
 
-You can just use `npm run cy:open` as well which will do the same thing as `npm run cy:open:nowatch`
+You can just use `npm run cy:open` as well which will do the same thing as `npm run cy:open:nowatch`.
+
+You can also run all tests in the repo, or search for a set of tests and run these. There's a video at this link: https://github.com/cypress-io/cypress/issues/3607#issuecomment-670322179 - the UI is outdated but the functionality is the same.
 
 #### Console
 
@@ -128,6 +130,20 @@ Alternatively you can run them for a single suite:
 - `npm run cy:run:admin`
 - `npm run cy:run:superadmin`
 - `npm run cy:run:apidashboard`
+
+#### Flake Detection
+
+Diagnosing a flaky test has never been easier thanks to the command:
+`npm run cy:run:flake --spec=**/YOUR_TEST_HERE.cy.js`
+
+This will run the tests over and over until they fail - so maybe don't leave it running overnight.
+
+A counter of how many times it ran will be displayed when the test fails, as well as after each individual run so you can keep track.
+
+Bear in mind, however - if you modify the test you're running while this command is executed, the changes WILL be picked up the next time it retries, as each test run is considered a separate run. This is different from the current cy:run behaviour where the tests are "fixed in time" from when you first start executing them.
+
+You can even run multiple files (not sure why you'd want to, but it is an option):
+`npm run cy:run:flake --spec=**/YOUR_TEST_HERE.cy.js,**/ANOTHER_TEST_HERE.cy.js`
 
 #### Reports
 

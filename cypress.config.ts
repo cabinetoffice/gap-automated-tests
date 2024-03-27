@@ -1,12 +1,14 @@
-import { defineConfig } from "cypress";
-import * as dayjs from "dayjs";
+import { defineConfig } from 'cypress';
+import * as dayjs from 'dayjs';
 import {
   TEST_V1_EXTERNAL_GRANT,
   TEST_V1_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
-} from "./cypress/common/constants";
+  EXPORT_BATCH,
+} from './cypress/common/constants';
 import {
+  addAdminInTechSupportTable,
   addSpotlightBatch,
   addToRecentBatch,
   cleanupTestSpotlightSubmissions,
@@ -15,34 +17,41 @@ import {
   createApplyData,
   deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
-  deleteApplyData,
+  deleteApplySchemes,
   deleteSpotlightBatch,
   deleteSpotlightSubmission,
   getExportedSubmissionUrlAndLocation,
+  insertSubmissionAndExport,
   insertSubmissionsAndMQs,
   updateSpotlightSubmission,
-} from "./cypress/seed/apply/service";
-import {
-  publishGrantAdverts,
-  removeAdvertByName,
-} from "./cypress/seed/contentful";
-import { createFindData, deleteFindData } from "./cypress/seed/find";
+  simulateMultipleApplicationFormEditors,
+  deleteApplyData,
+} from './cypress/seed/apply/service';
+import { deleteFindData } from './cypress/seed/find';
 import {
   addFailedOauthAudit,
   addSuccessOauthAudit,
+  addTechSupportRoleToAdmin,
   createTestUsers,
   deleteTestUsers,
-} from "./cypress/seed/user";
-const xlsx = require("node-xlsx").default;
-const fs = require("fs");
-const decompress = require("decompress");
-require("dotenv").config();
+  removeTechSupportRoleFromAdmin,
+} from './cypress/seed/user';
+import {
+  publishGrantAdverts,
+  removeAdvertByName,
+  waitForAdvertToPublish,
+} from './cypress/seed/contentful';
+const xlsx = require('node-xlsx').default;
+const fs = require('fs');
+const decompress = require('decompress');
+require('dotenv').config();
 
 export default defineConfig({
+  taskTimeout: 120000,
   e2e: {
     setupNodeEvents(on) {
       // implement node event listeners here
-      on("task", {
+      on('task', {
         async addFailedOauthAudit() {
           await addFailedOauthAudit();
           return null;
@@ -79,14 +88,48 @@ export default defineConfig({
           return null;
         },
         async setUpApplyData() {
-          await deleteApplyData().then(async () => {
-            await createApplyData();
-          });
+          await deleteApplyData();
+          await createApplyData({ publishedAds: true });
 
           return null;
         },
+        async setUpApplyDataWithAds() {
+          await deleteApplyData();
+          await createApplyData({ publishedAds: false });
+          await publishGrantAdverts();
+
+          return null;
+        },
+        async waitForAdvertToPublish(name) {
+          await waitForAdvertToPublish(name);
+
+          return null;
+        },
+        async removeAdvertByName(name) {
+          await removeAdvertByName(name);
+
+          return null;
+        },
+        async deleteSchemes() {
+          await deleteApplySchemes();
+
+          return null;
+        },
+        async simulateMultipleApplicationFormEditors() {
+          await simulateMultipleApplicationFormEditors();
+
+          return null;
+        },
+        async addTechSupportRoleToAdmin() {
+          // we remove the tech support user in apply db in deleteApplyData
+          await removeTechSupportRoleFromAdmin().then(async () => {
+            await addTechSupportRoleToAdmin();
+            await addAdminInTechSupportTable();
+          });
+          return null;
+        },
         async setUpFindData() {
-          await deleteFindData().then(async () => await createFindData());
+          await deleteFindData();
 
           return null;
         },
@@ -107,19 +150,13 @@ export default defineConfig({
 
           return null;
         },
-        async removeAdvertByName(name) {
-          await removeAdvertByName(name);
-
-          return null;
-        },
-        async publishGrantsToContentful() {
-          await publishGrantAdverts();
-
-          return null;
-        },
         async insertSubmissionsAndMQs() {
           await insertSubmissionsAndMQs();
 
+          return null;
+        },
+        async insertSubmissionAndExport() {
+          await insertSubmissionAndExport();
           return null;
         },
         async parseXlsx({ filePath }) {
@@ -133,18 +170,18 @@ export default defineConfig({
         unzip({ path, file }) {
           return decompress(
             path + file,
-            path + "unzip/" + file.replace(".zip", ""),
+            path + 'unzip/' + file.replace('.zip', ''),
           );
         },
         async getExportedSubmissionUrlAndLocation(schemeId: string) {
           return await getExportedSubmissionUrlAndLocation(schemeId);
         },
         log(message) {
-          console.log(dayjs().format() + " | " + message);
+          console.log(dayjs().format() + ' | ' + message);
 
           return null;
         },
-        async ls(filePath = "/cypress/downloads") {
+        async ls(filePath = '/cypress/downloads') {
           const list = fs.readdirSync(__dirname + filePath);
           console.log(list);
           return `ls ${filePath}: ${JSON.stringify(list)}`;
@@ -155,7 +192,7 @@ export default defineConfig({
           return null;
         },
       });
-      require("cypress-mochawesome-reporter/plugin")(on);
+      require('cypress-mochawesome-reporter/plugin')(on);
     },
     env: {
       oneLoginSandboxBaseUrl: process.env.ONE_LOGIN_BASE_URL,
@@ -190,19 +227,22 @@ export default defineConfig({
       testV2ExternalGrant: {
         ...TEST_V2_EXTERNAL_GRANT,
       },
+      exportBatch: {
+        ...EXPORT_BATCH,
+      },
       awsRegion: process.env.AWS_API_GATEWAY_REGION,
       awsAccessKey: process.env.AWS_API_GATEWAY_ACCESS_KEY,
       awsSecretKey: process.env.AWS_API_GATEWAY_SECRET_KEY,
       awsApiGatewayUsagePlanId: process.env.AWS_API_GATEWAY_USAGE_PLAN_ID,
       awsEnvironment: process.env.AWS_ENVIRONMENT,
     },
-    reporter: "cypress-mochawesome-reporter",
+    reporter: 'cypress-mochawesome-reporter',
     reporterOptions: {
-      reportDir: "mochawesome-report",
-      reportFilename: "[status]_[datetime]_report",
-      timestamp: "yyyy-mm-ddTHH:MM:ssZ",
+      reportDir: 'mochawesome-report',
+      reportFilename: '[status]_[datetime]_report',
+      timestamp: 'yyyy-mm-ddTHH:MM:ssZ',
       charts: true,
-      reportPageTitle: "Find a Grant",
+      reportPageTitle: 'Find a Grant',
       embeddedScreenshots: true,
       inlineAssets: true,
       saveAllAttempts: false,
@@ -212,8 +252,8 @@ export default defineConfig({
       overwrite: false,
     },
     baseUrl: process.env.APPLICATION_BASE_URL,
-    chromeWebSecurity: false,
     viewportWidth: 1000,
-    viewportHeight: 2000,
+    viewportHeight: process.env.HEADFUL_MODE === 'true' ? 1000 : 2000,
+    experimentalRunAllSpecs: true,
   },
 });

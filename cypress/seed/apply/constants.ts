@@ -3,13 +3,14 @@ import {
   TEST_V1_INTERNAL_GRANT,
   TEST_V2_EXTERNAL_GRANT,
   TEST_V2_INTERNAL_GRANT,
-} from "../../common/constants";
+  EXPORT_BATCH,
+} from '../../common/constants';
 import {
   v1ExternalAdvert,
   v1InternalAdvert,
   v2ExternalAdvert,
   v2InternalAdvert,
-} from "../data/apply";
+} from '../data/apply';
 import {
   deleteAdmins,
   deleteAdverts,
@@ -29,7 +30,7 @@ import {
   deleteSubmissions,
   deleteTechSupportUser,
   deleteUsers,
-} from "../ts/deleteApplyData";
+} from '../ts/deleteApplyData';
 import {
   addSpotlightBatchRow,
   addSubmissionToMostRecentBatch,
@@ -38,7 +39,10 @@ import {
   insertAdverts,
   insertApplicants,
   insertApplications,
+  insertDraftAdverts,
   insertEditors,
+  insertExport,
+  insertExportBatch,
   insertFundingOrgs,
   insertGrantApplicantOrgProfiles,
   insertMandatoryQuestions,
@@ -47,21 +51,21 @@ import {
   insertSubmissions,
   insertTechSupportUser,
   insertUsers,
-} from "../ts/insertApplyData";
+} from '../ts/insertApplyData';
 
 import {
   getExportedSubmission,
   selectApiKeysByFunderId,
-} from "../ts/selectApplyData";
-import { getTestID, getUUID, hashApiKey } from "./helper";
+} from '../ts/selectApplyData';
+import { getTestID, getUUID, hashApiKey } from './helper';
 
-require("dotenv").config();
+require('dotenv').config();
 
-const applyServiceDbName = process.env.APPLY_DATABASE_NAME || "gapapplylocaldb";
+const applyServiceDbName = process.env.APPLY_DATABASE_NAME || 'gapapplylocaldb';
 
 const applyDatabaseUrl =
   process.env.APPLY_DATABASE_URL ||
-  "postgres://postgres:postgres@localhost:5432";
+  'postgres://postgres:postgres@localhost:5432';
 
 const postLoginBaseUrl = process.env.POST_LOGIN_BASE_URL;
 
@@ -90,6 +94,8 @@ const ADVERT_ID_V1_EXTERNAL = getUUID(3);
 const ADVERT_ID_V2_INTERNAL = getUUID(1);
 const ADVERT_ID_V2_EXTERNAL = getUUID(2);
 const SPOTLIGHT_BATCH_ID = getUUID(5);
+const EXPORT_BATCH_ID_V1 = EXPORT_BATCH.export_batch_id_v1;
+const EXPORT_BATCH_ID_V2 = EXPORT_BATCH.export_batch_id_v2;
 
 // The IDs of the submissions and MQs are not linked to the advert schemes themselves, they're just unique UUIDs.
 const V1_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID = ADVERT_ID_V1_INTERNAL;
@@ -168,10 +174,20 @@ const applyInsertSubstitutions = {
   ],
   [insertEditors]: [
     ADMIN_ID,
+    V1_INTERNAL_SCHEME_ID,
+    ADMIN_ID,
+    V1_EXTERNAL_SCHEME_ID,
+    ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    ADMIN_ID,
+    V2_EXTERNAL_SCHEME_ID,
     SUPER_ADMIN_ID,
     V1_INTERNAL_SCHEME_ID,
+    SUPER_ADMIN_ID,
     V1_EXTERNAL_SCHEME_ID,
+    SUPER_ADMIN_ID,
     V2_INTERNAL_SCHEME_ID,
+    SUPER_ADMIN_ID,
     V2_EXTERNAL_SCHEME_ID,
   ],
   [insertApplications]: [
@@ -188,32 +204,50 @@ const applyInsertSubstitutions = {
   ],
   [insertAdverts]: [
     ADVERT_ID_V1_INTERNAL,
-    TEST_V1_INTERNAL_GRANT.contentfulId,
-    TEST_V1_INTERNAL_GRANT.contentfulSlug,
     TEST_V1_INTERNAL_GRANT.advertName,
     v1InternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
     V1_INTERNAL_SCHEME_ID,
     ADVERT_ID_V2_INTERNAL,
-    TEST_V2_INTERNAL_GRANT.contentfulId,
-    TEST_V2_INTERNAL_GRANT.contentfulSlug,
     TEST_V2_INTERNAL_GRANT.advertName,
     v2InternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
     V2_INTERNAL_SCHEME_ID,
     ADVERT_ID_V2_EXTERNAL,
-    TEST_V2_EXTERNAL_GRANT.contentfulId,
-    TEST_V2_EXTERNAL_GRANT.contentfulSlug,
     TEST_V2_EXTERNAL_GRANT.advertName,
     v2ExternalAdvert,
     ADMIN_ID,
     ADMIN_ID,
     V2_EXTERNAL_SCHEME_ID,
     ADVERT_ID_V1_EXTERNAL,
-    TEST_V1_EXTERNAL_GRANT.contentfulId,
-    TEST_V1_EXTERNAL_GRANT.contentfulSlug,
+    TEST_V1_EXTERNAL_GRANT.advertName,
+    v1ExternalAdvert,
+    ADMIN_ID,
+    ADMIN_ID,
+    V1_EXTERNAL_SCHEME_ID,
+  ],
+  [insertDraftAdverts]: [
+    ADVERT_ID_V1_INTERNAL,
+    TEST_V1_INTERNAL_GRANT.advertName,
+    v1InternalAdvert,
+    ADMIN_ID,
+    ADMIN_ID,
+    V1_INTERNAL_SCHEME_ID,
+    ADVERT_ID_V2_INTERNAL,
+    TEST_V2_INTERNAL_GRANT.advertName,
+    v2InternalAdvert,
+    ADMIN_ID,
+    ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    ADVERT_ID_V2_EXTERNAL,
+    TEST_V2_EXTERNAL_GRANT.advertName,
+    v2ExternalAdvert,
+    ADMIN_ID,
+    ADMIN_ID,
+    V2_EXTERNAL_SCHEME_ID,
+    ADVERT_ID_V1_EXTERNAL,
     TEST_V1_EXTERNAL_GRANT.advertName,
     v1ExternalAdvert,
     ADMIN_ID,
@@ -349,6 +383,63 @@ const applyUpdateSubstitutions = {
   ],
 };
 
+const applyExportSubstitutions = {
+  [insertSubmissions]: [
+    // V1 Internal Limited company application
+    V1_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    APPLICANT_ID,
+    V1_INTERNAL_SCHEME_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V1_INTERNAL_SCHEME_ID,
+    V1_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    // V2 Internal Limited company application
+    V2_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    APPLICANT_ID,
+    V2_INTERNAL_SCHEME_ID,
+    APPLICANT_ID,
+    APPLICANT_ID,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    // V2 Internal Non-limited company application
+    V2_INTERNAL_NON_LIMITED_COMPANY_SUBMISSION_ID,
+    ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    ADMIN_ID,
+    ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_NON_LIMITED_COMPANY_SUBMISSION_ID,
+    // V2 Internal Individual application
+    V2_INTERNAL_INDIVIDUAL_SUBMISSION_ID,
+    SUPER_ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    SUPER_ADMIN_ID,
+    SUPER_ADMIN_ID,
+    V2_INTERNAL_SCHEME_ID,
+    V2_INTERNAL_INDIVIDUAL_SUBMISSION_ID,
+  ],
+  [insertExportBatch]: [
+    EXPORT_BATCH_ID_V1,
+    V1_INTERNAL_SCHEME_ID,
+    ADMIN_ID,
+    EXPORT_BATCH_ID_V2,
+    V2_INTERNAL_SCHEME_ID,
+    ADMIN_ID,
+  ],
+  [insertExport]: [
+    EXPORT_BATCH_ID_V1,
+    V1_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    V1_INTERNAL_SCHEME_ID,
+    'FAILED',
+    ADMIN_ID,
+    EXPORT_BATCH_ID_V2,
+    V2_INTERNAL_LIMITED_COMPANY_SUBMISSION_ID,
+    V2_INTERNAL_SCHEME_ID,
+    'FAILED',
+    ADMIN_ID,
+  ],
+};
+
 const createApiKeyFundingOrganisationSubstitutions = {
   [createApiKeysFundingOrganisations]: [
     APPLICANT_ID,
@@ -358,10 +449,10 @@ const createApiKeyFundingOrganisationSubstitutions = {
   ],
 };
 
-const today = new Date().toLocaleDateString("en-GB", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
+const today = new Date().toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
 });
 
 const commonApiKeySubsValue = (value, name, id) => {
@@ -374,7 +465,7 @@ const createApiKeySubstitutions = (
   name: string,
   value: string,
 ) => {
-  const fundingOrganisation = name.startsWith("Org1") ? ADMIN_ID : APPLICANT_ID;
+  const fundingOrganisation = name.startsWith('Org1') ? ADMIN_ID : APPLICANT_ID;
   return [
     FUNDING_ID - i,
     fundingOrganisation,
@@ -425,4 +516,5 @@ export {
   getAPIKeysByFunderIdSubstitutions,
   postLoginBaseUrl,
   spotlightSubstitutions,
+  applyExportSubstitutions,
 };

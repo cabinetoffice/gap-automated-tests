@@ -1,6 +1,5 @@
-import { runSQLFromJs } from "./database";
-import "dotenv/config";
-import { insertFindUser } from "./ts/insertFindData";
+import { runSQLFromJs } from './database';
+import 'dotenv/config';
 
 import {
   deleteFromUnsubscribe,
@@ -8,31 +7,23 @@ import {
   deleteFromNewsletter,
   deleteFromSavedSearch,
   deleteFindUser,
-} from "./ts/deleteFindData";
+} from './ts/deleteFindData';
 
-const findServiceDbName: string = process.env.FIND_DATABASE_NAME || "postgres";
+const findServiceDbName: string = process.env.FIND_DATABASE_NAME || 'postgres';
 
 const findDatabaseUrl: string =
   process.env.FIND_DATABASE_URL ||
-  "postgres://postgres:postgres@localhost:5432";
+  'postgres://postgres:postgres@localhost:5432';
 
 const findSubstitutions = {
-  [insertFindUser]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFromUnsubscribe]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFromSubscription]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFromNewsletter]: [process.env.ONE_LOGIN_APPLICANT_SUB],
   [deleteFromSavedSearch]: [process.env.ONE_LOGIN_APPLICANT_SUB],
-  [deleteFindUser]: [process.env.ONE_LOGIN_APPLICANT_SUB],
-};
-
-export const createFindData = async (): Promise<void> => {
-  await runSQLFromJs(
-    [insertFindUser],
-    findSubstitutions,
-    findServiceDbName,
-    findDatabaseUrl,
-  );
-  console.log("Successfully added data to Find database");
+  [deleteFindUser]: [
+    -Math.abs(+process.env.FIRST_USER_ID),
+    process.env.ONE_LOGIN_APPLICANT_SUB,
+  ],
 };
 
 export const deleteFindData = async (): Promise<void> => {
@@ -48,5 +39,5 @@ export const deleteFindData = async (): Promise<void> => {
     findServiceDbName,
     findDatabaseUrl,
   );
-  console.log("Successfully removed data from Find database");
+  console.log('Successfully removed data from Find database');
 };
