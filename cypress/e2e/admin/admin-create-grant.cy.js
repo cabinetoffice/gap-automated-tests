@@ -249,7 +249,6 @@ describe('Create a Grant', () => {
       .contains('Find a grant')
       .click();
     cy.get('[data-cy=cySignInAndApply-Link]').click();
-    cy.get('[data-cy="cy-apply-register-button"]').click();
     cy.get(`[data-cy="cy_linkToScheme_${GRANT_NAME}"]`).click();
     cy.contains('Grant application form');
     cy.contains('View submitted applications');
