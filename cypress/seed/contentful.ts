@@ -10,9 +10,12 @@ import { retry } from './helper';
 import {
   SQSClient,
   SendMessageBatchCommand,
+  SendMessageCommand,
   type SendMessageBatchCommandInput,
+  type SendMessageCommandInput,
 } from '@aws-sdk/client-sqs';
 import { randomUUID } from 'crypto';
+import { getAdvertIdFromName } from './apply/service';
 
 type Entries = Awaited<ReturnType<typeof getContentfulEntries>>;
 
@@ -50,6 +53,44 @@ const createAndPublish = async (advertIds: string[]) => {
   };
 
   await sqsClient.send(new SendMessageBatchCommand(params));
+};
+
+const unpublishAdvert = async (advertId: string) => {
+  const sqsClient = new SQSClient({ region: 'eu-west-2' });
+  const id = randomUUID();
+
+  const params: SendMessageCommandInput = {
+    QueueUrl: process.env.PUBLISH_UNPUBLISH_AD_SCHEDULED_QUEUE,
+    MessageBody: id,
+    MessageGroupId: id,
+    MessageDeduplicationId: id,
+    MessageAttributes: {
+      action: {
+        DataType: 'String',
+        StringValue: 'UNPUBLISH',
+      },
+      grantAdvertId: {
+        DataType: 'String',
+        StringValue: advertId as unknown as string,
+      },
+    },
+  };
+
+  await sqsClient.send(new SendMessageCommand(params));
+};
+
+export const unpublishAdvertByName = async (advertName: string) => {
+  const advertId = await getAdvertIdFromName(advertName);
+
+  await unpublishAdvert(advertId);
+
+  const environment = await setupContentful();
+  await retry(
+    async () => await getContentfulEntries(environment, advertName),
+    (res) => areAllAdvertsDraft(res, 1),
+    20,
+    5000,
+  );
 };
 
 const unpublishAndDelete = async (entries: Entries) => {
@@ -114,6 +155,10 @@ const getContentfulEntries = async (
 const areAllAdvertsPublished = (entries: Entries, expectedLength: number) =>
   entries.total === expectedLength &&
   entries.items.every((entry) => entry.isPublished());
+
+const areAllAdvertsDraft = (entries: Entries, expectedLength: number) =>
+  entries.total === expectedLength &&
+  entries.items.every((entry) => entry.isDraft());
 
 export const publishGrantAdverts = async () => {
   console.log('Connecting to Contentful to manage grant adverts');

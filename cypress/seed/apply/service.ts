@@ -51,6 +51,7 @@ import {
 import {
   getExportedSubmission,
   selectApiKeysByFunderId,
+  getAdvertIdFromNameQuery,
 } from '../ts/selectApplyData';
 import {
   readdQueuedSpotlightSubmissions,
@@ -324,6 +325,13 @@ const getExportedSubmissionUrlAndLocation = async (schemeId: string) => {
   };
 };
 
+const getAdvertIdFromName = async (advertName: string) => {
+  const result = await runSqlForApply([getAdvertIdFromNameQuery], {
+    [getAdvertIdFromNameQuery]: [advertName],
+  });
+  return result[0][0].grant_advert_id;
+};
+
 const createApiKeysInDatabase = async (apiKeys: UsagePlanKey[]) => {
   console.log('Creating Api Keys in the database');
   const numberOfColumns = 10; // number of columns to be substituted in the database
@@ -444,6 +452,7 @@ export {
   createApiKeysData,
   createApiKeysInApiGatewayForTechnicalSupport,
   createApplyData,
+  getAdvertIdFromName,
   deleteAPIKeysFromAwsForTechSupport,
   deleteApiKeysData,
   deleteApplySchemes,
