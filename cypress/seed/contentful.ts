@@ -93,7 +93,7 @@ const deleteFromOpenSearch = async (entryId: string) => {
     },
   );
   console.log(
-    `Deleted contentful ad ${entryId} with status ${response.status}`,
+    `Deleted elastic search entry ${entryId} with status ${response.status}`,
   );
 };
 
