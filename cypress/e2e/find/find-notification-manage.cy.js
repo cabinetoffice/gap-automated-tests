@@ -6,8 +6,6 @@ import {
   clickText,
   signInAsFindApplicant,
   signInToIntegrationSite,
-  runAccessibility,
-  initialiseAccessibilityLogFile,
 } from '../../common/common';
 
 describe('Find a Grant - Manage Notifications', () => {
@@ -16,7 +14,6 @@ describe('Find a Grant - Manage Notifications', () => {
     cy.task('setUpApplyData');
     cy.task('setUpFindData');
     signInToIntegrationSite();
-    initialiseAccessibilityLogFile();
   });
 
   it('can manage notifications through One Login when there are no notifications or saved searches', () => {
@@ -31,7 +28,6 @@ describe('Find a Grant - Manage Notifications', () => {
         ' link in the emails we send to you.',
     );
     signInAsFindApplicant();
-    runAccessibility();
 
     cy.get('[data-cy="cyManageYourNotificationsHeading"]').should(
       'have.text',
@@ -41,7 +37,6 @@ describe('Find a Grant - Manage Notifications', () => {
 
     cy.get('[data-cy="cySearch grantsPageLink"]').click();
     clickText('Back');
-    runAccessibility();
 
     // journey when already logged in
     cy.get('[data-cy="cyManageNotificationsHomeLink"]').click();

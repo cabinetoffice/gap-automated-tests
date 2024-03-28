@@ -119,6 +119,7 @@ export const fillOutCustomSection = () => {
   // Error when trying to skip mandatory question
   clickSaveAndContinue();
   cy.get('[data-cy="cyErrorBanner"]').contains('There is a problem');
+  cy.get('[data-cy="cyErrorBanner"]').contains('Select an option');
 
   // Saving and exiting after filling out a question
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();

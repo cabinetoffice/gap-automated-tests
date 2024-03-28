@@ -1,5 +1,3 @@
-import 'cypress-axe';
-
 export const BASE_URL = Cypress.env('applicationBaseUrl');
 export const ONE_LOGIN_BASE_URL = Cypress.env('oneLoginSandboxBaseUrl');
 export const POST_LOGIN_BASE_URL = Cypress.env('postLoginBaseUrl');
@@ -114,16 +112,17 @@ export const signInToIntegrationSite = () => {
   console.log(BASE_URL);
   // We have to visit base url first to prevent issues with cross-origin
   cy.visit(BASE_URL);
+
   // then log in to the One Login integration environment to prevent the popup appearing
   const username = Cypress.env('oneLoginSandboxUsername');
   const password = Cypress.env('oneLoginSandboxPassword');
-
   cy.visit(
     `https://${username}:${password}@${ONE_LOGIN_BASE_URL}/sign-in-or-create`,
     {
       failOnStatusCode: false,
     },
   );
+
   // then return back to the base url to execute the tests
   cy.visit(BASE_URL);
   cy.contains('Reject analytics cookies').click();
@@ -273,57 +272,4 @@ export const validateValueForKeyInTable = (
     .within(() => {
       cy.get(options.valueElement).contains(value);
     });
-};
-
-export function initialiseAccessibilityLogFile() {
-  const specName = Cypress.spec.name;
-  const testName = Cypress.currentTest.title;
-  cy.writeFile(
-    `cypress/accessibility/logs/${specName}/${testName}.txt`,
-    '',
-    'utf-8',
-    { log: true },
-  );
-}
-
-function accessibilityLogInfo(violationData) {
-  let currentURL;
-  cy.url().then((url) => {
-    currentURL = url;
-
-    let info = `${violationData.length} accessibility violation${
-      violationData.length === 1 ? '' : 's'
-    } ${
-      violationData.length === 1 ? 'was' : 'were'
-    } detected on page: ${currentURL}\n`;
-
-    violationData.forEach((violation) => {
-      info += `${violation.impact}: ${violation.description}\n`;
-    });
-
-    const specName = Cypress.spec.name;
-    const testName = Cypress.currentTest.title;
-    cy.writeFile(
-      `cypress/accessibility/logs/${specName}/${testName}.txt`,
-      info + '\n',
-      'utf-8',
-      { flag: 'a+', log: false },
-    );
-
-    cy.log(info);
-  });
-}
-
-function violationCallback(violations) {
-  const violationData = violations.map(({ impact, description, tags }) => ({
-    impact,
-    description,
-    tags: tags.toString(),
-  }));
-  accessibilityLogInfo(violationData);
-}
-
-export const runAccessibility = () => {
-  cy.injectAxe();
-  cy.checkA11y(null, null, violationCallback, true);
 };

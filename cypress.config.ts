@@ -42,7 +42,7 @@ import {
   waitForAdvertToPublish,
 } from './cypress/seed/contentful';
 const xlsx = require('node-xlsx').default;
-const fs = require('fs');
+const fs = require('node:fs');
 const decompress = require('decompress');
 require('dotenv').config();
 
@@ -159,7 +159,32 @@ export default defineConfig({
           await insertSubmissionAndExport();
           return null;
         },
-        async parseXlsx({ filePath }) {
+        initialiseAccessibilityLogFile({ specName, testName }) {
+          const folder = `cypress/accessibility/logs/${specName}`;
+          fs.mkdir(folder, { recursive: true }, (error) => {
+            console.error(
+              'error creating accessibility file directory for ',
+              specName,
+              error,
+            );
+          });
+          fs.writeFile(
+            `${folder}/${testName}.txt`,
+            '',
+            { encoding: 'utf-8' },
+            (error) => {
+              console.error(
+                'error initialising accessibility file for ',
+                specName,
+                testName,
+                error,
+              );
+            },
+          );
+
+          return null;
+        },
+        parseXlsx({ filePath }) {
           try {
             return xlsx.parse(fs.readFileSync(__dirname + filePath));
           } catch (e) {
@@ -255,5 +280,6 @@ export default defineConfig({
     viewportWidth: 1000,
     viewportHeight: process.env.HEADFUL_MODE === 'true' ? 1000 : 2000,
     experimentalRunAllSpecs: true,
+    chromeWebSecurity: false,
   },
 });
