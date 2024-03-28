@@ -36,7 +36,7 @@ describe('Create a Grant', () => {
     signInToIntegrationSite();
   });
 
-  it('Admin can create a new Grant with Advert and Application Form', () => {
+  it('Admin can create a new Grant with Advert and Application Form', async () => {
     cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     log('Admin grant creation journey - Signing in as admin');
@@ -249,7 +249,6 @@ describe('Create a Grant', () => {
       .contains('Find a grant')
       .click();
     cy.get('[data-cy=cySignInAndApply-Link]').click();
-    cy.get('[data-cy="cy-apply-register-button"]').click();
     cy.get(`[data-cy="cy_linkToScheme_${GRANT_NAME}"]`).click();
     cy.contains('Grant application form');
     cy.contains('View submitted applications');
@@ -257,5 +256,20 @@ describe('Create a Grant', () => {
     cy.contains('An advert for this grant is live on Find a grant.');
     cy.get('[data-cy="cy-link-to-advert-on-find"]').should('have.attr', 'href');
     cy.contains('View or change your advert');
+
+    // Trigger schedule unpublish immediately
+    cy.task('unpublishAdvert', GRANT_NAME);
+
+    // Check the adverts unpublished
+    cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+    cy.get('[data-cy="cy-publish-advert-button"]').click();
+    cy.contains('Review your advert');
+    cy.get('[data-cy="cy-advert-summary-page-back-button"]').click();
+    cy.get('[data-cy="cy-back-button"]').click();
+
+    // Check the application forms unpublished
+    cy.get('[data-cy="cy_view-application-link"]').click();
+    cy.get('[data-cy="cy_publishApplication-button"]').click();
+    cy.contains('Are you sure you want to publish your application form?');
   });
 });
