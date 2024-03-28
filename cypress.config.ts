@@ -165,7 +165,7 @@ export default defineConfig({
           await insertSubmissionAndExport();
           return null;
         },
-        initialiseAccessibilityLogFile({ specName, testName }) {
+        initialiseAccessibilityLogFolder({ specName, testName }) {
           const folder = `cypress/accessibility/logs/${specName}`;
           fs.mkdir(folder, { recursive: true }, (error) => {
             console.error(
@@ -174,20 +174,6 @@ export default defineConfig({
               error,
             );
           });
-          fs.writeFile(
-            `${folder}/${testName}.txt`,
-            '',
-            { encoding: 'utf-8' },
-            (error) => {
-              console.error(
-                'error initialising accessibility file for ',
-                specName,
-                testName,
-                error,
-              );
-            },
-          );
-
           return null;
         },
         parseXlsx({ filePath }) {

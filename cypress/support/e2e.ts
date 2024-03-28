@@ -40,24 +40,28 @@ Cypress.Commands.add(
 );
 
 const formatAccessibilityViolations = (
-  accessibilityReport: axe.Result[],
+  violations: axe.Result[],
   url: string,
 ) => {
-  console.log('got ', accessibilityReport.length, ' violations for url ', url);
-  const violationData = accessibilityReport.map(
-    ({ impact, description, tags }) => ({
-      impact,
-      description,
-      tags: tags.toString(),
-    }),
-  );
-  let info = `${violationData.length} accessibility violation${
-    violationData.length === 1 ? '' : 's'
-  } ${violationData.length === 1 ? 'was' : 'were'} detected on page: ${url}\n`;
+  console.log('got ', violations.length, ' violations for url ', url);
+  let info = `### ${violations.length} accessibility violation${
+    violations.length === 1 ? '' : 's'
+  } ${violations.length === 1 ? 'was' : 'were'} detected on page: ${url}\n\n`;
 
-  violationData.forEach((violation) => {
-    info += `${violation.impact}: ${violation.description}\n`;
+  violations.forEach((violation) => {
+    const tags = violation.tags.map((tag) => tag).join(',<br>');
+    const nodes = violation.nodes
+      // Have to escape the HTML tags to get them to render in markdown
+      // @ts-expect-error it thinks replaceAll doesn't exist for some reason
+      .map((node) => node.html.replaceAll('<', '\\<'))
+      .join('<br><br>');
+
+    info += `| Impact | Description | Help | Tags | Nodes |\n`;
+    info += `|--------|-------------|------|------|-------|\n`;
+    info += `| ${violation.impact} | ${violation.description} | ${violation.helpUrl} | ${tags} | ${nodes} |\n`;
   });
+
+  info += `\n\n\n`;
   return info;
 };
 
@@ -191,7 +195,7 @@ const checkA11y = (
 // Modified from https://github.com/cypress-io/code-coverage/blob/d1cbb1df981fd12c97204a0409eb45757c70f24e/task.js
 const registerHooks = () => {
   // This variable is shared between hooks to allow the accessibility reports to be saved
-  let windowAccessibilityObjects: string[];
+  let windowAccessibilityObjects: Array<{ url: string; report: string }>;
 
   beforeEach(() => {
     // reset at the start of each test
@@ -199,7 +203,7 @@ const registerHooks = () => {
     const specName = Cypress.spec.name;
     const testName = Cypress.currentTest.title;
 
-    cy.task('initialiseAccessibilityLogFile', { specName, testName });
+    cy.task('initialiseAccessibilityLogFolder', { specName, testName });
 
     const saveAccessibilityObject = async (win: Cypress.AUTWindow) => {
       const url = win.location.href;
@@ -211,11 +215,12 @@ const registerHooks = () => {
           // Prevent about:blank and duplicate urls
           if (
             url !== 'about:blank' &&
-            !JSON.stringify(windowAccessibilityObjects).includes(url)
+            !windowAccessibilityObjects.map(({ url }) => url).includes(url)
           )
-            windowAccessibilityObjects.push(
-              formatAccessibilityViolations(accessibilityReport, url),
-            );
+            windowAccessibilityObjects.push({
+              url,
+              report: formatAccessibilityViolations(accessibilityReport, url),
+            });
         },
         true,
       );
@@ -237,17 +242,25 @@ const registerHooks = () => {
     );
     if (!windowAccessibilityObjects.length) {
       cy.writeFile(
-        `cypress/accessibility/logs/${specName}/${testName}.txt`,
+        `cypress/accessibility/logs/${specName}/${testName}.md`,
         'No accessibility violations detected.' + '\n',
         'utf-8',
-        { flag: 'a+', log: false },
+        { log: false },
       );
       return;
     }
-    windowAccessibilityObjects.forEach((accessibilityReport) => {
+    const title = `# ${specName} - ${testName}\n\n`;
+    const subtitle = `## Found ${windowAccessibilityObjects.length} pages with accessibility violations.\n\n`;
+    cy.writeFile(
+      `cypress/accessibility/logs/${specName}/${testName}.md`,
+      `${title} ${subtitle}`,
+      'utf-8',
+      { log: false },
+    );
+    windowAccessibilityObjects.forEach(({ report }) => {
       cy.writeFile(
-        `cypress/accessibility/logs/${specName}/${testName}.txt`,
-        accessibilityReport + '\n',
+        `cypress/accessibility/logs/${specName}/${testName}.md`,
+        report + '\n',
         'utf-8',
         { flag: 'a+', log: false },
       );
