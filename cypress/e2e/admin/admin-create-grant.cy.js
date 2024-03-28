@@ -36,7 +36,7 @@ describe('Create a Grant', () => {
     signInToIntegrationSite();
   });
 
-  it('Admin can create a new Grant with Advert and Application Form', async () => {
+  it('Admin can create a new Grant with Advert and Application Form', () => {
     cy.task(REMOVE_ADVERT_BY_NAME, GRANT_NAME);
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     log('Admin grant creation journey - Signing in as admin');
@@ -262,7 +262,7 @@ describe('Create a Grant', () => {
 
     // Check the adverts unpublished
     cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
-    cy.get('[data-cy="cy-publish-advert-button"]').click();
+    // cy.get('[data-cy="cy-publish-advert-button"]').click();
     cy.contains('Review your advert');
     cy.get('[data-cy="cy-advert-summary-page-back-button"]').click();
     cy.get('[data-cy="cy-back-button"]').click();

@@ -18,7 +18,6 @@ import './commands';
 import 'cypress-mochawesome-reporter/register';
 import 'cypress-file-upload';
 import type * as axe from 'axe-core';
-import { log } from '../common/common';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -237,7 +236,7 @@ const registerHooks = () => {
     // save accessibility to a file after the test
     const specName = Cypress.spec.name;
     const testName = Cypress.currentTest.title;
-    log(
+    console.log(
       `${specName} - ${testName} - Found ${windowAccessibilityObjects.length} pages with violations`,
     );
     if (!windowAccessibilityObjects.length) {

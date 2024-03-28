@@ -165,9 +165,9 @@ export default defineConfig({
           await insertSubmissionAndExport();
           return null;
         },
-        initialiseAccessibilityLogFolder({ specName, testName }) {
+        async initialiseAccessibilityLogFolder({ specName }) {
           const folder = `cypress/accessibility/logs/${specName}`;
-          fs.mkdir(folder, { recursive: true }, (error) => {
+          await fs.mkdir(folder, { recursive: true }, (error) => {
             console.error(
               'error creating accessibility file directory for ',
               specName,

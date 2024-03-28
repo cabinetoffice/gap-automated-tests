@@ -74,7 +74,9 @@ export const runSingleQuery = async (
       retries++;
 
       console.error(
-        `Error executing SQL script ${sqlScript}: (Retry ${retries}/${maxRetries}): ${error}`,
+        `Error executing SQL script ${sqlScript} ${JSON.stringify(
+          substitutions,
+        )}: (Retry ${retries}/${maxRetries}): ${error}`,
       );
     }
   }
