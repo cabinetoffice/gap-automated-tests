@@ -78,8 +78,8 @@ const unpublishAndDelete = async (entries: Entries) => {
   return deletionExecuted;
 };
 
-const deleteFromOpenSearch = async (entryId: string) =>
-  await fetch(
+const deleteFromOpenSearch = async (entryId: string) => {
+  const response = await fetch(
     `${process.env.OPEN_SEARCH_URL}/${process.env.OPEN_SEARCH_DOMAIN}/_doc/${entryId}`,
     {
       method: 'DELETE',
@@ -92,6 +92,10 @@ const deleteFromOpenSearch = async (entryId: string) =>
       }),
     },
   );
+  console.log(
+    `Deleted elastic search entry ${entryId} with status ${response.status}`,
+  );
+};
 
 const setupContentful = async () => {
   const client = contentful.createClient({
