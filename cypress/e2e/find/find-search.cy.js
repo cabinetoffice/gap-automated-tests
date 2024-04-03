@@ -45,9 +45,8 @@ describe('Find a Grant - Search', () => {
   });
 
   it('can search for a grant', () => {
-    searchForGrant(Cypress.env('testV1InternalGrant').advertName);
-
-    cy.contains(Cypress.env('testV1InternalGrant').advertName);
+    const grantAdvertName = Cypress.env('testV1InternalGrant').advertName;
+    searchForGrant(grantAdvertName);
 
     const grantData = {
       Location: 'National',
@@ -58,13 +57,15 @@ describe('Find a Grant - Search', () => {
       'Opening date': '24 August 2023, 12:01am',
       'Closing date': '24 October 2040, 11:59pm',
     };
-    Object.entries(grantData).forEach(([key, value]) => {
-      const elementId = `[id="${
-        Cypress.env('testV1InternalGrant').advertName
-      }"]`;
-      cy.get(elementId).contains(key);
-      cy.get(elementId).contains(value);
-    });
+    cy.contains('a', grantAdvertName)
+      .parent()
+      .parent()
+      .within(() => {
+        Object.entries(grantData).forEach(([key, value]) => {
+          cy.contains(key);
+          cy.contains(value);
+        });
+      });
   });
 
   it('can navigate through pagination and limit search term to < 100 characters', () => {

@@ -31,10 +31,7 @@ describe('Find a Grant - Grant Notification', () => {
     // search for and view test grant advert
     searchForGrant(grantAdvertName);
 
-    cy.get(`[id="${Cypress.env('testV1InternalGrant').advertName}"]`)
-      .children('h2')
-      .should('have.text', grantAdvertName)
-      .click();
+    cy.contains('a', grantAdvertName).click();
     runAccessibility();
 
     // click 'Sign up for updates' and continue to One Login
