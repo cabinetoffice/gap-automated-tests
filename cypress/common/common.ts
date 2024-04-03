@@ -282,33 +282,46 @@ export const validateValueForKeyInTable = (
 export function initialiseAccessibilityLogFile() {
   const specName = Cypress.spec.name;
   const testName = Cypress.currentTest.title;
+  const title = `# ${specName} - ${testName}\n\n`;
   cy.writeFile(
-    `cypress/accessibility/logs/${specName}/${testName}.txt`,
-    '',
+    `cypress/accessibility/logs/${specName}/${testName}.md`,
+    `${title}`,
     'utf-8',
     { log: true },
   );
 }
 
+const formatAccessibilityViolations = (violations: any[], url: any) => {
+  console.log('got ', violations.length, ' violations for url ', url);
+  let info = `### ${violations.length} accessibility violation${
+    violations.length === 1 ? '' : 's'
+  } ${violations.length === 1 ? 'was' : 'were'} detected on page: ${url}\n\n`;
+
+  violations.forEach((violation) => {
+    const tags = violation.tags.map((tag: string[]) => tag).join(',<br>');
+    const nodes = violation.nodes
+      // Have to escape the HTML tags to get them to render in markdown
+      .map((node: any) => node.html.replaceAll('<', '\\<'))
+      .join('<br><br>');
+
+    info += `| Impact | Description | Help | Tags | Nodes |\n`;
+    info += `|--------|-------------|------|------|-------|\n`;
+    info += `| ${violation.impact} | ${violation.description} | ${violation.helpUrl} | ${tags} | ${nodes} |\n`;
+  });
+
+  info += `\n\n\n`;
+  return info;
+};
+
 function accessibilityLogInfo(violationData) {
-  let currentURL;
   cy.url().then((url) => {
-    currentURL = url;
-
-    let info = `${violationData.length} accessibility violation${
-      violationData.length === 1 ? '' : 's'
-    } ${
-      violationData.length === 1 ? 'was' : 'were'
-    } detected on page: ${currentURL}\n`;
-
-    violationData.forEach((violation) => {
-      info += `${violation.impact}: ${violation.description}\n`;
-    });
+    const info = formatAccessibilityViolations(violationData, url);
 
     const specName = Cypress.spec.name;
     const testName = Cypress.currentTest.title;
+
     cy.writeFile(
-      `cypress/accessibility/logs/${specName}/${testName}.txt`,
+      `cypress/accessibility/logs/${specName}/${testName}.md`,
       info + '\n',
       'utf-8',
       { flag: 'a+', log: false },
@@ -318,16 +331,7 @@ function accessibilityLogInfo(violationData) {
   });
 }
 
-function violationCallback(violations) {
-  const violationData = violations.map(({ impact, description, tags }) => ({
-    impact,
-    description,
-    tags: tags.toString(),
-  }));
-  accessibilityLogInfo(violationData);
-}
-
 export const runAccessibility = () => {
   cy.injectAxe();
-  cy.checkA11y(null, null, violationCallback, true);
+  cy.checkA11y(null, null, accessibilityLogInfo, true);
 };
