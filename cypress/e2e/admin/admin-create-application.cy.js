@@ -1,10 +1,11 @@
 import {
+  downloadFileFromLink,
   log,
   signInAsAdmin,
   signInToIntegrationSite,
 } from '../../common/common';
 import { GRANT_NAME } from './constants';
-import { applicationForm, createGrant } from './helper';
+import { applicationForm, createGrant, validatePreview } from './helper';
 
 describe('Create a Grant', () => {
   beforeEach(() => {
@@ -33,5 +34,16 @@ describe('Create a Grant', () => {
     cy.contains('Grant application form');
     cy.contains('View submitted applications');
     cy.contains(GRANT_NAME + ' no advert');
+
+    log('View scheme details with no advert journey - validating preview');
+    cy.contains('a', 'Cypress - Grant Application').click();
+
+    validatePreview();
+
+    log('View scheme details with no advert journey - validating odt download');
+    downloadFileFromLink(
+      cy.contains('a', 'Download an overview (ODT)'),
+      'application.odt',
+    );
   });
 });

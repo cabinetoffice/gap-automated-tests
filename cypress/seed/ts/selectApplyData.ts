@@ -1,8 +1,4 @@
-export const selectSpotlightSession = `SELECT * FROM public.spotlight_session where scheme_id = $1;`;
-
-export const getSchemeIdFromName = `SELECT * FROM public.grant_scheme where scheme_name = $1 and scheme_contact = $2`;
-
-export const getGrantScheme = `SELECT * FROM public.grant_scheme`;
+export const getAdvertIdFromNameQuery = `SELECT grant_advert_id FROM public.grant_advert where grant_advert_name = $1`;
 
 export const getExportedSubmission = `
 SELECT * FROM public.grant_export WHERE submission_id IN (
@@ -15,7 +11,5 @@ SELECT * FROM public.grant_export WHERE submission_id IN (
     )
 );
 `;
-
-export const selectAllApiKeys = `SELECT * FROM public.api_key;`;
 
 export const selectApiKeysByFunderId = `SELECT * FROM public.api_key WHERE funder_id = $1;`;

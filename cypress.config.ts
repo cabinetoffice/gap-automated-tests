@@ -27,7 +27,7 @@ import {
   simulateMultipleApplicationFormEditors,
   deleteApplyData,
 } from './cypress/seed/apply/service';
-import { createFindData, deleteFindData } from './cypress/seed/find';
+import { deleteFindData } from './cypress/seed/find';
 import {
   addFailedOauthAudit,
   addSuccessOauthAudit,
@@ -39,6 +39,7 @@ import {
 import {
   publishGrantAdverts,
   removeAdvertByName,
+  unpublishAdvertByName,
   waitForAdvertToPublish,
 } from './cypress/seed/contentful';
 const xlsx = require('node-xlsx').default;
@@ -110,6 +111,11 @@ export default defineConfig({
 
           return null;
         },
+        async unpublishAdvert(advertName) {
+          await unpublishAdvertByName(advertName);
+
+          return null;
+        },
         async deleteSchemes() {
           await deleteApplySchemes();
 
@@ -129,7 +135,7 @@ export default defineConfig({
           return null;
         },
         async setUpFindData() {
-          await deleteFindData().then(async () => await createFindData());
+          await deleteFindData();
 
           return null;
         },

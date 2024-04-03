@@ -14,6 +14,7 @@
     "cy:run:admin": "cypress run --spec \"cypress/e2e/admin/*.cy.js\"",
     "cy:run:superadmin": "cypress run --spec \"cypress/e2e/superadmin/*.cy.js\"",
     "cy:run:apidashboard": "cypress run --spec \"cypress/e2e/api-dashboard/*.cy.js\"",
+    "cy:run:flake": "COUNTER=1; while npx cypress run --spec $npm_config_spec; do echo \"Test retry count: $COUNTER\"; COUNTER=$((COUNTER + 1)); done; echo \"Tests ran until failure: $COUNTER\"",
     "lint": "npx eslint --ext .js,.ts ./",
     "lint:fix": "npx eslint --ext .js,.ts ./ --fix",
     "prettier:write": "npx prettier . --write",
@@ -36,7 +37,7 @@
   "homepage": "https://github.com/cabinetoffice/gap-automated-tests#readme",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.7.2",
-    "cypress": "^13.2.0",
+    "cypress": "^13.7.1",
     "cypress-mochawesome-reporter": "^3.6.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.49.0",

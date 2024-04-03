@@ -42,6 +42,10 @@ export const signInAsApplyApplicant = () => {
     Cypress.env('oneLoginApplicantEmail'),
     Cypress.env('oneLoginApplicantPassword'),
   );
+  cy.url().should(
+    'not.equal',
+    `${Cypress.env('applicationBaseUrl')}/apply/applicant`,
+  );
 };
 
 export const signInAsFindApplicant = () => {
