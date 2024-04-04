@@ -76,3 +76,10 @@ export const EXPORT_BATCH = {
   export_batch_id_v1: getUUID(),
   export_batch_id_v2: getUUID(1),
 };
+
+export const wcagCategories = {
+  runOnly: {
+    type: 'tag',
+    values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'],
+  },
+};

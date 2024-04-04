@@ -2,6 +2,8 @@ import {
   clickText,
   signInAsFindApplicant,
   signInToIntegrationSite,
+  runAccessibility,
+  initialiseAccessibilityLogFile,
 } from '../../common/common';
 import {
   checkSuccessBanner,
@@ -15,20 +17,27 @@ describe('Find a Grant - Saved Search Notifications', () => {
     cy.task('setUpApplyData');
     cy.task('setUpFindData');
     signInToIntegrationSite();
+    initialiseAccessibilityLogFile();
   });
+
   it('Can subscribe and unsubscribe a saved search notification', () => {
     cy.contains('Find a grant');
     // start saved search login journey
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy£5,000,000 plusCheckbox"]').click();
     cy.get('[data-cy="cyApplyFilter"]').click();
+    runAccessibility();
     cy.get('[data-cy="cySaveSearchLink"]').click();
+    runAccessibility();
 
     signInAsFindApplicant();
+    runAccessibility();
     // capture date
     cy.wrap(Date.now()).as('subscribedDate');
 
     createSavedSearch('test saved search');
+    runAccessibility(); // Added after creating a saved search
     checkSuccessBanner(
       '[data-cy="cyImportantBannerTitle"]',
       '[data-cy="cyImportantBannerBody"]',
@@ -54,10 +63,13 @@ describe('Find a Grant - Saved Search Notifications', () => {
     );
     // unsubscribe
     cy.get('[data-cy="cytest saved searchDeleteLink"]').click();
+    runAccessibility();
     clickText('Yes, delete');
+    runAccessibility();
     cy.get('[data-cy="cytest saved searchSavedSearchTableName"]').should(
       'not.exist',
     );
+    runAccessibility();
     checkSuccessBanner(
       '#govuk-notification-banner-title',
       '[data-cy="cySubscribeSuccessMessageContent"]',

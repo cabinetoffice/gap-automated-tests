@@ -1,3 +1,5 @@
+import 'cypress-axe';
+
 export const BASE_URL = Cypress.env('applicationBaseUrl');
 export const ONE_LOGIN_BASE_URL = Cypress.env('oneLoginSandboxBaseUrl');
 export const POST_LOGIN_BASE_URL = Cypress.env('postLoginBaseUrl');
@@ -275,4 +277,61 @@ export const validateValueForKeyInTable = (
     .within(() => {
       cy.get(options.valueElement).contains(value);
     });
+};
+
+export function initialiseAccessibilityLogFile() {
+  const specName = Cypress.spec.name;
+  const testName = Cypress.currentTest.title;
+  const title = `# ${specName} - ${testName}\n\n`;
+  cy.writeFile(
+    `cypress/accessibility/logs/${specName}/${testName}.md`,
+    `${title}`,
+    'utf-8',
+    { log: true },
+  );
+}
+
+const formatAccessibilityViolations = (violations: any[], url: any) => {
+  console.log('got ', violations.length, ' violations for url ', url);
+  let info = `### ${violations.length} accessibility violation${
+    violations.length === 1 ? '' : 's'
+  } ${violations.length === 1 ? 'was' : 'were'} detected on page: ${url}\n\n`;
+
+  violations.forEach((violation) => {
+    const tags = violation.tags.map((tag: string[]) => tag).join(',<br>');
+    const nodes = violation.nodes
+      // Have to escape the HTML tags to get them to render in markdown
+      .map((node: any) => node.html.replaceAll('<', '\\<'))
+      .join('<br><br>');
+
+    info += `| Impact | Description | Help | Tags | Nodes |\n`;
+    info += `|--------|-------------|------|------|-------|\n`;
+    info += `| ${violation.impact} | ${violation.description} | ${violation.helpUrl} | ${tags} | ${nodes} |\n`;
+  });
+
+  info += `\n\n\n`;
+  return info;
+};
+
+function accessibilityLogInfo(violationData) {
+  cy.url().then((url) => {
+    const info = formatAccessibilityViolations(violationData, url);
+
+    const specName = Cypress.spec.name;
+    const testName = Cypress.currentTest.title;
+
+    cy.writeFile(
+      `cypress/accessibility/logs/${specName}/${testName}.md`,
+      info + '\n',
+      'utf-8',
+      { flag: 'a+', log: false },
+    );
+
+    cy.log(info);
+  });
+}
+
+export const runAccessibility = () => {
+  cy.injectAxe();
+  cy.checkA11y(null, null, accessibilityLogInfo, true);
 };
