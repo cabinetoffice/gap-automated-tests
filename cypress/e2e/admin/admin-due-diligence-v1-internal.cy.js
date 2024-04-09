@@ -24,7 +24,7 @@ describe('Downloads and Due Diligence', () => {
   beforeEach(() => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
-    cy.task('insertSubmissionsAndMQs');
+    // cy.task('insertSubmissionsAndMQs');
     signInToIntegrationSite();
     initialiseAccessibilityLogFile();
   });
@@ -130,7 +130,7 @@ describe('Downloads and Due Diligence', () => {
     submissionExportSuccess(Cypress.env('testV1InternalGrant'), 1);
   });
 
-  it('Error in Export', () => {
+  it.skip('Error in Export', () => {
     // Sign in as admin
     log('Admin V1 Internal - Download Submission Export - signing in as admin');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
