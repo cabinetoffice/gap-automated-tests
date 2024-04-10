@@ -98,3 +98,4 @@ jobs:
       notify: false
       environment: SANDBOX
     secrets: inherit
+    if: {{vars['SHOULD_RUN_SCHEDULED_QA_TESTS'] == "true" }}
