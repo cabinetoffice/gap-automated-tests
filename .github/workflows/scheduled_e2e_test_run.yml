@@ -22,6 +22,6 @@ jobs:
       environment: QA
       branch: main
     secrets: inherit
-    if: {{vars['SHOULD_RUN_SCHEDULED_QA_TESTS'] == "true" }}
+    if: ${{ vars.SHOULD_RUN_SCHEDULED_QA_TESTS == "true" }}
 
   # =============================
