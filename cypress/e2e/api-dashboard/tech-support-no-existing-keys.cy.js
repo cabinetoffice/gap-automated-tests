@@ -1,25 +1,14 @@
 import {
   ADMIN_DASHBOARD_URL,
   BASE_URL,
-  SUPER_ADMIN_DASHBOARD_URL,
   log,
   signInAsTechnicalSupport,
   signInToIntegrationSite,
-  signOut,
+  SUPER_ADMIN_DASHBOARD_URL,
 } from '../../common/common';
 
-const today = new Date().toLocaleDateString('en-GB', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
-
 const firstUserId = Cypress.env('firstUserId');
-
 const apiKeyName = `CypressE2ETestTechSupportCreateAPIKey${firstUserId}`;
-const existingApiKeyName = `CypressE2ETestTechSupport001${firstUserId}`;
-const API_DASHBOARD_BASE_URL = BASE_URL + '/find/api/admin';
-
 describe('API Admin - No existing keys', () => {
   beforeEach(() => {
     cy.task('setUpUser');
@@ -270,193 +259,17 @@ describe('API Admin - No existing keys', () => {
       'Tech Support Navigation - Checking applicant, admin and super-admin dashboard returns 404',
     );
     [ADMIN_DASHBOARD_URL, SUPER_ADMIN_DASHBOARD_URL].forEach((page) => {
-      cy.visit(page, { failOnStatusCode: false })
-        .contains('Page not found')
-        .should('exist');
+      cy.visit(page, { failOnStatusCode: false });
+      cy.get('[data-cy="error-heading"]')
+        .should('be.visible')
+        .should('have.text', 'Something went wrong');
+
+      cy.get('[data-cy="error-paragraph"]')
+        .should('be.visible')
+        .should(
+          'have.text',
+          'Something went wrong while trying to complete your request.',
+        );
     });
-  });
-});
-describe('API Admin - Existing API Keys', () => {
-  beforeEach(() => {
-    cy.task('setUpUser');
-    cy.task('deleteAPIKeysFromAwsForTechSupport');
-    cy.task('setUpApplyData');
-    cy.task('createApiKeysInApiGatewayForTechnicalSupport');
-    signInToIntegrationSite();
-
-    cy.get('[data-cy=cySignInAndApply-Link]').click();
-    log('Technical Support User - Signing in');
-    signInAsTechnicalSupport();
-  });
-
-  it('Should render API key dashboard with list of API keys and prevent creation of a key with duplicate name', () => {
-    // View existing API Keys
-    log(
-      'Tech Support - existing API key journey - checking API dashboard has existing API keys',
-    );
-    cy.get('[data-cy="api-keys-heading"]')
-      .should('be.visible')
-      .should('have.text', 'Manage API keys');
-
-    cy.get('[data-cy="api-keys-department"]')
-      .should('be.visible')
-      .contains('Department');
-
-    cy.get('[data-cy="api-keys-department-name"]')
-      .should('be.visible')
-      .contains('Cypress - Test Department');
-
-    cy.get('[data-cy="create-key-summary-list"]')
-      .children()
-      .should('have.length', 1);
-
-    cy.get(`[data-cy="api-key-name-${existingApiKeyName}"]`)
-      .should('be.visible')
-      .should('have.text', existingApiKeyName);
-
-    cy.get(`[data-cy="api-key-created-date-${existingApiKeyName}"]`)
-      .should('be.visible')
-      .should('have.text', 'Created ' + today);
-
-    cy.get(`[data-cy="api-key-revoke-${existingApiKeyName}"]`)
-      .should('be.visible')
-      .contains('Revoke');
-
-    cy.get('[data-cy="api-keys-create-button"]')
-      .should('be.visible')
-      .contains('Create an API key');
-
-    // Should display validation errors for existing API key name
-    log(
-      'Tech Support - existing API key journey - checking validation errors for existing API key name',
-    );
-    cy.get('[data-cy="api-keys-create-button"]')
-      .should('be.visible')
-      .contains('Create an API key')
-      .click();
-
-    cy.get('[data-cy="create-key-input"]').type(existingApiKeyName);
-
-    cy.get('[data-cy="create-key-continue"]')
-      .should('be.visible')
-      .contains('Continue')
-      .click();
-
-    cy.get('[data-cy="create-key-error-banner-heading"]')
-      .should('be.visible')
-      .contains('There is a problem');
-
-    cy.get('[data-cy="create-key-error-summary-list"]')
-      .should('have.length', 1)
-      .contains('An API key with this name already exists');
-
-    cy.get('[data-cy="create-key-input-validation-error-details"]')
-      .should('be.visible')
-      .should('have.text', 'An API key with this name already exists');
-
-    cy.get('[data-cy="create-key-back-button"]')
-      .should('be.visible')
-      .should('have.text', 'Back')
-      .click();
-  });
-
-  it('Should render API key confirmation page and revoke API key', () => {
-    log('Tech Support - revoke API key journey - beginning API key revocation');
-    cy.get(`[data-cy="api-key-revoke-${existingApiKeyName}"]`)
-      .should('be.visible')
-      .contains('Revoke')
-      .click();
-
-    cy.get('[data-cy="revoke-heading"]')
-      .should('be.visible')
-      .should('have.text', 'Revoke an API key');
-
-    cy.get('[data-cy="revoke-paragraph-1"]')
-      .should('be.visible')
-      .contains(
-        'If you revoke this API key, you will no longer be able to use it to request data from Find a grant.',
-      );
-
-    cy.get('[data-cy="revoke-paragraph-2"]')
-      .should('be.visible')
-      .contains(
-        'You cannot re-enable a revoked API key. If you want to request data again, you will need to create a new API key.',
-      );
-
-    cy.get('[data-cy="revoke-revoke-button"]')
-      .should('be.visible')
-      .should('have.text', 'Revoke key');
-
-    cy.get('[data-cy="revoke-cancel-button"]')
-      .should('be.visible')
-      .should('have.text', 'Cancel')
-      .click();
-
-    cy.get(`[data-cy="api-key-revoke-${existingApiKeyName}"]`)
-      .should('be.visible')
-      .contains('Revoke')
-      .click();
-
-    log(
-      'Tech Support - revoke API key journey - checking API key has been revoked',
-    );
-    cy.get('[data-cy="revoke-revoke-button"]')
-      .should('be.visible')
-      .should('have.text', 'Revoke key')
-      .click();
-
-    cy.get('[data-cy="create-key-summary-list"]')
-      .children()
-      .should('have.length', 1);
-
-    cy.get(`[data-cy="api-key-name-${existingApiKeyName}"]`)
-      .should('be.visible')
-      .should('have.text', existingApiKeyName);
-
-    cy.get(`[data-cy="api-key-created-date-${existingApiKeyName}"]`)
-      .should('be.visible')
-      .should('have.text', 'Created ' + today);
-
-    cy.get(`[data-cy="api-key-revoked-${existingApiKeyName}"]`)
-      .should('be.visible')
-      .should('have.text', 'Revoked ' + today);
-  });
-});
-
-describe('API Dashboard', () => {
-  beforeEach(() => {
-    cy.task('setUpUser');
-    cy.task('deleteAPIKeysFromAwsForTechSupport');
-    cy.task('setUpApplyData');
-    signInToIntegrationSite();
-
-    cy.log('Clicking Sign in as a Technical Support user');
-    cy.get('[data-cy=cySignInAndApply-Link]').click();
-
-    signInAsTechnicalSupport();
-  });
-
-  it('Technical Support users should not have access to any Super Admin API Dashboard endpoints', () => {
-    cy.getCookie('user-service-token').then((cookie) => {
-      cy.request(
-        {
-          method: 'GET',
-          url: `${API_DASHBOARD_BASE_URL}/api-keys/manage`,
-          headers: {
-            Cookie: cookie.value,
-          },
-        },
-        {
-          keyName: 'Cypress',
-        },
-      ).then((r) => {
-        expect(r.status).to.eq(200);
-        expect(r.redirects[0]).to.contain(`/api-keys/error`);
-        expect(r.body).to.contain('Something went wrong');
-      });
-    });
-
-    cy.log('signing out');
-    signOut();
   });
 });

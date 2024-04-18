@@ -10,7 +10,9 @@ DELETE FROM public.departments
     WHERE id in ($1, $2, $3) OR name in ($4);
 `;
 
-const deleteRole =
-  ' DELETE FROM roles_users WHERE roles_id= $1 AND users_gap_user_id=$2;';
+const deleteRole = `
+DELETE FROM public.roles_users
+    WHERE roles_id = $1 AND users_gap_user_id = $2;
+`;
 
 export { deleteUsers, deleteDepartments, deleteRole };
