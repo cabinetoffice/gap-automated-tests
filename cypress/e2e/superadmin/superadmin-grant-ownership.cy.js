@@ -1,6 +1,7 @@
 import {
   clickText,
   log,
+  runAccessibility,
   selectActionForItemInTable,
   signInAsSuperAdmin,
   signInToIntegrationSite,
@@ -17,9 +18,11 @@ describe('Super Admin', () => {
 
   it('Can change grant ownership', () => {
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
 
     log('Super Admin Change Grant Ownership - Signing in as super admin');
     signInAsSuperAdmin();
+    runAccessibility();
 
     log(
       'Super Admin Change Grant Ownership - Entering admin email in search box',
@@ -28,6 +31,7 @@ describe('Super Admin', () => {
 
     log('Super Admin Change Grant Ownership - Clicking search button');
     cy.get('[data-cy=cy-button-Search]').click();
+    runAccessibility();
 
     log('Super Admin Change Grant Ownership - Clicking edit on admin user');
 
@@ -109,6 +113,7 @@ describe('Super Admin', () => {
 
     log('Super Admin Change Grant Ownership - Hitting back button');
     cy.get('[data-cy="cy-back-button"]').click();
+    runAccessibility();
 
     log(
       'Super Admin Change Grant Ownership - Entering super admin email in search box',
@@ -116,6 +121,7 @@ describe('Super Admin', () => {
     cy.get('[name=searchTerm]').type(Cypress.env('oneLoginSuperAdminEmail'));
 
     cy.get('[data-cy=cy-button-Search]').click();
+    runAccessibility();
 
     log(
       'Super Admin Change Grant Ownership - Clicking edit on super admin user',
@@ -137,6 +143,7 @@ describe('Super Admin', () => {
     log('Super Admin Change Grant Ownership - Navigate to admin dashboard');
     cy.get('[data-cy="cy-back-button"]').click();
     cy.get('[data-cy="cyadminDashPageLink"] > .govuk-link').click();
+    runAccessibility();
 
     log(
       'Super Admin Change Grant Ownership - Checking grant shows in admin dashboard',

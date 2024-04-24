@@ -3,6 +3,7 @@ import {
   searchForGrant,
   signInAsApplyApplicant,
   log,
+  runAccessibility,
 } from '../../common/common';
 
 describe('Apply for a Grant', () => {
@@ -14,6 +15,7 @@ describe('Apply for a Grant', () => {
 
   it('Can complete V1 External grant journey', () => {
     // Sign in
+    runAccessibility();
     log('Apply V1 External Grant - Signing in as applicant');
     cy.get('[data-cy="cySignInAndApply-Link"]').click();
     signInAsApplyApplicant();

@@ -1,5 +1,6 @@
 import {
   log,
+  runAccessibility,
   signInAsTechnicalSupport,
   signInToIntegrationSite,
 } from '../../common/common';
@@ -18,10 +19,13 @@ describe('API Admin - Existing API Keys', () => {
     cy.task('setUpApplyData');
     cy.task('createApiKeysInApiGatewayForTechnicalSupport');
     signInToIntegrationSite();
+    runAccessibility();
 
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
     log('Technical Support User - Signing in');
     signInAsTechnicalSupport();
+    runAccessibility();
   });
 
   it('Should render API key dashboard with list of API keys and prevent creation of a key with duplicate name', () => {
@@ -69,6 +73,7 @@ describe('API Admin - Existing API Keys', () => {
       .should('be.visible')
       .contains('Create an API key')
       .click();
+    runAccessibility();
 
     cy.get('[data-cy="create-key-input"]').type(existingApiKeyName);
 
@@ -76,6 +81,7 @@ describe('API Admin - Existing API Keys', () => {
       .should('be.visible')
       .contains('Continue')
       .click();
+    runAccessibility();
 
     cy.get('[data-cy="create-key-error-banner-heading"]')
       .should('be.visible')
@@ -93,6 +99,7 @@ describe('API Admin - Existing API Keys', () => {
       .should('be.visible')
       .should('have.text', 'Back')
       .click();
+    runAccessibility();
   });
 
   it('Should render API key confirmation page and revoke API key', () => {
@@ -101,6 +108,7 @@ describe('API Admin - Existing API Keys', () => {
       .should('be.visible')
       .contains('Revoke')
       .click();
+    runAccessibility();
 
     cy.get('[data-cy="revoke-heading"]')
       .should('be.visible')
@@ -126,11 +134,13 @@ describe('API Admin - Existing API Keys', () => {
       .should('be.visible')
       .should('have.text', 'Cancel')
       .click();
+    runAccessibility();
 
     cy.get(`[data-cy="api-key-revoke-${existingApiKeyName}"]`)
       .should('be.visible')
       .contains('Revoke')
       .click();
+    runAccessibility();
 
     log(
       'Tech Support - revoke API key journey - checking API key has been revoked',
@@ -139,6 +149,7 @@ describe('API Admin - Existing API Keys', () => {
       .should('be.visible')
       .should('have.text', 'Revoke key')
       .click();
+    runAccessibility();
 
     cy.get('[data-cy="create-key-summary-list"]')
       .children()

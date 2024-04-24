@@ -9,6 +9,7 @@ const API_DASHBOARD_BASE_URL = BASE_URL + '/find/api/admin';
 describe('Api Dashboard Security', () => {
   beforeEach(() => {
     signInToIntegrationSite();
+    runAccessibility();
   });
 
   it('Applicant users should not have access to any API dashboard endpoints', () => {

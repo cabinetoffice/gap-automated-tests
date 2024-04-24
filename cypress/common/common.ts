@@ -101,6 +101,7 @@ export const navigateToSpecificUser = (email: string) => {
 
 export const signOut = () => {
   cy.contains('Sign out').click();
+  runAccessibility();
   cy.contains('Find a grant');
 };
 
@@ -164,6 +165,7 @@ export const yesSectionComplete = () => {
 
 export const yesQuestionComplete = () => {
   cy.get('[data-cy=cy-radioInput-option-YesIveCompletedThisQuestion]').click();
+  runAccessibility();
   clickSaveAndContinue();
 };
 

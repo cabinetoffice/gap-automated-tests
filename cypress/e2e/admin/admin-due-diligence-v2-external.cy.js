@@ -2,6 +2,7 @@ import {
   assert200,
   downloadFileFromLink,
   log,
+  runAccessibility,
   signInAsAdmin,
   signInToIntegrationSite,
   validateXlsx,
@@ -12,6 +13,7 @@ describe('Downloads and Due Diligence', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     signInToIntegrationSite();
+    runAccessibility();
   });
 
   it('V2 External - Download due diligence data', () => {
@@ -23,7 +25,9 @@ describe('Downloads and Due Diligence', () => {
 
     log('Admin V2 External - Due Diligence download - signing in as admin');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
     signInAsAdmin();
+    runAccessibility();
 
     // View grant and get due diligence data
     log('Admin V2 External - Due Diligence download - viewing grant');
@@ -32,6 +36,7 @@ describe('Downloads and Due Diligence', () => {
       '.govuk-button--secondary',
       'Manage due diligence checks',
     ).click();
+    runAccessibility();
 
     // Check download link works
     assert200(cy.get(':nth-child(4) > .govuk-link'));

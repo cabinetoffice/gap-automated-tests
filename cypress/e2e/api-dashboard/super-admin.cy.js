@@ -1,5 +1,6 @@
 import {
   BASE_URL,
+  runAccessibility,
   signInAsSuperAdmin,
   signInToIntegrationSite,
 } from '../../common/common';
@@ -29,14 +30,18 @@ describe('Api Dashboard SuperAdmin journeys', () => {
 
     beforeEach(() => {
       signInToIntegrationSite();
+      runAccessibility();
 
       cy.log('Clicking Sign in as a superAdmin');
       cy.get('[data-cy=cySignInAndApply-Link]').click();
+      runAccessibility();
 
       signInAsSuperAdmin();
+      runAccessibility();
 
       cy.log('Clicking Manage API Keys');
       cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
+      runAccessibility();
     });
 
     it('Should have correct navBar items for the superAdmin role, and check if link works', () => {
@@ -53,6 +58,7 @@ describe('Api Dashboard SuperAdmin journeys', () => {
       cy.get('[data-cy="header-navbar-back-to-dashboard-link"]')
         .contains('Super admin dashboard')
         .click();
+      runAccessibility();
 
       cy.log(
         'Should have correct navBar items for the superAdmin role, and check if link works - Verifying link to the superAdmin dashboard is correct',
@@ -62,6 +68,7 @@ describe('Api Dashboard SuperAdmin journeys', () => {
       cy.visit(SUPER_ADMIN_DASHBOARD);
       cy.log('Signing out');
       cy.get('[data-cy="cy_SignOutLink"]').click();
+      runAccessibility();
 
       cy.log('Signing out - Verifying that the user is on the homepage');
       cy.contains('Find a grant');
@@ -78,14 +85,18 @@ describe('Api Dashboard SuperAdmin journeys', () => {
 
     beforeEach(() => {
       signInToIntegrationSite();
+      runAccessibility();
 
       cy.log('Clicking sign in as a superAdmin');
       cy.get('[data-cy=cySignInAndApply-Link]').click();
+      runAccessibility();
 
       signInAsSuperAdmin();
+      runAccessibility();
 
       cy.log('Clicking Manage API Keys');
       cy.get('[data-cy="cytechnicalDashPageLink"] > .govuk-link').click();
+      runAccessibility();
     });
 
     it('Should show API keys in the table, organisations in the filters bar and any pagination required', () => {
@@ -200,6 +211,7 @@ describe('Api Dashboard SuperAdmin journeys', () => {
       cy.get(
         `[data-cy="admin-dashboard-list-table-row-Revoked-${KEY_NAME}-link"]`,
       ).click();
+      runAccessibility();
 
       cy.log(
         'Should be able to revoke any key from any department - Verify that the url contain the right path',
@@ -229,6 +241,7 @@ describe('Api Dashboard SuperAdmin journeys', () => {
       cy.get(
         `[data-cy="admin-dashboard-list-table-row-Revoked-${KEY_NAME}-link"]`,
       ).click();
+      runAccessibility();
 
       cy.log(
         'Should be able to revoke any key from any department - Verify that the url contain the right path',
@@ -241,6 +254,7 @@ describe('Api Dashboard SuperAdmin journeys', () => {
       );
       cy.get('form').within(() => {
         cy.get(`[data-cy="revoke-revoke-button"]`).click();
+        runAccessibility();
       });
 
       cy.log(
@@ -249,7 +263,9 @@ describe('Api Dashboard SuperAdmin journeys', () => {
       cy.url().should('eq', `${API_DASHBOARD_BASE_URL}/api-keys/manage`);
 
       cy.get(`[data-cy="admin-dashboard-filter-${ORG_2}-checkbox"]`).click();
+      runAccessibility();
       cy.get(`[data-cy="admin-dashboard-filter-apply-button"]`).click();
+      runAccessibility();
 
       cy.log(
         `Should be able to revoke any key from any department - Verify that the key ${KEY_NAME} is revoked`,
@@ -278,6 +294,7 @@ describe('Api Dashboard SuperAdmin journeys', () => {
       cy.log(
         'Show error page when trying to access Technical support dashboard page - Trying access Technical support dashboard page',
       );
+      runAccessibility();
 
       cy.visit(`${API_DASHBOARD_BASE_URL}/api-keys`, {
         failOnStatusCode: false,
