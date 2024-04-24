@@ -1,4 +1,8 @@
-import { searchForGrant, signInToIntegrationSite } from '../../common/common';
+import {
+  runAccessibility,
+  searchForGrant,
+  signInToIntegrationSite,
+} from '../../common/common';
 import { clickThroughPagination, countNumberOfPages } from './helper';
 
 describe('Find a Grant - Search', () => {
@@ -12,41 +16,50 @@ describe('Find a Grant - Search', () => {
 
   it('Interacts with the home page and enters a search term > 100 characters', () => {
     cy.contains('Find a grant');
+    runAccessibility();
 
     cy.get('[data-cy="cyhomePageLink"]')
       .children('a')
       .should('have.text', 'Home')
       .click();
+    runAccessibility();
 
     // browse grants and perform invalid search on home page(> 100 characters)
     cy.get('[data-cy="cyBrowseGrantsHomePageTextLink"]').click();
+    runAccessibility();
 
     cy.get('[data-cy="cyhomePageLink"]')
       .children('a')
       .should('have.text', 'Home')
       .click();
+    runAccessibility();
 
     // perform invalid search
     const invalidSearch = 'x'.repeat(101);
     cy.get('[data-cy="cyHomePageSearchInput"]').type(invalidSearch);
+    runAccessibility();
 
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
+    runAccessibility();
 
     // assert the error banner is there and contains correct text
     cy.get('[data-cy="cyErrorBannerHeading"]').should(
       'have.text',
       'There is a problem',
     );
+    runAccessibility();
 
     cy.get('[data-cy="cyError_searchAgainTermInput"]').should(
       'have.text',
       'Search term must be 100 characters or less',
     );
+    runAccessibility();
   });
 
   it('can search for a grant', () => {
     const grantAdvertName = Cypress.env('testV1InternalGrant').advertName;
     searchForGrant(grantAdvertName);
+    runAccessibility();
 
     const grantData = {
       Location: 'National',
@@ -70,15 +83,19 @@ describe('Find a Grant - Search', () => {
 
   it('can navigate through pagination and limit search term to < 100 characters', () => {
     cy.contains('Find a grant');
+    runAccessibility();
 
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
+    runAccessibility();
 
     cy.get('[data-cy="cyGrantsFoundMessage"]').should(
       'not.contain.text',
       "We've found 0",
     );
+    runAccessibility();
 
     countNumberOfPages();
+    runAccessibility();
 
     cy.get('@pageCount').then((pageCount) => {
       clickThroughPagination(pageCount);
@@ -95,17 +112,20 @@ describe('Find a Grant - Search', () => {
     const invalidSearch = 'x'.repeat(101);
     cy.get('[data-cy="cySearchAgainInput"]').type(invalidSearch);
     cy.get('[data-cy="cySearchAgainButton"]').click();
+    runAccessibility();
 
     cy.get('[data-cy="cyErrorBanner"]').contains('h2', 'There is a problem');
     cy.get('[data-cy="cyError_searchAgainTermInput"]').contains(
       'a',
       'Search term must be 100 characters or less',
     );
+    runAccessibility();
 
     cy.get('[data-cy="cySearchAgainInput"]').type(
       Cypress.env('testV1InternalGrant').advertName,
     );
     cy.get('[data-cy="cySearchAgainButton"]').click();
+    runAccessibility();
 
     cy.get('[data-cy="cyGrantNameAndLink"]').should(
       'include.text',

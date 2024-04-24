@@ -2,6 +2,7 @@ import {
   clickContinue,
   clickSaveAndContinue,
   clickSaveAndExit,
+  runAccessibility,
   yesSectionComplete,
 } from './common';
 
@@ -40,6 +41,7 @@ export const fillMqOrgQuestionsAsLimitedCompany = (details) => {
       .click();
   });
   clickSaveAndContinue();
+  runAccessibility();
 
   // Name
   cy.contains('Enter your full name').should('not.exist');
@@ -48,6 +50,7 @@ export const fillMqOrgQuestionsAsLimitedCompany = (details) => {
     .should('have.value', '')
     .type(details.name);
   clickSaveAndContinue();
+  runAccessibility();
 
   // Address
   cy.contains('Enter your address').should('not.exist');
@@ -60,6 +63,7 @@ export const fillMqOrgQuestionsAsLimitedCompany = (details) => {
     },
   );
   clickSaveAndContinue();
+  runAccessibility();
 
   // Companies House
   cy.contains('Enter your Companies House number (if you have one)').should(
@@ -69,6 +73,7 @@ export const fillMqOrgQuestionsAsLimitedCompany = (details) => {
     .should('have.value', '')
     .type(details.companiesHouse);
   clickSaveAndContinue();
+  runAccessibility();
 
   // Charities Commission
   cy.contains('Enter your Charity Commission number (if you have one)').should(
@@ -78,6 +83,7 @@ export const fillMqOrgQuestionsAsLimitedCompany = (details) => {
     .should('have.value', '')
     .type(details.charitiesCommission);
   clickSaveAndContinue();
+  runAccessibility();
 };
 
 export const fillMqFunding = (details) => {
@@ -87,6 +93,7 @@ export const fillMqFunding = (details) => {
     .should('have.value', '')
     .type(details.howMuchFunding);
   clickSaveAndContinue();
+  runAccessibility();
 
   // Where will this funding be spent
   cy.contains('Where will this funding be spent?').should('exist');
@@ -97,6 +104,7 @@ export const fillMqFunding = (details) => {
       .click();
   });
   clickSaveAndContinue();
+  runAccessibility();
 };
 
 export const fillOutDocUpload = () => {

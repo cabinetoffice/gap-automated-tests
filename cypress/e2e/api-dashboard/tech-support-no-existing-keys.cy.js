@@ -5,6 +5,7 @@ import {
   signInAsTechnicalSupport,
   signInToIntegrationSite,
   SUPER_ADMIN_DASHBOARD_URL,
+  runAccessibility,
 } from '../../common/common';
 
 const firstUserId = Cypress.env('firstUserId');
@@ -17,7 +18,9 @@ describe('API Admin - No existing keys', () => {
     signInToIntegrationSite();
 
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
     log('Technical Support User - Signing in');
+    runAccessibility();
     signInAsTechnicalSupport();
   });
 
@@ -76,6 +79,7 @@ describe('API Admin - No existing keys', () => {
       .should('be.visible')
       .contains('Create an API key')
       .click();
+    runAccessibility();
 
     cy.url().should('include', 'api-keys/create');
 
@@ -86,6 +90,7 @@ describe('API Admin - No existing keys', () => {
     cy.get('[data-cy="create-key-heading"]')
       .should('be.visible')
       .contains('Name your API key');
+    runAccessibility();
 
     cy.get('[data-cy="create-key-hint-text"]')
       .should('be.visible')

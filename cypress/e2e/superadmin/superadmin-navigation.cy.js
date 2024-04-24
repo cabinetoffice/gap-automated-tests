@@ -3,6 +3,7 @@ import {
   log,
   signInAsSuperAdmin,
   signInToIntegrationSite,
+  runAccessibility,
 } from '../../common/common';
 
 const firstUserId = Cypress.env('firstUserId');
@@ -18,6 +19,7 @@ describe('Super Admin', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     signInToIntegrationSite();
+    runAccessibility();
   });
 
   it('Can navigate Super Admin dashboard', () => {

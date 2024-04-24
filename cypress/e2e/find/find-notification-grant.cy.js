@@ -26,6 +26,7 @@ describe('Find a Grant - Grant Notification', () => {
     // --- UNAUTHENTICATED JOURNEY ---
     // go to home page
     cy.contains('Find a grant');
+    runAccessibility();
 
     const grantAdvertName = Cypress.env('testV1InternalGrant').advertName;
     // search for and view test grant advert

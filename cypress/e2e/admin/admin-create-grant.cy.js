@@ -3,6 +3,7 @@ import {
   clickContinue,
   clickText,
   log,
+  runAccessibility,
   saveAndExit,
   signInAsAdmin,
   signInToIntegrationSite,
@@ -34,6 +35,7 @@ describe('Create a Grant', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     signInToIntegrationSite();
+    runAccessibility();
   });
 
   it('Admin can create a new Grant with Advert and Application Form', async () => {
@@ -41,8 +43,10 @@ describe('Create a Grant', () => {
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     log('Admin grant creation journey - Signing in as admin');
     signInAsAdmin();
+    runAccessibility();
     log('Admin grant creation journey - creating Grant');
     createGrant(GRANT_NAME);
+    runAccessibility();
 
     // create advert
     log(
@@ -52,6 +56,7 @@ describe('Create a Grant', () => {
     log(
       'Scheme details with an in progress advert journey - creating Advert Section 2',
     );
+    runAccessibility();
     advertSection2();
 
     log(
@@ -59,8 +64,10 @@ describe('Create a Grant', () => {
     );
     // exit advert creation
     cy.get('[data-cy="cy-exit"]').click();
+    runAccessibility();
 
     cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+    runAccessibility();
 
     log(
       'Scheme details with an in progress advert journey - creating Advert Section 3',
@@ -84,19 +91,27 @@ describe('Create a Grant', () => {
       'Scheme details with an in progress advert journey - submitting feedback form',
     );
     cy.contains('Send feedback').click();
+    runAccessibility();
 
     log(
       'Scheme details with an in progress advert journey - Changing from scheduled to published',
     );
     cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy-unschedule-advert-button"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy-radioInput-option-YesUnscheduleMyAdvert"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy_unscheduleConfirmation-ConfirmButton"]').click();
+    runAccessibility();
     advertSection3(false);
+    runAccessibility();
     publishAdvert(GRANT_NAME, false);
 
     cy.contains('Very satisfied').click();
+    runAccessibility();
     cy.contains('Send feedback').click();
+    runAccessibility();
     // This wait is necessary as the cy.url() command will attempt to execute immediately after submitting the form
     // hence later cy.visit() commands will attempt to visit the wrong page
     cy.wait(1000);
@@ -113,9 +128,13 @@ describe('Create a Grant', () => {
 
         cy.visit(schemeUrl);
         cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+        runAccessibility();
         cy.get('[data-cy="cy-unpublish-advert-button"]').click();
+        runAccessibility();
         cy.get('[data-cy="cy-radioInput-option-YesUnpublishMyAdvert"]').click();
+        runAccessibility();
         cy.get('[data-cy="cy_unpublishConfirmation-ConfirmButton"]').click();
+        runAccessibility();
         cy.get('[data-cy="confirmation-message-title"]').contains(
           'Your advert has been unpublished',
         );
@@ -129,8 +148,11 @@ describe('Create a Grant', () => {
         cy.contains('Page not found');
         cy.visit(schemeUrl);
         cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+        runAccessibility();
         cy.get('[data-cy="cy-publish-advert-button"]').click();
+        runAccessibility();
         cy.get('[data-cy="cy-button-Confirm and publish"]').click();
+        runAccessibility();
         cy.get('[data-cy="cy-advert-published"]').contains(
           'Grant advert published',
         );
@@ -138,9 +160,11 @@ describe('Create a Grant', () => {
         cy.visit(advertUrl);
         cy.contains(GRANT_NAME);
         searchForAGrant(GRANT_NAME);
+        runAccessibility();
         // List contains the advert
         cy.get('[data-cy="cyGrantNameAndLink"]').contains(GRANT_NAME);
         cy.visit(schemeUrl);
+        runAccessibility();
       });
     });
 
@@ -154,15 +178,19 @@ describe('Create a Grant', () => {
       'View scheme details with application in progress journey - creating application form',
     );
     cy.get('[data-cy="cyBuildApplicationForm"]').click();
+    runAccessibility();
 
     cy.get('[data-cy="cy-applicationName-text-input"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy-applicationName-text-input"]').type(
       'Cypress - Grant Application',
       { force: true },
     );
     cy.get('[data-cy="cy-button-Continue"]').click();
+    runAccessibility();
 
     cy.get('[data-cy="cy_Section-Eligibility Statement"]').click();
+    runAccessibility();
 
     cy.get('[data-cy="cy-displayText-text-area"]').type('eligibility', {
       force: true,
@@ -172,9 +200,11 @@ describe('Create a Grant', () => {
       'Scheme details with an in progress application journey - exiting application form',
     );
     saveAndExit();
+    runAccessibility();
 
     // exit build application form
     clickText('Exit');
+    runAccessibility();
 
     // view scheme details
     cy.contains('Grant application form');
@@ -183,36 +213,46 @@ describe('Create a Grant', () => {
     log(
       'Scheme details with an in progress application journey - resuming application form',
     );
+    runAccessibility();
     cy.get('[data-cy="cy_view-application-link"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy_Section-due-diligence-checks"]').click();
+    runAccessibility();
 
     cy.on('uncaught:exception', () => false);
 
     cy.get(
       '[data-cy="cy-checkbox-value-I understand that applicants will be asked for this information"]',
     ).click();
+    runAccessibility();
     saveAndExit();
+    runAccessibility();
 
     log(
       'Scheme details with a completed journey - publishing application form',
     );
     // publish
     publishApplicationForm();
+    runAccessibility();
     cy.url().then((url) => {
       const schemeUrl = url;
       cy.get('.break-all-words > .govuk-link').then(($el) => {
         const applicationUrl = $el.text();
         cy.log('Visiting application while published');
         cy.visit(applicationUrl, { failOnStatusCode: false });
+        runAccessibility();
         cy.get('.govuk-heading-l').contains('Before you start');
         clickContinue();
+        runAccessibility();
         fillMqOrgQuestionsAsLimitedCompany(MQ_DETAILS);
         fillMqFunding(MQ_DETAILS);
         clickText('Confirm and submit');
+        runAccessibility();
         cy.contains('Cypress - Grant Application');
         cy.contains('Your Application');
         cy.get('[data-cy="cy-status-tag-Eligibility-Not Started"]');
         clickBack();
+        runAccessibility();
         cy.contains('p', 'Cypress - Grant Application')
           .parent()
           .parent()
@@ -221,6 +261,7 @@ describe('Create a Grant', () => {
           });
         cy.log('Heading back to scheme');
         cy.visit(schemeUrl);
+        runAccessibility();
         publishApplication(false);
         cy.visit(applicationUrl, { failOnStatusCode: false });
         cy.contains('p', 'Cypress - Grant Application')
@@ -231,8 +272,11 @@ describe('Create a Grant', () => {
           });
         cy.log('Heading back to scheme');
         cy.visit(schemeUrl);
+        runAccessibility();
         publishApplication(true);
+        runAccessibility();
         cy.visit(applicationUrl);
+        runAccessibility();
         cy.contains('p', 'Cypress - Grant Application')
           .parent()
           .parent()
@@ -248,8 +292,11 @@ describe('Create a Grant', () => {
     cy.get('.govuk-header__content > .govuk-header__link')
       .contains('Find a grant')
       .click();
+    runAccessibility();
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
     cy.get(`[data-cy="cy_linkToScheme_${GRANT_NAME}"]`).click();
+    runAccessibility();
     cy.contains('Grant application form');
     cy.contains('View submitted applications');
     cy.contains(GRANT_NAME);
@@ -259,17 +306,24 @@ describe('Create a Grant', () => {
 
     // Trigger schedule unpublish immediately
     cy.task('unpublishAdvert', GRANT_NAME);
+    runAccessibility();
 
     // Check the adverts unpublished
     cy.get('[data-cy="cyViewOrChangeYourAdvert-link"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy-publish-advert-button"]').click();
+    runAccessibility();
     cy.contains('Review your advert');
     cy.get('[data-cy="cy-advert-summary-page-back-button"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy-back-button"]').click();
+    runAccessibility();
 
     // Check the application forms unpublished
     cy.get('[data-cy="cy_view-application-link"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy_publishApplication-button"]').click();
+    runAccessibility();
     cy.contains('Are you sure you want to publish your application form?');
   });
 });
