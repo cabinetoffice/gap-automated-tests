@@ -186,3 +186,4 @@ jobs:
           name: accessibility-report-${{ inputs.environment }}-${{ inputs.browser }}-${{ env.NOW }}
           path: /home/runner/work/gap-automated-tests/gap-automated-tests/cypress/accessibility/logs
           retention-days: 30
+        if: ${{ !cancelled() }}
