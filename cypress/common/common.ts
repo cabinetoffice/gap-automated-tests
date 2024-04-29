@@ -320,7 +320,8 @@ function accessibilityLogInfo(violationData) {
     const info = formatAccessibilityViolations(violationData, url);
 
     const specName = Cypress.spec.name;
-    const testName = Cypress.currentTest.title;
+    // Replaces all illegal chars for a filename
+    const testName = Cypress.currentTest.title.replace(/[<>"=/\\]/g, '');
 
     cy.writeFile(
       `cypress/accessibility/logs/${specName}/${testName}.md`,
