@@ -5,6 +5,7 @@ import {
   clickText,
   downloadFileFromLink,
   log,
+  runAccessibility,
   signInAsAdmin,
   signInToIntegrationSite,
   validateXlsx,
@@ -29,6 +30,7 @@ describe('Downloads and Due Diligence', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     signInToIntegrationSite();
+    runAccessibility();
   });
 
   it("Can access and use 'Manage Due Diligence Checks' (spotlight)", () => {
@@ -37,14 +39,18 @@ describe('Downloads and Due Diligence', () => {
       'Admin V2 Internal - Manage Due Diligence & Spotlight - inserting submissions, mq and spotlight submissions',
     );
     cy.task('insertSubmissionsAndMQs');
+    runAccessibility();
 
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SENT);
+    runAccessibility();
 
     log(
       'Admin V2 Internal - Manage Due Diligence & Spotlight - signing in as admin',
     );
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
     signInAsAdmin();
+    runAccessibility();
 
     log('Admin V2 Internal - Manage Due Diligence & Spotlight - viewing grant');
     cy.get(
@@ -52,8 +58,10 @@ describe('Downloads and Due Diligence', () => {
         Number(Cypress.env('firstUserId')) + 1
       }']`,
     ).click();
+    runAccessibility();
 
     clickText('Manage due diligence checks');
+    runAccessibility();
 
     // due diligence downloads
     assert200(cy.get(':nth-child(4) > .govuk-link'));
@@ -66,6 +74,7 @@ describe('Downloads and Due Diligence', () => {
       cy.contains('download the information you need to run checks'),
       'spotlight_checks.zip',
     );
+    runAccessibility();
 
     log(
       'Admin V2 Internal - Manage Due Diligence & Spotlight - unzipping Spotlight checks',
@@ -174,6 +183,7 @@ describe('Downloads and Due Diligence', () => {
       'Admin V2 Internal - Manage Due Diligence & Spotlight - validating spotlight error messages',
     );
     clickBack();
+    runAccessibility();
 
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, GGIS_ERROR);
 
@@ -181,6 +191,7 @@ describe('Downloads and Due Diligence', () => {
     cy.task(ADD_SUBMISSION_TO_MOST_RECENT_BATCH);
 
     clickText('Manage due diligence checks');
+    runAccessibility();
 
     log(
       'Admin V2 Internal - Manage Due Diligence & Spotlight - validating invalid GGIS# spotlight error messages',
@@ -190,12 +201,14 @@ describe('Downloads and Due Diligence', () => {
     );
 
     clickText('Check that your grant reference number is correct.');
+    runAccessibility();
 
     cy.get('[data-cy="cy-ggisReference-text-input"]').clear();
 
     cy.get('[data-cy="cy-ggisReference-text-input"]').type('GGIS_ID_NEW');
 
     clickSaveAndContinue();
+    runAccessibility();
 
     cy.get(
       '[data-cy="cy_summaryListValue_GGIS Scheme Reference Number"]',
@@ -206,12 +219,15 @@ describe('Downloads and Due Diligence', () => {
     );
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, SEND_ERROR);
     clickText('Manage due diligence checks');
+    runAccessibility();
     cy.contains(
       'Due to a service outage, we cannot automatically send data to Spotlight at the moment. This affects 2 of your records.',
     );
     clickBack();
+    runAccessibility();
     cy.task(UPDATE_SPOTLIGHT_SUBMISSION_STATUS, VALIDATION_ERROR);
     clickText('Manage due diligence checks');
+    runAccessibility();
     cy.debug();
     cy.contains("We can't send your data to Spotlight");
     cy.task(CLEANUP_TEST_SPOTLIGHT_SUBMISSIONS);
@@ -219,6 +235,7 @@ describe('Downloads and Due Diligence', () => {
     // Download submission export
 
     clickBack();
+    runAccessibility();
 
     log(
       'Admin V2 Internal - Manage Due Diligence & Spotlight - Initiating download of submission export',
@@ -226,8 +243,10 @@ describe('Downloads and Due Diligence', () => {
     cy.get(
       '[data-cy="cy_Scheme-details-page-button-View submitted application"]',
     ).click();
+    runAccessibility();
 
     cy.get('[data-cy="cy-button-Download submitted applications"]').click();
+    runAccessibility();
 
     cy.contains('A list of applications is being created');
 
@@ -249,8 +268,11 @@ describe('Downloads and Due Diligence', () => {
     // Sign in as admin
     log('Admin V2 Internal - Download Submission Export - signing in as admin');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
     signInAsAdmin();
+    runAccessibility();
     cy.visit('/apply/admin/dashboard');
+    runAccessibility();
 
     // Insert failing submission and export and visit main download page
     cy.task('insertSubmissionAndExport');
@@ -259,12 +281,14 @@ describe('Downloads and Due Diligence', () => {
         EXPORT_BATCH.export_batch_id_v2
       }`,
     );
+    runAccessibility();
     cy.contains(Cypress.env('testV2InternalGrant').schemeName);
     cy.contains('Cannot download 1 application');
     cy.contains('V2 Limited Company');
 
     // View failed export
     cy.get('.govuk-link').contains('View').click();
+    runAccessibility();
     cy.contains(Cypress.env('testV2InternalGrant').schemeName);
     cy.contains('Eligibility');
     cy.contains('Your organisation');
@@ -275,6 +299,7 @@ describe('Downloads and Due Diligence', () => {
 
     // Return to main page
     cy.get('.govuk-button').click();
+    runAccessibility();
     cy.contains(Cypress.env('testV2InternalGrant').schemeName);
     cy.contains('Cannot download 1 application');
     cy.contains('V2 Limited Company');

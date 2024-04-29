@@ -1,5 +1,7 @@
 import {
   BASE_URL,
+  initialiseAccessibilityLogFile,
+  runAccessibility,
   signInAsAdmin,
   signInToIntegrationSite,
 } from '../../common/common';
@@ -13,11 +15,14 @@ describe('Admin navigation', () => {
     cy.task('setUpApplyData');
     cy.task('addTechSupportRoleToAdmin');
     signInToIntegrationSite();
+    initialiseAccessibilityLogFile();
   });
 
   it('Admin can view the dashboard, cannot access the super-admin dashboard', () => {
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsAdmin();
+
+    runAccessibility();
 
     cy.log('Logged into admin account - accessing TechSupport dashboard');
     cy.get('[data-cy=cyapiKeysPageLink]').should('exist');

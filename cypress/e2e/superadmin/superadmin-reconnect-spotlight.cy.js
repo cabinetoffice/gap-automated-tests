@@ -4,6 +4,7 @@ import {
   log,
   signInAsSuperAdmin,
   signInToIntegrationSite,
+  runAccessibility,
 } from '../../common/common';
 import { TASKS } from './constants';
 
@@ -13,6 +14,7 @@ describe('Super Admin', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     signInToIntegrationSite();
+    runAccessibility();
   });
 
   it('Can reconnect to spotlight', () => {

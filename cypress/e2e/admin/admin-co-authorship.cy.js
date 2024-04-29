@@ -3,6 +3,7 @@ import {
   clickSaveAndContinue,
   clickSaveAndExit,
   log,
+  runAccessibility,
   signInAsAdmin,
   signInAsSuperAdmin,
   signInToIntegrationSite,
@@ -14,35 +15,49 @@ describe('Admin co-authorship', () => {
     cy.task('setUpUser');
     cy.task('setUpApplyData');
     signInToIntegrationSite();
+    runAccessibility();
   });
 
   it('manages editors', () => {
     log('Co-auth: Checking initial editor status as super-admin');
+
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
+
     signInAsSuperAdmin();
+    runAccessibility();
+
     cy.contains('a', 'Admin dashboard').click();
+    runAccessibility();
     cy.contains('Grants you own').should('not.exist');
     cy.contains('Grants you can edit');
 
     cy.contains('a', Cypress.env('testV2InternalGrant').schemeName).click();
+    runAccessibility();
     cy.contains('a', 'View editors').click();
+    runAccessibility();
     cy.contains('a', 'Add an editor').should('not.exist');
     cy.contains('a', 'Remove').should('not.exist');
     cy.get('.govuk-summary-list').children().should('have.length', 3);
     signOut();
 
     log('Co-auth: Removing super-admin as editor');
+    runAccessibility();
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsAdmin();
+    runAccessibility();
     cy.contains('Grants you own');
     cy.contains('Grants you can edit').should('not.exist');
 
     cy.contains('a', Cypress.env('testV2InternalGrant').schemeName).click();
+    runAccessibility();
     cy.contains('a', 'Add or manage editors').click();
     cy.get('.govuk-summary-list').children().should('have.length', 3);
 
     cy.contains('a', 'Remove').click();
+    runAccessibility();
     cy.contains('button', 'Remove editor').click();
+    runAccessibility();
     cy.get('.govuk-summary-list').children().should('have.length', 2);
     signOut();
 
@@ -50,6 +65,7 @@ describe('Admin co-authorship', () => {
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsSuperAdmin();
     cy.contains('a', 'Admin dashboard').click();
+    runAccessibility();
     cy.contains('Grants you own').should('not.exist');
     cy.contains('Grants you can edit');
     cy.contains('a', Cypress.env('testV2InternalGrant').schemeName).should(
@@ -60,32 +76,39 @@ describe('Admin co-authorship', () => {
     log('Co-auth: Readding super-admin as editor');
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsAdmin();
+    runAccessibility();
     cy.contains('Grants you own');
     cy.contains('Grants you can edit').should('not.exist');
 
     cy.contains('a', Cypress.env('testV2InternalGrant').schemeName).click();
+    runAccessibility();
     cy.contains('a', 'Add or manage editors').click();
+    runAccessibility();
     cy.get('.govuk-summary-list').children().should('have.length', 2);
 
     log("Co-auth: Checking 'Add an editor' validation");
     cy.contains('a', 'Add an editor').click();
+    runAccessibility();
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').click();
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').type(
       Cypress.env('oneLoginApplicantEmail'),
     );
     cy.contains('button', 'Confirm').click();
+    runAccessibility();
     cy.contains("This account does not have an 'Administrator' account.");
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').click();
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').type(
       '{selectall}{backspace}' + 'Not a real email',
     );
     cy.contains('button', 'Confirm').click();
+    runAccessibility();
     cy.contains('Input a valid email address');
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').click();
     cy.get('[data-cy="cy-editorEmailAddress-text-input"]').type(
       '{selectall}{backspace}' + Cypress.env('oneLoginSuperAdminEmail'),
     );
     cy.contains('button', 'Confirm').click();
+    runAccessibility();
     cy.get('.govuk-summary-list').children().should('have.length', 3);
     signOut();
 
@@ -93,6 +116,7 @@ describe('Admin co-authorship', () => {
     cy.get('[data-cy=cySignInAndApply-Link]').click();
     signInAsSuperAdmin();
     cy.contains('a', 'Admin dashboard').click();
+    runAccessibility();
     cy.contains('Grants you own').should('not.exist');
     cy.contains('Grants you can edit');
     cy.contains('a', Cypress.env('testV2InternalGrant').schemeName);
@@ -100,18 +124,25 @@ describe('Admin co-authorship', () => {
 
   it('throws an error when multiple people simultaneously edit the application form', () => {
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
     signInAsAdmin();
+    runAccessibility();
     cy.contains('Grants you own');
     cy.contains('Grants you can edit').should('not.exist');
 
     cy.contains('a', Cypress.env('testV1InternalGrant').schemeName).click();
+    runAccessibility();
     cy.contains(
       'a',
       Cypress.env('testV1InternalGrant').applicationName,
     ).click();
+    runAccessibility();
     cy.contains('a', 'Unpublish').click();
+    runAccessibility();
     cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+    runAccessibility();
     cy.contains('button', 'Confirm').click();
+    runAccessibility();
 
     log('Multiple Editors - Eligibility');
     cy.contains('Eligibility Statement')
@@ -120,23 +151,31 @@ describe('Admin co-authorship', () => {
       .within(() => {
         cy.contains('a', 'View').click();
       });
+    runAccessibility();
     cy.get('[data-cy="cy-displayText-text-area"]').type(' Edited');
     cy.task('simulateMultipleApplicationFormEditors');
+    runAccessibility();
     clickSaveAndExit();
+    runAccessibility();
     assertMultipleEditorsErrorPage();
 
     cy.contains('a', 'Add a new section').click();
+    runAccessibility();
     cy.get('[data-cy="cy-sectionTitle-text-input"]').type('Custom Section Two');
     clickSaveAndContinue();
+    runAccessibility();
 
     log('Multiple Editors - Section title');
     cy.contains('a', 'Edit').click();
+    runAccessibility();
     cy.get('[data-cy="cy-sectionTitle-text-input"]').type(' Edited');
     cy.task('simulateMultipleApplicationFormEditors');
     clickSave();
+    runAccessibility();
     assertMultipleEditorsErrorPage();
 
     log('Multiple Editors - Reorder sections');
+    runAccessibility();
     cy.contains('4. Custom Section Two');
     cy.task('simulateMultipleApplicationFormEditors');
     cy.contains('4. Custom Section Two')
@@ -147,18 +186,22 @@ describe('Admin co-authorship', () => {
     assertMultipleEditorsErrorPage();
 
     log('Multiple Editors - Delete section');
+    runAccessibility();
     cy.contains('4. Custom Section Two')
       .parent()
       .within(() => {
         cy.contains('a', 'Edit section').click();
       });
     cy.contains('a', 'Delete section').click();
+    runAccessibility();
     cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
     cy.task('simulateMultipleApplicationFormEditors');
     cy.contains('button', 'Confirm').click();
+    runAccessibility();
     assertMultipleEditorsErrorPage();
 
     log('Multiple Editors - Question title');
+    runAccessibility();
     cy.contains('Custom Question 1')
       .parent()
       .parent()
@@ -168,6 +211,7 @@ describe('Admin co-authorship', () => {
     cy.get('[data-cy="cy-fieldTitle-text-input"]').type(' Edited');
     cy.task('simulateMultipleApplicationFormEditors');
     cy.contains('button', 'Save changes').click();
+    runAccessibility();
     assertMultipleEditorsErrorPage();
     cy.contains('Custom Question 1 Edited').should('not.exist');
 
@@ -178,9 +222,12 @@ describe('Admin co-authorship', () => {
       .within(() => {
         cy.contains('Yes/No');
         cy.contains('a', 'Edit').click();
+        runAccessibility();
       });
     cy.contains('a', 'Change question type').click();
+    runAccessibility();
     cy.get('[data-cy="cy-radioInput-option-ShortAnswer"]').click();
+    runAccessibility();
     cy.task('simulateMultipleApplicationFormEditors');
     clickSaveAndContinue();
     assertMultipleEditorsErrorPage();
@@ -190,6 +237,7 @@ describe('Admin co-authorship', () => {
       .within(() => {
         cy.contains('Yes/No');
         cy.contains('Short answer').should('not.exist');
+        runAccessibility();
       });
 
     log('Multiple Editors - Question type - Max Words');
@@ -199,13 +247,18 @@ describe('Admin co-authorship', () => {
       .within(() => {
         cy.contains('Yes/No');
         cy.contains('a', 'Edit').click();
+        runAccessibility();
       });
     cy.contains('a', 'Change question type').click();
+    runAccessibility();
     cy.get('[data-cy="cy-radioInput-option-LongAnswer"]').click();
+    runAccessibility();
     clickSaveAndContinue();
+    runAccessibility();
     cy.get('[data-cy="cy-maxWords-text-input-numeric"]').type('1000');
     cy.task('simulateMultipleApplicationFormEditors');
     clickSaveAndContinue();
+    runAccessibility();
     assertMultipleEditorsErrorPage();
     cy.contains('Custom Question 1')
       .parent()
@@ -216,20 +269,26 @@ describe('Admin co-authorship', () => {
       });
 
     log('Multiple Editors - Question type - Options');
+    runAccessibility();
     cy.contains('Custom Question 1')
       .parent()
       .parent()
       .within(() => {
         cy.contains('Yes/No');
         cy.contains('a', 'Edit').click();
+        runAccessibility();
       });
     cy.contains('a', 'Change question type').click();
+    runAccessibility();
     cy.get('[data-cy="cy-radioInput-option-MultipleChoice"]').click();
+    runAccessibility();
     clickSaveAndContinue();
+    runAccessibility();
     cy.get('[data-cy="cy-options[0]-text-input"]').type('Option 1');
     cy.get('[data-cy="cy-options[1]-text-input"]').type('Option 2');
     cy.task('simulateMultipleApplicationFormEditors');
     clickSaveAndContinue();
+    runAccessibility();
     assertMultipleEditorsErrorPage();
     cy.contains('Custom Question 1')
       .parent()
@@ -246,11 +305,15 @@ describe('Admin co-authorship', () => {
       .within(() => {
         cy.contains('Yes/No');
         cy.contains('a', 'Edit').click();
+        runAccessibility();
       });
     cy.contains('a', 'Delete question').click();
+    runAccessibility();
     cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
+    runAccessibility();
     cy.task('simulateMultipleApplicationFormEditors');
     cy.contains('button', 'Confirm').click();
+    runAccessibility();
     assertMultipleEditorsErrorPage();
 
     log('Multiple Editors - Reorder questions - Up');
@@ -258,6 +321,7 @@ describe('Admin co-authorship', () => {
       .parent()
       .within(() => {
         cy.contains('a', 'Edit section').click();
+        runAccessibility();
       });
     cy.contains('Custom Question 2');
     cy.task('simulateMultipleApplicationFormEditors');
@@ -267,6 +331,7 @@ describe('Admin co-authorship', () => {
       .within(() => {
         cy.contains('Short answer');
         cy.contains('button', 'Up').click();
+        runAccessibility();
       });
     assertMultipleEditorsErrorPage();
 
@@ -275,6 +340,7 @@ describe('Admin co-authorship', () => {
       .parent()
       .within(() => {
         cy.contains('a', 'Edit section').click();
+        runAccessibility();
       });
     cy.contains('Custom Question 1');
     cy.task('simulateMultipleApplicationFormEditors');
@@ -284,6 +350,7 @@ describe('Admin co-authorship', () => {
       .within(() => {
         cy.contains('Yes/No');
         cy.contains('button', 'Down').click();
+        runAccessibility();
       });
     assertMultipleEditorsErrorPage();
   });
@@ -305,4 +372,5 @@ const assertMultipleEditorsErrorPage = () => {
       }/dashboard`,
     )
     .click();
+  runAccessibility();
 };

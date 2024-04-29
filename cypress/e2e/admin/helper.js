@@ -1,10 +1,12 @@
 import dayjs from 'dayjs';
 import {
+  clickBack,
   clickSave,
   clickSaveAndContinue,
   clickText,
   downloadFileFromLink,
   log,
+  runAccessibility,
   saveAndExit,
   selectActionForItemInTable,
   yesQuestionComplete,
@@ -22,11 +24,14 @@ export function createGrant(GRANT_NAME) {
   const contactEmail = 'test@and-cypress-email.com';
 
   cy.get('[data-cy=cy_addAGrantButton]').click();
+  runAccessibility();
 
   cy.get('[data-cy=cy-grantName-text-input]').click();
   cy.get('[data-cy=cy-grantName-text-input]').type(GRANT_NAME, { force: true });
 
   clickSaveAndContinue();
+  runAccessibility();
+  runAccessibility();
 
   cy.get('[data-cy=cy-ggisReference-text-input]').click();
   cy.get('[data-cy=cy-ggisReference-text-input]').type(ggisNumber, {
@@ -34,6 +39,7 @@ export function createGrant(GRANT_NAME) {
   });
 
   clickSaveAndContinue();
+  runAccessibility();
 
   cy.get('[data-cy=cy-contactEmail-text-input]').click();
   cy.get('[data-cy=cy-contactEmail-text-input]').type(contactEmail, {
@@ -41,6 +47,7 @@ export function createGrant(GRANT_NAME) {
   });
 
   clickSaveAndContinue();
+  runAccessibility();
 
   cy.get("[data-cy='cy_summaryListValue_Grant name']").contains(GRANT_NAME);
 
@@ -53,14 +60,18 @@ export function createGrant(GRANT_NAME) {
   );
 
   cy.get('[data-cy=cy_addAGrantConfirmationPageButton]').click();
+  runAccessibility();
 
   cy.contains(GRANT_NAME).click();
 }
 
 export function applicationForm() {
   cy.get('[data-cy="cyBuildApplicationForm"]').click();
+  runAccessibility();
 
   cy.get('[data-cy="cy-applicationName-text-input"]').click();
+  runAccessibility();
+
   cy.get('[data-cy="cy-applicationName-text-input"]').type(
     'Cypress - Grant Application',
     { force: true },
@@ -93,7 +104,7 @@ export function applicationForm() {
 
 export function publishApplicationForm() {
   cy.get('[data-cy="cy_publishApplication-button"]').click();
-
+  runAccessibility();
   cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
   cy.get('[data-cy="cy_publishConfirmation-ConfirmButton"]').click();
 }
@@ -356,12 +367,14 @@ function addOptionalMultiChoiceQuestion(questionText, description, type) {
 
 export function publishAdvert(advertName, scheduled) {
   cy.get('[data-cy="cy-publish-advert-button"]').click();
+  runAccessibility();
 
   cy.get(
     `[data-cy="cy-button-${
       scheduled ? 'Schedule my advert' : 'Confirm and publish'
     }"]`,
   ).click();
+  runAccessibility();
 
   if (!scheduled) cy.task('waitForAdvertToPublish', advertName);
 
@@ -370,54 +383,63 @@ export function publishAdvert(advertName, scheduled) {
   ).should('exist');
 
   cy.get('[data-cy="back-to-my-account-button"]').click();
+  runAccessibility();
 }
 
 export function advertSection5() {
   cy.get(
     '[data-cy="cy-5. Further information-sublist-task-name-Eligibility information"]',
   ).click();
+  runAccessibility();
 
   getIframeBody('#grantEligibilityTab_ifr')
     .find('p')
     .type('This is our Eligibility information', { force: true });
 
   yesQuestionComplete();
+  runAccessibility();
 
   getIframeBody('#grantSummaryTab_ifr')
     .find('p')
     .type('This is our Summary information', { force: true });
 
   yesQuestionComplete();
+  runAccessibility();
 
   getIframeBody('#grantDatesTab_ifr')
     .find('p')
     .type('This is our Date information', { force: true });
 
   yesQuestionComplete();
+  runAccessibility();
 
   getIframeBody('#grantObjectivesTab_ifr')
     .find('p')
     .type('This is our Objectives information', { force: true });
 
   yesQuestionComplete();
+  runAccessibility();
 
   getIframeBody('#grantApplyTab_ifr')
     .find('p')
     .type('This is our application information', { force: true });
 
   yesQuestionComplete();
+  runAccessibility();
 
   getIframeBody('#grantSupportingInfoTab_ifr')
     .find('p')
     .type('This is our supporting information', { force: true });
 
   yesQuestionComplete();
+  runAccessibility();
 }
 
 export function advertSection4() {
   cy.get(
     '[data-cy="cy-4. How to apply-sublist-task-name-Link to application form"]',
   ).click();
+  runAccessibility();
 
   // TODO copy url from application form
   cy.get('[data-cy="cy-grantWebpageUrl-text-input"]').click();
@@ -427,12 +449,14 @@ export function advertSection4() {
   );
 
   yesQuestionComplete();
+  runAccessibility();
 }
 
 export function advertSection3(scheduled) {
   cy.get(
     "[data-cy='cy-3. Application dates-sublist-task-name-Opening and closing dates']",
   ).click();
+  runAccessibility();
 
   const today = new Date();
   cy.get('[data-cy=cyDateFilter-grantApplicationOpenDateDay]').click().clear();
@@ -463,12 +487,14 @@ export function advertSection3(scheduled) {
     .type(`${today.getFullYear() + 1}`, { force: true });
 
   yesQuestionComplete();
+  runAccessibility();
 }
 
 export function advertSection2() {
   cy.get(
     "[data-cy='cy-2. Award amounts-sublist-task-name-How much funding is available?']",
   ).click();
+  runAccessibility();
 
   cy.get('[data-cy=cy-grantTotalAwardAmount-text-input-numeric]').click();
   cy.get('[data-cy=cy-grantTotalAwardAmount-text-input-numeric]').type(
@@ -483,21 +509,26 @@ export function advertSection2() {
   });
 
   yesQuestionComplete();
+  runAccessibility();
 }
 
 export function advertSection1(GRANT_NAME) {
   cy.get('[data-cy=cyBuildAdvert]').click();
+  runAccessibility();
 
   cy.get('[data-cy=cy-advertName-text-input]').click();
+  runAccessibility();
   cy.get('[data-cy=cy-advertName-text-input]').type(GRANT_NAME, {
     force: true,
   });
 
   clickSaveAndContinue();
+  runAccessibility();
 
   cy.get(
     "[data-cy='cy-1. Grant details-sublist-task-name-Short description']",
   ).click();
+  runAccessibility();
 
   cy.get('[data-cy=cy-grantShortDescription-text-area]').click();
   cy.get('[data-cy=cy-grantShortDescription-text-area]').type(
@@ -506,12 +537,14 @@ export function advertSection1(GRANT_NAME) {
   );
 
   yesQuestionComplete();
+  runAccessibility();
 
   cy.contains('Where is the grant available?');
 
   cy.get('[data-cy=cy-checkbox-value-National]').click();
 
   yesQuestionComplete();
+  runAccessibility();
 
   cy.contains('Which organisation is funding this grant?');
 
@@ -521,12 +554,14 @@ export function advertSection1(GRANT_NAME) {
   });
 
   yesQuestionComplete();
+  runAccessibility();
 
   cy.contains('Who can apply for this grant?');
 
   cy.get("[data-cy='cy-checkbox-value-Personal / Individual']").click();
 
   yesQuestionComplete();
+  runAccessibility();
 }
 
 export const convertDateToString = (date, dateFormat = 'YYYY-MM-DD') =>
@@ -534,6 +569,7 @@ export const convertDateToString = (date, dateFormat = 'YYYY-MM-DD') =>
 
 export const publishApplication = (choice) => {
   cy.contains('Manage this grant').click();
+  runAccessibility();
   // feedback form
   log(
     'Scheme details with a completed application journey - submitting feedback',
@@ -547,17 +583,23 @@ export const publishApplication = (choice) => {
       '<CEASING_DEMONSTRATION_OF_SATISFACTION/>',
   );
   cy.contains('Send feedback').click();
+  runAccessibility();
   cy.wait(1000);
 
   cy.get('[data-cy="cy_view-application-link"]').click();
+  runAccessibility();
   if (choice === true) {
     cy.get('[data-cy="cy_publishApplication-button"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
     cy.get('[data-cy="cy_publishConfirmation-ConfirmButton"]').click();
+    runAccessibility();
   } else {
     cy.get('[data-cy="cy_unpublishApplication-button"]').click();
+    runAccessibility();
     cy.get('[data-cy="cy-radioInput-option-Yes"]').click();
     cy.get('[data-cy="cy_unpublishConfirmation-ConfirmButton"]').click();
+    runAccessibility();
   }
 };
 
@@ -647,4 +689,248 @@ export const submissionExportSuccess = (grantInformation, version) => {
 
   cy.get('.govuk-button').contains('Return to overview').click();
   cy.contains('Applications available to download');
+};
+
+export const validatePreview = () => {
+  log(
+    'View scheme details with no advert journey - validating preview overview',
+  );
+  cy.contains('a', 'Preview your application form').click();
+  cy.contains(
+    'This is a preview of your application form. You cannot enter any answers.',
+  );
+  cy.contains(
+    'a',
+    'See an overview of the questions you will be asked',
+  ).click();
+  runAccessibility();
+  checkOverviewPage();
+  clickBack();
+
+  log(
+    'View scheme details with no advert journey - validating preview sections',
+  );
+  // Eligibility
+  cy.contains('Eligibility')
+    .parent()
+    .parent()
+    .within(() => {
+      cy.contains('Not Started');
+    });
+  cy.contains('a', 'Eligibility').click();
+  cy.contains('Question preview');
+  cy.contains('Eligibility Statement');
+  cy.get('[data-cy="cy-radioInput-option-Yes"]');
+  cy.get('[data-cy="cy-radioInput-label-Yes"]');
+  cy.get('[data-cy="cy-radioInput-option-No"]');
+  cy.get('[data-cy="cy-radioInput-label-No"]');
+  cy.contains('a', 'Back to overview').click();
+  cy.contains('Eligibility')
+    .parent()
+    .parent()
+    .within(() => {
+      cy.contains('Not Started');
+    });
+
+  // Your details
+  cy.contains('Your details')
+    .parent()
+    .parent()
+    .within(() => {
+      cy.contains('Not Started');
+    });
+  cy.contains('a', 'Your details').click();
+  cy.contains('Question preview');
+  cy.contains('Enter the name of your organisation');
+  cy.get('[data-cy="cy-preview-text-input"]').should('be.disabled');
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains('Choose your organisation type');
+  cy.get('[data-cy="cy-preview-select"]').select('Limited company');
+  cy.get('[data-cy="cy-preview-select"]').select('Non-limited company');
+  cy.get('[data-cy="cy-preview-select"]').select('Registered charity');
+  cy.get('[data-cy="cy-preview-select"]').select('Unregistered charity');
+  cy.get('[data-cy="cy-preview-select"]').select('Other');
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains("Enter your organisation's address");
+  cy.contains('Address line 1');
+  cy.get('[data-cy="cy-preview-address-line-1-text-input"]').should(
+    'be.disabled',
+  );
+  cy.contains('Address line 2 (optional)');
+  cy.get('[data-cy="cy-preview-address-line-2-text-input"]').should(
+    'be.disabled',
+  );
+  cy.contains('Town or City');
+  cy.get('[data-cy="cy-preview-town-text-input"]').should('be.disabled');
+  cy.contains('County (optional)');
+  cy.get('[data-cy="cy-preview-county-text-input"]').should('be.disabled');
+  cy.contains('Postcode');
+  cy.get('[data-cy="cy-preview-postcode-text-input"]').should('be.disabled');
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains(
+    'Enter your Charity Commission number (if you have one) (optional)',
+  );
+  cy.get('[data-cy="cy-preview-text-input"]').should('be.disabled');
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains('Enter your Companies House number (if you have one) (optional)');
+  cy.get('[data-cy="cy-preview-text-input"]').should('be.disabled');
+  cy.contains('a', 'Back to overview').click();
+  cy.contains('Your details')
+    .parent()
+    .parent()
+    .within(() => {
+      cy.contains('Not Started');
+    });
+
+  // Funding
+  cy.contains('Funding')
+    .parent()
+    .parent()
+    .within(() => {
+      cy.contains('Not Started');
+    });
+  cy.contains('a', 'Funding').click();
+  cy.contains('Question preview');
+  cy.contains('How much does your organisation require as a grant?');
+  cy.get('[data-cy="cy-preview-text-input-numeric"]').should('be.disabled');
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains('Where will this funding be spent?');
+  cy.get('[data-cy="cy-checkbox-value-North East England"]');
+  cy.contains('a', 'Back to overview').click();
+  cy.contains('Funding')
+    .parent()
+    .parent()
+    .within(() => {
+      cy.contains('Not Started');
+    });
+
+  // Custom section
+  cy.contains('Shiny new section name')
+    .parent()
+    .parent()
+    .within(() => {
+      cy.contains('Not Started');
+    });
+  cy.contains('a', 'Shiny new section name').click();
+  cy.contains('Question preview');
+  cy.contains('Custom Question 1');
+  cy.contains('a', 'Back to overview').click();
+  cy.contains('Shiny new section name')
+    .parent()
+    .parent()
+    .within(() => {
+      cy.contains('Not Started');
+    });
+
+  cy.contains('a', 'Shiny new section name').click();
+  cy.contains('Question preview');
+  cy.contains('Custom Question 1');
+  cy.get('[data-cy="cy-radioInput-option-Yes"]');
+  cy.get('[data-cy="cy-radioInput-label-Yes"]');
+  cy.get('[data-cy="cy-radioInput-option-No"]');
+  cy.get('[data-cy="cy-radioInput-label-No"]');
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains('Custom Question 2');
+  cy.get('[data-cy="cy-preview-text-input"]').should('be.disabled');
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains('Custom Question 3');
+  cy.get('[data-cy="cy-preview-text-area"]').should('be.disabled');
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains('Custom Question 4 (optional)');
+  cy.get('[data-cy="cy-preview-select"]').select('Choice 1');
+  cy.get('[data-cy="cy-preview-select"]').select('Choice 2');
+  cy.get('[data-cy="cy-preview-select"]').select('Choice 3');
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains('Custom Question 5 (optional)');
+  cy.contains('Choice 1').click();
+  cy.contains('Choice 2').click();
+  cy.contains('Choice 3').click();
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains('Custom Question 6');
+  cy.get('[data-testid="file-upload-input"]').should('be.disabled');
+  cy.contains('a', 'Preview next question').click();
+
+  cy.contains('Question preview');
+  cy.contains('Custom Question 7');
+  cy.get('[data-cy="cyDateFilter-previewDay"]');
+  cy.get('[data-cy="cyDateFilter-previewMonth"]');
+  cy.get('[data-cy="cyDateFilter-previewYear"]');
+  cy.contains('a', 'Back to overview').click();
+  cy.contains('Shiny new section name')
+    .parent()
+    .parent()
+    .within(() => {
+      cy.contains('Not Started');
+    });
+
+  cy.contains('a', 'Exit preview').click();
+
+  cy.contains('Build an application form');
+};
+
+const checkOverviewPage = () => {
+  // assert on headings
+  cy.get('[data-cy="cy-application-name"]').should(
+    'have.text',
+    'Cypress - Grant Application',
+  );
+  cy.contains(
+    '[data-cy="cy-overview-heading"]',
+    'Overview of application questions',
+  );
+
+  // assert on section headings
+  cy.contains('Eligibility')
+    .parent()
+    .within(() => {
+      cy.contains('Does your organisation meet the eligibility criteria?');
+    });
+
+  cy.contains('Your details')
+    .parent()
+    .within(() => {
+      cy.contains('Enter the name of your organisation');
+      cy.contains('Choose your organisation type');
+      cy.contains("Enter your organisation's address");
+      cy.contains('Charity Commission number (if applicable)');
+      cy.contains('Companies House number (if applicable)');
+    });
+
+  cy.contains('Funding')
+    .parent()
+    .within(() => {
+      cy.contains('How much does your organisation require as a grant?');
+      cy.contains('Where will this funding be spent?');
+    });
+
+  cy.contains('Shiny new section name')
+    .parent()
+    .within(() => {
+      for (let i = 1; i <= 7; i++) {
+        cy.contains(`Custom Question ${i}`);
+      }
+    });
+
+  // return to application form
+  cy.get('[data-cy="cy-back-to-application"]').click();
 };

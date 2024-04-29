@@ -5,6 +5,7 @@ import {
   log,
   ADMIN_DASHBOARD_URL,
   SUPER_ADMIN_DASHBOARD_URL,
+  runAccessibility,
 } from '../../common/common';
 
 describe('Apply for a Grant', () => {
@@ -16,12 +17,14 @@ describe('Apply for a Grant', () => {
 
   it('can land on application dashboard and view details', () => {
     cy.get('[data-cy=cySignInAndApply-Link]').click();
+    runAccessibility();
 
     log('Apply Dashboard & Profile - Signing in as applicant');
     signInAsApplyApplicant();
 
     log('Apply Dashboard & Profile - Viewing profile');
     cy.contains('Your saved information').click();
+    runAccessibility();
 
     log('Apply Dashboard & Profile - Editing name');
     cy.get(
@@ -95,6 +98,7 @@ describe('Apply for a Grant', () => {
     cy.get('[data-cy=cy-find-a-grant-link').click();
     cy.get('[data-cy=cyHomePageTitle]').should('have.text', 'Find a grant');
     cy.go('back');
+    runAccessibility();
 
     log(
       'Apply Dashboard & Profile - Checking admin and super-admin dashboard returns 404',
@@ -108,6 +112,7 @@ describe('Apply for a Grant', () => {
 
     log('Apply Dashboard & Profile - Editing One Login details');
     cy.contains('Your sign in details').click();
+    runAccessibility();
 
     // TODO reenable click when MFA strategy is defined
     cy.contains('Change your sign in details in your GOV.UK One Login');

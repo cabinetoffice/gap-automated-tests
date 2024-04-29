@@ -6,7 +6,7 @@ const firstUserId = Math.abs(+process.env.FIRST_USER_ID);
 const firstGrantId = Math.abs(+process.env.FIRST_USER_ID);
 const secondGrantId = Math.abs(+process.env.FIRST_USER_ID) + 1;
 
-export const ADDED_DEPARTMENT_NAME = `Cypress - Test Add Department ${firstUserId}`;
+export const ADDED_DEPARTMENT_NAME = `Cypress - Test Add Department -${firstUserId}`;
 export const ADMIN_TEST_GRANT_NAME = `Cypress Admin E2E Test Grant ID:${firstUserId}`;
 
 export const TEST_V1_INTERNAL_GRANT = {
@@ -75,4 +75,11 @@ export const MQ_DETAILS = {
 export const EXPORT_BATCH = {
   export_batch_id_v1: getUUID(),
   export_batch_id_v2: getUUID(1),
+};
+
+export const wcagCategories = {
+  runOnly: {
+    type: 'tag',
+    values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'],
+  },
 };

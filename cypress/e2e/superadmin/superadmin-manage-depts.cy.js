@@ -2,6 +2,7 @@ import {
   clickBack,
   log,
   navigateToSpecificUser,
+  runAccessibility,
   selectActionForItemInTable,
   signInAsSuperAdmin,
   signInToIntegrationSite,
@@ -27,6 +28,7 @@ describe('Super Admin', () => {
     log('Super Admin Manage Depts - Signing in as super admin');
     signInAsSuperAdmin();
     navigateToSpecificUser(Cypress.env('oneLoginAdminEmail'));
+    runAccessibility();
 
     log("Super Admin Manage Depts - Clicking change on user's department");
     selectActionForItemInTable(ORIGINAL_DEPARTMENT_NAME, 'Change', {
@@ -34,12 +36,15 @@ describe('Super Admin', () => {
       actionCellElement: 'dd',
     });
     cy.get('.govuk-link').contains('Manage departments').click();
+    runAccessibility();
 
     log('Super Admin Manage Depts - Adding department');
     cy.get('.govuk-button').contains('Add new department').click();
+    runAccessibility();
 
     log('Super Admin Manage Depts - Trying to submit empty form data');
     cy.get('.govuk-button').contains('Add department').click();
+    runAccessibility();
     cy.get('[data-cy="cyErrorBannerHeading"]').contains('There is a problem');
     cy.get('[data-cy="cyError_ggisID"]').contains('Enter a GGIS ID');
     cy.get('[data-cy="cyError_name"]').contains('Enter a Department name');
@@ -47,6 +52,7 @@ describe('Super Admin', () => {
     log('Super Admin Manage Depts - Entering a name but no ID');
     cy.get('[data-cy="cy-name-text-input"]').type(ADDED_DEPARTMENT_NAME);
     cy.get('.govuk-button').contains('Add department').click();
+    runAccessibility();
     cy.get('[data-cy="cyErrorBannerHeading"]').contains('There is a problem');
     cy.get('[data-cy="cyError_ggisID"]').contains('Enter a GGIS ID');
 
@@ -54,12 +60,14 @@ describe('Super Admin', () => {
     cy.get('[data-cy="cy-name-text-input"]').clear();
     cy.get('[data-cy="cy-ggisID-text-input"]').type('123456');
     cy.get('.govuk-button').contains('Add department').click();
+    runAccessibility();
     cy.get('[data-cy="cyErrorBannerHeading"]').contains('There is a problem');
     cy.get('[data-cy="cyError_name"]').contains('Enter a Department name');
 
     log('Super Admin Manage Depts - Entering a valid ID and name');
     cy.get('[data-cy="cy-name-text-input"]').type(ADDED_DEPARTMENT_NAME);
     cy.get('.govuk-button').contains('Add department').click();
+    runAccessibility();
 
     log(
       'Super Admin Manage Depts - Verifying that the department has been added',
@@ -76,6 +84,7 @@ describe('Super Admin', () => {
       actionCellElement: 'dd',
     });
     cy.get('.govuk-link').contains('Manage departments').click();
+    runAccessibility();
 
     log('Super Admin Manage Depts - Clicking edit on department');
 
@@ -85,6 +94,7 @@ describe('Super Admin', () => {
     cy.get('[data-cy="cy-name-text-input"]').clear();
     cy.get('[data-cy="cy-ggisID-text-input"]').clear();
     cy.get('.govuk-button').contains('Save changes').click();
+    runAccessibility();
     cy.get('[data-cy="cyErrorBannerHeading"]').contains('There is a problem');
     cy.get('[data-cy="cyError_ggisID"]').contains('Enter a GGIS ID');
     cy.get('[data-cy="cyError_name"]').contains('Enter a Department name');
@@ -94,6 +104,7 @@ describe('Super Admin', () => {
     cy.get('[data-cy="cy-ggisID-text-input"]').clear();
     cy.get('[data-cy="cy-name-text-input"]').type(EDITED_DEPARTMENT_NAME);
     cy.get('.govuk-button').contains('Save changes').click();
+    runAccessibility();
     cy.get('[data-cy="cyErrorBannerHeading"]').contains('There is a problem');
     cy.get('[data-cy="cyError_ggisID"]').contains('Enter a GGIS ID');
 
@@ -102,6 +113,7 @@ describe('Super Admin', () => {
     cy.get('[data-cy="cy-ggisID-text-input"]').clear();
     cy.get('[data-cy="cy-ggisID-text-input"]').type('123456');
     cy.get('.govuk-button').contains('Save changes').click();
+    runAccessibility();
     cy.get('[data-cy="cyErrorBannerHeading"]').contains('There is a problem');
     cy.get('[data-cy="cyError_name"]').contains('Enter a Department name');
 
@@ -118,6 +130,7 @@ describe('Super Admin', () => {
     cy.get('.govuk-summary-list__key').contains(EDITED_DEPARTMENT_NAME);
 
     clickBack();
+    runAccessibility();
 
     navigateToSpecificUser(Cypress.env('oneLoginAdminEmail'));
 
@@ -127,6 +140,7 @@ describe('Super Admin', () => {
       actionCellElement: 'dd',
     });
     cy.get('.govuk-link').contains('Manage departments').click();
+    runAccessibility();
 
     log('Super Admin Manage Depts - Clicking delete on department');
 
@@ -134,9 +148,11 @@ describe('Super Admin', () => {
 
     log('Super Admin Manage Depts - Clicking delete department');
     cy.get('.govuk-button').contains('Delete department').click();
+    runAccessibility();
 
     log('Super Admin Manage Depts - Confirming delete department');
     cy.get('.govuk-button').contains('Delete department').click();
+    runAccessibility();
 
     log(
       'Super Admin Manage Depts - Verifying that the department has been deleted',

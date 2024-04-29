@@ -39,6 +39,7 @@ import {
 import {
   publishGrantAdverts,
   removeAdvertByName,
+  unpublishAdvertByName,
   waitForAdvertToPublish,
 } from './cypress/seed/contentful';
 const xlsx = require('node-xlsx').default;
@@ -107,6 +108,11 @@ export default defineConfig({
         },
         async removeAdvertByName(name) {
           await removeAdvertByName(name);
+
+          return null;
+        },
+        async unpublishAdvert(advertName) {
+          await unpublishAdvertByName(advertName);
 
           return null;
         },

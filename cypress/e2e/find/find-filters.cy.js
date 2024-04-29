@@ -1,4 +1,8 @@
-import { signInToIntegrationSite, log } from '../../common/common';
+import {
+  signInToIntegrationSite,
+  log,
+  runAccessibility,
+} from '../../common/common';
 
 describe('Filter search results', () => {
   beforeEach(() => {
@@ -8,6 +12,7 @@ describe('Filter search results', () => {
 
   it('can apply and clear filters', () => {
     cy.get('[data-cy="cySearchGrantsBtn"]').click();
+    runAccessibility();
 
     const filters = {
       whoCanApply: [
@@ -44,6 +49,7 @@ describe('Filter search results', () => {
     };
 
     log('Find Filters - Who Can Apply');
+    runAccessibility();
 
     filters.whoCanApply.forEach((filterOption, filterIndex) => {
       cy.get(`[data-cy="cy${filterOption[0]}Checkbox"]`).click();
@@ -76,6 +82,7 @@ describe('Filter search results', () => {
     });
 
     log('Find Filters - Location');
+    runAccessibility();
 
     filters.location.forEach((filterOption, filterIndex) => {
       cy.get(`[data-cy="cy${filterOption}Checkbox"]`).click();
@@ -108,6 +115,7 @@ describe('Filter search results', () => {
     });
 
     log('Find Filters - How much can you get');
+    runAccessibility();
 
     filters.howMuchCanYouGet.forEach((filterRange, filterIndex, filters) => {
       cy.get(`[data-cy="cy${filterRange[0]}Checkbox"]`).click();
@@ -155,6 +163,7 @@ describe('Filter search results', () => {
     });
 
     log('Find Filters - Date');
+    runAccessibility();
 
     filters.dateAdded.forEach((date) => {
       cy.get(`[data-cy="cyDateFilter-${date[0]}Day"]`).type('01');
