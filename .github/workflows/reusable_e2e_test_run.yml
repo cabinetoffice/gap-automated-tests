@@ -178,13 +178,14 @@ jobs:
         if: ${{ !cancelled() && failure() }}
 
       - name: Set current date as env variable
-        run: echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+        id: now
+        run: echo "NOW=$(date +'%Y-%m-%dT%H-%M-%S')" >> $GITHUB_ENV
         if: ${{ !cancelled() }}
 
       - name: Upload accessibility report
         uses: actions/upload-artifact@v4
         with:
-          name: accessibility-report-${{ inputs.environment }}-${{ inputs.browser }}-${{ env.NOW }}
+          name: accessibility-report-${{ inputs.environment }}-${{ inputs.browser }}-${{ steps.now.outputs.NOW }}
           path: /home/runner/work/gap-automated-tests/gap-automated-tests/cypress/accessibility/logs
           retention-days: 30
         if: ${{ !cancelled() }}
